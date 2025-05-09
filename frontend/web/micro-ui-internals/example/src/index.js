@@ -26,7 +26,8 @@ const enabledModules = [
   "Microplanning",
   "Sample",
   "PublicServices",
-  "OpenPayment"
+  "core",
+  "OpenPayment",
   //added to check fsm
   // "FSM"
 ];
@@ -61,7 +62,7 @@ const initDigitUI = () => {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
   window.Digit.Customizations = {
     PGR: pgrCustomizations,
-    commonUiConfig: UICustomizations
+    commonUiConfig: UICustomizations,
   };
   window?.Digit.ComponentRegistryService.setupRegistry({
     // PaymentModule,
@@ -76,11 +77,13 @@ const initDigitUI = () => {
 
   const moduleReducers = (initData) => initData;
 
-
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules}       defaultLanding="employee"  moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(
+    <DigitUI stateCode={stateCode} enabledModules={enabledModules} defaultLanding="employee" moduleReducers={moduleReducers} />,
+    document.getElementById("root")
+  );
 };
 
 initLibraries().then(() => {

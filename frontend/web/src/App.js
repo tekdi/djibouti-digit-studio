@@ -15,8 +15,8 @@ const enabledModules = [
   "Workbench",
   "HCMWORKBENCH",
   "PublicServices",
-  "OpenPayment"
-
+  "core",
+  "OpenPayment",
 ];
 
 const moduleReducers = (initData) => ({
@@ -31,7 +31,6 @@ const initDigitUI = () => {
   };
   initPublicServiceComponents();
   initOpenPaymentComponents();
-
 };
 
 initLibraries().then(() => {
