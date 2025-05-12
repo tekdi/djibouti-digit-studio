@@ -7,25 +7,6 @@
       "service": "PCO",
       "fields": [
         {
-          "name": "identity",
-          "label": "Applicant's Identity",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": [
-              {
-                "name": "applicantType",
-                "label": "Applicant Type",
-                "type": "string",
-                "reference": "mdms",
-                "format": "text",
-                "required": true,
-                "schema": "BPA.ApplicantType"
-              }
-            ]
-          }
-        },
-        {
           "name": "individual",
           "label": "Individual",
           "type": "array",
@@ -33,21 +14,21 @@
             "type": "object",
             "properties": [
               {
-                "name": "firstName",
-                "label": "First Name",
+                "name": "wayToAddress",
+                "label": "Preferred Way to Address",
                 "type": "string",
-                "format": "text",
-                "minLength": 2,
-                "maxLength": 100,
-                "required": true
+                "reference": "mdms",
+                "format": "radioordropdown",
+                "required": true,
+                "schema": "BPA.Gender"
               },
               {
-                "name": "lastName",
-                "label": "Last Name",
+                "name": "legalName",
+                "label": "Legal Name",
                 "type": "string",
                 "format": "text",
                 "minLength": 2,
-                "maxLength": 100,
+                "maxLength": 256,
                 "required": true
               },
               {
@@ -56,8 +37,17 @@
                 "type": "string",
                 "format": "text",
                 "minLength": 2,
-                "maxLength": 100,
+                "maxLength": 500,
                 "required": true
+              },
+              {
+                "name": "nationalIdNuber",
+                "label": "National Identification Number (CIN)",
+                "type": "string",
+                "format": "number",
+                "minLength": 6,
+                "maxLength": 8,
+                "required": false
               },
               {
                 "name": "Telephone",
@@ -66,73 +56,29 @@
                 "format": "text",
                 "validation": {
                   "regex": "(^$|^77[0-9]{6}$)",
-                  "message": "Only letters and numbers allowed"
+                  "message": "Only valid contact number is allowed"
                 },
                 "required": true
-              }
-            ]
-          }
-        },
-        {
-          "name": "legalEntity",
-          "label": "legal entity",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": [
+              },
               {
-                "name": "name",
-                "label": "Name",
+                "name": "checkValidationsField1",
+                "label": "I certify I am entitled to request this authorization",
                 "type": "string",
-                "format": "text",
+                "format": "checkbox",
                 "required": true
               },
               {
-                "name": "companyName",
-                "label": "Company Name",
+                "name": "checkValidationsField2",
+                "label": "I, the undersigned, author of the request, certify that the information provided is correct.",
                 "type": "string",
-                "format": "text",
+                "format": "checkbox",
                 "required": true
               },
               {
-                "name": "registration",
-                "label": "Registration",
+                "name": "checkValidationsField3",
+                "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
                 "type": "string",
-                "format": "text",
-                "required": true
-              },
-              {
-                "name": "companyType",
-                "label": "Type of Company",
-                "type": "string",
-                "format": "radioordropdown",
-                "reference": "mdms",
-                "required": true,
-                "schema": "BPA.CompanyType"
-              },
-              {
-                "name": "representative",
-                "label": "Representative of the Legal Entity",
-                "type": "string",
-                "format": "text",
-                "required": true
-              },
-              {
-                "name": "lastName",
-                "label": "Last Name",
-                "type": "string",
-                "format": "text",
-                "minLength": 2,
-                "maxLength": 100,
-                "required": true
-              },
-              {
-                "name": "firstName",
-                "label": "First Name",
-                "type": "string",
-                "format": "text",
-                "minLength": 2,
-                "maxLength": 100,
+                "format": "checkbox",
                 "required": true
               }
             ]
@@ -148,7 +94,10 @@
               {
                 "name": "siteLocation",
                 "label": "Site Location",
-                "type": "string"
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 500,
+                "required": true
               },
               {
                 "name": "area",
@@ -163,105 +112,73 @@
               },
               {
                 "name": "legalStatus",
-                "label": "Legal Status",
+                "label": "Legal Current Status",
                 "type": "string",
-                "format": "text"
+                "reference": "mdms",
+                "format": "radioordropdown",
+                "required": true,
+                "schema": "BPA.LegalStatus"
               },
               {
-                "name": "titreFoncierDefinitif",
-                "label": "Titre Foncier Definitif",
+                "name": "registrationCertificate",
+                "label": "Registration Certificate",
                 "type": "string",
+                "reference": "mdms",
                 "format": "radioordropdown",
-                "required": true
+                "required": true,
+                "schema": "BPA.BooleanOptions"
+              },
+              {
+                "name": "definitiveLandTitle",
+                "label": "Definitive Land Title (TF)",
+                "type": "string",
+                "reference": "mdms",
+                "format": "radioordropdown",
+                "required": true,
+                "schema": "BPA.BooleanOptions"
               },
               {
                 "name": "tfNo",
                 "label": "If Yes, please indicate TF No",
                 "type": "string",
                 "format": "text",
-                "required": true
-              },
-              {
-                "name": "registrationCertificate",
-                "label": "Registration Certificate",
-                "type": "string",
-                "format": "radioordropdown"
+                "maxLength": 20,
+                "required": false
               },
               {
                 "name": "other",
                 "label": "Other",
                 "type": "string",
-                "format": "text"
-              },
-              {
-                "name": "name",
-                "label": "Name of Design Office",
-                "type": "string",
                 "format": "text",
-                "minLength": 2,
-                "maxLength": 100
+                "maxLength": 256,
+                "required": false
               },
               {
-                "name": "lastName",
-                "label": "Architect's Last Name",
-                "type": "number",
-                "format": "text",
-                "minLength": 2,
-                "maxLength": 100,
-                "required": true
-              },
-              {
-                "name": "firstName",
-                "label": "Architect's First Name",
-                "type": "string",
-                "format": "text",
-                "minLength": 2,
-                "maxLength": 100,
-                "required": true
-              },
-              {
-                "name": "telephone",
-                "label": "Telephone",
-                "type": "number",
-                "format": "text",
-                "required": true
-              },
-              {
-                "name": "email",
-                "label": "Email Address",
-                "type": "string",
-                "format": "text",
-                "validation": {
-                  "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-                  "message": "Invalid email id"
-                },
-                "required": true
-              },
-              {
-                "name": "registrationNumber",
-                "label": "Registration Number",
-                "type": "string",
-                "format": "text",
-                "required": true
-              },
-              {
-                "name": "typeOfWork",
+                "name": "workType",
                 "label": "Type of Work",
                 "type": "string",
+                "reference": "mdms",
                 "format": "radioordropdown",
-                "required": true
+                "required": true,
+                "schema": "BPA.WorkType"
               },
               {
-                "name": "numberOfUnits",
+                "name": "noOfUnits",
                 "label": "Number of Housing Units",
                 "type": "number",
-                "format": "text"
+                "format": "number",
+                "required": false,
+                "validation": {
+                  "min": 0,
+                  "message": "Number of housing units should be non negative"
+                }
               },
               {
                 "name": "others",
                 "label": "Others",
                 "type": "string",
-                "format": "text"
+                "format": "text",
+                "maxLength": 256
               }
             ]
           }
@@ -298,52 +215,68 @@
                 "name": "projectedCos",
                 "label": "Projected C.O.S.",
                 "type": "string",
-                "format": "text",
+                "format": "number",
                 "required": true
               },
               {
                 "name": "coveredProjectArea",
                 "label": "Covered project area",
                 "type": "string",
-                "format": "text",
+                "format": "number",
                 "required": true
               },
               {
                 "name": "constructionCostPerSqM",
                 "label": "Construction cost per m² excluding work",
                 "type": "string",
+                "format": "number",
+                "required": true
+              },
+              {
+                "name": "name",
+                "label": "Name of Design Office",
+                "type": "string",
                 "format": "text",
-                "required": true
-              }
-            ]
-          }
-        },
-        {
-          "name": "applicantsCommitment",
-          "label": "Applicant's commitment",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": [
-              {
-                "name": "eligibilityDeclaration",
-                "label": "Declaration of Eligibility",
-                "type": "string",
-                "format": "checkbox",
+                "minLength": 2,
+                "maxLength": 100,
                 "required": true
               },
               {
-                "name": "accuracyDeclaration",
-                "label": "Declaration of Accuracy",
+                "name": "archietectName",
+                "label": "Architect's Full Name",
                 "type": "string",
-                "format": "checkbox",
+                "format": "text",
+                "minLength": 2,
+                "maxLength": 256,
                 "required": true
               },
               {
-                "name": "taxCalculationAgreement",
-                "label": "Agreement for Tax Calculation",
+                "name": "telephone",
+                "label": "Telephone",
+                "type": "number",
+                "format": "text",
+                "validation": {
+                  "regex": "(^$|^77[0-9]{6}$)",
+                  "message": "Only valid contact number is allowed"
+                },
+                "required": true
+              },
+              {
+                "name": "email",
+                "label": "Email Address",
                 "type": "string",
-                "format": "checkbox",
+                "format": "text",
+                "validation": {
+                  "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                  "message": "Invalid email id"
+                },
+                "required": true
+              },
+              {
+                "name": "registrationNumber",
+                "label": "Registration Number",
+                "type": "string",
+                "format": "text",
                 "required": true
               }
             ]
