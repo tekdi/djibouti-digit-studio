@@ -122,7 +122,7 @@ module.exports = {
         "text-primary": "#363636",
         "text-secondary": "#787878",
         "text-disabled": "#C5C5C5",
-        "alert-error": "#D4D4D4",
+        "alert-error": "#B91900",
         "alert-errorbg": "#FFF5F4",
         "alert-success": "#00703C",
         "alert-successbg": "#F1FFF8",

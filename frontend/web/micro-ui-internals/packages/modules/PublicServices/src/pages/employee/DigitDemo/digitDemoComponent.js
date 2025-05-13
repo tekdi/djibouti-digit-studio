@@ -19,7 +19,7 @@ const DigitDemoComponent = () => {
 
   // Load from localStorage
   const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
-   let savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+  let savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
 
   const [currentStep, setCurrentStep] = useState(savedStep);
   const [formData, setFormData] = useState(savedFormData);
@@ -37,21 +37,19 @@ const DigitDemoComponent = () => {
 
   const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-  const config = data?.mdms?.find((item) =>
-    item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase()
-  );
+  const config = data?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
   const workflowrequestCriteria = {
     url: "/egov-workflow-v2/egov-wf/businessservice/_search",
     params: {
       tenantId: tenantId,
-      businessServices : config?.data?.workflow?.businessService,
+      businessServices: config?.data?.workflow?.businessService,
     },
-    config:{
-      enabled : config?.data?.workflow?.businessService ? true : false
-    }
+    config: {
+      enabled: config?.data?.workflow?.businessService ? true : false,
+    },
   };
 
-  const { isLoading: workflowDetailsLoading, data : workflowDetails } = Digit.Hooks.useCustomAPIHook(workflowrequestCriteria);
+  const { isLoading: workflowDetailsLoading, data: workflowDetails } = Digit.Hooks.useCustomAPIHook(workflowrequestCriteria);
 
   const Updatedconfig = {
     ServiceConfiguration: [config?.data],
@@ -66,7 +64,7 @@ const DigitDemoComponent = () => {
   // console.log(configMap[module],"configMap")
 
   const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
-  console.log(rawConfig,"rawconfig");
+  console.log(rawConfig, "rawconfig");
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
   const currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode || "SVC-DEV-TRADELICENSE-NEWTL-04";
@@ -185,12 +183,7 @@ const DigitDemoComponent = () => {
 
   return (
     <React.Fragment>
-      <Stepper
-        customSteps={steps}
-        currentStep={currentStep}
-        onStepClick={onStepperClick}
-        activeSteps={currentStep}
-      />
+      <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
       <FormComposerV2
         key={currentFormConfig?.name}
         heading={t(`${serviceCode}_HEADING`)}
@@ -201,19 +194,17 @@ const DigitDemoComponent = () => {
             body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
           },
         ]}
-        defaultValues={currentFormConfig?.type === "multiChildForm"? {...formData} : { ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
+        defaultValues={
+          currentFormConfig?.type === "multiChildForm"
+            ? { ...formData }
+            : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
+        }
         onSubmit={onSubmit}
         fieldStyle={{ marginRight: 0 }}
         onFormValueChange={onFormValueChange}
       />
       {showToast && (
-        <Toast
-          style={{ zIndex: "10000" }}
-          error={showToast?.error}
-          label={t(showToast?.message)}
-          onClose={closeToast}
-          isDleteBtn={true}
-        />
+        <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
       )}
     </React.Fragment>
   );
