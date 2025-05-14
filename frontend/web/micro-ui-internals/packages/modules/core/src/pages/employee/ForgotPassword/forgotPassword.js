@@ -61,7 +61,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
           type: userId.type,
           populators: {
             name: userId.name,
-            componentInFront: "+91",
+            componentInFront: "+253",
           },
           isMandatory: true,
         },

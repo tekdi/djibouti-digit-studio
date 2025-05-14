@@ -2,9 +2,10 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_LOGIN_PROVIDE_MOBILE_NUMBER",
-      cardText: "CS_LOGIN_TEXT",
+      cardText: "",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
+      submitBarLabel2: "CS_COMMONS_NEXT_EMPLOYEE",
     },
     inputs: [
       {
@@ -14,8 +15,8 @@ export const loginSteps = [
         error: "ERR_HRMS_INVALID_MOB_NO",
         validation: {
           required: true,
-          minLength: 10,
-          maxLength: 10,
+          minLength: 8,
+          maxLength: 8,
         },
       },
     ],

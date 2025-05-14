@@ -153,11 +153,11 @@ const Home = ({
       />
 
       <div className={`main center-container citizen-home-container mb-25`}>
-        {hideSidebar ? null : (
+        {/* {hideSidebar ? null : (
           <div className="SideBarStatic">
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
-        )}
+        )} */}
 
         <Switch>
           <Route exact path={path}>
@@ -210,7 +210,7 @@ const Home = ({
           </ErrorBoundary>
         </Switch>
       </div>
-      <div className="citizen-home-footer" style={window.location.href.includes("citizen/obps") ? { zIndex: "-1" } : {}}>
+      {/* <div className="citizen-home-footer" style={window.location.href.includes("citizen/obps") ? { zIndex: "-1" } : {}}>
         <img
           alt="Powered by DIGIT"
           src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
@@ -219,7 +219,7 @@ const Home = ({
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

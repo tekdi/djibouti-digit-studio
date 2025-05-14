@@ -43,7 +43,6 @@ const FormStep = ({
           <CardLabel>{t(input.label)}</CardLabel>
           {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
-            {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
             <TextInput
               key={index}
               name={input.name}
@@ -57,6 +56,7 @@ const FormStep = ({
               isMandatory={errors[input.name]}
               disable={input.disable ? input.disable : false}
               textInputStyle={textInputStyle}
+              placeholder={componentInFront ? componentInFront : null}
             />
           </div>
         </React.Fragment>

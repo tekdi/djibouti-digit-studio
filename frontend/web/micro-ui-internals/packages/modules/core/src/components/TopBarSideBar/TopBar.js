@@ -103,7 +103,7 @@ const TopBar = ({
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
       <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} />
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {loggedin &&
+        {
           (cityDetails?.city?.ulbGrade ? (
             // TODO: title name is hardcoded, need to change it with i18Key
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
@@ -121,7 +121,7 @@ const TopBar = ({
           </p>
         )} */}
         {!mobileView && (
-          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "80%" } : {}}>
+          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "30%" } : {}}>
             {/* <div className="left">
               {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/language-selection") && (
                 <ChangeCity dropdown={true} t={t} />

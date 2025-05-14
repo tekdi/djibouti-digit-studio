@@ -125,7 +125,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
           {`${t(`CS_LOGIN_OTP_TEXT`)} `}
           <b>
             {" "}
-            {`${t(`+ 91 - `)}`} {mobileNumber}
+            {`${t(`+ 253 - `)}`} {mobileNumber}
           </b>
         </CardText>
         <SelectOtp t={t} userType="employee" otp={otp} onOtpChange={setOtp} error={isOtpValid} onResend={onResendOTP} />

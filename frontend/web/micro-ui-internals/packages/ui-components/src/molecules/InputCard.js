@@ -27,10 +27,12 @@ const InputCard = ({
   return (
     <Card style={cardStyle}>
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}
-      {texts?.header && <CardHeader>{t(texts.header)}</CardHeader>}
-      {texts?.cardText && <CardText>{t(texts.cardText)}</CardText>}
+      {texts?.header && <CardHeader styles={{ fontSize: '24px', color: '#111827', textAlign: 'center', fontFamily: 'Inter', margin: '0px' }}>{t(texts.header)}</CardHeader>}
+      {texts?.cardText && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText)}</CardText>}
+      {texts?.cardText2 && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText2)}</CardText>}
       {children}
-      {texts.submitBarLabel ? <Button disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
+      {texts.submitBarLabel ? <Button disabled={isDisable} gradient={true} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
+      {texts.submitBarLabel2 ? <Button disabled={isDisable}  label={t(texts.submitBarLabel2)} onClick={{}} /> : null}
       {texts.skipLabel ? <CardText> {t(texts.skipLabel)} </CardText> : null}
       {texts.skipText ? <ActionLinks label={t(texts.skipText)} onClick={onSkip} /> : null}
       {isMultipleAllow && texts.addMultipleText ? <ActionLinks label={t(texts.addMultipleText)} onClick={onAdd} /> : null}

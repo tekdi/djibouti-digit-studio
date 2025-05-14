@@ -114,16 +114,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-      if (!err) {
+      // if (!err) {
         setCanSubmitNo(true);
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
-      } else {
-        setCanSubmitNo(true);
-        if (!(location.state && location.state.role === "FSM_DSO")) {
-          history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
-        }
-      }
+      // }
+      // else {
+      //   setCanSubmitNo(true);
+      //   if (!(location.state && location.state.role === "FSM_DSO")) {
+      //     history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+      //   }
+      // }
       if (location.state?.role) {
         setCanSubmitNo(true);
         setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
@@ -230,10 +231,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   return (
-    <div className="citizen-form-wrapper">
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="citizen-form-wrapper">
       <Switch>
         <AppContainer>
-          <BackButton />
+          {/* <BackButton /> */}
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
@@ -247,7 +248,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} +253 ${params.mobileNumber || ""}` } }}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}

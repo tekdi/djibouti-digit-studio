@@ -8,8 +8,8 @@ const TelePhone = (props) => (
     <div className={`digit-telephone ${props?.className ? props?.className : ""}`} style={props?.style}>
       <div className={`digit-call`}>
         <SVG.Phone />
-        <a href={`digit-tel:${props?.mobile}`}>
-          {"+91"} {props?.mobile}
+         <a href={`digit-tel:${props?.mobile}`}>
+          {"+253"} {props?.mobile}
         </a>
       </div>
     </div>

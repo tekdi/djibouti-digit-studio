@@ -118,12 +118,13 @@ const Button = (props) => {
       form={props.formId}
       onClick={
         props?.type === "actionButton"
-          ? (e) => handleActionButtonClick(e)
-          : props?.onClick
+        ? (e) => handleActionButtonClick(e)
+        : props?.onClick
       }
       disabled={props?.isDisabled || null}
       title={props?.title || ""}
-      style={props.style ? props.style : null}
+      // style={props.style ? props.style : null}
+      style={props.style ? props.style : { background: props?.gradient ? "linear-gradient(90deg, #016769 0%, #728269 100%)" : "transparent", width: "100%", borderRadius:'10px', color:props?.gradient ? "white" : "black" }}
     >
       <div
         className={`icon-label-container ${
@@ -131,7 +132,7 @@ const Button = (props) => {
         } ${props?.size ? props?.size : ""}`}
       >
         {!props?.isSuffix && props?.icon && icon}
-        <h2 style={{ ...props?.textStyles }} className="digit-button-label">
+        <h2 style={{ ...props?.textStyles, color: props?.gradient ? "white" : "#006769", fontSize: props?.gradient ? "20px" : "16px" }} className="digit-button-label">
           {formattedLabel}
         </h2>
         {props?.isSuffix && props?.icon && icon}

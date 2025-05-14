@@ -115,8 +115,8 @@ module.exports = {
         "primary-orange": "#F47738",
         "primary-bluegray": "#0B4B66",
         "primary-orangebg": "#FEEFE7",
-
         "primary-1": "#006769",
+        "primary-1-gradient": "linear-gradient(90deg, #016769 0%, #728269 100%)",
         "primary-bg": "#FBEEE8",
         "primary-2": "#0B4B66",
         "text-primary": "#363636",
