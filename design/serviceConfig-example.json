@@ -19,9 +19,7 @@
           "label": "Trade Structure Sub Type ",
           "type": "string",
           "reference": "mdms",
-          "dependencies": [
-            "tradeStructureType"
-          ],
+          "dependencies": ["tradeStructureType"],
           "required": true,
           "schema": "Tradelicence.TradeStructureSubType"
         },
@@ -54,9 +52,7 @@
           "label": "Trade Sub Type ",
           "type": "string",
           "reference": "mdms",
-          "dependencies": [
-            "tradeType"
-          ],
+          "dependencies": ["tradeType"],
           "required": true,
           "schema": "Tradelicence.TradeSubType"
         },
@@ -135,9 +131,7 @@
                   {
                     "action": "CREATE",
                     "nextState": "PENDING_FOR_VERIFICATION",
-                    "roles": [
-                      "WORK_ORDER_CREATOR"
-                    ]
+                    "roles": ["WORK_ORDER_CREATOR"]
                   }
                 ]
               },
@@ -153,16 +147,12 @@
                   {
                     "action": "VERIFY_AND_FORWARD",
                     "nextState": "PENDING_FOR_APPROVAL",
-                    "roles": [
-                      "WORK_ORDER_VERIFIER"
-                    ]
+                    "roles": ["WORK_ORDER_VERIFIER"]
                   },
                   {
                     "action": "SEND_BACK",
                     "nextState": "PENDING_FOR_CORRECTION",
-                    "roles": [
-                      "WORK_ORDER_VERIFIER"
-                    ]
+                    "roles": ["WORK_ORDER_VERIFIER"]
                   }
                 ]
               },
@@ -178,30 +168,22 @@
                   {
                     "action": "APPROVE",
                     "nextState": "PENDING_FOR_ACCEPTANCE",
-                    "roles": [
-                      "WORK_ORDER_APPROVER"
-                    ]
+                    "roles": ["WORK_ORDER_APPROVER"]
                   },
                   {
                     "action": "SEND_BACK",
                     "nextState": "PENDING_FOR_VERIFICATION",
-                    "roles": [
-                      "WORK_ORDER_APPROVER"
-                    ]
+                    "roles": ["WORK_ORDER_APPROVER"]
                   },
                   {
                     "action": "REJECT",
                     "nextState": "REJECTED",
-                    "roles": [
-                      "WORK_ORDER_APPROVER"
-                    ]
+                    "roles": ["WORK_ORDER_APPROVER"]
                   },
                   {
                     "action": "SEND_BACK_TO_ORIGINATOR",
                     "nextState": "PENDING_FOR_CORRECTION",
-                    "roles": [
-                      "WORK_ORDER_APPROVER"
-                    ]
+                    "roles": ["WORK_ORDER_APPROVER"]
                   }
                 ]
               },
@@ -217,16 +199,12 @@
                   {
                     "action": "ACCEPT",
                     "nextState": "ACCEPTED",
-                    "roles": [
-                      "ORG_ADMIN"
-                    ]
+                    "roles": ["ORG_ADMIN"]
                   },
                   {
                     "action": "DECLINE",
                     "nextState": "PENDING_FOR_CORRECTION",
-                    "roles": [
-                      "ORG_ADMIN"
-                    ]
+                    "roles": ["ORG_ADMIN"]
                   }
                 ]
               },
@@ -242,16 +220,12 @@
                   {
                     "action": "EDIT",
                     "nextState": "PENDING_FOR_VERIFICATION",
-                    "roles": [
-                      "WORK_ORDER_CREATOR"
-                    ]
+                    "roles": ["WORK_ORDER_CREATOR"]
                   },
                   {
                     "action": "REJECT",
                     "nextState": "REJECTED",
-                    "roles": [
-                      "WORK_ORDER_CREATOR"
-                    ]
+                    "roles": ["WORK_ORDER_CREATOR"]
                   }
                 ]
               },
@@ -278,25 +252,14 @@
             ]
           }
         ],
-        "ACTIVE": [
-          "APPROVED"
-        ],
-        "INACTIVE": [
-          "REJECTED",
-          "WITHDRAWN"
-        ]
+        "ACTIVE": ["APPROVED"],
+        "INACTIVE": ["REJECTED", "WITHDRAWN"]
       },
       "documents": [
         {
-          "states": [
-            "applied",
-            "approved"
-          ],
+          "states": ["applied", "approved"],
           "category": "address-proof",
-          "documentTypes": [
-            "aadhar",
-            "voter"
-          ],
+          "documentTypes": ["aadhar", "voter"],
           "active": true,
           "isMandatory": false,
           "allowedFileTypes": [
@@ -314,10 +277,7 @@
         },
         {
           "category": "identity-proof",
-          "documentTypes": [
-            "aadhar",
-            "voter"
-          ],
+          "documentTypes": ["aadhar", "voter"],
           "active": true,
           "isMandatory": true,
           "allowedFileTypes": [
@@ -335,41 +295,33 @@
         },
         {
           "category": "owner-photo",
-          "documentTypes": [
-            "photo"
-          ],
+          "documentTypes": ["photo"],
           "active": true,
           "isMandatory": true,
-          "allowedFileTypes": [
-            "jpeg",
-            "jpg",
-            "png"
-          ],
+          "allowedFileTypes": ["jpeg", "jpg", "png"],
           "maxSizeInMB": 5,
           "maxFilesAllowed": 1
         }
       ],
-      "idgen":[ {
-        "type":"application"
-        "format": "tl.application.number",
-        "sequence": "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]"
-      },{
-        "type":"bill"
-        "format": "tl.application.number",
-        "sequence": "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]"
-      }],
+      "idgen": [
+        {
+          "type": "application",
+          "format": "tl.application.number",
+          "sequence": "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]"
+        },
+        {
+          "type": "bill",
+          "format": "tl.application.number",
+          "sequence": "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]"
+        }
+      ],
       "localization": {
-        "modules": [
-          "digit-tradelicence"
-        ]
+        "modules": ["digit-tradelicence"]
       },
       "applicant": {
         "minimum": 1,
         "maximum": 3,
-        "types": [
-          "individual",
-          "organisation"
-        ]
+        "types": ["individual", "organisation"]
       },
       "boundary": {
         "hierarchyType": "REVENUE",
@@ -384,9 +336,7 @@
         }
       },
       "access": {
-        "roles": [
-          "TL_CREATOR"
-        ],
+        "roles": ["TL_CREATOR"],
         "actions": [
           {
             "url": "tl-services/v1/create"
@@ -420,26 +370,17 @@
         {
           "key": "tl-application",
           "type": "application",
-          "states": [
-            "applied",
-            "approved"
-          ]
+          "states": ["applied", "approved"]
         },
         {
           "key": "tl-bill",
           "type": "bill",
-          "states": [
-            "applied",
-            "approved"
-          ]
+          "states": ["applied", "approved"]
         },
         {
           "key": "tl-receipt",
           "type": "receipt",
-          "states": [
-            "applied",
-            "approved"
-          ]
+          "states": ["applied", "approved"]
         }
       ],
       "bill": {
@@ -536,10 +477,7 @@
           }
         ]
       },
-      "enabled": [
-        "citizen",
-        "employee"
-      ]
+      "enabled": ["citizen", "employee"]
     },
     {
       "module": "Tradelicence",
@@ -584,20 +522,11 @@
       "documents": [
         {
           "category": "owner-photo",
-          "documentTypes": [
-            "photo"
-          ],
+          "documentTypes": ["photo"],
           "active": true,
           "isMandatory": false,
-          "workflowAction": [
-            "apply",
-            "approved"
-          ],
-          "allowedFileTypes": [
-            "jpeg",
-            "jpg",
-            "png"
-          ],
+          "workflowAction": ["apply", "approved"],
+          "allowedFileTypes": ["jpeg", "jpg", "png"],
           "maxSizeInMB": 5,
           "maxFilesAllowed": 1
         }
@@ -606,10 +535,7 @@
         {
           "key": "tl-renew-application",
           "type": "application",
-          "states": [
-            "applied",
-            "approved"
-          ]
+          "states": ["applied", "approved"]
         }
       ],
       "calculator": {
