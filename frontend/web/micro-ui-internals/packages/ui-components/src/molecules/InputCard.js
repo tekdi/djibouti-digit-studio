@@ -8,7 +8,7 @@ import Button from "../atoms/Button";
 import CardCaption from "../atoms/CardCaption";
 import TextInput from "../atoms/TextInput";
 import ActionLinks from "../atoms/ActionLinks";
-
+import { useHistory } from "react-router-dom";
 const InputCard = ({
   t,
   children,
@@ -18,11 +18,12 @@ const InputCard = ({
   inputRef,
   onNext,
   onSkip,
-  isDisable,
+  isDisabled,
   onAdd,
   isMultipleAllow = false,
   cardStyle = {},
 }) => {
+  const history = useHistory();
   // TODO: inputs handle
   return (
     <Card style={cardStyle}>
@@ -31,8 +32,8 @@ const InputCard = ({
       {texts?.cardText && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText)}</CardText>}
       {texts?.cardText2 && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText2)}</CardText>}
       {children}
-      {texts.submitBarLabel ? <Button disabled={isDisable} gradient={true} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
-      {texts.submitBarLabel2 ? <Button disabled={isDisable}  label={t(texts.submitBarLabel2)} onClick={{}} /> : null}
+      {texts.submitBarLabel ? <Button isDisabled={isDisabled} gradient={true} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
+      {texts.submitBarLabel2 ? <Button isDisabled={isDisabled}  label={t(texts.submitBarLabel2)} onClick={() => history.push('/employee/login')} /> : null}
       {texts.skipLabel ? <CardText> {t(texts.skipLabel)} </CardText> : null}
       {texts.skipText ? <ActionLinks label={t(texts.skipText)} onClick={onSkip} /> : null}
       {isMultipleAllow && texts.addMultipleText ? <ActionLinks label={t(texts.addMultipleText)} onClick={onAdd} /> : null}

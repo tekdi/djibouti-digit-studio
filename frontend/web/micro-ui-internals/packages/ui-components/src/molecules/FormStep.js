@@ -34,7 +34,7 @@ const FormStep = ({
     onSelect(data);
   };
 
-  var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
+  const isDisable = isDisabled ? true : (config.canDisable && Object.keys(errors).filter((i) => errors[i]).length);
 
   const inputs = config.inputs?.map((input, index) => {
     if (input.type === "text") {
@@ -74,7 +74,7 @@ const FormStep = ({
   return (
     <form onSubmit={handleSubmit(goNext)}>
       <InputCard
-        {...{ isDisable: isDisable, isMultipleAllow: isMultipleAllow }}
+        {...{ isDisabled: isDisable, isMultipleAllow: isMultipleAllow }}
         {...config}
         cardStyle={cardStyle}
         submit

@@ -137,6 +137,7 @@ const OTPInput = ({
             onPaste={handlePaste}
             placeholder={placeholder && placeholder[index]}
             className={`otp-input ${error ? "error" : ""}`}
+            style={{borderRadius: "12px"}}
           />
         ))}
       </div>

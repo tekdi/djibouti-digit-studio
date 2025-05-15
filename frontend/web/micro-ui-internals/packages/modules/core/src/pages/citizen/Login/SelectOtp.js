@@ -38,8 +38,8 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 
   return (
       <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginTop: "50px" }}>
-    <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 4 && canSubmit)} cardStyle={{ width: "fit-content", minWidth: "476px" }}>
-      <OTPInput length={4} onChange={onOtpChange} value={otp} />
+    <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)} cardStyle={{ width: "fit-content", minWidth: "476px" }}>
+      <OTPInput length={6} onChange={onOtpChange} value={otp} />
       {timeLeft > 0 ? (
         <CardText style={{ fontSize: "16px", color: "#111827", textAlign: "center", fontFamily: "Inter" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
       ) : (

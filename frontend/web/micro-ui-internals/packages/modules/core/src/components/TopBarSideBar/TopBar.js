@@ -106,7 +106,7 @@ const TopBar = ({
         {
           (cityDetails?.city?.ulbGrade ? (
             // TODO: title name is hardcoded, need to change it with i18Key
-            <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
+            <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block", fontFamily: "Inter" } : {}}>
               Ministère de la Ville, de l'Aménagement du Territoire et du Logement
               {/* {t(cityDetails?.i18nKey).toUpperCase()}{" "} */}
               {/* {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()} */}
@@ -137,7 +137,7 @@ const TopBar = ({
                   showArrow={true}
                   freeze={true}
                   style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert",display:"table" }}
+                  optionCardStyles={{ overflow: "revert",display:"table", position: "absolute", marginRight: "30px" }}
                   topbarOptionsClassName={"topbarOptionsClassName"}
                   customSelector={
                     profilePic == null ? (

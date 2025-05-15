@@ -40,8 +40,9 @@ module.exports = {
       white: "#FFFFFF",
     },
     fontFamily: {
-      sans: ["Roboto", "sans-serif"],
-      rc: ['"Roboto Condensed"', "sans-serif"],
+      sans: ["Inter", "sans-serif"],
+      rc: ["Inter", "sans-serif"],
+      inter: ["Inter", "sans-serif"],
     },
     fontSize: {
       "heading-xl-dt": ["48px", "56px"],
@@ -236,8 +237,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ["Roboto"],
-        rc: ['"Roboto Condensed"'],
+        sans: ["Inter", "Roboto", "sans-serif"],
+        rc: ['"Roboto Condensed"', "sans-serif"],
+        inter: ["Inter"],
       },
       fontStyle: {
         normal: "normal",

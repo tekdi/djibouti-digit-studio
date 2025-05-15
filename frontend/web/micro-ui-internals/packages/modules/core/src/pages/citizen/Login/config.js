@@ -4,15 +4,15 @@ export const loginSteps = [
       header: "CS_LOGIN_PROVIDE_MOBILE_NUMBER",
       cardText: "",
       nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "CS_COMMONS_NEXT",
-      submitBarLabel2: "CS_COMMONS_NEXT_EMPLOYEE",
+      submitBarLabel: "Login",
+      submitBarLabel2: "Login as Employee",
     },
     inputs: [
       {
         label: "CORE_COMMON_MOBILE_NUMBER",
         type: "text",
         name: "mobileNumber",
-        error: "ERR_HRMS_INVALID_MOB_NO",
+        error: "Enter a valid mobile number",
         validation: {
           required: true,
           minLength: 8,
@@ -26,7 +26,7 @@ export const loginSteps = [
       header: "CS_LOGIN_OTP",
       cardText: "CS_LOGIN_OTP_TEXT",
       nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "CS_COMMONS_NEXT",
+      submitBarLabel: "Verify",
     },
   },
   {

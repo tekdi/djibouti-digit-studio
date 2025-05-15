@@ -1,4 +1,5 @@
-import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
+import { AppContainer, Toast } from "@egovernments/digit-ui-react-components";
+import Modal from "../../../../../../ui-components/src/hoc/Modal";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -41,6 +42,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [tokens, setTokens] = useState(null);
   const [params, setParmas] = useState(isUserRegistered ? {} : location?.state?.data);
   const [errorTO, setErrorTO] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const searchParams = Digit.Hooks.useQueryParams();
   const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
@@ -70,14 +72,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
-    const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
-    if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace(`/${window?.contextPath}/citizen/select-location`, {
-        redirectBackTo: redirectPath,
-      });
-    } else {
-      history.replace(redirectPath);
-    }
+    // const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+    // if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
+    //   history.replace(`/${window?.contextPath}/citizen/select-location`, {
+    //     redirectBackTo: redirectPath,
+    //   });
+    // } else {
+    //   history.replace(redirectPath);
+    // }
   }, [user]);
 
   const stepItems = useMemo(() =>
@@ -114,11 +116,15 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     };
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-      // if (!err) {
+      if (!err) {
         setCanSubmitNo(true);
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
-      // }
+      }
+      else{
+        setError("User not registered.");
+        setCanSubmitNo(true);
+      }
       // else {
       //   setCanSubmitNo(true);
       //   if (!(location.state && location.state.role === "FSM_DSO")) {
@@ -162,7 +168,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp, name } = params;
+      const { mobileNumber, otp } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
@@ -184,10 +190,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           info.tenantId = Digit.ULBService.getStateId();
         }
 
+        // Show success modal and then set user after a short delay
+        const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
         setUser({ info, ...tokens });
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          history.replace(redirectPath);
+        }, 2000);
       } else if (!isUserRegistered) {
         const requestData = {
-          name,
           username: mobileNumber,
           otpReference: otp,
           tenantId: stateCode,
@@ -234,7 +246,35 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="citizen-form-wrapper">
       <Switch>
         <AppContainer>
-          {/* <BackButton /> */}
+        {showSuccessModal && (
+          <Modal
+            popupModuleMianStyles={{ padding: "16px" }}
+            hideSubmit={true}
+          >
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
+              <div style={{
+                background: "#00703C",
+                borderRadius: "50%",
+                width: "60px",
+                height: "60px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: "16px"
+              }}>
+                <svg width="32" height="32" viewBox="0 0 14 11" fill="none">
+                  <path d="M4.75012 8.1275L1.62262 5L0.557617 6.0575L4.75012 10.25L13.7501 1.25L12.6926 0.192505L4.75012 8.1275Z" fill="white"/>
+                </svg>
+              </div>
+              <p style={{ fontSize: "24px", textAlign: "center", margin: "10px", fontWeight: "700", fontFamily: "Inter" }}>
+                Successful!
+              </p>
+              <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>
+                Your phone number has been successfully verified
+              </p>
+            </div>
+          </Modal>
+        )}
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
