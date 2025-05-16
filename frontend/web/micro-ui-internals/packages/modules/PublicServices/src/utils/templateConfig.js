@@ -223,14 +223,14 @@ export const documentFields = [
             "withoutLabel": true,
             "mdmsModuleName": "DigitStudio",
             "module": "BPA.BPA_PCO",
-            "error": "WORKS_REQUIRED_ERR",
+            "error": "BPA_DOC_REQUIRED_ERR",
             "name": "uploadedDocs",
             "populators": {
                 "name": "uploaded",
                 "action": "APPLY"  
             },
             "customClass": "input-emp",
-            "localePrefix": "TL_DOC"
+            "localePrefix": "PCO_DOC"
         }
     ]
   }
