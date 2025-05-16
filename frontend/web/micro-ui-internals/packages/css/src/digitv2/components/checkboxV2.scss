@@ -1,8 +1,9 @@
 @import url("../index.scss");
 
 .digit-checkbox-container {
-  @apply flex mb-md relative;
+  @apply flex relative;
   gap: theme(digitv2.spacers.spacer4);
+  margin: 0 !important;
 
   input {
     @apply opacity-0 absolute cursor-pointer z-10;
@@ -20,6 +21,7 @@
     @apply flex items-center border border-solid border-text-secondary justify-center;
     width: theme(digitv2.spacers.spacer6);
     height: theme(digitv2.spacers.spacer6);
+    border-radius: 4px;
 
     img,
     svg {

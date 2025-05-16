@@ -42,7 +42,7 @@ const UploadAndDownloadDocumentHandler = ({
                 "moduleName": "DigitStudio",
                 "masterDetails": [
                     {
-                        "name": "DocumentConfig2"
+                        "name": "DocumentConfig"
                     }
                 ]
             }

@@ -91,46 +91,125 @@ export const ApplicantFields =  [{
     "items":{
       "type": "object",
       "properties": [
+        // {
+        //   "name": "OwnerName",
+        //   "label": "Owner Name ",
+        //   "disable" : false,
+        //   "type": "string",
+        //   "format": "text",
+        //   "maxLength": 256,
+        //   "minLength": 0,
+        //   "validation": {
+        //     "regex": "^[1-9][0-9]{5}$",
+        //     "message": "Only 6 numbers allowed"
+        //   },
+        //   "required": false,
+        //   "orderNumber": 1
+        // },
+        // {
+        //   "name": "mobileNumber",
+        //   "label": "Mobile Number ",
+        //   "disable" : false,
+        //   "type": "mobileNumber",
+        //   "format": "mobileNumber",
+        //   "maxLength": 256,
+        //   "minLength": 0,
+        //   "validation": {
+        //     "regex": "^[6-9]\d{9}$",
+        //     "message": "Only 9 numbers allowed"
+        //   },
+        //   "required": false,
+        //   "orderNumber": 1
+        // },
+        // {
+        //   "name": "gender",
+        //   "label": "Gender ",
+        //   "disable" : false,
+        //   "type": "string",
+        //   "format": "radioordropdown",
+        //   "reference": "mdms",
+        //   "required": false,
+        //   "schema": "common-masters.GenderType" 
+        // },
         {
-          "name": "OwnerName",
-          "label": "Owner Name ",
-          "disable" : false,
+          "name": "wayToAddress",
           "type": "string",
-          "format": "text",
-          "maxLength": 256,
-          "minLength": 0,
-          "validation": {
-            "regex": "^[1-9][0-9]{5}$",
-            "message": "Only 6 numbers allowed"
-          },
-          "required": false,
-          "orderNumber": 1
-        },
-        {
-          "name": "mobileNumber",
-          "label": "Mobile Number ",
-          "disable" : false,
-          "type": "mobileNumber",
-          "format": "mobileNumber",
-          "maxLength": 256,
-          "minLength": 0,
-          "validation": {
-            "regex": "^[6-9]\d{9}$",
-            "message": "Only 9 numbers allowed"
-          },
-          "required": false,
-          "orderNumber": 1
-        },
-        {
-          "name": "gender",
-          "label": "Gender ",
-          "disable" : false,
-          "type": "string",
+          "label": "Preferred Way to Address",
           "format": "radioordropdown",
-          "reference": "mdms",
+          "schema": "common-masters.GenderType",
           "required": false,
-          "schema": "common-masters.GenderType" 
+          "reference": "mdms"
         },
+        {
+          "name": "legalName",
+          "type": "string",
+          "label": "Legal Name",
+          "format": "text",
+          "required": false,
+          "maxLength": 256,
+          "minLength": 2
+        },
+        {
+          "name": "address",
+          "type": "string",
+          "label": "Address",
+          "format": "text",
+          "required": false,
+          "maxLength": 500,
+          "minLength": 2
+        },
+        {
+          "name": "nationalIdNumber",
+          "type": "string",
+          "label": "National Identification Number (CIN)",
+          "format": "number",
+          "required": false,
+          "maxLength": 8,
+          "minLength": 6
+        },
+        {
+          "name": "Telephone",
+          "type": "string",
+          "label": "Telephone",
+          "format": "text",
+          "required": false,
+          "validation": {
+            "regex": "(^$|^77[0-9]{6}$)",
+            "message": "Only valid contact number is allowed"
+          }
+        },
+        {
+          "name": "eligibilityDeclaration",
+          "type": "string",
+          "label": "I certify I am entitled to request this authorization",
+          "format": "checkbox",
+          "withoutLabel": true,
+          "required": false
+        },
+        {
+          "name": "accuracyDeclaration",
+          "type": "string",
+          "label": "I, the undersigned, author of the request, certify that the information provided is correct",
+          "format": "checkbox",
+          "withoutLabel": true,
+          "required": false
+        },
+        {
+          "name": "taxCalculationAgreement",
+          "type": "string",
+          "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
+          "format": "checkbox",
+          "withoutLabel": true,
+          "required": false
+        },
+        {
+          "name": "taxCalculationAgreement",
+          "type": "string",
+          "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
+          "format": "checkbox",
+          "withoutLabel": true,
+          "required": false
+        }
       ]
     }
   }]
@@ -143,7 +222,7 @@ export const documentFields = [
             "type": "documentUploadAndDownload",
             "withoutLabel": true,
             "mdmsModuleName": "DigitStudio",
-            "module": "TradeLicense.NewTL",
+            "module": "BPA.BPA_PCO",
             "error": "WORKS_REQUIRED_ERR",
             "name": "uploadedDocs",
             "populators": {

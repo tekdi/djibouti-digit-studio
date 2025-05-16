@@ -12,6 +12,7 @@ export const generateFormConfig = (config, module, service) => {
     return {
       type: field.format || field.type,
       label: `${module}_${service}_${field.name.toUpperCase()}`,
+      withoutLabel: field.withoutLabel,
       populators: {
         ...field?.populators,
         name: field.name,
@@ -24,6 +25,7 @@ export const generateFormConfig = (config, module, service) => {
         prefix: field.prefix,
         reference: field.reference,
         dependencies: field.dependencies,
+        label:field.label,
         ...(field?.schema
           ? {
               mdmsConfig: {
@@ -33,19 +35,9 @@ export const generateFormConfig = (config, module, service) => {
               },
             }
           : {}),
-          ...(field?.type === "enum"
-            ? {
-                options: field?.values?.map((ob) => ({"code" : ob.toUpperCase(), name: `${module}_${service}_${field.name.toUpperCase()}_${ob.toUpperCase()}`})),
-              }
-            : {}),
-        ...(field?.defaultValue
+          ...(field?.reference === "enum"
           ? {
-              options: [
-                {
-                  code: field.defaultValue,
-                  name: `TRADELICENSE_${field?.name.toUpperCase()}_${field.defaultValue}`,
-                },
-              ],
+              options: field?.values?.map((ob) => ({"code" : ob.toUpperCase(), name: `${module}_${service}_${field.name.toUpperCase()}_${ob.toUpperCase()}`})),
             }
           : {}),
       },
@@ -123,8 +115,8 @@ export const generateFormConfig = (config, module, service) => {
     config?.ServiceConfiguration?.[0]?.documents && documentFields?.[0]
       ? getDocumentFields(documentFields[0])
       : {};
-
-  return [...steps, ...stepForms
-    // , applicantFieldsStep, addressFieldsStep, documentform
+  return [applicantFieldsStep,...steps, ...stepForms,
+    // addressFieldsStep, 
+    documentform
   ];
 };

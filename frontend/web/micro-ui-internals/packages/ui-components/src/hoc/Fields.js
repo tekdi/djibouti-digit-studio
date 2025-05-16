@@ -205,7 +205,7 @@ const Fields = (
                   }}
                   value={formData?.[populators.name]}
                   checked={formData?.[populators.name]}
-                  label={t(`${populators?.title}`)}
+                  label={t(`${populators?.label}`)}
                   styles={populators?.styles}
                   style={populators?.labelStyles}
                 />

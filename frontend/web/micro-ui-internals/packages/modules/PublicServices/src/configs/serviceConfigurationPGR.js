@@ -382,11 +382,22 @@ export const serviceConfigPGR = {
               {
                 "name": "applicantType",
                 "label": "Applicant Type",
-                "type": "string",
+                "type": "enum",
                 // "reference": "mdms",
-                "format": "text",
+                "format": "radio",
                 "required": false,
                 // "schema": "BPA.ApplicantType"
+                "values": ["Madam", "Sir"]
+              },
+              {
+                "name": "docs",
+                "label": "docs Type",
+                "type": "multiupload",
+                // "reference": "mdms",
+                "format": "multiupload",
+                "required": false,
+                // "schema": "BPA.ApplicantType"
+                // "values": ["Madam", "Sir"]
               },
               {
                 "name": "firstName",
@@ -404,7 +415,7 @@ export const serviceConfigPGR = {
                 "format": "text",
                 "minLength": 2,
                 "maxLength": 100,
-                "required": true
+                "required": false
               },
               {
                 "name": "address",
@@ -413,7 +424,7 @@ export const serviceConfigPGR = {
                 "format": "text",
                 "minLength": 2,
                 "maxLength": 100,
-                "required": true
+                "required": false
               },
               {
                 "name": "Telephone",
@@ -424,14 +435,14 @@ export const serviceConfigPGR = {
                   "regex": "(^$|^77[0-9]{6}$)",
                   "message": "Only letters and numbers allowed"
                 },
-                "required": true
+                "required": false
               },
               {
                 "name": "name",
                 "label": "Name",
                 "type": "string",
                 "format": "text",
-                "required": true
+                "required": false
               },
               {
                 "name": "companyName",
@@ -450,18 +461,20 @@ export const serviceConfigPGR = {
               {
                 "name": "companyType",
                 "label": "Type of Company",
-                "type": "string",
+                "type": "enum",
                 "format": "radioordropdown",
                 // "reference": "mdms",
                 // "required": true,
                 // "schema": "BPA.CompanyType"
+                "values": ["A", "B"]
               },
               {
                 "name": "representative",
                 "label": "Representative of the Legal Entity",
-                "type":"string",
-                "format": "text",
-                "required": false
+                "type":"enum",
+                "format": "radio",
+                "required": false,
+                "values": ["Madam", "Sir"]
               },
               {
                 "name": "lastName",
@@ -510,8 +523,9 @@ export const serviceConfigPGR = {
               {
                 "name": "titreFoncierDefinitif",
                 "label": "Titre Foncier Definitif",
-                "type": "string",
+                "type": "enum",
                 "format": "radioordropdown",
+                "values": ["Yes", "No"]
                 // "required": true
               },
               {
@@ -524,8 +538,9 @@ export const serviceConfigPGR = {
               {
                 "name": "registrationCertificate",
                 "label": "Registration Certificate",
-                "type": "string",
-                "format": "radioordropdown"
+                "type": "enum",
+                "format": "radio",
+                "values": ["Yes", "No"]
               },
               {
                 "name": "other",
@@ -587,8 +602,9 @@ export const serviceConfigPGR = {
               {
                 "name": "typeOfWork",
                 "label": "Type of Work",
-                "type": "string",
+                "type": "enum",
                 "format": "radioordropdown",
+                "values": ["Yes", "No"]
                 // "required": true
               },
               {
@@ -716,9 +732,10 @@ export const serviceConfigPGR = {
               {
                 "name": "taxCalculationAgreement",
                 "label": "Agreement for Tax Calculation",
-                "type":"string",
+                "type":"enum",
                 "format": "checkbox",
-                "required": false
+                "required": false,
+                
               }          
             ]
           }

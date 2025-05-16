@@ -84,7 +84,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
                   "moduleName": "DigitStudio",
                   "masterDetails": [
                       {
-                          "name": "DocumentConfig2"
+                          "name": "DocumentConfig"
                       }
                   ]
               }
@@ -107,12 +107,12 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     useEffect(() => {
       if(assigneeOptions?.length >=0 && data){
       setConfig(
-        configModal(t,action,assigneeOptions,businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig2)
+        configModal(t,action,assigneeOptions,businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig)
       )
       }
       else {
         setConfig(
-            configModal(t, action, undefined, businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig2)
+            configModal(t, action, undefined, businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig)
         )
       }
       
