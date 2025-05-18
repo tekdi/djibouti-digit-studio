@@ -7,7 +7,7 @@ import { loginConfig } from "./config";
 import SelectEmail from "./SelectEmail";
 import SelectOtp from "./SelectOtp";
 
-/* set employee details to enable backward compatibility */
+/* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || Digit.Utils.getDefaultLanguage();
   localStorage.setItem("Employee.tenant-id", userObject?.tenantId);
@@ -65,7 +65,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
       redirectPath = `/${window?.contextPath}/employee/dss/landing/NURT_DASHBOARD`;
     }
-    /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [STADMIN]*/
+    /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
     if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "STADMIN")) {
       redirectPath = `/${window?.contextPath}/employee/dss/landing/home`;
     }
@@ -233,6 +233,20 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const onForgotPassword = () => {
     history.push(`/${window?.contextPath}/employee/user/forgot-password`);
   };
+
+    const defaultValue = {
+    code: Digit.ULBService.getStateId(),
+    name: Digit.Utils.locale.getTransformedLocale(`TENANT_TENANTS_${Digit.ULBService.getStateId()}`),
+  };
+
+  let config = [{body : propsConfig?.inputs}];
+
+  const { mode } = Digit.Hooks.useQueryParams();
+  if (mode === "admin" && config?.[0]?.body?.[2]?.disable == false && config?.[0]?.body?.[2]?.populators?.defaultValue == undefined) {
+    config[0].body[2].disable = true;
+    config[0].body[2].isMandatory = false;
+    config[0].body[2].populators.defaultValue = defaultValue;
+  }
 
   if (isLoading || isStoreLoading) {
     return <Loader />;
