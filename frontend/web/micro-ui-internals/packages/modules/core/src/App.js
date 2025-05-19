@@ -11,7 +11,6 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
 
@@ -65,9 +64,6 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
     initData,
   };
 
-  // Determine the appropriate route based on the path
-  const isEmployeePath = pathname.includes("/employee");
-  const defaultPath = isEmployeePath ? "employee/user/login" : "citizen/login";
 
   return (
     <Switch>
@@ -78,7 +74,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to={`/${window?.contextPath}/${defaultPath}`} />
+        <Redirect to={`/${window?.contextPath}/${defaultLanding}`} />
       </Route>
     </Switch>
   );
