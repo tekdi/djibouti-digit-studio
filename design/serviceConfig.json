@@ -137,7 +137,7 @@
       ],
       "pdf": [
         {
-          "key": "tl-application",
+          "key": "studio-application",
           "type": "application",
           "states": [
             "applied",
@@ -503,6 +503,8 @@
           "category": "address-proof",
           "isMandatory": false,
           "maxSizeInMB": 5,
+          "templatePDFKey": null,
+          "templatedownloadURL": null,
           "documentTypes": [
             "aadhar",
             "voter"
@@ -548,6 +550,8 @@
             "apply"
           ],
           "active": true,
+          "templatePDFKey": "studio-blank-application",
+          "templatedownloadURL": null,
           "category": "owner-photo",
           "isMandatory": true,
           "maxSizeInMB": 5,
