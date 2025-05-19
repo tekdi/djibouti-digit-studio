@@ -164,7 +164,11 @@ export const ApplicantFields =  [{
           "label": "National Identification Number (CIN)",
           "format": "number",
           "required": true,
-          "maxLength": 8,
+          "validation": {
+           "regex": "^(\\d{6}|\\d{12})$",
+            "message": "Only valid contact number is allowed",
+          },
+          "maxLength": 12,
           "minLength": 6
         },
         {
@@ -175,9 +179,11 @@ export const ApplicantFields =  [{
           "required": true,
           "validation": {
             "regex": "(^$|^77[0-9]{6}$)",
-            "message": "Only valid contact number is allowed"
+            "message": "Only valid contact number is allowed",
           },
-          "placeholder":"00 00 00 00"
+          "placeholder":"00 00 00 00",
+          "maxLength": 8,
+          "minLength": 8
         },
         {
           "name": "eligibilityDeclaration",
@@ -204,9 +210,9 @@ export const ApplicantFields =  [{
           "required": true
         },
         {
-          "name": "informationDeclaration",
+          "name": "checkValidation",
           "type": "string",
-          "label": "I am aware that the information contained in this application will be correct",
+          "label": "The phone number will be used for communication regarding the application and payment details",
           "format": "checkbox",
           "withoutLabel": true,
           "required": true

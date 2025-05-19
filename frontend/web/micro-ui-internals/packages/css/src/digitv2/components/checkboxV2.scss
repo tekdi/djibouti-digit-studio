@@ -8,8 +8,6 @@
   input {
     @apply opacity-0 absolute cursor-pointer z-10;
     @extend .light-input-border;
-    width: theme(digitv2.spacers.spacer8);
-    height: theme(digitv2.spacers.spacer8);
     left: -15%;
   }
 
@@ -22,6 +20,7 @@
     width: theme(digitv2.spacers.spacer6);
     height: theme(digitv2.spacers.spacer6);
     border-radius: 4px;
+    margin: 0 !important;
 
     img,
     svg {

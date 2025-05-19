@@ -48,7 +48,7 @@ const CheckBox = ({
         </label>
       ) : null}
       <div
-        style={{ cursor: "pointer", display: "flex", position: "relative" }}
+        style={{ cursor: "pointer", display: "flex", position: "relative", height: "fit-content" }}
         className={props?.inputWrapperClassName}
       >
         <input

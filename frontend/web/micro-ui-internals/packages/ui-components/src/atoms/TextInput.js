@@ -244,7 +244,7 @@ const TextInput = (props) => {
             <input
               type={
                 props?.validation && props.ValidationRequired
-                  ? props?.validation?.type
+                  ? props?.type
                   : defaultType || "text"
               }
               name={props.name}
@@ -255,8 +255,8 @@ const TextInput = (props) => {
                 props.placeholder
               )}
               onChange={(event) => {
-                if (props?.type === "number" && props?.maxlength) {
-                  if (event.target.value.length > props?.maxlength) {
+                    if (props?.type === "number" && props?.populators?.maxLength) {
+                  if (event.target.value.length > props?.populators?.maxLength) {
                     event.target.value = event.target.value.slice(0, -1);
                   }
                 }
@@ -277,12 +277,12 @@ const TextInput = (props) => {
               value={props?.value}
               style={{ ...props.style }}
               defaultValue={props.defaultValue}
-              minLength={props.minlength}
-              maxLength={props.maxlength}
+              minLength={props.populators?.minLength}
+              maxLength={props.populators?.maxLength}
               max={props.max}
               pattern={
                 props?.validation && props.ValidationRequired
-                  ? props?.validation?.pattern
+                  ? props?.validation?.regex
                   : props.pattern
               }
               min={props.min}
@@ -339,8 +339,8 @@ const TextInput = (props) => {
                 props.placeholder
               )}
               onChange={(event) => {
-                if (props?.type === "number" && props?.maxlength) {
-                  if (event.target.value.length > props?.maxlength) {
+                if (props?.type === "number" && props?.maxLength) {
+                  if (event.target.value.length > props?.maxLength) {
                     event.target.value = event.target.value.slice(0, -1);
                   }
                 }
@@ -361,19 +361,19 @@ const TextInput = (props) => {
               value={props?.value}
               style={{ ...props.style }}
               defaultValue={props.defaultValue}
-              minLength={props.minlength}
-              maxLength={props.maxlength}
+              minLength={props.populators?.minLength}
+              maxLength={props.populators?.maxLength}
               max={props.max}
               required={
                 props?.validation && props.ValidationRequired
-                  ? props?.validation?.isRequired
+                  ? props?.validation
                   : props.isRequired ||
                     (props.type === "date" &&
                       (props.name === "fromDate" ? data.toDate : data.fromDate))
               }
               pattern={
                 props?.validation && props.ValidationRequired
-                  ? props?.validation?.pattern
+                  ? props?.validation?.regex
                   : props.pattern
               }
               min={props.min}

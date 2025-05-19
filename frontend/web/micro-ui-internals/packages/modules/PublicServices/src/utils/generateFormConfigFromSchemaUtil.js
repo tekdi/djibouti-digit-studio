@@ -19,7 +19,7 @@ export const generateFormConfig = (config, module, service) => {
         optionsKey: "name",
         error: field?.validation?.message || "field is required",
         required: !!field.required,
-        validation: field.validation,
+        validation: field?.validation,
         disable: field.disable,
         defaultValue: field.defaultValue,
         prefix: field.prefix,
@@ -27,6 +27,8 @@ export const generateFormConfig = (config, module, service) => {
         dependencies: field.dependencies,
         label:field.label,
         placeholder:field.placeholder,
+        minLength: field?.minLength,
+        maxLength: field?.maxLength,
         ...(field?.schema
           ? {
               mdmsConfig: {

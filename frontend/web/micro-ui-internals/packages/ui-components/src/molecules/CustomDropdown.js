@@ -57,8 +57,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange,id, value, errorS
       case "dropdown":
       case "radioordropdown":
       case "select":
-        const options = data || config?.options || [];
-        const defaultOption = options.length > 0 ? options[0] : null;
+        
         return (
           <Dropdown
             inputRef={inputRef}
@@ -72,8 +71,8 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange,id, value, errorS
               onChange(e, config.name);
             }}
             disabled={disabled}
-            selected={config.defaultValue || value || defaultOption}
-            defaultValue={value || config.defaultValue || defaultOption}
+            selected={value || config.defaultValue}
+            defaultValue={value || config.defaultValue}
             t={t}
             errorStyle={errorStyle}
             optionCardStyles={config?.optionsCustomStyle}

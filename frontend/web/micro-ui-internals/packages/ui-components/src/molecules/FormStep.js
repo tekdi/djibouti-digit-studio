@@ -42,7 +42,7 @@ const FormStep = ({
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)}</CardLabel>
-          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          {errors && errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
             <TextInput
               key={index}

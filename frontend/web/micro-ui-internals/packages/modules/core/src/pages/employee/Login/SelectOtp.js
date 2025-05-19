@@ -40,8 +40,8 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
     texts: {
       ...config.texts,
       header: "CS_LOGIN_OTP",
-      cardText: `CS_LOGIN_OTP_TEXT ${config.email || ""}`,
-      submitBarLabel: config.texts?.submitButtonLabel || "Verify",
+      cardText: `${config.email || ""}`,
+      submitBarLabel: config.texts?.submitButtonLabel || "CS_COMMONS_VERIFY",
     }
   };
 

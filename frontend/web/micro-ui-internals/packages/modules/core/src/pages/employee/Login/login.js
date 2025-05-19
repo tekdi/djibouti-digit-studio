@@ -326,7 +326,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         ],
         texts: {
           header: "CS_LOGIN_OTP",
-          cardText: `CS_LOGIN_OTP_TEXT ${params.username || (location.state?.email || "")}`,
+          cardText: `${params.username || (location.state?.email || "")}`,
           submitBarLabel: "CS_COMMONS_VERIFY"
         }
       }}

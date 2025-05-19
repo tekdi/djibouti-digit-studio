@@ -48,7 +48,7 @@ const UploadFileComposer = ({ module, config, Controller, control, register, for
                   inputRef={register({ minLength: 2 })}
                 />
               ) : null}
-              <div style={{ marginBottom: "24px" }}>
+              <div >
                 <Controller
                   render={({ value = [], onChange }) => {
                     function getFileStoreData(filesData) {

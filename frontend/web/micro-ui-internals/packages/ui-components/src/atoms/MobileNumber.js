@@ -32,7 +32,7 @@ const MobileNumber = (props) => {
             className={props.className}
             style={{ ...props.style }}
             maxLength={props.maxLength}
-            minlength={props.minlength}
+            minlength={props.minLength}
             max={props.max}
             pattern={props.pattern}
             min={props.min}
@@ -46,6 +46,8 @@ const MobileNumber = (props) => {
             populators={
               !props.hideSpan ? {prefix: props?.prefix || "+253"} :{}
             }
+            validation={props.validation}
+            ValidationRequired={true}
           />
         </div>
       </div>

@@ -217,13 +217,17 @@ const UploadAndDownloadDocumentHandler = ({
         return (
           <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center" }} className="digit-label-field-pair-upload-page">
             {item.code && (
-              <div style={{ display: "flex", gap: "1.5rem", width: "30%" }}>
+              <div style={{ display: "flex", gap: "1.5rem", width: "100%", maxWidth: "30%" }}>
                 <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%", display: "flex", gap: "2px" }}>
                   <span>{(item?.templatePDFKey || item?.templatedownloadURL) ? t(`${localePrefix}_${item?.code}_DOWNLOAD`) : t(`${localePrefix}_${item?.code}_UPLOAD`)}{item?.isMandatory && <span style={{ color: "#B91900" }}>*</span>}</span>
                 </CardLabel>
 
-                {(item?.templatePDFKey || item?.templatedownloadURL) && (
-                  <div>
+              
+              </div>
+            )}
+
+            {(item?.templatePDFKey || item?.templatedownloadURL) && (
+                  <div style={{ maxWidth: "60%" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem", width: "100%" }}>
 
                     <div className={`digit-upload-wrapper ${customClass || ""}`} style={{ flex: 1, padding: "1rem", border: "1px solid #D6D5D4", borderRadius: "8px", backgroundColor: "#FAFAFA", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1.5rem" }}>
@@ -231,7 +235,7 @@ const UploadAndDownloadDocumentHandler = ({
                       <CustomSVG.PDFSvg width={"40"} height={"40"} />
                       <label>{"PLACEHOLDER"}</label>
                       <Button
-                        label={"Download"}
+                        label={t("CS_COMMON_DOWNLOAD_FILE")}
                         variation="secondary"
                         icon={"FileDownload"}
                         type="button"
@@ -242,8 +246,6 @@ const UploadAndDownloadDocumentHandler = ({
                   </div>
 
                 )}
-              </div>
-            )}
 
             <div className="digit-field" style={{flex: 1, maxWidth: '100%' }}>
               {item?.showTextInput && (
@@ -294,11 +296,11 @@ const UploadAndDownloadDocumentHandler = ({
                   name={`${config?.name}.${item?.name}`}
                   control={control}
                 />
-                {errors?.[`${config?.name}`]?.[`${item?.name}`] && (
+                {/* {errors?.[`${config?.name}`]?.[`${item?.name}`] && (
                   <CardLabelError style={{ fontSize: "12px" }}>
                     {t(config?.error)}
                   </CardLabelError>
-                )}
+                )} */}
               </div>}
             </div>
           </LabelFieldPair>

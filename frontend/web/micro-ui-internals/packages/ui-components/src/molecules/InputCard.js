@@ -29,7 +29,9 @@ const InputCard = ({
     <Card style={cardStyle}>
       {texts.headerCaption && <CardCaption>{t(texts.headerCaption)}</CardCaption>}
       {texts?.header && <CardHeader styles={{ fontSize: '24px', color: '#111827', textAlign: 'center', fontFamily: 'Inter', margin: '0px' }}>{t(texts.header)}</CardHeader>}
-      {texts?.cardText && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText)}</CardText>}
+      {texts?.cardText && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>
+        {t("CS_LOGIN_OTP_TEXT")} {texts.cardText}
+        </CardText>}
       {texts?.cardText2 && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText2)}</CardText>}
       {children}
       {texts.submitBarLabel ? <Button isDisabled={isDisabled} gradient={true} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
