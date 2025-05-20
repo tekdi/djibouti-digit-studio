@@ -226,6 +226,7 @@ Current Version Features:
 | **Edit & Resubmit Application**       | 🚫 *Not started*                                          |    v2       |
 | **User Type Enablement**              | 🚫 *Not started*                                          |    v2       |
 | **Service Initialization**            | 🚫 *Not started*                                          |    v2       |
+| **Dependent Fields**                  | 🚫 *Not started*                                          |    v2       |
 | **UI Schema**                         | 🚫 *Not started*                                          |    v2       |
 | **External Registry Integration**     | 🚫 *Not started*                                          |    v2       |
 | **Data Transformer**                  | 🚫 *Not started*                                          |    v2       |
