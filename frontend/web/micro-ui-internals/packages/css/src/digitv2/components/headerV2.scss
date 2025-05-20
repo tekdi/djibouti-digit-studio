@@ -6,7 +6,7 @@
   background: white;
   box-shadow: rgba(0, 0, 0, 0.24) 0 0.063rem 0.25rem;
   z-index: 9999999;
-  @apply flex items-center;
+  @apply flex items-center justify-between;
 
   img {
     display: inline;

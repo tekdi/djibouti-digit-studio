@@ -158,8 +158,8 @@ const FieldV1 = ({
             inputRef={ref}
             step={config?.step}
             errorStyle={errors?.[populators?.name]}
-            max={populators?.validation?.max}
-            min={populators?.validation?.min}
+            max={populators?.max}
+            min={populators?.min}
             maxLength={populators?.maxLength}
             minLength={populators?.minLength}
             customIcon={populators?.customIcon}
@@ -167,7 +167,7 @@ const FieldV1 = ({
             onIconSelection={populators?.onIconSelection}
             id={fieldId}
             validation={populators?.validation}
-            ValidationRequired={true}
+            ValidationRequired={required}
           />
         );
       case "textarea":
@@ -288,7 +288,7 @@ const FieldV1 = ({
               errorStyle={errors?.[populators?.name]}
               placeholder={populators?.placeholder}
               validation={populators?.validation}
-              ValidationRequired={true}
+              ValidationRequired={required}
               minLength={populators?.minLength}
               maxLength={populators?.maxLength}
             />

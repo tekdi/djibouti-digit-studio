@@ -279,13 +279,9 @@ const TextInput = (props) => {
               defaultValue={props.defaultValue}
               minLength={props.populators?.minLength}
               maxLength={props.populators?.maxLength}
-              max={props.max}
-              pattern={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation?.regex
-                  : props.pattern
-              }
-              min={props.min}
+              max={props.populators?.max}
+              min={props.populators?.min}
+              pattern={props?.validation?.regex}
               readOnly={props.nonEditable}
               title={
                 props?.validation && props.ValidationRequired
@@ -310,6 +306,7 @@ const TextInput = (props) => {
                   }
                 }
               }}
+              required={props.required}
             />
             {renderSuffix()}
             {props.signature && props.signatureImg}
@@ -363,7 +360,8 @@ const TextInput = (props) => {
               defaultValue={props.defaultValue}
               minLength={props.populators?.minLength}
               maxLength={props.populators?.maxLength}
-              max={props.max}
+              max={props.populators?.max}
+              min={props.populators?.min}
               required={
                 props?.validation && props.ValidationRequired
                   ? props?.validation
@@ -371,12 +369,7 @@ const TextInput = (props) => {
                     (props.type === "date" &&
                       (props.name === "fromDate" ? data.toDate : data.fromDate))
               }
-              pattern={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation?.regex
-                  : props.pattern
-              }
-              min={props.min}
+              pattern={props?.validation?.regex}
               readOnly={props.nonEditable}
               title={
                 props?.validation && props.ValidationRequired

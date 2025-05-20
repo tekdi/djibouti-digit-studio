@@ -50,7 +50,7 @@ const TextArea = (props) => {
         autoComplete="off"
         disabled={props.disabled}
         nonEditable={props.nonEditable}
-        pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
+        pattern={props?.validation && props.ValidationRequired ? props?.validation?.regex : props.pattern}
       ></textarea>
     </React.Fragment>
   );

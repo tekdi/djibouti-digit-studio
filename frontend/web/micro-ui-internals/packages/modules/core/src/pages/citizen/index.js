@@ -189,11 +189,19 @@ const Home = ({
           </Route>
 
           <Route path={`${path}/login`}>
-            <Login stateCode={stateCode} />
+            {userDetails?.access_token ? (
+              <Redirect to={`/${window?.contextPath}/citizen/publicservices/modules?selectedPath=Apply`} />
+            ) : (
+              <Login stateCode={stateCode} />
+            )}
           </Route>
 
           <Route path={`${path}/register`}>
-            <Login stateCode={stateCode} isUserRegistered={false} />
+            {userDetails?.access_token ? (
+              <Redirect to={`/${window?.contextPath}/citizen/publicservices/modules?selectedPath=Apply`} />
+            ) : (
+              <Login stateCode={stateCode} isUserRegistered={false} />
+            )}
           </Route>
 
           <Route path={`${path}/user/profile`}>

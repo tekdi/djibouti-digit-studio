@@ -24,6 +24,11 @@ const modulePageComponent = ({}) => {
 
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
 
+  const userDetails = Digit.SessionStorage.get("User");
+
+  const isArchitect = userDetails?.info?.roles?.some(role => role.code === "BPA_ARCHITECT");
+
+
   if (isLoading) {
     return <Loader />;
   }
@@ -44,7 +49,7 @@ const modulePageComponent = ({}) => {
               <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
             </div>
             <CardText className="product-description">{t(product?.cardDescription)}</CardText>
-            {queryStrings?.selectedPath === "Apply" && product?.businessServices.map((bs) => (
+            {queryStrings?.selectedPath === "Apply" && isArchitect && product?.businessServices.map((bs) => (
              <Link className="link" to={`/${window.contextPath}/employee/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
               {bs.businessService}
         </Link>

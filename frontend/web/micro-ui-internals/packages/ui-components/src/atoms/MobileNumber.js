@@ -47,7 +47,7 @@ const MobileNumber = (props) => {
               !props.hideSpan ? {prefix: props?.prefix || "+253"} :{}
             }
             validation={props.validation}
-            ValidationRequired={true}
+            ValidationRequired={props.ValidationRequired}
           />
         </div>
       </div>

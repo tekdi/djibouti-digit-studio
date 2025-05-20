@@ -29,6 +29,8 @@ export const generateFormConfig = (config, module, service) => {
         placeholder:field.placeholder,
         minLength: field?.minLength,
         maxLength: field?.maxLength,
+        min: field?.min,
+        max: field?.max,
         ...(field?.schema
           ? {
               mdmsConfig: {

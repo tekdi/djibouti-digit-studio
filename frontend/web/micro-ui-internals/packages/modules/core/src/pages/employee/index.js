@@ -30,7 +30,7 @@ const EmployeeApp = ({
   initData,
 }) => {
   const history = useHistory();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { path } = useRouteMatch();
   const location = useLocation();
   const showLanguageChange = location?.pathname?.includes("language-selection");
@@ -90,8 +90,12 @@ const EmployeeApp = ({
             }
           >
             <Switch>
-              <Route path={`${path}/user/login`}>
-                <EmployeeLogin />
+            <Route path={`${path}/user/login`}>
+                {userDetails?.access_token ? (
+                  <Redirect to={`/${window?.contextPath}/employee`} />
+                ) : (
+                  <EmployeeLogin />
+                )}
               </Route>
               <Route path={`${path}/user/language-selection`}>
                 <Redirect to={`/${window?.contextPath}/employee/user/login`} />
@@ -142,7 +146,7 @@ const EmployeeApp = ({
             <div className="employee-home-footer">
               <img
                 alt="Powered by DIGIT"
-                src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
+                src={i18n.language === "en_IN" ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER"): "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"}
                 style={{ height: "1.1em", cursor: "pointer" }}
                 onClick={() => {
                   window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();

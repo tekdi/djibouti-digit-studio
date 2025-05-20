@@ -101,20 +101,24 @@ const TopBar = ({
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} />
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {
-          (cityDetails?.city?.ulbGrade ? (
-            // TODO: title name is hardcoded, need to change it with i18Key
-            <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block", fontFamily: "Inter" } : {}}>
-              Ministère de la Ville, de l'Aménagement du Territoire et du Logement
-              {/* {t(cityDetails?.i18nKey).toUpperCase()}{" "} */}
-              {/* {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()} */}
-            </p>
-          ) : (
-            <img className="state" src={logoUrl} />
+      <img className="city" style={{width: "40px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/LOGO+DATUH.jpg" alt="DATUH" />
 
-          ))}
+      <img className="city" style={{width: "56px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
+
+      <span>
+        {
+          // (cityDetails?.city?.ulbGrade ? (
+          //   // TODO: title name is hardcoded, need to change it with i18Key
+          //   <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block", fontFamily: "Inter" } : {}}>
+          //     Ministère de la Ville, de l'Aménagement du Territoire et du Logement
+          //     {/* {t(cityDetails?.i18nKey).toUpperCase()}{" "} */}
+          //     {/* {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()} */}
+          //   </p>
+          // ) : (
+          //   <img className="state" src={logoUrl} />
+
+          // ))
+          }
         {/* {!loggedin && (
           <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
             {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
