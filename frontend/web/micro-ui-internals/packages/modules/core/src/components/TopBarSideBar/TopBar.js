@@ -105,7 +105,7 @@ const TopBar = ({
 
       <img className="city" style={{width: "56px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
 
-      <span>
+      <span style={{width: "20px" }}>
         {
           // (cityDetails?.city?.ulbGrade ? (
           //   // TODO: title name is hardcoded, need to change it with i18Key
