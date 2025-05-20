@@ -12,7 +12,7 @@ import (
 	db "public-service/scripts"
 	"public-service/service"
 	"public-service/utils"
-
+    "strings"
 	"github.com/Priyansuvaish/digit_client/configdigit"
 
 	"github.com/gorilla/mux"
@@ -23,8 +23,11 @@ func main() {
 	utils.InitLogger()
 
 	// Initialize the configuration
+	mdmsHost := os.Getenv("MDMS_SERVICE_HOST")
+	mdmsHost = strings.TrimSuffix(mdmsHost, "/")
+	// Initialize the configuration
 	configdigit.GetGlobalConfig().Initialize(
-		"https://unified-dev.digit.org",
+		mdmsHost,
 		"",
 	)
 	// Load environment variables
@@ -88,6 +91,8 @@ func main() {
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.CreateApplicationHandler).Methods("POST")
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.SearchApplicationHandler).Methods("GET")
 	router.HandleFunc("/public-service/v1/application/{serviceCode}/{applicationId}", appCtrl.UpdateApplicationHandler).Methods("PUT")
+
+	router.HandleFunc("/public-service/_calculate", appCtrl.CalculateHandler).Methods("POST")
 
 	// Start HTTP server
 	port := os.Getenv("SERVER_PORT")

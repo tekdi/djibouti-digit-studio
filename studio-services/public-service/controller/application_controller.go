@@ -11,7 +11,6 @@ import (
 	"public-service/utils"
 	"strconv"
 	"strings"
-
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
@@ -165,6 +164,20 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 	businessService := r.URL.Query().Get("businessService")
 	status := r.URL.Query().Get("status")
 	applicationNumber := r.URL.Query().Get("applicationNumber")
+	sortBy := r.URL.Query().Get("sortBy")
+	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
+		if limit, err := strconv.Atoi(limitStr); err == nil {
+			criteria.SearchCriteria.Limit = limit
+		}
+	}
+	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
+		if offset, err := strconv.Atoi(offsetStr); err == nil {
+			criteria.SearchCriteria.Offset = offset
+		}
+	}
+	if sortBy != "" {
+		criteria.SearchCriteria.SortBy = sortBy
+	}
 	if businessService != "" {
 		criteria.SearchCriteria.BusinessService = businessService
 	}
@@ -254,3 +267,23 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
+
+
+func (c *ApplicationController) CalculateHandler(w http.ResponseWriter, r *http.Request) {
+	var req model.ApplicationRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		utils.WriteErrorResponse(w, http.StatusBadRequest, "Invalid request payload: "+err.Error())
+		return
+	}
+
+	res, err := c.enrichmentService.GetCalculation(req)
+	if err != nil {
+		utils.WriteErrorResponse(w, http.StatusInternalServerError, "Calculation error: "+err.Error())
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}
+

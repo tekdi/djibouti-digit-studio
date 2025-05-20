@@ -1,15 +1,20 @@
 package service
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
+	"errors"
+	"io"
 	"log"
 	"math/big"
+	"net/http"
 	"os"
 	"public-service/model"
 	"public-service/model/demand"
 	"public-service/model/individual"
 	"strconv"
-
+	"strings"
 	"github.com/google/uuid"
 )
 
@@ -292,4 +297,198 @@ func (s *EnrichmentService) EnrichApplicationsWithIdGen(apps model.ApplicationRe
 	}
 
 	return apps
+}
+
+func (s *EnrichmentService) GetCalculation(apps model.ApplicationRequest) ([]demand.DemandDetail, error) {
+	var demandDetails []demand.DemandDetail
+
+	schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
+	mdmsData, err := s.MDMSV2Service.SearchMDMS(
+		apps.Application.TenantId,
+		schemaCode,
+		apps.Application.BusinessService,
+		apps.Application.Module,
+		apps.RequestInfo,
+	)
+	if err != nil {
+		log.Println("Error fetching MDMS data:", err)
+		return nil, err
+	}
+
+	mdmsList, ok := mdmsData["mdms"].([]interface{})
+	if !ok || len(mdmsList) == 0 {
+		return nil, errors.New("MDMS data missing or invalid")
+	}
+
+	firstEntry, _ := mdmsList[0].(map[string]interface{})
+	data, _ := firstEntry["data"].(map[string]interface{})
+	calculatorData, ok := data["calculator"].(map[string]interface{})
+	if !ok {
+		return nil, errors.New("No calculator data found in MDMS")
+	}
+
+	for _, v := range calculatorData {
+		calcConf, _ := v.(map[string]interface{})
+		calcTypeRaw, ok := calcConf["type"].(string)
+		if !ok {
+			continue
+		}
+		calcType := strings.ToLower(calcTypeRaw)
+
+		if calcType == "custom" {
+			slabs, ok := calcConf["billingSlabs"].([]interface{})
+			if !ok || len(slabs) == 0 {
+				return nil, errors.New("No billingSlabs in custom calculator")
+			}
+
+			for _, slab := range slabs {
+				slabData, ok := slab.(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				key, ok := slabData["key"].(string)
+				if !ok {
+					continue
+				}
+
+				var floatVal float64
+				switch v := slabData["value"].(type) {
+				case float64:
+					floatVal = v
+				case int:
+					floatVal = float64(v)
+				default:
+					return nil, errors.New("Unsupported value type for billing slab")
+				}
+
+				detail := demand.DemandDetail{
+					ID:                uuid.NewString(),
+					TaxHeadMasterCode: key,
+					TaxAmount:         big.NewFloat(floatVal),
+					CollectionAmount:  big.NewFloat(0.0),
+					TenantID:          apps.Application.TenantId,
+					AuditDetails:      nil,
+				}
+				demandDetails = append(demandDetails, detail)
+
+				log.Printf("Using custom billing slab: %s = %v\n", key, floatVal)
+			}
+			return demandDetails, nil
+
+		} else if calcType == "api" {
+			apiConf, ok := calcConf["api"].(map[string]interface{})
+			if !ok {
+				return nil, errors.New("invalid or missing API config")
+			}
+
+			hosts := strings.Split(apiConf["host"].(string), "||")
+			endpoint := apiConf["endpoint"].(string)
+			method := strings.ToUpper(apiConf["method"].(string))
+
+			var responseBody []byte
+			var apiErr error
+			for _, host := range hosts {
+				url := strings.TrimSuffix(host, "/") + endpoint
+				responseBody, apiErr = makeAPICall(url, method, apps)
+				if apiErr == nil {
+					log.Println("API call successful:", url)
+					break
+				}
+				log.Printf("Failed API call to %s: %v", url, apiErr)
+			}
+
+			if apiErr != nil {
+				return nil, fmt.Errorf("all API hosts failed: %w", apiErr)
+			}
+
+			// Example API response decoding
+			var apiResponse map[string]interface{}
+			err = json.Unmarshal(responseBody, &apiResponse)
+			if err != nil {
+				return nil, fmt.Errorf("error decoding API response: %w", err)
+			}
+
+			// Expecting array of demandDetails: apiResponse["demandDetails"] = [{...}, {...}]
+			rawList, ok := apiResponse["demandDetails"].([]interface{})
+			if !ok {
+				return nil, errors.New("expected demandDetails as array in API response")
+			}
+
+			for _, rawItem := range rawList {
+				item, ok := rawItem.(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				key, ok := item["taxHeadCode"].(string)
+				if !ok {
+					continue
+				}
+
+				var floatVal float64
+				switch v := item["taxAmount"].(type) {
+				case float64:
+					floatVal = v
+				case int:
+					floatVal = float64(v)
+				default:
+					return nil, errors.New("unsupported taxAmount type in API response")
+				}
+
+				detail := demand.DemandDetail{
+					ID:                uuid.NewString(),
+					TaxHeadMasterCode: key,
+					TaxAmount:         big.NewFloat(floatVal),
+					CollectionAmount:  big.NewFloat(0.0),
+					TenantID:          apps.Application.TenantId,
+					AuditDetails:      nil,
+				}
+				demandDetails = append(demandDetails, detail)
+			}
+
+			log.Printf("Collected %d demand details from API\n", len(demandDetails))
+			return demandDetails, nil
+		}
+	}
+
+	return nil, errors.New("no valid calculator config found")
+}
+
+
+
+
+
+// makeAPICall sends a POST/GET/etc request with the ApplicationRequest as JSON
+func makeAPICall(url, method string, req model.ApplicationRequest) ([]byte, error) {
+	jsonData, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("error marshalling request: %w", err)
+	}
+
+	request, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("error creating HTTP request: %w", err)
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("error making API request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("API request failed: %s - %s", resp.Status, string(bodyBytes))
+	}
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	return responseBody, nil
 }

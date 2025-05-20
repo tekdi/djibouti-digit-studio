@@ -625,6 +625,24 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		queryBuilder.WriteString(strings.Join(conditions, " AND "))
 	}
 
+	// Apply sorting if provided
+	if criteria.SortBy != "" {
+		queryBuilder.WriteString(fmt.Sprintf(" ORDER BY %s", criteria.SortBy))
+	}
+
+	// Apply pagination if limit is set
+	if criteria.Limit > 0 {
+		queryBuilder.WriteString(fmt.Sprintf(" LIMIT $%d", argPos))
+		args = append(args, criteria.Limit)
+		argPos++
+		// Offset is meaningful only if limit is set
+		if criteria.Offset > 0 {
+			queryBuilder.WriteString(fmt.Sprintf(" OFFSET $%d", argPos))
+			args = append(args, criteria.Offset)
+			argPos++
+		}
+	}
+
 	log.Println("query in search:", queryBuilder.String())
 	rows, err := r.db.QueryContext(ctx, queryBuilder.String(), args...)
 	if err != nil {

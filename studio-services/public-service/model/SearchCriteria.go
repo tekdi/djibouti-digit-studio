@@ -9,4 +9,7 @@ type SearchCriteria struct {
 	ApplicationNumber string      `json:"applicationNumber"`
 	Status            string      `json:"status"`
 	ServiceCode       string      `json:"serviceCode"`
+	Offset            int         `json:"offset"`
+	Limit             int         `json:"limit"`
+	SortBy            string      `json:"sortBy"`
 }
