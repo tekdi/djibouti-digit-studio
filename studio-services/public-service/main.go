@@ -57,11 +57,12 @@ func main() {
 	restRepo := repository.NewRestCallRepository()
 
 	// Initialize services
-	demandSvc := service.NewDemandService(restRepo)
+	
 	individualSvc := service.NewIndividualService(restRepo)
 	mdmsSvc := service.NewMDMSService(restRepo)
 	mdmsv2sSvc := service.NewMDMSV2Service(restRepo,dbConn)
 	idgenSvc := service.NewIdGenService(restRepo)
+	demandSvc := service.NewDemandService(restRepo,mdmsv2sSvc)
 	localizationService := service.NewLocalizationService(restRepo)
 	smsService := service.NewSMSService(restRepo, localizationService, kafkaProducer, demandSvc)
 	enrichSvc := service.NewEnrichmentService(individualSvc, demandSvc, mdmsSvc, mdmsv2sSvc, idgenSvc, smsService)

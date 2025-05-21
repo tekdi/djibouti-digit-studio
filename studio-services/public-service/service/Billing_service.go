@@ -8,15 +8,18 @@ import (
 	"public-service/model"
 	"public-service/model/demand"
 	"public-service/repository"
+	"os"
 )
 
 type DemandService struct {
 	restCallRepo repository.RestCallRepository
+	MdmsV2Service *MDMSV2Service
 }
 
-func NewDemandService(repo repository.RestCallRepository) *DemandService {
+func NewDemandService(repo repository.RestCallRepository, MdmsV2Service *MDMSV2Service) *DemandService {
 	return &DemandService{
 		restCallRepo: repo,
+		MdmsV2Service: MdmsV2Service,
 	}
 }
 
@@ -84,14 +87,46 @@ func (r *DemandService) UpdateDemand(requestInfo model.RequestInfo, demands []de
 func (r *DemandService) fetchBill(request model.ApplicationRequest) ([]demand.Bill, error) {
 	baseURL := config.GetEnv("BILLING_SERVICE_HOST")
 	endpoint := config.GetEnv("BILL_FETCH_ENDPOINT") // e.g., /billing-service/bill/v2/_fetchbill
+	
+	schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
+		mdmsData, _ := r.MdmsV2Service.SearchMDMS(
+			request.Application.TenantId,
+			schemaCode,
+			request.Application.BusinessService,
+			request.Application.Module,
+			request.RequestInfo,
+		)
+		var resp demand.BillResponse
+
+		mdmsList, ok := mdmsData["mdms"].([]interface{})
+		if !ok || len(mdmsList) == 0 {
+			log.Println("MDMS data missing or invalid")
+			return resp.Bill, fmt.Errorf("failed to call billing service: %w", "MDMS data missing or invalid")
+		}
+
+		firstEntry, _ := mdmsList[0].(map[string]interface{})
+		data, _ := firstEntry["data"].(map[string]interface{})
+		billData, ok := data["bill"].(map[string]interface{})
+		if !ok {
+			log.Println("No 'bill' section in MDMS data")
+			return resp.Bill,fmt.Errorf("failed to call billing service: %w", "No 'bill' section in MDMS data")
+		}
+        // Step 2: Extract businessService from bill.BusinessService
+		var businessService string
+		if bsMap, ok := billData["BusinessService"].(map[string]interface{}); ok {
+			if code, ok := bsMap["code"].(string); ok {
+				businessService = code
+			}
+
+		}
 	queryParams := fmt.Sprintf("?tenantId=%s&consumerCode=%s&businessService=%s",
 		request.Application.TenantId,
 		request.Application.ApplicationNumber,
-		request.Application.BusinessService,
-	)
+		businessService,
+	)		
 
 	url := baseURL + endpoint + queryParams
-
+    log.Printf("fetch bill url: %v", url)
 	// Prepare request body
 	// Have to make IT citizen as type employee Cannot search state level tenantid Bills
 	requestInfo := request.RequestInfo
@@ -107,7 +142,7 @@ func (r *DemandService) fetchBill(request model.ApplicationRequest) ([]demand.Bi
 	}
 
 	// Make HTTP POST call
-	var resp demand.BillResponse
+	
 	err := r.restCallRepo.Post(url, billRequest, &resp)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call billing service: %w", err)
