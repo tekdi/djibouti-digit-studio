@@ -152,7 +152,7 @@ const DigitDemoComponent = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     }
-  }
+  };
 
   const onStepperClick = (stepIndex) => {
     const clickedStepIndex = stepIndex + 1;
@@ -182,31 +182,20 @@ const DigitDemoComponent = () => {
   const closeToast = () => {
     setShowToast(false);
   };
-
   if (moduleListLoading || workflowDetailsLoading) {
     return <Loader />;
   }
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
-  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
-  console.log(formData, "formdata");
   return (
     <React.Fragment>
       <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
       {isSummaryStep ? (
         <div className="summary-container">
-          <SummaryView
-            serviceCode={serviceCode}
-            formData={formData}
-            steps={steps}
-            t={t}
-          />
+          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} />
           <div className="flex justify-end mt-8">
-            <button
-              className="submit-btn"
-              onClick={() => onSubmit(formData)}
-            >
+            <button className="submit-btn" onClick={() => onSubmit(formData)}>
               {t(`${serviceCode}_SUBMIT`)}
             </button>
           </div>
