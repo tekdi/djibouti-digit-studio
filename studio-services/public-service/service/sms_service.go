@@ -64,7 +64,7 @@ func (s *SMSService) SendSMS(application model.ApplicationRequest, tenantId stri
 		totalAmount += bill.TotalAmount
 	}
 	amountStr := strconv.FormatFloat(totalAmount, 'f', 2, 64)
-    log.Printf("amtStr::::",amountStr)
+    log.Println("amtStr::::",amountStr)
 	// Loop over all owners to send SMS
 	for _, owner := range owners {
 		msg := templateMsg

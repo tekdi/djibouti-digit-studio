@@ -9,6 +9,7 @@ import (
 	"public-service/model/demand"
 	"public-service/repository"
 	"os"
+	"errors"
 )
 
 type DemandService struct {
@@ -101,7 +102,7 @@ func (r *DemandService) fetchBill(request model.ApplicationRequest) ([]demand.Bi
 		mdmsList, ok := mdmsData["mdms"].([]interface{})
 		if !ok || len(mdmsList) == 0 {
 			log.Println("MDMS data missing or invalid")
-			return resp.Bill, fmt.Errorf("failed to call billing service: %w", "MDMS data missing or invalid")
+			return resp.Bill, fmt.Errorf("failed to call billing service: %w", errors.New("MDMS data missing or invalid"))
 		}
 
 		firstEntry, _ := mdmsList[0].(map[string]interface{})
@@ -109,7 +110,7 @@ func (r *DemandService) fetchBill(request model.ApplicationRequest) ([]demand.Bi
 		billData, ok := data["bill"].(map[string]interface{})
 		if !ok {
 			log.Println("No 'bill' section in MDMS data")
-			return resp.Bill,fmt.Errorf("failed to call billing service: %w", "No 'bill' section in MDMS data")
+			return resp.Bill, fmt.Errorf("failed to call billing service: %w", errors.New("No 'bill' section in MDMS data"))
 		}
         // Step 2: Extract businessService from bill.BusinessService
 		var businessService string
