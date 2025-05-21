@@ -153,6 +153,12 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 		return
 	}
 
+	AuthToken := r.Header.Get("auth-token")
+	if AuthToken == "" {
+		http.Error(w, "auth-token header is required", http.StatusBadRequest)
+		return
+	}
+
 	if criteria.SearchCriteria.TenantId == "" {
 		criteria.SearchCriteria.TenantId = tenantID
 	}
