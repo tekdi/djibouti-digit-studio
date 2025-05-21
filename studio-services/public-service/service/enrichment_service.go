@@ -94,6 +94,8 @@ func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationR
 			return apps
 		}
 
+		
+
 		// Step 2: Extract taxHeadCode from bill.taxHead
 		var taxHeadCode string
 		if taxHeads, ok := billData["taxHead"].([]interface{}); ok {
@@ -132,11 +134,10 @@ func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationR
 		// Step 4: Extract businessService from bill.BusinessService
 		var businessService string
 		if bsMap, ok := billData["BusinessService"].(map[string]interface{}); ok {
-			if bsMap["businessService"] == apps.Application.BusinessService {
 				if code, ok := bsMap["code"].(string); ok {
 					businessService = code
 				}
-			}
+			
 		}
 		if businessService == "" {
 			businessService = apps.Application.BusinessService // fallback

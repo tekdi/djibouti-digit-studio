@@ -856,14 +856,14 @@ func (r *ApplicationRepository) CreateUsingKafka(ctx context.Context, req model.
 	}, nil
 }
 
-func (r *ApplicationRepository) UpdateUsingKafka(ctx context.Context, req model.ApplicationRequest, serviceCode string, applicationId string) (model.ApplicationResponse, error) {
+func (r *ApplicationRepository) UpdateUsingKafka(ctx context.Context, req model.ApplicationRequest, serviceCode string) (model.ApplicationResponse, error) {
 	nowMillis := time.Now().UnixMilli()
 
 	// Validate that the application exists
 	searchCriteria := model.SearchCriteria{
 		TenantId:    req.Application.TenantId,
 		ServiceCode: serviceCode,
-		Ids:         []string{applicationId},
+		Ids:         []string{req.Application.Id.String()},
 	}
 
 	existingService, _ := r.SearchWithIndividual(ctx, searchCriteria)

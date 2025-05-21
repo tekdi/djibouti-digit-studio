@@ -90,7 +90,7 @@ func main() {
 	// Application routes
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.CreateApplicationHandler).Methods("POST")
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.SearchApplicationHandler).Methods("GET")
-	router.HandleFunc("/public-service/v1/application/{serviceCode}/{applicationId}", appCtrl.UpdateApplicationHandler).Methods("PUT")
+	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.UpdateApplicationHandler).Methods("PUT")
 
 	router.HandleFunc("/public-service/_calculate", appCtrl.CalculateHandler).Methods("POST")
 

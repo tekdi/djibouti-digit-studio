@@ -11,7 +11,6 @@ import (
 	"public-service/utils"
 	"strconv"
 	"strings"
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -220,9 +219,8 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 
 func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, r *http.Request) {
 	serviceCode := mux.Vars(r)["serviceCode"]
-	applicationId := mux.Vars(r)["applicationId"]
 
-	if serviceCode == "" || applicationId == "" {
+	if serviceCode == ""  {
 		utils.WriteErrorResponse(w, http.StatusBadRequest, "Path variable 'serviceCode' is required")
 		return
 	}
@@ -233,6 +231,11 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		return
 	}
 
+	AuthToken := r.Header.Get("auth-token")
+	if AuthToken == "" {
+		log.Println("auth-token",AuthToken)
+	}
+    
 	var req model.ApplicationRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -249,13 +252,6 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 	if req.Application.ServiceCode == "" {
 		req.Application.ServiceCode = serviceCode
 	}
-	if req.Application.Id == uuid.Nil {
-		parsedID, err := uuid.Parse(applicationId)
-		if err != nil {
-			utils.WriteErrorResponse(w, http.StatusBadRequest, "Invalid application id")
-		}
-		req.Application.Id = parsedID
-	}
 	ctx := context.Background()
 	c.enrichmentService.EnrichApplicationsWithDemand(req)
 	// Call workflow integrator on success
@@ -264,7 +260,7 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		log.Printf("Workflow integration failed: %v", err)
 		// Optional: return HTTP error or log only
 	}
-	res, err := c.service.UpdateApplication(ctx, req, serviceCode, applicationId)
+	res, err := c.service.UpdateApplication(ctx, req, serviceCode)
 	if err != nil {
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return

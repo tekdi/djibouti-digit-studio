@@ -85,7 +85,7 @@ func ConsumePayments(workflowIntegrator *service.WorkflowIntegrator, application
 			continue
 		}
 
-		if _, err := applicationService.UpdateApplication(context.Background(), appReq, application.ServiceCode, application.Id.String()); err != nil {
+		if _, err := applicationService.UpdateApplication(context.Background(), appReq, application.ServiceCode); err != nil {
 			log.Printf("❌ Failed to update application after payment: %v", err)
 			continue
 		}
