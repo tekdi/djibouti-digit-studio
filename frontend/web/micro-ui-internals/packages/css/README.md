@@ -21,7 +21,7 @@ npm install --save @tekdi/djibouti-ui-css
 After adding the dependency in your package.json:
 
 ```json
-"@tekdi/djibouti-ui-css": "^0.0.5"
+"@tekdi/djibouti-ui-css": "^0.0.6"
 ```
 
 ### Method 1: Add to HTML directly
@@ -29,7 +29,7 @@ After adding the dependency in your package.json:
 Add the following to your HTML head:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.5/dist/index.css" />
+<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.6/dist/index.css" />
 ```
 
 ### Method 2: Import in JavaScript
