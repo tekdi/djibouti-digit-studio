@@ -186,19 +186,22 @@
   padding: 8px 24px !important;
   background-color: #FFFFFF;
   border: 1px solid theme(digitv2.lightTheme.primary);
+  color: theme(digitv2.lightTheme.primary);
+  font-size: 16px;
+  font-weight: 500;
   border-radius: 12px;
   min-width: unset !important;
   height: 40px !important;
   box-sizing: border-box !important;
   display: flex !important;
   align-items: center !important;
+  cursor: pointer !important;
+  margin: 0 !important;
 
-  h2 {
-    color: theme(digitv2.lightTheme.primary);
-    margin: 0 !important;
-    font-size: 16px !important;
-
+  &:hover {
+    box-shadow: theme(digitv2.spacers.spacer0) -0.125rem theme(digitv2.spacers.spacer0) theme(digitv2.spacers.spacer0) theme(digitv2.lightTheme.primary-1) inset !important;
   }
+
 
 }
 

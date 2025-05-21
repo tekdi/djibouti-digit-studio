@@ -14,7 +14,7 @@ const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues,
   };
 
   return (
-    <div>
+    <div style={{width:"80%"}}>
       {instances.map((inst, idx) => (
         <div
           key={inst.id}

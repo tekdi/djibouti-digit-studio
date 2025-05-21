@@ -83,3 +83,13 @@
   align-items: flex-start !important;
   margin-bottom: 0 !important;
 }
+
+.digit-upload-wrapper{
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.button-fit {
+  width: fit-content !important;
+}

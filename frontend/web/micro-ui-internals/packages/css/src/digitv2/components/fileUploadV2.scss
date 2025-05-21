@@ -725,5 +725,13 @@
 
   input {
     height: 40px !important;
+    cursor: pointer;
+    z-index: 99999;
+
+    &:hover {
+      box-shadow: theme(digitv2.spacers.spacer0) -0.125rem theme(digitv2.spacers.spacer0) theme(digitv2.spacers.spacer0) theme(digitv2.lightTheme.primary-1) inset !important;
+    }
   }
+
+
 }

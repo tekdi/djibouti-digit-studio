@@ -215,7 +215,7 @@ const UploadAndDownloadDocumentHandler = ({
       {flow !== "WORKFLOW" && updatedDocuments?.map((item, index) => {
         if (!item?.active) return null;
         return (
-          <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center" }} className="digit-label-field-pair-upload-page">
+          <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center", maxWidth: "70%" }} className="digit-label-field-pair-upload-page">
             {item.code && (
               <div style={{ display: "flex", gap: "1.5rem", width: "100%", maxWidth: "30%" }}>
                 <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%", display: "flex", gap: "2px" }}>
@@ -227,19 +227,22 @@ const UploadAndDownloadDocumentHandler = ({
             )}
 
             {(item?.templatePDFKey || item?.templatedownloadURL) && (
-                  <div style={{ maxWidth: "60%" }}>
+                  <div style={{ width: "100%" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem", width: "100%" }}>
 
-                    <div className={`digit-upload-wrapper ${customClass || ""}`} style={{ flex: 1, padding: "1rem", border: "1px solid #D6D5D4", borderRadius: "8px", backgroundColor: "#FAFAFA", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1.5rem" }}>
-                      <div style={{ fontSize: "14px", color: "#1A1A1A" }}>{t(item?.documentType)}</div>
-                      <CustomSVG.PDFSvg width={"40"} height={"40"} />
+                    <div className={`digit-upload-wrapper ${customClass || ""}`} style={{ flex: 1, padding: "1rem", border: "1px solid #D6D5D4", borderRadius: "8px", backgroundColor: "#FAFAFA", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                      {/* <div style={{ fontSize: "14px", color: "#1A1A1A" }}>{t(item?.documentType)}</div> */}
+                      <div style={{display: "flex", alignItems: "center", gap: "8px", justifyContent: "center"}}>
+                        <div><CustomSVG.PDFSvgNew/></div>
                       <label>{"PLACEHOLDER"}</label>
+                      </div>
                       <Button
                         label={t("CS_COMMON_DOWNLOAD_FILE")}
                         variation="secondary"
                         icon={"FileDownload"}
                         type="button"
                         onClick={() => handleTemplateDownload({ item, tenantId, t })}
+                        className='button-fit'
                       />
                     </div>
                   </div>

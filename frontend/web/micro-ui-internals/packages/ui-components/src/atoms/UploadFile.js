@@ -60,14 +60,15 @@ const UploadFile = (props) => {
           } ${props.disabled ? " disabled" : ""}`}
           style={props?.style}
         >
-          <ButtonSelector
+          {/* <ButtonSelector
             theme="border"
             label={t("CS_COMMON_UPLOAD_FILE")}
             style={{ ...(props?.extraStyles ? props?.extraStyles?.buttonStyles : {}), ...(!props?.enableButton ? { opacity: 0.5 } : {}) }}
             textStyles={props?.textStyles}
-            type={props.buttonType}
+            type='text'
             className="upload-button"
-          />
+          /> */}
+          <div className="upload-button">{t("CS_COMMON_UPLOAD_FILE")}</div>
           <input
             className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
             ref={inpRef}
