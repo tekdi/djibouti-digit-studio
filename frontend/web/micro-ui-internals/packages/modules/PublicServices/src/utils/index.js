@@ -95,7 +95,6 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);
-  debugger;
   const applicants =
     formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
       type: "CITIZEN",
