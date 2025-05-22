@@ -188,10 +188,6 @@ const DigitDemoComponent = () => {
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
-  const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
-
-  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
-  console.log(formData, "formdata");
   return (
     <React.Fragment>
       <Stepper
