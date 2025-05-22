@@ -17,9 +17,7 @@ const modulePageComponent = ({}) => {
     headers: {
       "X-Tenant-Id" : tenantId,
      "auth-token":
-              Digit.UserService.getType() === "employee"
-                ? window?.localStorage?.getItem("Employee.token")
-                : window?.localStorage?.getItem("Citizen.token"),
+              Digit.UserService.getUser()?.access_token,
     },
     method: "GET",
   }
