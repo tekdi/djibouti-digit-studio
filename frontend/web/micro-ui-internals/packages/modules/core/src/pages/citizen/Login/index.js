@@ -72,13 +72,13 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
-    // const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+    const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     // if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
     //   history.replace(`/${window?.contextPath}/citizen/select-location`, {
     //     redirectBackTo: redirectPath,
     //   });
     // } else {
-    //   history.replace(redirectPath);
+    history.replace(redirectPath);
     // }
   }, [user]);
 
@@ -191,12 +191,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         }
 
         // Show success modal and then set user after a short delay
-        const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
         setUser({ info, ...tokens });
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
-          history.replace(redirectPath);
         }, 2000);
       } else if (!isUserRegistered) {
         const requestData = {
