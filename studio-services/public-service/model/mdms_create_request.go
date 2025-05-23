@@ -6,7 +6,7 @@ import (
 )
 
 type MDMSCreateV2Request struct {
-	MDMS        Mdms        `json:"mdms"`
+	MDMS        Mdms        `json:"Mdms"`
 	RequestInfo RequestInfo `json:"RequestInfo"`
 }
 

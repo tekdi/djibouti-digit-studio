@@ -8,6 +8,7 @@ import (
 	"public-service/model"
 	"public-service/repository"
 	"strconv"
+	"fmt"
 )
 
 const (
@@ -131,6 +132,9 @@ func (s *MDMSV2Service) createMDMSActionTest(tenantId string, serviceCode string
 	}
 
 	log.Printf("Calling MDMS Create ActionTest\nURL: %s\nPayload: %+v\n", url, payload)
+
+	b, _ := json.MarshalIndent(payload, "", "  ")
+    fmt.Println("Final Payload:\n", string(b))
 
 	var resp map[string]interface{}
 	err = s.restCallRepo.Post(url, payload, &resp)
