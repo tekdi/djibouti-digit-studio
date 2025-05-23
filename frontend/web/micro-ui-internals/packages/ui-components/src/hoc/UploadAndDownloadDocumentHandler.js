@@ -92,7 +92,7 @@ const UploadAndDownloadDocumentHandler = ({
           applicationNumber: formData?.applicationNumber || applicationNo,
           pdfKey: templatePDFKey
         }
-        let url = `/studio-pdf/download/pdf/generatepdf`;
+        let url = `/studio-pdf/public-service/download/pdf`;
         try {
           const response = await Digit.CustomService.getResponse({
             url,
