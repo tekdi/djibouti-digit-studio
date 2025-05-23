@@ -260,7 +260,29 @@ func convertFieldsToJSONSchema(fieldsSchema interface{}, req model.ApplicationRe
 
 							// Add property to section schema
 							sectionProperties[propName] = propSchema
+						} else if values, hasValues := propMap["values"].([]interface{}); hasValues {
+							propSchema := createPropertySchema(propMap)
+							propSchema["enum"] = values
+
+							if isRequired, ok := propMap["required"].(bool); ok && isRequired {
+								requiredProps = append(requiredProps, propName)
+							}
+							fmt.Println("values", propSchema)
+							// Add property to section schema
+							sectionProperties[propName] = propSchema
+						} else {
+							// Create property schema for non-reference fields
+							propSchema := createPropertySchema(propMap)
+
+							// Add to required list if needed
+							if isRequired, ok := propMap["required"].(bool); ok && isRequired {
+								requiredProps = append(requiredProps, propName)
+							}
+
+							// Add property to section schema
+							sectionProperties[propName] = propSchema
 						}
+
 					} else {
 						// Create property schema for non-reference fields
 						propSchema := createPropertySchema(propMap)
@@ -341,6 +363,27 @@ func convertFieldsToJSONSchema(fieldsSchema interface{}, req model.ApplicationRe
 								}
 
 								// Add property to items schema
+								itemProperties[propName] = propSchema
+							} else if values, hasValues := propMap["values"].([]interface{}); hasValues {
+								propSchema := createPropertySchema(propMap)
+								propSchema["enum"] = values
+
+								if isRequired, ok := propMap["required"].(bool); ok && isRequired {
+									requiredProps = append(requiredProps, propName)
+								}
+								fmt.Println("values", propSchema)
+								// Add property to section schema
+								itemProperties[propName] = propSchema
+							} else {
+								// Create property schema for non-reference fields
+								propSchema := createPropertySchema(propMap)
+
+								// Add to required list if needed
+								if isRequired, ok := propMap["required"].(bool); ok && isRequired {
+									requiredProps = append(requiredProps, propName)
+								}
+
+								// Add property to section schema
 								itemProperties[propName] = propSchema
 							}
 						} else {

@@ -52,7 +52,7 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	requestPayload := make(map[string]interface{})
 	processInstance := make(map[string]interface{})
 	schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
-	mdmsData, err := wi.MDMSV2Service.SearchMDMS(app.TenantId, schemaCode, app.BusinessService, app.Module, req.RequestInfo)
+	mdmsData, err 	:= wi.MDMSV2Service.SearchMDMS(app.TenantId, schemaCode, app.BusinessService, app.Module, req.RequestInfo)
 	mdmsList, ok := mdmsData["mdms"].([]interface{})
 	if !ok || len(mdmsList) == 0 {
 		log.Println("MDMS data missing or invalid")
@@ -65,16 +65,23 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	if !ok {
 		log.Println("No 'Workflow' section in MDMS data")
 	}
+	var businessService string
 
-	// Step 2: Extract businessService from from workflow
-	businessService, ok := workflowData["businessService"].(string)
+	if app.Workflow.BusinessService != "" {
+		businessService = app.Workflow.BusinessService
+	} else if bs, ok := workflowData["businessService"].(string); ok && bs != "" {
+		businessService = bs
+	} else {
+		log.Println("BusinessService not found in workflow data or application")
+		return errors.New("unable to resolve businessService from application or MDMS")
+	}
+
 
 	processInstance[BUSINESS_ID_KEY] = app.ApplicationNumber
 	processInstance[TENANT_ID_KEY] = app.TenantId
 	processInstance[BUSINESS_SERVICE_KEY] = businessService
 	processInstance[MODULE_NAME_KEY] = app.Module
 	processInstance[ACTION_KEY] = app.Workflow.Action
-	log.Println("workflow")
 	processInstance[COMMENT_KEY] = app.Workflow.Comment
 
 	if len(app.Workflow.Assignees) > 0 {

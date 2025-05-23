@@ -12,14 +12,17 @@ import (
 	"public-service/model"
 	"strings"
 	"time"
+	"public-service/config"
+	producer "public-service/kafka/producer"
 )
 
 type PublicRepository struct {
 	db *sql.DB
+	kafkaProducer *producer.PublicServiceProducer
 }
 
-func NewPublicRepository(db *sql.DB) *PublicRepository {
-	return &PublicRepository{db: db}
+func NewPublicRepository(db *sql.DB, kafkaProducer *producer.PublicServiceProducer) *PublicRepository {
+	return &PublicRepository{db: db,kafkaProducer: kafkaProducer}
 }
 func (r PublicRepository) CreateService(ctx context.Context, req model.ServiceRequest, tenantId string) (model.ServiceResponse, error) {
 	searchCriteria := model.SearchCriteria{
@@ -53,31 +56,32 @@ func (r PublicRepository) CreateService(ctx context.Context, req model.ServiceRe
 	//req.Service.ServiceCode, _ = r.generateServiceCode(ctx, req.Service.TenantId, req.Service.Module, req.Service.BusinessService)
 
 	// Marshal complex fields
-	additionalDetailsJSON, _ := json.Marshal(req.Service.AdditionalDetails)
+	//additionalDetailsJSON, _ := json.Marshal(req.Service.AdditionalDetails)
 
-	insertQuery := `
-		INSERT INTO service (
-			id, tenant_id, module, business_service, status, service_code, additional_details,createdby, last_modifiedby, created_at, updated_at
-		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7,
-			$8, $9, $10, $11
-		)
-	`
-	_, err := r.db.ExecContext(ctx, insertQuery,
-		ServiceID,
-		req.Service.TenantId,
-		req.Service.Module,
-		req.Service.BusinessService,
-		req.Service.Status,
-		req.Service.ServiceCode,
-		additionalDetailsJSON,
-		createdBy,
-		createdBy,
-		now,
-		now,
-	)
+	req.Service.ID = ServiceID
+	req.Service.AuditDetails = model.AuditDetails{
+		CreatedBy:        createdBy,
+		LastModifiedBy:   createdBy,
+		CreatedTime:      now.UnixMilli(),
+		LastModifiedTime: now.UnixMilli(),
+	}
+
+	// Marshal request into JSON
+	kafkaPayload, err := json.Marshal(req)
 	if err != nil {
-		return model.ServiceResponse{}, err
+		return model.ServiceResponse{}, fmt.Errorf("failed to marshal application request for Kafka: %w", err)
+	}
+
+	// Publish to Kafka topic
+	if r.kafkaProducer != nil {
+		log.Println("request", string(kafkaPayload))
+		err = r.kafkaProducer.Push(ctx, config.GetEnv("SAVE_PUBLIC_SERVICE"), kafkaPayload)
+		if err != nil {
+			log.Printf("failed to push kafka message: %v", err)
+			return model.ServiceResponse{}, err
+		}
+	} else {
+		return model.ServiceResponse{}, errors.New("Kafka producer is not initialized")
 	}
 
 	nowMillis := time.Now().UnixMilli()
@@ -257,7 +261,7 @@ func (r *PublicRepository) UpdateService(ctx context.Context, req model.ServiceR
 	}
 	nowMillis := time.Now().UnixMilli()
 	// Marshal complex fields
-	additionalDetailsJSON, _ := json.Marshal(req.Service.AdditionalDetails)
+	// additionalDetailsJSON, _ := json.Marshal(req.Service.AdditionalDetails)
 	if req.RequestInfo.UserInfo == nil {
 		req.RequestInfo.UserInfo = &model.User{}
 	}
@@ -267,36 +271,27 @@ func (r *PublicRepository) UpdateService(ctx context.Context, req model.ServiceR
 	}
 
 	modifiedBy := req.RequestInfo.UserInfo.Uuid
-
-	appQuery := `
-		UPDATE service
-		SET tenant_id = $1,
-		    module = $2,
-		    business_service = $3,
-		    status = $4,
-		    additional_details = $5,
-		    last_modifiedby = $6,
-		    updated_at = to_timestamp($7 / 1000.0)
-		WHERE service_code = $8
-	`
-	_, err := r.db.ExecContext(ctx, appQuery,
-		req.Service.TenantId,
-		req.Service.Module,
-		req.Service.BusinessService,
-		req.Service.Status,
-		additionalDetailsJSON,
-		modifiedBy,
-		nowMillis,
-		req.Service.ServiceCode,
-	)
-	if err != nil {
-		return model.ServiceResponse{}, fmt.Errorf("failed to update service: %w", err)
-	}
 	req.Service.AuditDetails = model.AuditDetails{
 		LastModifiedBy:   modifiedBy,
 		LastModifiedTime: nowMillis,
 	}
+	// Marshal request into JSON
+	kafkaPayload, err := json.Marshal(req)
+	if err != nil {
+		return model.ServiceResponse{}, fmt.Errorf("failed to marshal application request for Kafka: %w", err)
+	}
 
+	// Publish to Kafka topic
+	if r.kafkaProducer != nil {
+		log.Println("request", string(kafkaPayload))
+		err = r.kafkaProducer.Push(ctx, config.GetEnv("UPDATE_PUBLIC_SERVICE"), kafkaPayload)
+		if err != nil {
+			log.Printf("failed to push kafka message: %v", err)
+			return model.ServiceResponse{}, err
+		}
+	} else {
+		return model.ServiceResponse{}, errors.New("Kafka producer is not initialized")
+	}
 	return model.ServiceResponse{
 		ResponseInfo: model.ResponseInfo{
 			ApiId: req.RequestInfo.ApiId,

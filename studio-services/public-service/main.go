@@ -52,7 +52,7 @@ func main() {
 	kafkaProducer := producer.NewPublicServiceProducer(writerFunc)
 
 	// Initialize repositories
-	publicRepo := repository.NewPublicRepository(dbConn)
+	publicRepo := repository.NewPublicRepository(dbConn,kafkaProducer)
 	appRepo := repository.NewApplicationRepository(dbConn, publicRepo, kafkaProducer)
 	restRepo := repository.NewRestCallRepository()
 
