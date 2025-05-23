@@ -2,5 +2,5 @@ package model
 
 type ServiceRequest struct {
 	RequestInfo RequestInfo `json:"RequestInfo"`
-	Service     Service     `json:"service"`
+	Service     Service     `json:"Service"`
 }
