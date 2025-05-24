@@ -89,7 +89,7 @@ const UploadAndDownloadDocumentHandler = ({
         let params = {
           tenantId,
           serviceCode,
-          applicationNumber: formData?.applicationNumber || applicationNo,
+          applicationNumber: (JSON.parse(localStorage.getItem("formData"))?.applicationNumber).toString() || formData?.applicationNumber || applicationNo,
           pdfKey: templatePDFKey
         }
         let url = `/studio-pdf/public-service/download/pdf`;
@@ -234,7 +234,7 @@ const UploadAndDownloadDocumentHandler = ({
                       {/* <div style={{ fontSize: "14px", color: "#1A1A1A" }}>{t(item?.documentType)}</div> */}
                       <div style={{display: "flex", alignItems: "center", gap: "8px", justifyContent: "center"}}>
                         <div><CustomSVG.PDFSvgNew/></div>
-                      <label>{"PLACEHOLDER"}</label>
+                      <label>{t(`BPA_${(item?.templatePDFKey)?.toUpperCase().replace("-", "_")}`)}</label>
                       </div>
                       <Button
                         label={t("CS_COMMON_DOWNLOAD_FILE")}

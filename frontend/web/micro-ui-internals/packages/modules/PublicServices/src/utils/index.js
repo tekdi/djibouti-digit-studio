@@ -91,7 +91,7 @@ const transformUploadedDocs = (uploadedDocs = {}) => {
   return documents;
 };
 
-export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, id, serviceCode) => {
+export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, id, serviceCode, isLastStep) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);

@@ -103,12 +103,17 @@ const DigitDemoComponent = () => {
 
     setFormData(updatedFormData);
     persistData(updatedFormData, currentStep);
-    if (!(beforeDocStep || isLastStep)) {
+
+    // If we have an ID and it's not the last step, just move to next step
+    if (id && !isLastStep) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       persistData(updatedFormData, nextStep);
-    } else {
-      // Final Submit
+      return;
+    }
+
+    // Only make API call if it's beforeDocStep (first time) or last step
+    if (beforeDocStep || isLastStep) {
       await mutation.mutate(
         {
           url: `/public-service/v1/application/${schemaCode}`,
@@ -116,7 +121,17 @@ const DigitDemoComponent = () => {
           headers: { "x-tenant-id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
           method: isLastStep ? "PUT" : "POST",
           body: isLastStep
-            ? transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, id, serviceCodeResponse, config, workflowDetails)
+            ? transformToApplicationPayload(
+                updatedFormData,
+                Updatedconfig,
+                service,
+                tenantId,
+                id,
+                serviceCodeResponse,
+                isLastStep,
+                config,
+                workflowDetails
+              )
             : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
           config: {
             enable: true,
@@ -126,6 +141,7 @@ const DigitDemoComponent = () => {
           onSuccess: (data) => {
             setId(data?.Application?.id);
             setServiceCodeResponse(data?.Application?.serviceCode);
+            setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
             localStorage.removeItem("formData");
             localStorage.removeItem("currentStep");
             sessionStorage.removeItem("formData");
@@ -146,18 +162,15 @@ const DigitDemoComponent = () => {
             }
           },
           onError: () => {
-            // history.push({
-            //   pathname: `/${window.contextPath}/employee/publicservices/${module}/response`,
-            //   search: "?isSuccess=false",
-            //   state: {
-            //     message: "COMMON_APPLICATION_FAILED",
-            //     showID: false,
-            //   },
-            // });
             <Toast label={t("COMMON_APPLICATION_FAILED")} />;
           },
         }
       );
+    } else {
+      // If not beforeDocStep or lastStep, just move to next step
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      persistData(updatedFormData, nextStep);
     }
   };
 
