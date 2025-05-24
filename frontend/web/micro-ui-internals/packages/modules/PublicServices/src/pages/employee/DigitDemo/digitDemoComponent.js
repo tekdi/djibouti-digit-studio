@@ -27,6 +27,7 @@ const DigitDemoComponent = () => {
   const [sessionData, setSessionData] = useState(savedFormData);
   const [id, setId] = useState("");
   const [serviceCodeResponse, setServiceCodeResponse] = useState("");
+  const [workflowAction, setWorkflowAction] = useState("");
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -126,11 +127,12 @@ const DigitDemoComponent = () => {
                 Updatedconfig,
                 service,
                 tenantId,
+                config,
+                workflowDetails,
+                isLastStep,
                 id,
                 serviceCodeResponse,
-                isLastStep,
-                config,
-                workflowDetails
+                workflowAction
               )
             : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
           config: {
@@ -141,6 +143,7 @@ const DigitDemoComponent = () => {
           onSuccess: (data) => {
             setId(data?.Application?.id);
             setServiceCodeResponse(data?.Application?.serviceCode);
+            setWorkflowAction(data?.Application?.processInstance[0]?.nextActions?.[0]?.action);
             setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
             localStorage.removeItem("formData");
             localStorage.removeItem("currentStep");
@@ -149,14 +152,16 @@ const DigitDemoComponent = () => {
             if (!isLastStep) {
               setCurrentStep(currentStep + 1);
             } else {
+              const userDetails = Digit.SessionStorage.get("User");
+              const userType = userDetails?.info?.type?.toLowerCase();
               history.push({
-                pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
+                pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
                 search: "?isSuccess=true",
                 state: {
                   message: "COMMON_APPLICATION_CREATED",
                   showID: true,
                   applicationNumber: data?.Application?.applicationNumber,
-                  redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+                  redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 },
               });
             }

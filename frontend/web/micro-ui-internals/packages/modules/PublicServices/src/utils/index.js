@@ -90,7 +90,18 @@ const transformUploadedDocs = (uploadedDocs = {}) => {
   return documents;
 };
 
-export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, id, serviceCode, isLastStep) => {
+export const transformToApplicationPayload = (
+  formData,
+  configMap,
+  service,
+  tenantId,
+  config,
+  workflowDetails,
+  isLastStep,
+  id,
+  serviceCode,
+  workflowAction
+) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);
@@ -151,7 +162,9 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       documents, // <-- documents as top-level key
       additionalDetails,
       Workflow: {
-        action: workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null)?.[0]?.actions?.[0]?.action,
+        action: isLastStep
+          ? workflowAction
+          : workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null || ob?.state === "")?.[0]?.actions?.[0]?.action,
         comment: "",
         assignees: [],
         businessService: config?.data?.workflow?.businessService,
