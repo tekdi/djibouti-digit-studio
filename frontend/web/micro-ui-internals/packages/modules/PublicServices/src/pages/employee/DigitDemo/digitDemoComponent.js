@@ -126,11 +126,11 @@ const DigitDemoComponent = () => {
                 Updatedconfig,
                 service,
                 tenantId,
+                config,
+                workflowDetails,
                 id,
                 serviceCodeResponse,
-                isLastStep,
-                config,
-                workflowDetails
+                isLastStep
               )
             : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
           config: {
@@ -149,14 +149,16 @@ const DigitDemoComponent = () => {
             if (!isLastStep) {
               setCurrentStep(currentStep + 1);
             } else {
+              const userDetails = Digit.UserService.getUser();
+              const userType = userDetails?.info?.type?.toLowerCase();
               history.push({
-                pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
+                pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
                 search: "?isSuccess=true",
                 state: {
                   message: "COMMON_APPLICATION_CREATED",
                   showID: true,
                   applicationNumber: data?.Application?.applicationNumber,
-                  redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+                  redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 },
               });
             }
