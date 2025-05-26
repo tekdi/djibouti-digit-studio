@@ -16,6 +16,7 @@ import HowItWorks from "./HowItWorks/howItWorks";
 import Login from "./Login";
 import Search from "./SearchApp";
 import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
+import Calculation from "./Calculation";
 
 const sidebarHiddenFor = [
   `${window?.contextPath}/citizen/register/name`,
@@ -211,6 +212,11 @@ const Home = ({
           <Route path={`${path}/Audit`}>
             <Search />
           </Route>
+
+          <Route path={`${path}/calculation`}>
+            <Calculation />
+          </Route>
+
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}

@@ -113,6 +113,11 @@ const Home = () => {
         Icon: <DocumentIcon />,
         onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl),
       },
+      {
+        name: "calculation",
+        Icon: <DocumentIcon />,
+        onClick: () => history.push(`/${window?.contextPath}/citizen/calculation`),
+      },
       // {
       //     name: t("CS_COMMON_HELP"),
       //     Icon: <HelpIcon/>

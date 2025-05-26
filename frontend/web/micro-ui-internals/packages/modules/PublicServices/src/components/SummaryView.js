@@ -62,11 +62,12 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                     <span
                       className="digit-custom-checkbox digit-custom-checkbox-emp"
                       style={{
-                        border: "2px solid grey",
+                        border: "3px solid grey",
                         display: "inline-block",
-                        borderRadius: "10px",
+                        borderRadius: "6px",
                         padding: "2px",
                         marginRight: "8px",
+                        height: "35px",
                       }}
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,7 +87,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                     {label}
                   </div>
                 ) : (
-                  <div style={{ width: "50%" }} className="fields-container">
+                  <div style={{ width: "65%" }} className="fields-container">
                     {label}
                     {field}
                   </div>
@@ -111,7 +112,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
 
             return (
               <div key={docType} className="fields-container">
-                <div className="field-label" style={{ width: "50%" }}>
+                <div className="field-label" style={{ width: "65%", fontSize: "16px", fontWeight: "500" }}>
                   {t(docType)}
                 </div>
                 <div className="field-value">
@@ -190,7 +191,8 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
         .fields-container {
           display: flex;
           padding: 12px 0;
-          width: 80%;
+          width: 68%;
+          align-items: center;
         }
         .field-label {
           width: 100%;

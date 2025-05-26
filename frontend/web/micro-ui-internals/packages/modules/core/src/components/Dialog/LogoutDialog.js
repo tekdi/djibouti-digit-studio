@@ -1,9 +1,10 @@
-import { CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
+import { CardText, CloseSvg } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import Modal from "../../../../../ui-components/src/hoc/Modal";
 import { useTranslation } from "react-i18next";
 
 const Heading = (props) => {
-  return <h1 className="heading-m">{props.label}</h1>;
+  return <h1 style={props?.style} className="heading-m">{props.label}</h1>;
 };
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -77,8 +78,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
       popupModuleMianStyles={{
         padding: "18px",
       }}
-      headerBarMain={<Heading label={t("CORE_LOGOUT_WEB_HEADER")} />}
-      headerBarEnd={<CloseBtn onClick={onDismiss} isMobileView={isMobileView} />}
+      headerBarMain={<Heading style={{ fontSize: "24px" }} label={t("CORE_LOGOUT_WEB_HEADER")} />}
       actionCancelLabel={t("CORE_LOGOUT_CANCEL")}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("CORE_LOGOUT_WEB_YES")}
@@ -92,18 +92,28 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
   ) : (
     <Modal
       popupModuleMianStyles={{
-        paddingTop: "30px",
+
       }}
       headerBarMain={<Heading label={t("CORE_LOGOUT_WEB_HEADER")} />}
-      headerBarEnd={<CloseBtn onClick={onDismiss} isMobileView={false} />}
       actionCancelLabel={t("CORE_LOGOUT_CANCEL")}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("CORE_LOGOUT_WEB_YES")}
       actionSaveOnSubmit={onSelect}
       formId="modal-action"
+      popupModuleActionBarStyles={{
+        display: "flex",
+        flex: 1,
+        width: "100%",
+        padding: "18px",
+        justifyContent: "end",
+        gap: "15px",
+      }}
+      style={{
+        borderRadius: "10px",
+      }}
     >
       <div>
-        <CardText style={{ marginBottom: "54px", marginLeft: "8px", marginRight: "8px" }}>
+        <CardText style={{ marginBottom: "54px", marginLeft: "15px", marginBottom: "8px", fontSize: "18px", fontFamily: "Inter" }}>
           {t("CORE_LOGOUT_WEB_CONFIRMATION_MESSAGE") + " "}
           <strong>{t("CORE_LOGOUT_MESSAGE")}?</strong>
         </CardText>
