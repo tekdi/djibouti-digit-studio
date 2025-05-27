@@ -12,23 +12,21 @@ const modulePageComponent = ({}) => {
   const queryStrings = Digit.Hooks.useQueryParams();
 
   const request = {
-    url : "/public-service/v1/service",
-    params: { tenantId : tenantId},
+    url: "/public-service/v1/service",
+    params: { tenantId: tenantId },
     headers: {
-      "X-Tenant-Id" : tenantId,
-     "auth-token":
-              Digit.UserService.getUser()?.access_token,
+      "X-Tenant-Id": tenantId,
+      "auth-token": Digit.UserService.getUser()?.access_token,
     },
     method: "GET",
-  }
-  const {isLoading, data} = Digit.Hooks.useCustomAPIHook(request);
+  };
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
 
-  const userDetails = Digit.SessionStorage.get("User");
+  const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isArchitect = userDetails?.info?.roles?.some(role => role.code !== "CITIZEN");
-
+  const isArchitect = userDetails?.info?.roles?.some((role) => role.code !== "CITIZEN");
 
   if (isLoading) {
     return <Loader />;
@@ -38,9 +36,7 @@ const modulePageComponent = ({}) => {
     <div className="products-container">
       {/* Header Section */}
       <HeaderComponent className="products-title">{t("DIGIT_STUDIO_HEADER")}</HeaderComponent>
-      <CardText className="products-description">
-        {t("DIGIT_STUDIO_HEADER_DESCRIPTION")}
-      </CardText>
+      <CardText className="products-description">{t("DIGIT_STUDIO_HEADER_DESCRIPTION")}</CardText>
 
       {/* Product Cards Section */}
       <div className="products-list">
@@ -50,21 +46,28 @@ const modulePageComponent = ({}) => {
               <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
             </div>
             <CardText className="product-description">{t(product?.cardDescription)}</CardText>
-            {queryStrings?.selectedPath === "Apply" && isArchitect && product?.businessServices.map((bs) => (
-              <Link className="link" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
-              {bs.businessService}
-        </Link>
-            ))
-            }
-            <Link className="link" to={{
-              pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
-              state: {
-                moduleData:data // example
-              }
-            }}>
+            {queryStrings?.selectedPath === "Apply" &&
+              isArchitect &&
+              product?.businessServices.map((bs) => (
+                <Link
+                  className="link"
+                  to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
+                >
+                  {bs.businessService}
+                </Link>
+              ))}
+            <Link
+              className="link"
+              to={{
+                pathname: `/${window.contextPath}/${userType}/publicservices/${product.module}/search`,
+                state: {
+                  moduleData: data, // example
+                },
+              }}
+            >
               Search
             </Link>
-            <Link className="link" to={`/${window.contextPath}/employee/publicservices/${product.module}/Inbox`}>
+            <Link className="link" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/Inbox`}>
               Inbox
             </Link>
           </Card>
