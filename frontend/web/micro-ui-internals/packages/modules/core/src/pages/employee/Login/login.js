@@ -215,6 +215,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   };
 
   const resendOtp = async () => {
+    setIsOtpValid(true);
     try {
       const { username } = params;
       setParams({ ...params, otp: "" });

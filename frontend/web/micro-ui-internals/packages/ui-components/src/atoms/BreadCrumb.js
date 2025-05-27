@@ -1,10 +1,13 @@
 import React, { useEffect, useState, Fragment } from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import ConfirmationModal from "../molecules/ConfirmationModal";
 
 const BreadCrumb = (props) => {
   const [expanded, setExpanded] = useState(false);
   const [crumbsToDisplay, setCrumbsToDisplay] = useState([...props?.crumbs]);
+  const [showBackConfirmation, setShowBackConfirmation] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (props?.maxItems && props?.crumbs.length > props?.maxItems && !expanded) {
@@ -24,26 +27,21 @@ const BreadCrumb = (props) => {
   }, [props.crumbs, props.maxItems, expanded, props.itemsBeforeCollapse, props.itemsAfterCollapse, props?.expandText]);
 
   function handleRedirect(path) {
-    const host = window.location.origin; // Dynamically get the base URL
+    const host = window.location.origin;
     window.location.href = `${host}${path}`;
   }
 
   function isLast(index) {
-    // Filter crumbs to only include those that are displayed
     let validCrumbs = crumbsToDisplay?.filter((crumb) => crumb?.show === true);
-
-    // Check if all crumbs have the same `internalLink` or `externalLink`
     const allHaveSameInternalLink = validCrumbs.every((crumb) => crumb.internalLink === validCrumbs[0].internalLink);
     const allHaveSameExternalLink = validCrumbs.every((crumb) => crumb.externalLink === validCrumbs[0].externalLink);
-    
-    // If all visible crumbs have the same link, determine last crumb by index
+
     if (allHaveSameInternalLink || allHaveSameExternalLink) {
       return index === validCrumbs.length - 1;
     }
-    
-    // Check if the current crumb is the last one in the validCrumbs list
+
     return validCrumbs?.findIndex((ob) => {
-      const linkToCheck = ob?.externalLink || ob?.internalLink; // Use externalLink if it exists, else internalLink
+      const linkToCheck = ob?.externalLink || ob?.internalLink;
       const currentLink = crumbsToDisplay?.[index]?.externalLink || crumbsToDisplay?.[index]?.internalLink;
       return linkToCheck === currentLink;
     }) === validCrumbs?.length - 1;
@@ -53,83 +51,115 @@ const BreadCrumb = (props) => {
     setExpanded(!expanded);
   };
 
+  const handleBackClick = () => {
+    // Check if we're on the BPA form page
+    if (location.pathname.includes("/publicservices/BPA/BPA_PCO/Apply")) {
+      const formData = JSON.parse(localStorage.getItem("formData") || "{}");
+
+      if (Object.keys(formData).length > 1) {
+        setShowBackConfirmation(true);
+        return;
+      }
+    }
+    window.history.back();
+  };
+
+  const handleConfirmBack = () => {
+    setShowBackConfirmation(false);
+    window.history.back();
+  };
+
+  const handleCancelBack = () => {
+    setShowBackConfirmation(false);
+  };
+
   const validCrumbsMain = crumbsToDisplay?.filter((crumb) => crumb?.show === true);
 
   return (
-    <ol
-      className={`digit-bread-crumb ${props?.className ? props?.className : ""}`}
-      style={props?.style}
-    >
+    <>
+      <ol
+        className={`digit-bread-crumb ${props?.className ? props?.className : ""}`}
+        style={props?.style}
+      >
+        <div className="digit-bread-crumb-back-icon" onClick={handleBackClick}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clipPath="url(#clip0_41_3825)">
+              <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#0B0C0C" />
+            </g>
+            <defs>
+              <clipPath id="clip0_41_3825">
+                <rect width="24" height="24" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
 
-      <div className="digit-bread-crumb-back-icon" onClick={() => window.history.back()}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g clip-path="url(#clip0_41_3825)">
-            <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#0B0C0C" />
-          </g>
-          <defs>
-            <clipPath id="clip0_41_3825">
-              <rect width="24" height="24" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
-      </div>
+        {validCrumbsMain?.map((crumb, ci) => {
+          if (!crumb?.show) return null;
+          if (crumb?.isBack)
+            return (
+              <li
+                key={ci}
+                style={props?.itemStyle}
+                className="digit-bread-crumb--item back-crumb-item"
+              >
+                <span onClick={handleBackClick}>{crumb.content}</span>
+              </li>
+            );
 
-      {validCrumbsMain?.map((crumb, ci) => {
-        if (!crumb?.show) return null;
-        if (crumb?.isBack)
           return (
-            <li
-              key={ci}
-              style={props?.itemStyle}
-              className="digit-bread-crumb--item back-crumb-item"
-            >
-              <span onClick={() => window.history.back()}>{crumb.content}</span>
-            </li>
+            <Fragment key={ci}>
+              <li
+                style={props?.itemStyle}
+                className="digit-bread-crumb--item"
+              >
+                {isLast(ci) || (!crumb?.internalLink && !crumb?.externalLink) ? (
+                  <span
+                    className={`digit-bread-crumb-content ${isLast(ci) ? "current" : "default"}`}
+                    style={props?.spanStyle}
+                    onClick={(crumb.content === "..." || crumb.content === props?.expandText) ? handleCrumbClick : null}
+                  >
+                    {crumb?.icon && crumb.icon}
+                    {crumb.content}
+                  </span>
+                ) : crumb?.externalLink ? (
+                  <Link
+                    className="digit-bread-crumb-content"
+                    onClick={() => handleRedirect(crumb?.externalLink)}
+                  >
+                    {crumb?.icon && crumb.icon}
+                    {crumb.content}
+                  </Link>
+                ) : (
+                  <Link
+                    to={{ pathname: crumb.internalLink, state: { count: crumb?.count }, search: crumb?.query  }}
+                    className="digit-bread-crumb-content"
+                  >
+                    {crumb?.icon && crumb.icon}
+                    {crumb.content}
+                  </Link>
+                )}
+                {!isLast(ci) && (
+                  <div className="digit-bread-crumb-seperator">
+                    {props?.customSeparator ? props?.customSeparator : "/"}
+                  </div>
+                )}
+              </li>
+            </Fragment>
           );
+        })}
+      </ol>
 
-        return (
-          <Fragment>
-            <li
-            key={ci}
-              style={props?.itemStyle}
-              className="digit-bread-crumb--item"
-            >
-              {isLast(ci) || (!crumb?.internalLink && !crumb?.externalLink) ? (
-                <span
-                  className={`digit-bread-crumb-content ${isLast(ci) ? "current" : "default"}`}
-                  style={props?.spanStyle}
-                  onClick={(crumb.content === "..." || crumb.content === props?.expandText) ? handleCrumbClick : null}
-                >
-                  {crumb?.icon && crumb.icon}
-                  {crumb.content}
-                </span>
-              ) : crumb?.externalLink ? (
-                <Link
-                  className="digit-bread-crumb-content"
-                  onClick={() => handleRedirect(crumb?.externalLink)}
-                >
-                  {crumb?.icon && crumb.icon}
-                  {crumb.content}
-                </Link>
-              ) : (
-                <Link
-                  to={{ pathname: crumb.internalLink, state: { count: crumb?.count }, search: crumb?.query  }}
-                  className="digit-bread-crumb-content"
-                >
-                  {crumb?.icon && crumb.icon}
-                  {crumb.content}
-                </Link>
-              )}
-              {!isLast(ci) && (
-                <div className="digit-bread-crumb-seperator">
-                  {props?.customSeparator ? props?.customSeparator : "/"}
-                </div>
-              )}
-            </li>
-          </Fragment>
-        );
-      })}
-    </ol>
+      <ConfirmationModal
+        isOpen={showBackConfirmation}
+        onClose={handleCancelBack}
+        onConfirm={handleConfirmBack}
+        title="CONFIRM_BACK_TITLE"
+        message="CONFIRM_BACK_MESSAGE"
+        confirmText="CONFIRM_BACK_YES"
+        cancelText="CONFIRM_BACK_NO"
+      />
+    </>
   );
 };
 

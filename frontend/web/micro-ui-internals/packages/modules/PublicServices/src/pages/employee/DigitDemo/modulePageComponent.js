@@ -35,42 +35,113 @@ const modulePageComponent = ({}) => {
   return (
     <div className="products-container">
       {/* Header Section */}
-      <HeaderComponent className="products-title">{t("DIGIT_STUDIO_HEADER")}</HeaderComponent>
-      <CardText className="products-description">{t("DIGIT_STUDIO_HEADER_DESCRIPTION")}</CardText>
+      {/* <HeaderComponent className="products-title">{t("DIGIT_STUDIO_HEADER")}</HeaderComponent>
+      <CardText className="products-description">
+        {t("DIGIT_STUDIO_HEADER_DESCRIPTION")}
+      </CardText> */}
 
       {/* Product Cards Section */}
       <div className="products-list">
         {detailsConfig?.map((product, index) => (
-          <Card key={index} className="product-card">
-            <div className="product-header">
-              <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
-            </div>
-            <CardText className="product-description">{t(product?.cardDescription)}</CardText>
-            {queryStrings?.selectedPath === "Apply" &&
-              isArchitect &&
-              product?.businessServices.map((bs) => (
-                <Link
-                  className="link"
-                  to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
-                >
+          <React.Fragment key={index}>
+            {/* BPA_PCO Card */}
+            {queryStrings?.selectedPath === "Apply" && isArchitect && product?.businessServices.map((bs) => (
+              <Card key={`${index}-bpa`} className="product-card module-card">
+                <div className="product-header inbox-header">
+                  <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
+                </div>
+                <div className="">
+                <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
                   {bs.businessService}
                 </Link>
-              ))}
-            <Link
-              className="link"
-              to={{
-                pathname: `/${window.contextPath}/${userType}/publicservices/${product.module}/search`,
+                </div>
+              </Card>
+            ))}
+
+            {/* Inbox Card */}
+            <Card key={`${index}-inbox`} className="product-card module-card">
+              <div className="product-header inbox-header">
+                <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
+                <div className="product-icon">
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="56" height="56" rx="2" fill="#006769"/>
+                  <g clip-path="url(#clip0_101_37716)">
+                  <path d="M41.3334 11.3333H14.6667C12.8334 11.3333 11.35 12.8333 11.35 14.6667L11.3334 44.6667L18 38H41.3334C43.1667 38 44.6667 36.5 44.6667 34.6667V14.6667C44.6667 12.8333 43.1667 11.3333 41.3334 11.3333ZM29.6667 26.3333H26.3334V16.3333H29.6667V26.3333ZM29.6667 33H26.3334V29.6667H29.6667V33Z" fill="white"/>
+                  </g>
+                  <defs>
+                  <clipPath id="clip0_101_37716">
+                  <rect width="40" height="40" fill="white" transform="translate(8 8)"/>
+                  </clipPath>
+                  </defs>
+                  </svg>
+
+                </div>
+              </div>
+              <div className="inbox-count-container">
+              <CardText className="product-description inbox-count-number">0</CardText>
+              <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
+              </div>
+              <div className="product-button-container">
+              <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/Inbox`}>
+                  {t("VIEW_ALL")}
+                </Link>
+                <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769"/>
+                </svg>
+
+              </div>
+              {/* <Link className="link" to={{
+                pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
                 state: {
-                  moduleData: data, // example
-                },
-              }}
-            >
-              Search
-            </Link>
-            <Link className="link" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/Inbox`}>
-              Inbox
-            </Link>
-          </Card>
+                  moduleData:data
+                }
+              }}>
+                Search
+              </Link> */}
+            </Card>
+               <style jsx>{`
+       .module-card {
+        width: 100%;
+        min-width: 400px;
+        padding: 15px 30px 15px 30px;
+       }
+        .inbox-header{
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+          border-bottom: 1px solid #ccc;
+          margin-bottom: 10px;
+        }
+          .inbox-count-number{
+            font-size: 18px;
+            font-weight: 600;
+          }
+        .product-icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 56px;
+          height: 56px;
+        }
+        .product-button-container {
+          display: flex;
+          align-items: center;
+          border-top: 1px solid #ccc;
+          padding-top: 10px;
+          width: 100%;
+        }
+        .request-button {
+          background-color: white;
+          cursor: pointer;
+          color: #006769;
+          border-radius: 10px;
+          padding: 10px 0px;
+          text-decoration: none;
+          margin-right: 10px;
+        }
+
+      `}</style>
+          </React.Fragment>
         ))}
       </div>
     </div>

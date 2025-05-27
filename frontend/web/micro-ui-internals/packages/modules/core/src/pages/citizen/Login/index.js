@@ -219,6 +219,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   const resendOtp = async () => {
+    setIsOtpValid(true);
     const { mobileNumber } = params;
     setParmas({ ...params, otp: "" });
     const data = {
