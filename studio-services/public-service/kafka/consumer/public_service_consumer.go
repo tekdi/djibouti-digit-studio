@@ -71,7 +71,7 @@ func ConsumePayments(workflowIntegrator *service.WorkflowIntegrator, application
 		}
 
 		application := searchRes.Application[0]
-		application.Workflow.Action = "PAY"
+		application.Workflow.Action = os.Getenv("NEXT_WORKFLOW_ACTION_AFTER_PAYMENT")
 
 		appReq := model.ApplicationRequest{
 			RequestInfo: paymentReq.RequestInfo,

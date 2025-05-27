@@ -71,7 +71,7 @@ func (s *EnrichmentService) EnrichApplicationsWithIndividuals(apps []model.Appli
 }
 
 func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationRequest) (model.ApplicationRequest, error ){
-	if apps.Application.Workflow.Action == "VERIFY_AND_FORWARD" {
+	if apps.Application.Workflow.Action == os.Getenv("GENERATE_DEMAND_WORKFLOW_ACTION"){
 		schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
 		mdmsData, _ := s.MDMSV2Service.SearchMDMS(
 			apps.Application.TenantId,
