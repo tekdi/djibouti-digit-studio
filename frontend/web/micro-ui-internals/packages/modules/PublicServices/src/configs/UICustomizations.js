@@ -107,9 +107,9 @@ export const UICustomizations = {
     preProcess: (data, additionalDetails) => {
       const { module } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.searchForm?.businessService?.code}`;
+      data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
-      data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.searchForm?.businessService?.code}`];
+      data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
       data.body.inbox.processSearchCriteria.tenantId = tenantId;
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;

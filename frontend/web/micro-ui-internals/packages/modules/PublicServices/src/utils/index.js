@@ -17,7 +17,7 @@ export const updateCustomConfigs = () => {
 };
 
 const getServiceDetails = (formData) => {
-  const excludedKeys = ["address", "applicantDetails", "uploadedDocs", "uploaded"];
+  const excludedKeys = ["address", "applicantDetails", "uploadedDocs", "uploaded", "summary"];
   const validSections = Object.keys(formData).reduce((acc, key) => {
     if (!excludedKeys.includes(key) && !key.startsWith("section_")) {
       acc[key] = formData[key];
@@ -129,7 +129,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
-      status: "INACTIVE",
+      status: "ACTIVE",
       channel: "counter",
       reference: null,
       workflowStatus: "applied",

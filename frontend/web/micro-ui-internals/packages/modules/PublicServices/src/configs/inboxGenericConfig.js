@@ -203,7 +203,7 @@ export const InboxConfig = () => {
                         },
                         {
                             label: "Status",
-                            jsonPath: "businessObject.status",
+                            jsonPath: "ProcessInstance.state.state",
                         },
                         {
                             label: "SLA",
