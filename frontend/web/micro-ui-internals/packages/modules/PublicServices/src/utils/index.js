@@ -157,7 +157,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       Workflow: {
         id: responseData?.Application?.workflow?.id || null,
         action: isLastStep
-          ? responseData?.Application?.processInstance?.[0]?.nextActions?.[0]?.action
+          ? "CREATE"
           : workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null || ob?.state === "")?.[0]?.actions?.[0]?.action,
         comment: "",
         assignees: [],
