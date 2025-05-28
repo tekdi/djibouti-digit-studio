@@ -70,136 +70,151 @@ func (s *EnrichmentService) EnrichApplicationsWithIndividuals(apps []model.Appli
 	return apps
 }
 
-func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationRequest) (model.ApplicationRequest, error ){
-	if apps.Application.Workflow.Action == "VERIFY_AND_FORWARD" {
-		schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
-		mdmsData, _ := s.MDMSV2Service.SearchMDMS(
-			apps.Application.TenantId,
-			schemaCode,
-			apps.Application.BusinessService,
-			apps.Application.Module,
-			apps.RequestInfo,
-		)
+func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationRequest) (model.ApplicationRequest, error) {
 
-		mdmsList, ok := mdmsData["mdms"].([]interface{})
-		if !ok || len(mdmsList) == 0 {
-			log.Println("MDMS data missing or invalid")
-			return apps, errors.New("MDMS data missing or invalid")
-		}
+	// Step 1: Extract generateDemandAt from MDMS and check if action is allowed
+	schemaCode := os.Getenv("SERVICE_MODULE_NAME") + "." + os.Getenv("SERVICE_MASTER_NAME")
+	mdmsData, _ := s.MDMSV2Service.SearchMDMS(
+		apps.Application.TenantId,
+		schemaCode,
+		apps.Application.BusinessService,
+		apps.Application.Module,
+		apps.RequestInfo,
+	)
 
-		firstEntry, _ := mdmsList[0].(map[string]interface{})
-		data, _ := firstEntry["data"].(map[string]interface{})
-		billData, ok := data["bill"].(map[string]interface{})
-		if !ok {
-			log.Println("No 'bill' section in MDMS data")
-			return apps,errors.New("No 'bill' section in MDMS data")
-		}
-        // Step 2: Extract businessService from bill.BusinessService
-		var businessService string
-		if bsMap, ok := billData["BusinessService"].(map[string]interface{}); ok {
-			if code, ok := bsMap["code"].(string); ok {
-				businessService = code
-			}
-
-		}
-		// Step 3: Extract taxHeadCode from bill.taxHead
-
-		//demandDetais model.DemandDe
-		demandDetails,err := s.GetCalculation(apps)
-
-		
-		// Step 4: Extract taxPeriodFrom and taxPeriodTo from bill.taxPeriod
-		var taxPeriodFrom, taxPeriodTo *int64
-		if taxPeriods, ok := billData["taxPeriod"].([]interface{}); ok {
-			for _, item := range taxPeriods {
-				tp, _ := item.(map[string]interface{})
-				if tp["service"] == businessService {
-					if from, ok := tp["fromDate"].(float64); ok {
-						fromInt := int64(from)
-						taxPeriodFrom = &fromInt
-					}
-					if to, ok := tp["toDate"].(float64); ok {
-						toInt := int64(to)
-						taxPeriodTo = &toInt
-					}
-					break
-				}
-			}
-		}
-
-		var payerUser model.User // Replace with your actual User struct type
-		if len(apps.Application.Applicants) > 0 {
-			individualId := apps.Application.Applicants[0].UserId // Assuming this exists
-
-			// Fetch individual/user details using the ID
-			criteria := map[string]interface{}{
-				"uuid":     individualId,
-				"tenantId": apps.Application.TenantId,
-			}
-			indResp := s.individualService.GetIndividual(model.RequestInfo{}, criteria)
-			if jsonBytes, err := json.MarshalIndent(indResp, "", "  "); err == nil {
-				log.Printf("Indiviual response:\n%s\n", string(jsonBytes))
-			} else {
-				log.Printf("Indiviual response (raw): %+v\n", indResp)
-			}
-
-			if len(indResp.Individual) > 0 {
-				// Map individual data to User (Payer)
-				individual := indResp.Individual[0]
-
-				parsedUUID, err := uuid.Parse(individual.UserUuid)
-				if err != nil {
-					log.Printf("Invalid UUID format for UserUuid: %v", err)
-					return apps,errors.New("Invalid UUID format for UserUuid to enrich payer ")
-				}
-				payerUser = model.User{
-					Uuid:         parsedUUID,
-					UserName:     individual.UserDetails.UserName,
-					Name:         individual.Name.GivenName,
-					MobileNumber: individual.MobileNumber,
-					EmailId:      individual.Email,
-					TenantId:     individual.TenantId,
-					Type:         individual.UserDetails.Type,
-				}
-			}
-		} else {
-			log.Println("No applicants found to assign as payer")
-		}
-
-		d := demand.Demand{
-			ID:              uuid.NewString(),
-			TenantID:        apps.Application.TenantId,
-			ConsumerCode:    apps.Application.ApplicationNumber,
-			ConsumerType:    apps.Application.Module,
-			BusinessService: businessService,
-			Payer:           &payerUser,
-			TaxPeriodFrom:   taxPeriodFrom,
-			TaxPeriodTo:     taxPeriodTo,
-			DemandDetails:   demandDetails,
-			AuditDetails:    nil,
-		}
-		var demands []demand.Demand
-		demands = append(demands, d)
-
-		createdDemands, err := s.DemandService.SaveDemand(apps.RequestInfo, demands)
-		if err != nil {
-			log.Printf("Failed to save demand: %v", err)
-			return apps, fmt.Errorf("Failed to save demand: %v", err)
-
-		} else {
-			logJSON("Saved Demands Response", createdDemands)
-			_, err2 := s.SMSService.SendSMS(apps, apps.Application.TenantId, "DIGIT_STUDIO_DEMAND_CREATED", apps.Application.Applicants)
-			if err2 != nil {
-				log.Printf("Failed to send SMS: %v", err2)
-			}
-
-		}
-
-		// Optional: attach the demand to the application if needed
+	mdmsList, ok := mdmsData["mdms"].([]interface{})
+	if !ok || len(mdmsList) == 0 {
+		log.Println("MDMS data missing or invalid")
+		return apps, errors.New("MDMS data missing or invalid")
 	}
 
-	return apps,nil
+	firstEntry, _ := mdmsList[0].(map[string]interface{})
+	data, _ := firstEntry["data"].(map[string]interface{})
+	workflowData, ok := data["workflow"].(map[string]interface{})
+	if !ok {
+		log.Println("No 'workflow' section in MDMS")
+		return apps, errors.New("No 'workflow' section in MDMS")
+	}
+
+	// Extract generateDemandAt array
+	var generateDemandAtArray []string
+	if gdaRaw, ok := workflowData["generateDemandAt"]; ok {
+		if gdaList, ok := gdaRaw.([]interface{}); ok {
+			for _, item := range gdaList {
+				if str, ok := item.(string); ok {
+					generateDemandAtArray = append(generateDemandAtArray, str)
+				}
+			}
+		}
+	}
+
+	// Check if action is present in generateDemandAt array
+	shouldGenerate := false
+	for _, action := range generateDemandAtArray {
+		if strings.EqualFold(action, apps.Application.Workflow.Action) {
+			shouldGenerate = true
+			break
+		}
+	}
+
+	if !shouldGenerate {
+		log.Printf("Action '%s' not in generateDemandAt: %+v", apps.Application.Workflow.Action, generateDemandAtArray)
+		return apps, nil
+	}
+
+	// Step 2: Extract bill data
+	billData, ok := data["bill"].(map[string]interface{})
+	if !ok {
+		log.Println("No 'bill' section in MDMS data")
+		return apps, errors.New("No 'bill' section in MDMS data")
+	}
+
+	var businessService string
+	if bsMap, ok := billData["BusinessService"].(map[string]interface{}); ok {
+		if code, ok := bsMap["code"].(string); ok {
+			businessService = code
+		}
+	}
+
+	// Step 3: Get demand details
+	demandDetails, err := s.GetCalculation(apps)
+	if err != nil {
+		return apps, err
+	}
+
+	// Step 4: Extract tax period
+	var taxPeriodFrom, taxPeriodTo *int64
+	if taxPeriods, ok := billData["taxPeriod"].([]interface{}); ok {
+		for _, item := range taxPeriods {
+			tp, _ := item.(map[string]interface{})
+			if tp["service"] == businessService {
+				if from, ok := tp["fromDate"].(float64); ok {
+					fromInt := int64(from)
+					taxPeriodFrom = &fromInt
+				}
+				if to, ok := tp["toDate"].(float64); ok {
+					toInt := int64(to)
+					taxPeriodTo = &toInt
+				}
+				break
+			}
+		}
+	}
+
+	// Step 5: Get Payer Info
+	var payerUser model.User
+	if len(apps.Application.Applicants) > 0 {
+		individualId := apps.Application.Applicants[0].UserId
+		criteria := map[string]interface{}{
+			"uuid":     individualId,
+			"tenantId": apps.Application.TenantId,
+		}
+		indResp := s.individualService.GetIndividual(model.RequestInfo{}, criteria)
+		if len(indResp.Individual) > 0 {
+			individual := indResp.Individual[0]
+			parsedUUID, err := uuid.Parse(individual.UserUuid)
+			if err != nil {
+				log.Printf("Invalid UUID format for UserUuid: %v", err)
+				return apps, errors.New("Invalid UUID format for UserUuid to enrich payer")
+			}
+			payerUser = model.User{
+				Uuid:         parsedUUID,
+				UserName:     individual.UserDetails.UserName,
+				Name:         individual.Name.GivenName,
+				MobileNumber: individual.MobileNumber,
+				EmailId:      individual.Email,
+				TenantId:     individual.TenantId,
+				Type:         individual.UserDetails.Type,
+			}
+		}
+	} else {
+		log.Println("No applicants found to assign as payer")
+	}
+
+	// Step 6: Construct and save demand
+	d := demand.Demand{
+		ID:              uuid.NewString(),
+		TenantID:        apps.Application.TenantId,
+		ConsumerCode:    apps.Application.ApplicationNumber,
+		ConsumerType:    apps.Application.Module,
+		BusinessService: businessService,
+		Payer:           &payerUser,
+		TaxPeriodFrom:   taxPeriodFrom,
+		TaxPeriodTo:     taxPeriodTo,
+		DemandDetails:   demandDetails,
+		AuditDetails:    nil,
+	}
+
+	createdDemands, err := s.DemandService.SaveDemand(apps.RequestInfo, []demand.Demand{d})
+	if err != nil {
+		log.Printf("Failed to save demand: %v", err)
+		return apps, fmt.Errorf("Failed to save demand: %v", err)
+	}
+	logJSON("Saved Demands Response", createdDemands)
+
+	return apps, nil
 }
+
 
 func logJSON(message string, data interface{}) {
 	if jsonData, err := json.Marshal(data); err == nil {
@@ -473,13 +488,13 @@ func (s *EnrichmentService) GetCalculation(apps model.ApplicationRequest) ([]dem
 				continue
 			}
 	
-			key, ok := item["taxHeadCode"].(string)
+			key, ok := item["taxhead"].(string)
 			if !ok {
 				continue
 			}
 	
 			var floatVal float64
-			switch v := item["taxAmount"].(type) {
+			switch v := item["amount"].(type) {
 			case float64:
 				floatVal = v
 			case int:

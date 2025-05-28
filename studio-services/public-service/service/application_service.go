@@ -11,17 +11,18 @@ import (
 type ApplicationService struct {
 	repo              *repository.ApplicationRepository
 	enrichmentService *EnrichmentService
+	workflowIntegrator *WorkflowIntegrator
 }
 
-func NewApplicationService(repo *repository.ApplicationRepository, enrichmentService *EnrichmentService) *ApplicationService {
-	return &ApplicationService{repo: repo, enrichmentService: enrichmentService}
+func NewApplicationService(repo *repository.ApplicationRepository, enrichmentService *EnrichmentService,workflowIntegrator *WorkflowIntegrator) *ApplicationService {
+	return &ApplicationService{repo: repo, enrichmentService: enrichmentService,workflowIntegrator: workflowIntegrator}
 }
 
 func (s *ApplicationService) CreateApplication(ctx context.Context, req model.ApplicationRequest, ServiceCode string) (model.ApplicationResponse, error) {
 	return s.repo.CreateUsingKafka(ctx, req, ServiceCode)
 }
 
-func (s *ApplicationService) SearchApplication(ctx context.Context, criteria model.SearchCriteria) (model.SearchResponse, error) {
+func (s *ApplicationService) SearchApplication(ctx context.Context, criteria model.SearchCriteria,authToken  string) (model.SearchResponse, error) {
 	resp, err := s.repo.SearchWithIndividual(ctx, criteria)
 	log.Println(resp)
 	if err != nil {
@@ -33,6 +34,22 @@ func (s *ApplicationService) SearchApplication(ctx context.Context, criteria mod
 		log.Printf("Search Application respons (raw): %+v\n", resp)
 	}
 	resp.Application = s.enrichmentService.EnrichApplicationsWithIndividuals(resp.Application, criteria)
+	// Prepare RequestInfo with authToken
+	requestInfo := model.RequestInfo{
+		AuthToken: authToken,
+		UserInfo: &model.User{
+			
+		},
+	}
+
+	// Iterate through applications and enrich with workflow data
+	for i := range resp.Application {
+		err := s.workflowIntegrator.SearchWorkflow(&resp.Application[i], requestInfo)
+		if err != nil {
+			log.Printf("Error enriching application with workflow: %v", err)
+			// Optionally return or continue depending on desired behavior
+		}
+	}
 	return resp, nil
 }
 

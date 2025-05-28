@@ -31,16 +31,13 @@ const (
 type WorkflowIntegrator struct {
 	HttpClient    *http.Client
 	MDMSV2Service *MDMSV2Service
-	smsService    *SMSService 
 }
 
 // NewWorkflowIntegrator returns a new instance of WorkflowIntegrator.
-func NewWorkflowIntegrator(MdmsV2sService *MDMSV2Service, smsService *SMSService,
-	) *WorkflowIntegrator {
+func NewWorkflowIntegrator(MdmsV2sService *MDMSV2Service) *WorkflowIntegrator {
 	return &WorkflowIntegrator{
 		HttpClient:    &http.Client{},
 		MDMSV2Service: MdmsV2sService,
-		smsService: smsService,
 	}
 }
 
@@ -133,9 +130,6 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	}
 	app.ProcessInstance = &wfResponse.ProcessInstances
 	req.Application.ProcessInstance = &wfResponse.ProcessInstances
-    if req.Application.Workflow.Action == "APPROVE" {
-         wi.smsService.SendSMS(*req,req.Application.TenantId,"DIGIT_STUDIO_APPLY_APPROVED",req.Application.Applicants)
-	}
 	return nil
 }
 

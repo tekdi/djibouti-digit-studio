@@ -64,11 +64,14 @@ func main() {
 	idgenSvc := service.NewIdGenService(restRepo)
 	demandSvc := service.NewDemandService(restRepo,mdmsv2sSvc)
 	localizationService := service.NewLocalizationService(restRepo)
-	smsService := service.NewSMSService(restRepo, localizationService, kafkaProducer, demandSvc)
-	enrichSvc := service.NewEnrichmentService(individualSvc, demandSvc, mdmsSvc, mdmsv2sSvc, idgenSvc, smsService)
-	appSvc := service.NewApplicationService(appRepo, enrichSvc)
 	serviceSvc := service.NewPublicService(publicRepo)
-	workflowIntegrator := service.NewWorkflowIntegrator(mdmsv2sSvc, smsService)
+	workflowIntegrator := service.NewWorkflowIntegrator(mdmsv2sSvc)
+	smsService := service.NewSMSService(restRepo, localizationService, kafkaProducer, demandSvc,workflowIntegrator,mdmsv2sSvc)
+	enrichSvc := service.NewEnrichmentService(individualSvc, demandSvc, mdmsSvc, mdmsv2sSvc, idgenSvc, smsService)
+	appSvc := service.NewApplicationService(appRepo, enrichSvc,workflowIntegrator)
+
+	
+
 
 	// Start Kafka consumer in a separate goroutine if enabled
 	if os.Getenv("KAFKA_PAYMENT_CONSUMER_ENABLED") == "true" {

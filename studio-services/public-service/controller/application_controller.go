@@ -132,9 +132,9 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	_, err2 := c.smsService.SendSMS(req, req.Application.TenantId, "DIGIT_STUDIO_NEW_APPLICATION", req.Application.Applicants)
+	_, err2 := c.smsService.SendSMS(req, req.Application.TenantId, req.Application.Applicants)
 	if err2 != nil {
-		log.Printf("error sending sms ")
+		log.Printf("error sending sms  %v",err2)
 	}
 	log.Printf("ProcessInstance enriched: %+v", res.Application.ProcessInstance)
 	w.Header().Set("Content-Type", "application/json")
@@ -204,7 +204,7 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 	}
 	log.Println("inside search", criteria.SearchCriteria)
 	ctx := context.Background()
-	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria)
+	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria,AuthToken)
 	if err != nil {
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -276,6 +276,10 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		return
 	}
 	log.Printf("ProcessInstance enriched: %+v", res.Application.ProcessInstance)
+	_, err2 := c.smsService.SendSMS(req, req.Application.TenantId, req.Application.Applicants)
+	if err2 != nil {
+		log.Printf("error sending sms  %v",err2)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
