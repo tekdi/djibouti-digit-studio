@@ -43,8 +43,8 @@
     @apply inline-flex items-center h-10 w-full max-w-full;
     padding: theme(digitv2.spacers.spacer2);
     gap: theme(digitv2.spacers.spacer2);
-    border-radius: theme(digitv2.spacers.spacer1);
-    background: theme(digitv2.lightTheme.generic-background);
+    border-radius: 50px;
+    background: #D6D5D4;
     margin: theme(digitv2.spacers.spacer0);
     border: 0.063rem solid theme(digitv2.lightTheme.generic-divider);
 
@@ -100,7 +100,7 @@
     .close-icon {
       @apply items-center w-6 h-6 cursor-pointer flex-shrink-0;
       border: 0.063rem solid theme(digitv2.lightTheme.text-secondary);
-      border-radius: theme(digitv2.spacers.spacer1);
+      border-radius: 12px;
       background-color: theme(digitv2.lightTheme.text-secondary);
       display: flex !important;
       justify-content: center;

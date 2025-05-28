@@ -44,27 +44,28 @@ export const InboxConfig = () => {
                     fields: [
                         {
                             inline: true,
-                            label: `${prefix}_APPLICATION_NUMBER`,
+                            label: ``,
                             isMandatory: false,
                             type: "text",
                             disable: false,
-                            populators: { name: "applicationNumber", error: "Error!" },
+                            populators: { name: "applicationNumber", error: "Error!", placeholder: `Search by application number or name...` }
+                            
                         },
-                        {
-                            label: `${prefix}_BUSINESS_SERVICE`,
-                            isMandatory: true,
-                            key: "businessService",
-                            type: "dropdown",
-                            disable: false,
-                            preProcess: {
-                                updateDependent: ["populators.options"]
-                            },
-                            populators: {
-                                name: "businessService",
-                                optionsKey: "name",
-                                options: []
-                            }
-                        },
+                        // {
+                        //     label: `${prefix}_BUSINESS_SERVICE`,
+                        //     isMandatory: true,
+                        //     key: "businessService",
+                        //     type: "dropdown",
+                        //     disable: false,
+                        //     preProcess: {
+                        //         updateDependent: ["populators.options"]
+                        //     },
+                        //     populators: {
+                        //         name: "businessService",
+                        //         optionsKey: "name",
+                        //         options: []
+                        //     }
+                        // },
                     ],
                 },
                 label: "",
@@ -105,12 +106,12 @@ export const InboxConfig = () => {
                                 name: "assignee",
                                 options: [
                                     {
-                                        code: `${prefix}_ASSIGNED_TO_ME`,
-                                        name: `${prefix}_ASSIGNED_TO_ME`,
+                                        code: `${prefix}_RECENT`,
+                                        name: `${prefix}_RECENT`,
                                     },
                                     {
-                                        code: `${prefix}_ASSIGNED_TO_ALL`,
-                                        name: `${prefix}_ASSIGNED_TO_ALL`,
+                                        code: `${prefix}_OLDEST`,
+                                        name: `${prefix}_OLDEST`,
                                     },
                                 ],
                                 optionsKey: "name",
@@ -142,23 +143,38 @@ export const InboxConfig = () => {
                         //         //   }]
                         //     },
                         // },
-                        {
-                            label: `${prefix}_COMMON_WARD`,
-                            type: "locationdropdown",
-                            isMandatory: false,
+                         {
+                            label: `${prefix}_BUSINESS_SERVICE`,
+                            isMandatory: true,
+                            key: "businessService",
+                            type: "multiselectdropdown",
                             disable: false,
+                            preProcess: {
+                                updateDependent: ["populators.options"]
+                            },
                             populators: {
-                                name: "ward",
-                                type: "ward",
-                                optionsKey: "i18nKey",
-                                // defaultText: "COMMON_SELECT_WARD",
-                                // selectedText: "COMMON_SELECTED",
-                                allowMultiSelect: true
+                                name: "businessService",
+                                optionsKey: "name",
+                                options: []
                             }
                         },
+                        // {
+                        //     label: `${prefix}_COMMON_WARD`,
+                        //     type: "radioordropdown",
+                        //     isMandatory: false,
+                        //     disable: false,
+                        //     populators: {
+                        //         name: "ward",
+                        //         type: "ward",
+                        //         optionsKey: "i18nKey",
+                        //         // defaultText: "COMMON_SELECT_WARD",
+                        //         // selectedText: "COMMON_SELECTED",
+                        //         allowMultiSelect: true
+                        //     }
+                        // },
                         {
                             label: `${prefix}_COMMON_WORKFLOW_STATES`,
-                            type: "workflowstatesfilter",
+                            type: "dropdown",
                             labelClassName: "checkbox-status-filter-label",
                             isMandatory: false,
                             disable: false,

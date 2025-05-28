@@ -151,6 +151,9 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     var { isLoading, data, revalidate, isFetching, error, refetch } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
   }
 
+  const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles;
+  const roleLabel = roles?.some(role => role?.code === "BPA_ARCHITECT") ? "ARCHITECT" : roles && roles[0]?.code;
+
   const closeToast = () => {
     setTimeout(() => {
       setShowToast(null);
@@ -187,7 +190,25 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
   return (
     <InboxContext.Provider value={{ state, dispatch }}>
       <div className="digit-inbox-search-composer-header-action-wrapper">
-        {configs?.headerLabel && <HeaderComponent className="digit-inbox-search-composer-header">{t(configs?.headerLabel)}</HeaderComponent>}
+        {configs?.headerLabel && <HeaderComponent className="digit-inbox-search-composer-header">
+          {t(`${configs?.headerLabel}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name}! (${roleLabel})`)}
+          </HeaderComponent>}
+
+        {configs?.type === "inbox" && configs?.sections?.search?.show && (
+            <MediaQuery minWidth={426}>
+              <div className="digit-section search">
+                <SearchComponent
+                  uiConfig={configs?.sections?.search?.uiConfig}
+                  header={configs?.sections?.search?.label}
+                  screenType={configs.type}
+                  fullConfig={configs}
+                  data={data}
+                  showTabCount={configs?.sections?.search?.uiConfig?.showTabCount}
+                />
+              </div>
+            </MediaQuery>
+          )}
+
         {Digit.Utils.didEmployeeHasAtleastOneRole(configs?.actions?.actionRoles) && (
           <Button
             label={t(configs?.actions?.actionLabel)}
@@ -203,7 +224,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
       </div>
       <div className="digit-inbox-search-component-wrapper ">
         <div className={`digit-sections-parent ${configs?.type}`}>
-          {configs?.sections?.links?.show && (
+          {configs?.sections?.links?.show && configs?.sections?.links?.uiConfig?.links?.length>0 && (
             <MediaQuery minWidth={426}>
               <div className="digit-section links">
                 <InboxSearchLinks
@@ -242,7 +263,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
               />
             </div>
           )}
-          {configs?.type === "inbox" && configs?.sections?.search?.show && (
+          {/* {configs?.type === "inbox" && configs?.sections?.search?.show && (
             <MediaQuery minWidth={426}>
               <div className="digit-section search">
                 <SearchComponent
@@ -255,7 +276,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
                 />
               </div>
             </MediaQuery>
-          )}
+          )} */}
           {configs?.type === "inbox" && configs?.sections?.filter?.show && (
             <MediaQuery minWidth={426}>
               <div className="digit-section filter">

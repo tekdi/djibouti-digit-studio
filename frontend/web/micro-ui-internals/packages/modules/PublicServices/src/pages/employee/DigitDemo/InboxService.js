@@ -45,7 +45,7 @@ const InboxService = () => {
     return Digit.Utils.preProcessMDMSConfigInboxSearch(
       t,
       configs,
-      "sections.search.uiConfig.fields",
+      "sections.filter.uiConfig.fields",
       {
         updateDependent: [
           {

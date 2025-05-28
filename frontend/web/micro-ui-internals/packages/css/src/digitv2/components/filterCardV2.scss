@@ -87,9 +87,18 @@
   position: relative;
 
   .digit-radio-options-wrap {
-    margin-bottom: theme(digitv2.spacers.spacer0);
+      margin-bottom: theme(digitv2.spacers.spacer0);
+      display: flex;
+      flex-direction: column !important;
+      justify-content: flex-start !important;
+      gap: 0 !important;
+      width: 100% !important;
+  
+      label {
+        color: #0B0C0C !important;
+      }
+    }
   }
-}
 
 .filter-card-horizontal {
   display: grid;
@@ -115,6 +124,18 @@
     /* Media query for desktop */
     max-width: 37.5rem;
   }
+.digit-dropdown-select {
+  border-radius: 12px !important;
+}
+
+.label-styles {
+  color: #0B0C0C !important;
+}
+
+.digit-button-primary {
+  border: 1px solid #006769 !important;
+  border-radius: 12px !important;
+}
 }
 
 
@@ -127,6 +148,7 @@
     display: flex !important;
     gap: 0.5rem;
     align-items: center;
+    width: 100%;
 
     .close-icon {
       cursor: pointer;
@@ -147,8 +169,9 @@
   }
 
   @media (min-aspect-ratio: 3/4) {
-    padding: theme(digitv2.spacers.spacer6);
+    padding: theme(digitv2.spacers.spacer4);
     padding-bottom: theme(digitv2.spacers.spacer0);
+    padding-top: theme(digitv2.spacers.spacer6);
 
     &.with-shadow {
       padding-bottom: theme(digitv2.spacers.spacer6);
@@ -176,7 +199,10 @@
 
 .filter-header .filter-title {
   @extend .typography.caption-l;
-  color: theme(digitv2.lightTheme.primary-2);
+  color: #0B0C0C !important;
+  font-size: 24px !important;
+  font-weight: 400 !important;
+
 }
 
 .content-container {
@@ -187,7 +213,7 @@
 
   @media (min-aspect-ratio: 3/4) {
     gap: theme(digitv2.spacers.spacer6);
-    padding: theme(digitv2.spacers.spacer6) theme(digitv2.spacers.spacer6) theme(digitv2.spacers.spacer0) theme(digitv2.spacers.spacer6);
+    padding: theme(digitv2.spacers.spacer6) theme(digitv2.spacers.spacer4) theme(digitv2.spacers.spacer0) theme(digitv2.spacers.spacer4);
 
     &.with-shadow,
     &.without-footer {
@@ -289,7 +315,7 @@
   }
 
   @media (min-aspect-ratio: 3/4) {
-    padding: theme(digitv2.spacers.spacer6);
+    padding: theme(digitv2.spacers.spacer6) theme(digitv2.spacers.spacer4) theme(digitv2.spacers.spacer8) theme(digitv2.spacers.spacer4);
   }
 
   @media (min-aspect-ratio: 9/16) and (max-aspect-ratio: 3/4) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Fragment } from "react";
 import { SVG } from "../atoms/SVG";
 import PropTypes from 'prop-types';
 import Button from "../atoms/Button";
+import { CustomSVG } from "../atoms";
 
 const FilterCard = ({
   title,
@@ -20,7 +21,8 @@ const FilterCard = ({
   hideIcon,
   isPopup = false,
   onOverlayClick,
-  contentClassName
+  contentClassName,
+  handleFilterRefresh
 }) => {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const childrenWrapRef = useRef(null);
@@ -160,12 +162,13 @@ const FilterCard = ({
             <SVG.FilterAlt
               width={"32px"}
               height={"32px"}
-              fill={"#C84C0E"}
+              fill={"#505A5F"}
             ></SVG.FilterAlt>
           )
         ) : null}
 
         {title && <div className="filter-title">{title}</div>}
+        <div className="icon-refresh" onClick={handleFilterRefresh}><CustomSVG.RefreshIcon fill={"#505A5F"}></CustomSVG.RefreshIcon></div>
         {addClose && (
           <div className="close-icon" onClick={handleClose}>
             <SVG.Close width={"32px"} height={"32px"} fill={"#363636"} />

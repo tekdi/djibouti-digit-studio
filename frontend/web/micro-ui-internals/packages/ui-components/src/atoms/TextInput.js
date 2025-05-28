@@ -252,7 +252,7 @@ const TextInput = (props) => {
               className={inputClassNameForMandatory}
               placeholder={StringManipulator(
                 "TOSENTENCECASE",
-                props.placeholder
+                props.placeholder || props.populators?.placeholder
               )}
               onChange={(event) => {
                     if (props?.type === "number" && props?.populators?.maxLength) {
@@ -333,7 +333,7 @@ const TextInput = (props) => {
               className={inputClassName}
               placeholder={StringManipulator(
                 "TOSENTENCECASE",
-                props.placeholder
+                props.placeholder || props.populators?.placeholder
               )}
               onChange={(event) => {
                 if (props?.type === "number" && props?.maxLength) {

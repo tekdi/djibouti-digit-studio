@@ -16,8 +16,8 @@
   .digit-dropdown-select {
     @extend .light-input-border;
     @apply relative block w-full h-10 bg-white;
-      border: 0.094rem solid theme(digitv2.lightTheme.generic-inputborder);
-      border-radius: 8px;
+    border-radius: 12px !important;
+    border: 1.5px solid #d4d4d4 !important;
     &.digit-field-error {
       border: 0.063rem solid;
       border-color: theme(digitv2.lightTheme.alert-error);
@@ -77,8 +77,8 @@
   }
   .digit-dropdown-select-active {
     @apply relative block w-full h-10 bg-white;
-    border: 0.094rem solid theme(digitv2.lightTheme.primary-1);
-    border-radius: 8px;
+    border-radius: 12px !important;
+    border: 1.5px solid #d4d4d4 !important;
     input[type="text"] {
       @extend .typography.body-s;
       @media (max-aspect-ratio: 9/16) {
@@ -476,7 +476,8 @@
   .digit-dropdown-select {
     @extend .light-input-border;
     @apply relative block w-full h-10 bg-white;
-    border: 0.063rem solid theme(digitv2.lightTheme.text-secondary);
+    border-radius: 8px !important;
+    border: 1.5px solid #d4d4d4 !important;
     input[type="text"] {
       @extend .typography.body-s;
       @media (max-aspect-ratio: 9/16) {
@@ -532,7 +533,8 @@
   }
   .digit-dropdown-select-active {
     @apply relative block w-full h-10;
-    border: 0.063rem solid theme(digitv2.lightTheme.primary-1);
+    border-radius: 12px !important;
+    border: 1.5px solid #d4d4d4 !important;
     input[type="text"] {
       @extend .typography.body-s;
       @media (max-aspect-ratio: 9/16) {

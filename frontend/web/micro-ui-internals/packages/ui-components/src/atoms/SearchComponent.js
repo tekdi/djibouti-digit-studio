@@ -11,6 +11,7 @@ import { CustomSVG } from "./CustomSVG";
 import Tab from "./Tab";
 import Button from "./Button";
 import FilterCard from "../molecules/FilterCard";
+import { SVG } from "./SVG";
 
 const setUIConf = (uiConfig) => {
   if(uiConfig.additionalTabs)
@@ -238,6 +239,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
           addClose={uiConfig?.isPopUp}
           isPopup={uiConfig?.isPopUp}
           contentClassName={"digit-inbox-search-composer-filter-card-content"}
+          handleFilterRefresh={handleFilterRefresh}
         >
           {renderContent()}
         </FilterCard>
@@ -260,16 +262,14 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                 }`}
               >
                 {renderContent()}
-                <div
-                  className={`digit-search-button-wrapper ${screenType} ${
-                    uiConfig?.type
-                  } ${uiConfig?.searchWrapperClassName} ${
-                    addMargin ? "add-margin" : "donot-add-margin"
-                  }`}
-                  style={uiConfig?.searchWrapperStyles}
-                  ref={buttonWrapperRef}
-                >
-                  {uiConfig?.secondaryLabel && (
+                  <div
+                    className={`digit-search-button-wrapper ${screenType} ${uiConfig?.type
+                      } ${uiConfig?.searchWrapperClassName} ${addMargin ? "add-margin" : "donot-add-margin"
+                      }`}
+                    style={uiConfig?.searchWrapperStyles}
+                    ref={buttonWrapperRef}
+                  >
+                    {/* {uiConfig?.secondaryLabel && (
                     <Button
                       variation="teritiary"
                       label={t(uiConfig?.secondaryLabel)}
@@ -277,28 +277,43 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
                       size={"medium"}
                       onClick={clearSearch}
                     />
-                  )}
-                  {uiConfig?.isPopUp && uiConfig?.primaryLabel && (
-                    <Button
-                      variation="primary"
-                      label={t(uiConfig?.primaryLabel)}
-                      type="submit"
-                      size={"medium"}
-                      onClick={(e) => handleSubmit(e)}
-                    />
-                  )}
-                  {!uiConfig?.isPopUp && uiConfig?.primaryLabel && (
-                    <Button
-                      variation="primary"
-                      label={t(uiConfig?.primaryLabel)}
-                      type="submit"
-                      size={"medium"}
-                      onClick={(e) => handleSubmit(e)}
-                    />
-                  )}
+                  )} */}
+                    {uiConfig?.isPopUp && uiConfig?.primaryLabel && (
+                      <Button
+                        variation="primary"
+                        label={t(uiConfig?.primaryLabel)}
+                        type="submit"
+                        size={"medium"}
+                        onClick={(e) => handleSubmit(e)}
+                      />
+                    )}
+                    {!uiConfig?.isPopUp && uiConfig?.primaryLabel && (
+                      // <Button
+                      //   variation="primary"
+                      //   label={''}
+                      //   type="submit"
+                      //   size={"medium"}
+                      //   onClick={(e) => handleSubmit(e)}
+                      // >
+
+                      // </Button>
+                      <button type="submit" className="digit-search-button-wrapper-search-icon" onClick={(e) => handleSubmit(e)}>
+                        <SVG.Search
+                          width="18px"
+                          height="18px"
+                          fill="#FFFFFF"
+                        />
+                      </button>
+                    )}
+                  </div>
+
+
+                  {/* <Link className="digit-submit-bar create-application-button" to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
+                  Commencer une nouvelle demande
+                  </Link> */}
+
                 </div>
               </div>
-            </div>
           </form>
           {showToast && (
             <Toast

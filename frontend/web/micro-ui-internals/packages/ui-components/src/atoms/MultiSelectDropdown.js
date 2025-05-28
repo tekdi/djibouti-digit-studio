@@ -766,7 +766,7 @@ const MultiSelectDropdown = ({
           </div>
         ) : null}
       </div>
-      {config?.isDropdownWithChip ? (
+      {config ? (
         <div className="digit-tag-container">
           {alreadyQueuedSelectedState.length > 0 &&
             alreadyQueuedSelectedState
@@ -823,8 +823,8 @@ const MultiSelectDropdown = ({
                 padding: "0.5rem",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "0.25rem",
-                border: "1px solid #C84C0E",
+                borderRadius: "12px",
+                border: "1px solid #006769",
                 background: background,
               }}
               textStyles={{
