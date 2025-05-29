@@ -153,7 +153,7 @@ const WorkflowActions = ({
 
     setDisplayMenu(false);
     setSelectedAction(action);
-    if (action.action.includes("PAY")) {
+    if (action.action.includes("MAKE_PAYMENT")) {
       history.push(
         `/${window.contextPath}/employee/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}`,
         {
