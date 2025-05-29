@@ -12,6 +12,29 @@ const businessServiceMap = {};
 
 const inboxModuleNameMap = {};
 
+const colorCodes = {
+  INITIATED: ["#DDDDDD", "#4B4B4B"],
+  AGENT_NOT_ASSIGNED: ["#DDDDDD", "#4B4B4B"],
+  PENDING_ACTION_BY_AGENT: ["#F1F4CF", "#746D00"],
+  AGENT_REPORT_READY: ["#CFF4E2", "#00703C"],
+  DECLARED_NON_CONFORM: ["#F4DECF", "#9C4900"],
+  NOT_FORWARDED_TO_COMMISSIONER: ["#DDDDDD", "#4B4B4B"],
+  AWAITING_ON_COMMISSIONER: ["#F1F4CF", "#746D00"],
+  AWAITING_CITIZEN_PAYMENT: ["#F4CFD0", "#9C0003"],
+  CITIZEN_PAYMENT_DONE: ["#CFF4E2", "#00703C"],
+  PERMIT_GRANTED: ["#CFF4E2", "#00703C"],
+  PERMIT_REJECTED: ["#F4DECF", "#9C4900"]
+}
+
+function formatCreatedTime(timestamp) {
+  const date = new Date(Number(timestamp));
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'short' });
+  const year = date.getFullYear();
+
+  return `${day} ${month}, ${year}`;
+}
+
 const userType = Digit.UserService.getType().toLowerCase();
 
 export const UICustomizations = {
@@ -114,11 +137,16 @@ export const UICustomizations = {
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
+      
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const stateKey = row?.ProcessInstance?.state?.state?.toUpperCase();
+      const [bgColor, textColor] = colorCodes[stateKey] || ["#DDDDDD","#4B4B4B"];
+
       console.log(row, key, column, value, t, searchResult);
-      if (key === "Application Number") {
+      if (key === "APPLICATION_NUMBER") {
         return (
           <span className="link">
             <Link
@@ -126,7 +154,27 @@ export const UICustomizations = {
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
+            <div style={{color:"#949494"}}>
+            {formatCreatedTime(row?.businessObject?.auditDetails?.createdTime)}
+            </div>
           </span>
+        );
+      }
+      if (key === "APPLICANT_NAME") {
+        return (
+         <div style={{display:"flex",justifyContent:"center", flexDirection:"column", gap:"4px"}}>
+          <div>{row?.businessObject?.applicants[0]?.name}</div>
+          <div style={{color:"#949494"}}>{row?.ProcessInstance?.assigner?.name}</div>
+         </div>
+        );
+      }
+      if (key === "WORKFLOW_STATUS") {
+        return (
+        <div>
+          <span style={{ backgroundColor: bgColor, color: textColor, width:"fit-content", padding:"4px 12px", borderRadius:"6px"}}>
+            {t(`${row?.businessObject?.businessService}_${row?.ProcessInstance?.state?.state}`.toUpperCase())}
+            </span>
+        </div>
         );
       }
     },

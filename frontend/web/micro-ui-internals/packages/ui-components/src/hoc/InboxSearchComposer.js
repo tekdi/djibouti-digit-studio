@@ -152,7 +152,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
   }
 
   const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles;
-  const roleLabel = roles?.some(role => role?.code === "BPA_ARCHITECT") ? "ARCHITECT" : roles && roles[0]?.code;
+  const roleLabel = roles?.some(role => role?.code === "BPA_ARCHITECT") ? "BPA_ARCHITECT" : roles && roles[0]?.code;
 
   const closeToast = () => {
     setTimeout(() => {
@@ -191,7 +191,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     <InboxContext.Provider value={{ state, dispatch }}>
       <div className="digit-inbox-search-composer-header-action-wrapper">
         {configs?.headerLabel && <HeaderComponent className="digit-inbox-search-composer-header">
-          {t(`${configs?.headerLabel}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name}! (${roleLabel})`)}
+          {`${t(configs?.headerLabel)}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name}! (${t(roleLabel)})`}
           </HeaderComponent>}
 
         {configs?.type === "inbox" && configs?.sections?.search?.show && (

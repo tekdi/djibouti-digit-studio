@@ -775,3 +775,58 @@ input[type="number"] {
   cursor: pointer;
   margin-left: auto;
 }
+.digit-results-table-wrapper {
+  box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.15);
+  height: fit-content !important;
+
+  .digit-card-component {
+    padding: 0 !important;
+  }
+
+  .rdt_TableHeadRow {
+    background-color: #EDF1F2 !important;
+    border-radius: 12px 12px 0 0
+  }
+
+  .rdt_TableCol {
+    color: #006769 !important;
+    border-right: none !important;
+  }
+
+  .rdt_TableCell {
+    font-size: 14px !important;
+    border: none !important;
+  }
+
+  .rdt_Pagination {
+    background-color: #EDF1F2 !important;
+    border-radius: 0 0 12px 12px !important;
+    color: #363636;
+    font-size: 16px;
+    font-weight: 700;
+    border: none !important;
+  }
+
+  .rdt_TableRow:hover {
+    background-color: #EDF1F2 !important;
+  }
+
+  .rdt_TableBody {
+    border: 1px solid #D6D5D4
+  }
+
+  ;
+
+  .rdt_TableCol_Sortable {
+    border-right: 1px solid #787878 !important;
+  }
+
+  .digit-card-component {
+    border-radius: 12px 12px 12px 12px !important;
+    border: 1px solid #EDF1F2 !important;
+  }
+
+  .digit-no-data-found {
+    min-height: 420px !important;
+  }
+}

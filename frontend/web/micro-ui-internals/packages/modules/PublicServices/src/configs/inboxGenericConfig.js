@@ -47,7 +47,7 @@ export const InboxConfig = () => {
               isMandatory: false,
               type: "text",
               disable: false,
-              populators: { name: "applicationNumber", error: "Error!", placeholder: `Search by application number or name...` },
+              populators: { name: "applicationNumber", error: "Error!", placeholder: `SEARCH_BY_APPLICATION_NUMBER` },
             },
             // {
             //     label: `${prefix}_BUSINESS_SERVICE`,
@@ -171,16 +171,16 @@ export const InboxConfig = () => {
             // },
             {
               label: `${prefix}_COMMON_WORKFLOW_STATES`,
-              type: "dropdown",
+              type: "workflowstatesfilter",
               labelClassName: "checkbox-status-filter-label",
               isMandatory: false,
               disable: false,
               populators: {
-                name: "state",
-                labelPrefix: "WF_MUSTOR_",
-                businessService: "NEWTL",
+                  name: "state",
+                  labelPrefix: "",
+                  businessService: "NEWTL",
               },
-            },
+          },
           ],
         },
         label: `ES_COMMON_FILTERS`,
@@ -190,21 +190,25 @@ export const InboxConfig = () => {
         uiConfig: {
           columns: [
             {
-              label: "Application Number",
+              label: "APPLICATION_NUMBER",
               jsonPath: "businessObject.applicationNumber",
               additionalCustomization: true,
+              secondaryLabel:"CREATION_DATE"
             },
             {
-              label: "Applicant's Name",
+              label: "APPLICANT_NAME",
               jsonPath: "businessObject.applicants[0].name",
+              additionalCustomization: true,
+              secondaryLabel:"ARCHITECT_NAME"
             },
             {
-              label: "Business Service",
+              label: "BUSINESS_SERVICE_LABEL",
               jsonPath: "businessObject.businessService",
             },
             {
-              label: "Status",
+              label: "WORKFLOW_STATUS",
               jsonPath: "ProcessInstance.state.state",
+              additionalCustomization: true,
             },
           ],
           tableProps: {
