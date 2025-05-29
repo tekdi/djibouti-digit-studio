@@ -10,6 +10,7 @@ import {
   ActionBar,
   SubmitBar,
   ArrowRightInbox,
+  ArrowDown
 } from "@egovernments/digit-ui-react-components";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -100,20 +101,21 @@ const Response = () => {
         whichSvg={`${isResponseSuccess ? "tick" : null}`}
         applicationNumber={state?.applicationNumber}
       />
-      <div style={{ display: "flex", gap: "1rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
         </LinkLabel>
-      </div>
-      <ActionBar style={{display: "flex", justifyContent: "space-between"}}>
-         {service === "BPA_PCO" && (
-          <button style={{width: "20%", backgroundColor: "#006769", color: "white", padding: "10px", border: "none", cursor: "pointer", fontSize: "19px", fontWeight:'700'}} onClick={handleTemplateDownload}>
+        {service === "BPA_PCO" && (
+           <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+            <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
             {t("CS_COMMON_DOWNLOAD_RECEIPT")}
-          </button>
+          </LinkLabel>
         )}
+      </div>
+      <ActionBar>
         <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
-          <SubmitBar label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
+          <SubmitBar style={{borderRadius: "10px"}} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
         </Link>
       </ActionBar>
     </Card>
