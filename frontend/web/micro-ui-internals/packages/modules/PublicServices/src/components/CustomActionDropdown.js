@@ -33,6 +33,8 @@ const CustomActionDropdown = ({
           cursor: isDisabled ? "not-allowed" : "pointer",
           minWidth: "200px",
           appearance: "none",
+          fontSize: "16px",
+          textAlign: "center",
           ...menuStyles
         }}
         title={title}
@@ -55,21 +57,27 @@ const CustomActionDropdown = ({
           </option>
         ))}
       </select>
-      <style>
-        {`
-          .custom-action-dropdown option:hover,
-          .custom-action-dropdown option:focus {
-            background-color:rgb(5, 156, 158) !important;
-            color: black !important;
-          }
-          .custom-action-dropdown {
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            background-size: 8px;
-            padding-right: 24px;
-          }
-        `}
-      </style>
+    <style>
+  {`
+    .custom-action-dropdown {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='white' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 36px;
+    }
+
+    .custom-action-dropdown option:hover,
+    .custom-action-dropdown option:focus {
+      background-color: rgb(5, 156, 158) !important;
+      color: black !important;
+    }
+  `}
+</style>
+
     </div>
   );
 };

@@ -87,13 +87,13 @@ const CheckListCard = (props) => {
           <p style={{ color: "black", fontSize: "24px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word" }}>
             {props.t(props.item.code)}
           </p>
-          {filled ? (
+          {filled  ? (
             <button
               style={{
                 border: "1px solid rgb(209, 213, 219)",
                 width: "100%",
-                backgroundColor: "",
-                color: "white",
+                backgroundColor: "white",
+                color: "#006769",
                 borderRadius: "10px",
                 padding: "8px",
               }}
@@ -117,8 +117,8 @@ const CheckListCard = (props) => {
               }}
               onClick={() =>
                 history.push(
-                  `/${window.contextPath}/employee/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}`,
-                  { redirectionUrl: `${window.location.href}` }
+                  `/${window.contextPath}/employee/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&state=${props?.state}`,
+                  { redirectionUrl: `${window.location.href}`}
                 )
               }
             >
