@@ -58,16 +58,16 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 		req.Application.ServiceCode = serviceCode
 	}
 	// mdmsSearch := service.NewMDMSService(nil)
-	// //MDMS Search
+	//MDMS Search
 	// fields := mdmsSearch.MdmsSearchWithFilter(req)
 
-	// // Print only the fields part
-	// // fmt.Printf("Fields: %+v\n", fields)
+	// Print only the fields part
+	// fmt.Printf("Fields: %+v\n", fields)
 
-	// // Validate the service details against the fields schema
+	// Validate the service details against the fields schema
 	// if err := mdmsSearch.ValidateServiceDetailsWithSchema(req, fields); err != nil {
-	// 	utils.WriteErrorResponse(w, http.StatusBadRequest, "Service details validation failed: "+err.Error())
-	// 	return
+	// utils.WriteErrorResponse(w, http.StatusBadRequest, "Service details validation failed: "+err.Error())
+	// return
 	// }
 
 	req, err = c.enrichmentService.EnrichApplicationsWithIdGen(req, "application")
@@ -276,12 +276,14 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	// Call workflow integrator on success
-	err = c.workflowIntegrator.CallWorkflow(&req)
-	if err != nil {
-		log.Printf("Workflow integration failed: %v", err)
-		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return
+	if req.Application.Workflow.Action != "" {
+		// Call workflow integrator on success
+		err = c.workflowIntegrator.CallWorkflow(&req)
+		if err != nil {
+			log.Printf("Workflow integration failed: %v", err)
+			utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 	res, err := c.service.UpdateApplication(ctx, req, serviceCode)
 	if err != nil {
