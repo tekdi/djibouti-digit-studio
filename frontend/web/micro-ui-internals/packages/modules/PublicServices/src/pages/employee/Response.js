@@ -33,7 +33,9 @@ const Response = () => {
         tenantId,
         serviceCode: service,
         applicationNumber: state?.applicationNumber,
-        pdfKey: "pco-receipt"
+        pdfKey: window.location.href.includes("openpayment")
+          ? "payment-receipt"
+          : "pco-receipt"
       };
 
       let url = `/studio-pdf/public-service/download/pdf`;
