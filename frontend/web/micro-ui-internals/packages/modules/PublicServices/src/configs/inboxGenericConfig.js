@@ -153,6 +153,7 @@ export const InboxConfig = () => {
                 name: "businessService",
                 optionsKey: "name",
                 options: [],
+                defaultValue: ["BPA_PCO"],
               },
             },
             // {
@@ -176,11 +177,11 @@ export const InboxConfig = () => {
               isMandatory: false,
               disable: false,
               populators: {
-                  name: "state",
-                  labelPrefix: "",
-                  businessService: "NEWTL",
+                name: "state",
+                labelPrefix: "",
+                businessService: "NEWTL",
               },
-          },
+            },
           ],
         },
         label: `ES_COMMON_FILTERS`,
@@ -193,13 +194,13 @@ export const InboxConfig = () => {
               label: "APPLICATION_NUMBER",
               jsonPath: "businessObject.applicationNumber",
               additionalCustomization: true,
-              secondaryLabel:"CREATION_DATE"
+              secondaryLabel: "CREATION_DATE",
             },
             {
               label: "APPLICANT_NAME",
               jsonPath: "businessObject.applicants[0].name",
               additionalCustomization: true,
-              secondaryLabel:"ARCHITECT_NAME"
+              secondaryLabel: "ARCHITECT_NAME",
             },
             {
               label: "BUSINESS_SERVICE_LABEL",

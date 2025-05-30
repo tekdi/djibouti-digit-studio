@@ -23,13 +23,13 @@ export const colorCodes = {
   AWAITING_CITIZEN_PAYMENT: ["#F4CFD0", "#9C0003"],
   CITIZEN_PAYMENT_DONE: ["#CFF4E2", "#00703C"],
   PERMIT_GRANTED: ["#CFF4E2", "#00703C"],
-  PERMIT_REJECTED: ["#F4DECF", "#9C4900"]
-}
+  PERMIT_REJECTED: ["#F4DECF", "#9C4900"],
+};
 
 function formatCreatedTime(timestamp) {
   const date = new Date(Number(timestamp));
   const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'short' });
+  const month = date.toLocaleString("default", { month: "short" });
   const year = date.getFullYear();
 
   return `${day} ${month}, ${year}`;
@@ -130,9 +130,11 @@ export const UICustomizations = {
     preProcess: (data, additionalDetails) => {
       const { module } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
-      data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
+      // data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
+      data.body.inbox.moduleSearchCriteria.businessService = "BPA_PCO";
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
-      data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
+      // data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
+      data.body.inbox.processSearchCriteria.businessService = ["BPA_PCO"];
       data.body.inbox.processSearchCriteria.tenantId = tenantId;
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
@@ -143,7 +145,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const statusKey = row?.ProcessInstance?.state?.state?.toUpperCase();
-      const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD","#4B4B4B"];
+      const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD", "#4B4B4B"];
 
       console.log(row, key, column, value, t, searchResult);
       if (key === "APPLICATION_NUMBER") {
@@ -154,27 +156,25 @@ export const UICustomizations = {
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
-            <div style={{color:"#949494"}}>
-            {formatCreatedTime(row?.businessObject?.auditDetails?.createdTime)}
-            </div>
+            <div style={{ color: "#949494" }}>{formatCreatedTime(row?.businessObject?.auditDetails?.createdTime)}</div>
           </span>
         );
       }
       if (key === "APPLICANT_NAME") {
         return (
-         <div style={{display:"flex",justifyContent:"center", flexDirection:"column", gap:"4px"}}>
-          <div>{row?.businessObject?.applicants[0]?.name}</div>
-          <div style={{color:"#949494"}}>{row?.ProcessInstance?.assigner?.name}</div>
-         </div>
+          <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "4px" }}>
+            <div>{row?.businessObject?.applicants[0]?.name}</div>
+            <div style={{ color: "#949494" }}>{row?.ProcessInstance?.assigner?.name}</div>
+          </div>
         );
       }
       if (key === "WORKFLOW_STATUS") {
         return (
-        <div>
-          <span style={{ backgroundColor: bgColor, color: textColor, width:"fit-content", padding:"4px 12px", borderRadius:"6px"}}>
-            {t(`${row?.businessObject?.businessService}_${row?.ProcessInstance?.state?.state}`.toUpperCase())}
+          <div>
+            <span style={{ backgroundColor: bgColor, color: textColor, width: "fit-content", padding: "4px 12px", borderRadius: "6px" }}>
+              {t(`${row?.businessObject?.businessService}_${row?.ProcessInstance?.state?.state}`.toUpperCase())}
             </span>
-        </div>
+          </div>
         );
       }
     },
