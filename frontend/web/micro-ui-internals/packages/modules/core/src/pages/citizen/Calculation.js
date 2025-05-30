@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
-import axios from 'axios';
 
 const Calculation = () => {
   const { t } = useTranslation();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const queryStrings = Digit.Hooks.useQueryParams();
+
   const [floorData, setFloorData] = useState([
-    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 },
-    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 },
-    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 }
+    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:0 },
+    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:1 },
+    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:2 }
   ]);
 
+
   const [feeRates, setFeeRates] = useState({
-    residentialCost: 0,
-    commercialCost: 0,
-    royaltyFeePercentage: 0,
-    seismicFeePercentage: 0,
-    registryServiceFee: 0
+    residentialCost: 50000,
+    commercialCost: 30000,
+    royaltyFeePercentage: 1.5,
+    seismicFeePercentage: 1,
+    registryServiceFee: 5000
   });
 
   const [plotArea, setPlotArea] = useState(0);
   const [calculatedFees, setCalculatedFees] = useState({
     buildingPermitFees: 0,
     seismicFees: 0,
-    totalFees: 0,
-    totalFeesWithService: 0,
+    totalTax: 0,
+    totalTaxWithService: 0,
     totalProjectValue: 0
   });
 
@@ -32,101 +35,47 @@ const Calculation = () => {
     cos: 0
   });
 
+  const [calculationResponse, setCalculationResponse] = useState();
+
   const [costBreakdown, setCostBreakdown] = useState([
-    { name: t('CALCULATION_TERRASSEMENT'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_FONDATION'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_BETON_ARME'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_MENUISERIES'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 0, amount: 0 }
+    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id:"Earthwork" },
+    { name: t('CALCULATION_FONDATION'), percentage: 8, amount: 0, id:"Foundation" },
+    { name: t('CALCULATION_MACONNERIE'), percentage: 8, amount: 0, id:"Masonry" },
+    { name: t('CALCULATION_BETON_ARME'), percentage: 8, amount: 0, id: "Reinforced concrete in elevation" },
+    { name: t('CALCULATION_REVETEMENTS'), percentage: 8, amount: 0, id: "Floor and wall coverings/Paints"},
+    { name: t('CALCULATION_MENUISERIES'), percentage: 8, amount: 0, id:"Carpentry" },
+    { name: t('CALCULATION_ELECTRICITE'), percentage: 8, amount: 0, id:"Electricity" },
+    { name: t('CALCULATION_PLOMBERIE'), percentage: 8, amount: 0, id:"Plumbing/Sanitation" },
+    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 8, amount: 0, id:"Sanitation" }
   ]);
 
-  useEffect(() => {
-    // Function to fetch data from API
-    const fetchData = async () => {
-      try {
-        // API endpoint will need to be updated when it's available
-        const response = await axios.get('/api/bpa/application/latest');
 
-        // Extract fee rates from response
-        const costEstimation = response.data.Application[0].additionalDetails.costEstimation;
-        setFeeRates({
-          residentialCost: costEstimation?.costPerSqmLivingSpace,
-          commercialCost: costEstimation?.costPerSqmCommercialSpace,
-          royaltyFeePercentage: costEstimation?.royaltyPer,
-          seismicFeePercentage: costEstimation?.eqResistancePer,
-          registryServiceFee: costEstimation?.registryServiceFee
-        });
+  const request = {
+    url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
+    headers: {
+      "X-Tenant-Id": tenantId,
+      "auth-token": Digit.UserService.getUser()?.access_token,
+    },
+    method: "GET",
+    params: {
+      applicationNumber: queryStrings?.applicationNumber,
+      tenantId: tenantId,
+    },
+  };
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
+  let response = data ? data?.Application?.[0] : {};
 
-        // Extract floor data from response
-        const apiFloors = costEstimation.floors;
-        if (apiFloors && apiFloors.length > 0) {
-          const mappedFloors = apiFloors.map((floor, index) => {
-            let floorName;
-            if (index === 0) {
-              floorName = t('CALCULATION_RDC');
-            } else if (index === 1) {
-              floorName = t('CALCULATION_1ER_ETAGE');
-            } else if (index === 2) {
-              floorName = t('CALCULATION_TERRASSE');
-            } else {
-              floorName = `${t('CALCULATION_ETAGE')} ${index}`;
-            }
-
-            return {
-              name: floorName,
-              residentialArea: floor?.builtUpAreaLiving || 0,
-              commercialArea: floor?.builtupAreaCommercial || 0,
-              totalArea: floor?.totalAreaPerLevel || 0,
-              cost: floor?.floorCost || 0
-            };
-          });
-          setFloorData(mappedFloors);
-        }
-
-        // Extract total values
-        setCalculatedFees({
-          buildingPermitFees: costEstimation?.royaltyFee || 0,
-          seismicFees: costEstimation?.eqResistanceCost || 0,
-          totalFees: costEstimation?.totalTax || 0,
-          totalFeesWithService: costEstimation?.totalTaxWithServiceCharge || 0,
-          totalProjectValue: costEstimation?.totalBuildingCost || 0
-        });
-
-        // Update cost breakdown from API when available
-        // This is placeholder logic - replace with actual API data mapping
-        if (costEstimation?.totalBuildingCost) {
-          const total = costEstimation.totalBuildingCost;
-          const updatedBreakdown = costBreakdown.map(item => ({
-            ...item,
-            amount: Math.round(total * (item.percentage / 100))
-          }));
-          setCostBreakdown(updatedBreakdown);
-        }
-
-        // Update plot area and info values
-        const landandProjectDetails = response.data.Application[0].serviceDetails.landandProjectDesignDetails?.[0];
-        if (landandProjectDetails) {
-          setPlotArea(landandProjectDetails.area ? Number(landandProjectDetails.area) : 0);
-
-          // Update plot info (these fields might be differently named in the API)
-          setPlotInfo({
-            seismicFeesCalculated: landandProjectDetails.seismicFeesCalculated || 0,
-            cos: landandProjectDetails.projectedCos || 0
-          });
-        }
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    // Uncomment this when the API is ready
-    // fetchData();
-  }, [t]);
+  const request2 = {
+    url: "/calculator-service/v1/BPA_PCO/estimate_calculate",
+    params: {},
+    // body: {'Application':[payload]},
+    method: "POST",
+    headers: {},
+    config: {
+        enable: false,
+    },
+}
+const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
@@ -137,36 +86,123 @@ const Calculation = () => {
   };
 
   const addFloor = () => {
-    setFloorData([...floorData, { name: `${t('CALCULATION_ETAGE')} ${floorData.length}`, residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 }]);
+    const newFloor = { 
+      name: `${t('CALCULATION_ETAGE')} ${floorData.length - 1}`, 
+      residentialArea: 0, 
+      commercialArea: 0, 
+      totalArea: 0, 
+      cost: 0,
+      floorNo: floorData.length - 1
+    };
+    
+    const newFloorData = [...floorData];
+    // Insert at the second-to-last position (last position is terrace)
+    newFloorData.splice(floorData.length - 1, 0, newFloor);
+    setFloorData(newFloorData);
   };
 
   const calculateFees = async () => {
-    // When API is ready, we'll call it here
-    try {
-      // Mock API call for now - replace with actual API call when ready
-      // const response = await axios.post('/api/bpa/application/calculate', {
-      //   floors: floorData.map(floor => ({
-      //     builtUpAreaLiving: floor.residentialArea,
-      //     builtupAreaCommercial: floor.commercialArea
-      //   }))
-      // });
 
-      // For now, just update the UI with calculated values
-      const updatedFloors = [...floorData];
-      updatedFloors.forEach((floor, index) => {
-        updatedFloors[index].cost = Math.round(
-          (floor.residentialArea * feeRates.residentialCost) +
-          (floor.commercialArea * feeRates.commercialCost)
-        );
-      });
-      setFloorData(updatedFloors);
-
-      alert(t('CALCULATION_CALCUL_EFFECTUE'));
-    } catch (error) {
-      console.error('Error calculating fees:', error);
-      alert('Error calculating fees');
+    const updatedCostEstimation = {
+      "costPerSqmLivingSpace": feeRates.residentialCost,
+      "costPerSqmCommercialSpace": feeRates.commercialCost,
+      "royaltyPer": feeRates.royaltyFeePercentage,
+      "eqResistancePer": feeRates.seismicFeePercentage,
+      "eqResistanceCost": 0,
+      "royaltyFee": 0,
+      "registryServiceFee": 5000,
+      "totalBuildingCost": 0,
+      "totalTax": 0,
+      "totalTaxWithServiceCharge": 0,
+      "floors": floorData.map((floor, index) => ({
+        floorNo: index,
+        builtUpAreaLiving: floor.residentialArea,
+        builtupAreaCommercial: floor.commercialArea,
+        totalAreaPerLevel: floor.totalArea,
+        floorCost: floor.cost
+      })),
+      "totalCostBreakdown": costBreakdown.map(item => ({
+        designationOfWorks: item.id,
+        percentage: item.percentage,
+        amount: item.amount
+      }))
+    };
+  
+    const clonedPayload = JSON.parse(JSON.stringify(response));
+    const updatedPayload = {
+      ...clonedPayload,
+      additionalDetails: {
+        ...(clonedPayload.additionalDetails || {}),
+        costEstimation: updatedCostEstimation || {}
+      }
+    };
+ 
+  await mutation.mutate(
+    {
+      ...request2,
+      body: {'Application': [updatedPayload]}
+    },
+    {
+        onSuccess: (res) => {
+            setCalculationResponse(res?.Application?.[0]?.additionalDetails?.costEstimation)
+        },
+        onError: () => {
+            console.log("Error occured");
+        },
     }
+)
+   
   };
+
+  useEffect(()=>{
+
+    setCostBreakdown(prev => 
+      prev.map(item => {
+        // Find matching entry in API response
+        const matched = calculationResponse?.totalCostBreakdown?.find(apiItem => 
+          apiItem.designationOfWorks === item.id
+        );
+        
+        // Update if match found, otherwise keep original values
+        return matched 
+          ? { 
+              ...item, 
+              amount: matched.amount,
+              percentage: matched.percentage 
+            }
+          : item;
+      })
+    );
+
+    setCalculatedFees({
+      buildingPermitFees: calculationResponse?.eqResistanceCost || 0,
+      seismicFees: calculationResponse?.royaltyFee || 0,
+      totalTax: calculationResponse?.totalTax || 0,
+      totalTaxWithService: calculationResponse?.totalTaxWithServiceCharge || 0,
+      totalProjectValue: calculationResponse?.totalBuildingCost || 0
+    })
+
+    setFloorData(prevFloors => 
+      prevFloors.map(floor => {
+        // Find matching floor in API response
+        const matchingApiFloor = calculationResponse?.floors?.find(
+          apiFloor => apiFloor.floorNo === floor.floorNo
+        );
+        
+        // If found, update the cost and areas, otherwise keep original values
+        return matchingApiFloor 
+          ? {
+              ...floor,
+              cost: matchingApiFloor.floorCost,
+            }
+          : floor;
+      })
+    );
+
+
+
+  },[calculationResponse])
+
 
   return (
     <div className="calculation-container">
@@ -176,27 +212,27 @@ const Calculation = () => {
         <div className="fee-rates">
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_RESIDENTIAL')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.residentialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates.residentialCost.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_COMMERCIAL')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.commercialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates.commercialCost.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES')}</h3>
-            <p className='fee-rate-card-value'>{feeRates.royaltyFeePercentage} % du devis estimatif</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates.royaltyFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES')}</h3>
-            <p className='fee-rate-card-value'>{feeRates.seismicFeePercentage} % du devis estimatif</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates.seismicFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_REGISTRY_SERVICE_FEE')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.registryServiceFee.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates.registryServiceFee.toLocaleString()}</p>
           </div>
         </div>
 
@@ -249,39 +285,10 @@ const Calculation = () => {
                       </div>
                     </td>
                     <td className="total-col">
-                      {floor.name === t('CALCULATION_TERRASSE') ? (
-                        <div className="input-with-unit">
-                          <input
-                            type="number"
-                            value={floor.totalArea === 0 ? "" : floor.totalArea}
-                            onChange={(e) => {
-                              const updatedFloors = [...floorData];
-                              updatedFloors[index].totalArea = e.target.value ? Number(e.target.value) : 0;
-                              setFloorData(updatedFloors);
-                            }}
-                            placeholder=""
-                          />
-                          <span className="unit">m</span>
-                        </div>
-                      ) : (
-                        floor.totalArea > 0 ? `${floor.totalArea}m` : "m"
-                      )}
+                       { floor.totalArea > 0 ? `${floor.totalArea} m²` : "0 m²"}
                     </td>
                     <td className="cost-col">
-                      {floor.name === t('CALCULATION_TERRASSE') ? (
-                        <input
-                          type="number"
-                          value={floor.cost === 0 ? "" : floor.cost}
-                          onChange={(e) => {
-                            const updatedFloors = [...floorData];
-                            updatedFloors[index].cost = e.target.value ? Number(e.target.value) : 0;
-                            setFloorData(updatedFloors);
-                          }}
-                          className="cost-input"
-                        />
-                      ) : (
-                        floor.cost ? floor.cost.toLocaleString() : 0
-                      )}
+                    {floor.cost ? floor.cost.toLocaleString() : 0}
                     </td>
                   </tr>
                 ))}
@@ -309,35 +316,35 @@ const Calculation = () => {
             <div className="info-content">
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SURFACE_PARCELLE')}</span>
-                <span className='fee-rate-card-value'>{plotArea}</span>
+                <span className='fee-rate-card-value disabled'>{plotArea}</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value'>{plotInfo.seismicFeesCalculated}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo.seismicFeesCalculated}</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_COS')}</span>
-                <span className='fee-rate-card-value'>{plotInfo.cos}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo.cos}</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_BUILDING_PERMIT_TAXES')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.buildingPermitFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees.buildingPermitFees.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.seismicFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees.seismicFees.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees.totalTax.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalFeesWithService.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees.totalTaxWithService.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_PROJECT_TOTAL_VALUE')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalProjectValue.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees.totalProjectValue.toLocaleString()} FDj</span>
               </div>
             </div>
           </div>
@@ -378,8 +385,7 @@ const Calculation = () => {
 
       <style jsx>{`
         .calculation-container {
-          padding: 20px;
-          margin: 50px;
+          padding: 24px;
           border-radius: 15px;
           background-color: #fff;
           width: 100%;
@@ -635,6 +641,10 @@ const Calculation = () => {
         .amount-col {
           width: 40%;
           text-align: center;
+        }
+
+        .disabled{
+         color:"#848484"
         }
       `}</style>
     </div>
