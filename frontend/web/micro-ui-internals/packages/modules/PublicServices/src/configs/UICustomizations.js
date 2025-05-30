@@ -12,7 +12,7 @@ const businessServiceMap = {};
 
 const inboxModuleNameMap = {};
 
-const colorCodes = {
+export const colorCodes = {
   INITIATED: ["#DDDDDD", "#4B4B4B"],
   AGENT_NOT_ASSIGNED: ["#DDDDDD", "#4B4B4B"],
   PENDING_ACTION_BY_AGENT: ["#F1F4CF", "#746D00"],
@@ -138,7 +138,7 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
       data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
-      
+
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {

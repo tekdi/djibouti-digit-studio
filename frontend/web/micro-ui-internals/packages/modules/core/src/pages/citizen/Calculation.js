@@ -383,6 +383,7 @@ const Calculation = () => {
           border-radius: 15px;
           background-color: #fff;
           width: 100%;
+          box-shadow: 1px 5px 7px 2px #adadad;
         }
 
         .calculation-wrapper {

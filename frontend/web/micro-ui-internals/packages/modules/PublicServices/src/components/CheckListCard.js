@@ -3,17 +3,22 @@ import { Card, TextBlock, Button, Loader } from "@egovernments/digit-ui-componen
 import { transformViewApplication } from "../utils/createUtils";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CheckListCard = (props) => {
     const [filled, setFilled] = useState(false);
     const [loading, setLoading] = useState(false);
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const history = useHistory();
+    const { t } = useTranslation();
 
     const style = {
         display: "flex",
         alignItems: "center",
-        gap: "1rem"
+        gap: "1rem",
+        width:'100%',
+        position:'relative',
+        padding:'20px'
     };
 
     const request = {
@@ -64,11 +69,31 @@ const CheckListCard = (props) => {
         <div>
             {loading ? (
                 <Card type="primary" style={style}>
-                    <TextBlock body={props.t(props.item.code)} />
+                      {/* <span
+              style={{
+                fontSize: '0.75rem',
+                position:'absolute',
+                top:'10px',
+                left:'20px',
+                fontWeight: 500,
+                color: '#166534',
+                backgroundColor: '#dcfce7',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '9999px',
+              }}
+            >
+              {t("READY")}
+            </span> */}
+                    {/* <TextBlock style={{color:'black',fontSize:'40px', fontWeight:'700' }} body={props.t(props.item.code)} /> */}
+                    <p style={{color:'black',fontSize:'24px', fontWeight:'700', wordBreak:'break-word', overflowWrap:'break-word' }}>{props.t(props.item.code)}</p>
                     {filled ? (
-                        <Button label="View Response" onClick={() => history.push({ pathname: `/${window.contextPath}/employee/publicservices/viewresponse/${props.accid}/${props.item.id}/${props.item.code}` })} />
+                      <button style={{border:'1px solid rgb(209, 213, 219)', width:'100%', backgroundColor:'', color:'white', borderRadius:'10px', padding:'8px'}} onClick={() => history.push({ pathname: `/${window.contextPath}/employee/publicservices/viewresponse/${props.accid}/${props.item.id}/${props.item.code}` })}>
+                        {t("VIEW_RESPONSE")}
+                      </button>
                     ) : (
-                        <Button label="Fill Checklist" onClick={() => history.push({ pathname: `/${window.contextPath}/employee/publicservices/checklist/${props.accid}/${props.item.id}/${props.item.code}?redirectionUrl=${window.location.href}` })} />
+                      <button style={{border:'1px solid rgb(209, 213, 219)', width:'100%', backgroundColor:'white', color:'#006769', borderRadius:'10px', padding:'8px'}} onClick={() => history.push({ pathname: `/${window.contextPath}/employee/publicservices/checklist/${props.accid}/${props.item.id}/${props.item.code}?redirectionUrl=${window.location.href}` })}>
+                        {t("FILL_CHECKLIST")}
+                      </button>
                     )}
                 </Card>
             ) : (

@@ -12,6 +12,7 @@ import { useQuery, useQueryClient } from "react-query";
 import { Request } from "./Request";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useWorkflowDetailsWorks } from "../utils";
+import CustomActionDropdown from "./CustomActionDropdown";
 
 export const CustomService = {
   getResponse: ({
@@ -270,20 +271,17 @@ const WorkflowActions = ({
                   ></Button>,
                 ]
               : [
-                  <Button
-                    t={t}
-                    type={workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions ? "actionButton" : "submit"}
-                    options={actions}
-                    label={t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`)}
-                    variation={"primary"}
-                    optionsKey={"displayname"}
-                    isSearchable={false}
-                    isDisabled={isDisabled}
-                    onOptionSelect={(option) => {
-                      onActionSelect(option);
-                    }}
-                    menuStyles={MenuStyle}
-                  ></Button>,
+                 <CustomActionDropdown
+  workflowDetails={workflowDetails}
+  actions={actions}
+  isDisabled={isDisabled}
+  onActionSelect={onActionSelect}
+  module={module}
+  service={service}
+  menuStyles={MenuStyle}
+/>
+
+                  ,
                 ]
           }
           setactionFieldsToRight={true}
