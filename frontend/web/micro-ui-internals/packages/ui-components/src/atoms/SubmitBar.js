@@ -9,8 +9,8 @@ const SubmitBar = forwardRef((props, ref) => {
       className={`${props.disabled ? `digit-submit-bar ${"disabled"}` : "digit-submit-bar"} ${props.className ? props.className : ""}`}
       type={props.submit ? "submit" : "button"}
       style={{ ...props.style }}
-      onClick={props.onSubmit}
-      {... props.form ? {form: props.form} : {}}
+      onClick={props.submit ? props.onSubmit : props.onClick}
+      {...(props.form ? { form: props.form } : {})}
     >
       <h2>{props.label}</h2>
     </button>

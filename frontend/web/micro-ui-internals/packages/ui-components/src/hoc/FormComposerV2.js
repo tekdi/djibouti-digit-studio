@@ -65,7 +65,7 @@ export const FormComposer = (props) => {
   const formData = watch();
   const selectedFormCategory = props?.currentFormCategory;
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const [customToast, setCustomToast] = useState(false); 
+  const [customToast, setCustomToast] = useState(false);
   //clear all errors if user has changed the form category.
   //This is done in case user first click on submit and have errors in cat 1, switches to cat 2 and hit submit with errors
   //So, he should not get error prompts from previous cat 1 on cat 2 submit.
@@ -93,9 +93,9 @@ export const FormComposer = (props) => {
     props.getFormAccessors && props.getFormAccessors({ setValue, getValues });
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setCustomToast(props?.customToast);
-  },[props?.customToast])
+  }, [props?.customToast]);
   function onSubmit(data) {
     props.onSubmit(data);
   }
@@ -123,7 +123,7 @@ export const FormComposer = (props) => {
       control: control,
       props: props,
       errors: errors,
-      control:control,
+      control: control,
       defaultValues: props?.defaultValues,
       controllerProps: {
         register,
@@ -216,9 +216,8 @@ export const FormComposer = (props) => {
   const closeToast = () => {
     setShowErrorToast(false);
     setCustomToast(false);
-    props?.updateCustomToast&&props?.updateCustomToast(false);
+    props?.updateCustomToast && props?.updateCustomToast(false);
   };
-
 
   const formFields = useCallback(
     (section, index, array, sectionFormCategory) => (
@@ -237,13 +236,14 @@ export const FormComposer = (props) => {
             defaultValues={props?.defaultValues}
           />
         )}
-        {section.type !== "multiChildForm" && section?.body?.map((field, index) => {
-          if (field?.populators?.hideInForm) return null;
-          if (props.inline)
-            return (
-              <React.Fragment key={index}>
-                <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : field.inline ? { display: "flex" } : {}}>
-                  {/* {!field.withoutLabel && (
+        {section.type !== "multiChildForm" &&
+          section?.body?.map((field, index) => {
+            if (field?.populators?.hideInForm) return null;
+            if (props.inline)
+              return (
+                <React.Fragment key={index}>
+                  <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : field.inline ? { display: "flex" } : {}}>
+                    {/* {!field.withoutLabel && (
                     <HeaderComponent
                       style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
                       className={` ${field?.disable ? `disabled ${props?.labelBold ? "bolder" : ""}` : `${props?.labelBold ? "bolder" : ""}`}`}
@@ -253,44 +253,44 @@ export const FormComposer = (props) => {
                       {field.labelChildren && field.labelChildren}
                     </HeaderComponent>
                   )} */}
-                  {/* {errors && errors[field.populators?.name] && Object.keys(errors[field.populators?.name]).length ? (
+                    {/* {errors && errors[field.populators?.name] && Object.keys(errors[field.populators?.name]).length ? (
                     <ErrorMessage>{t(field.populators.error || errors[field.populators?.name]?.message)}</ErrorMessage>
                   ) : null} */}
-                  <div style={field.withoutLabel ? { width: "100%" } : {}} className="digit-field">
-                    {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
-                    {field?.description && (
-                      <HeaderComponent
-                        style={{
-                          marginTop: "-24px",
-                          fontSize: "16px",
-                          fontWeight: "bold",
-                          color: "#505A5F",
-                          ...field?.descriptionStyles,
-                        }}
-                        className="bolder"
-                      >
-                        {t(field.description)}
-                      </HeaderComponent>
-                    )}
+                    <div style={field.withoutLabel ? { width: "100%" } : {}} className="digit-field">
+                      {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
+                      {field?.description && (
+                        <HeaderComponent
+                          style={{
+                            marginTop: "-24px",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                            color: "#505A5F",
+                            ...field?.descriptionStyles,
+                          }}
+                          className="bolder"
+                        >
+                          {t(field.description)}
+                        </HeaderComponent>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </React.Fragment>
-            );
-          return (
-            <Fragment>
-              <LabelFieldPair
-                key={index}
-                style={
-                  props?.showWrapperContainers && !field.hideContainer
-                    ? { ...wrapperStyles, ...field?.populators?.customStyle }
-                    : { border: "none", background: "white", ...field?.populators?.customStyle }
-                }
-                vertical={props?.labelfielddirectionvertical}
-              >
-                {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
+                </React.Fragment>
+              );
+            return (
+              <Fragment>
+                <LabelFieldPair
+                  key={index}
+                  style={
+                    props?.showWrapperContainers && !field.hideContainer
+                      ? { ...wrapperStyles, ...field?.populators?.customStyle }
+                      : { border: "none", background: "white", ...field?.populators?.customStyle }
+                  }
+                  vertical={props?.labelfielddirectionvertical}
+                >
+                  {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
 
-                {/* Commenting to initialize & check Field Controller and composer which render label and field Should remove later*/}
-                {/*{!field.withoutLabel && (
+                  {/* Commenting to initialize & check Field Controller and composer which render label and field Should remove later*/}
+                  {/*{!field.withoutLabel && (
                   <HeaderComponent
                     style={{
                       color: field.isSectionText ? "#505A5F" : "",
@@ -308,17 +308,17 @@ export const FormComposer = (props) => {
                   {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
                   {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                   </div> */}
-              </LabelFieldPair>
+                </LabelFieldPair>
 
-              {/* Migrating error message to field container as here it renders outside the field */}
-              {/* {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
+                {/* Migrating error message to field container as here it renders outside the field */}
+                {/* {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
                 <ErrorMessage message={t(field?.populators?.error)} />
               ) : // {t(field?.populators?.error)}
               // </ErrorMessage>
               null} */}
-            </Fragment>
-          );
-        })}
+              </Fragment>
+            );
+          })}
         {!props.noBreakLine && (array.length - 1 === index ? null : <BreakLine style={props?.breaklineStyle ? props?.breaklineStyle : {}} />)}
       </React.Fragment>
     ),
@@ -328,17 +328,17 @@ export const FormComposer = (props) => {
   const getCardStyles = (shouldDisplay = true) => {
     let styles = {
       ...(props.cardStyle || {}),
-      padding: "24px"
+      padding: "24px",
     };
-  
+
     if (props.noBoxShadow) {
       styles = { ...styles, boxShadow: "none" };
     }
-  
+
     if (!shouldDisplay) {
       styles = { ...styles, display: "none" };
     }
-  
+
     return styles;
   };
 
@@ -374,13 +374,35 @@ export const FormComposer = (props) => {
   const renderFormFields = (props, section, index, array, sectionFormCategory) => (
     <React.Fragment key={index}>
       {!props.childrenAtTheBottom && props.children}
-      {props.heading && <HeaderComponent className={props?.cardSubHeaderClassName ? `digit-form-card-subheader ${props?.cardSubHeaderClassName}` : "digit-form-card-subheader"} styles={{ ...props.headingStyle }}> {props.heading} </HeaderComponent>}
-      {props.description && <HeaderComponent className={props?.cardDescriptionClassName ? `digit-form-card-description ${props?.cardDescriptionClassName}` : "digit-form-card-description"} styles={{ ...props.descriptionStyles }}> {props.description} </HeaderComponent>}
-      {props.text && <HeaderComponent className={props?.cardTextClassName ? `digit-form-card-text ${props?.cardTextClassName}` : "digit-form-card-text"}>{props.text}</HeaderComponent>}
+      {props.heading && (
+        <HeaderComponent
+          className={props?.cardSubHeaderClassName ? `digit-form-card-subheader ${props?.cardSubHeaderClassName}` : "digit-form-card-subheader"}
+          styles={{ ...props.headingStyle }}
+        >
+          {" "}
+          {props.heading}{" "}
+        </HeaderComponent>
+      )}
+      {props.description && (
+        <HeaderComponent
+          className={
+            props?.cardDescriptionClassName ? `digit-form-card-description ${props?.cardDescriptionClassName}` : "digit-form-card-description"
+          }
+          styles={{ ...props.descriptionStyles }}
+        >
+          {" "}
+          {props.description}{" "}
+        </HeaderComponent>
+      )}
+      {props.text && (
+        <HeaderComponent className={props?.cardTextClassName ? `digit-form-card-text ${props?.cardTextClassName}` : "digit-form-card-text"}>
+          {props.text}
+        </HeaderComponent>
+      )}
       {formFields(section, index, array, sectionFormCategory)}
       {props.childrenAtTheBottom && props.children}
       {props.submitInForm && (
-        <SubmitBar label={t(props.label)} style={{ width:"100%",...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full"/>
+        <SubmitBar label={t(props.label)} style={{ width: "100%", ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
       )}
       {props.secondaryActionLabel && (
         <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
@@ -389,6 +411,10 @@ export const FormComposer = (props) => {
       )}
     </React.Fragment>
   );
+
+  function onDraftLabelClick() {
+    props.onDraftLabelClick(getValues());
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
@@ -405,22 +431,32 @@ export const FormComposer = (props) => {
       ) : (
         <Card style={getCardStyles()} noCardStyle={props.noCardStyle} className={props.cardClassName}>
           {props?.config?.map((section, index, array) => {
-            return !section.navLink && <>{renderFormFields(props, section, index, array)}
-            </>;
+            return !section.navLink && <>{renderFormFields(props, section, index, array)}</>;
           })}
           {!props.submitInForm && props.label && (
-        <Footer className={"footer-in-form"} style={{justifyContent: "flex-end"}}>
-          <div className="footer-buttons-wrapper">
-          {props?.draftLabel && (  <SubmitBar className="digit-submit-bar previous-btn" submit="button" label={t(props?.draftLabel)} onClick={props?.onSecondayActionClick} />)}
-          {props.currentStep && <button type="button" 
-          className={`digit-submit-bar previous-btn ${props.currentStep < 2 ? "disabled" : ''}`}
-          onClick={(e) => { e.preventDefault(); props.onPrevious(); }}>Previous</button>}
+            <Footer className={"footer-in-form"} style={{ justifyContent: "flex-end" }}>
+              <div className="footer-buttons-wrapper">
+                {props?.draftLabel && (
+                  <SubmitBar className="digit-submit-bar previous-btn" submit="{false}" label={t(props?.draftLabel)} onClick={onDraftLabelClick} />
+                )}
+                {props.currentStep && (
+                  <button
+                    type="button"
+                    className={`digit-submit-bar previous-btn ${props.currentStep < 2 ? "disabled" : ""}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      props.onPrevious();
+                    }}
+                  >
+                    Previous
+                  </button>
+                )}
 
-          <SubmitBar label={t(props.label)} className="digit-formcomposer-submitbar" submit="submit" disabled={isDisabled} />
-          </div>
-          {props.onSkip && props.showSkip && <ActionLinks style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
-        </Footer>
-      )}
+                <SubmitBar label={t(props.label)} className="digit-formcomposer-submitbar" submit="submit" disabled={isDisabled} />
+              </div>
+              {props.onSkip && props.showSkip && <ActionLinks style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
+            </Footer>
+          )}
         </Card>
       )}
       {props?.showFormInNav && props.horizontalNavConfig && (
