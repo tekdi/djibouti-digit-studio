@@ -541,7 +541,7 @@ export const getDetailsByIdWorks = async ({ tenantId, id, moduleCode }) => {
         applicationBusinessService: workflow?.ProcessInstances?.[0]?.businessService,
         processInstances: applicationProcessInstance,
         triggerParallelWorkflow: businessServiceResponse?.filter((state) => state.uuid === workflow?.ProcessInstances?.[0]?.state.uuid)?.[0]
-          ?.triggerParallelWorkflows || ["FIRE", "HEALTH", "BUILDING"],
+          ?.triggerParallelWorkflows,
       };
 
       return details;
@@ -635,18 +635,18 @@ const makeCommentsSubsidariesOfPreviousActionsWorks = async (wf) => {
 };
 
 export const downloadStudioPDF = async (
-    pdfRoute,
-    queryParams={},
-    fileName="application.pdf"
-  ) => {
-    const response =await Digit.CustomService.getResponse({ url:`/studio-pdf/download/${pdfRoute}`, params:queryParams, useCache:false,setTimeParam:false ,userDownload:true})
-    const responseStatus = parseInt(response.status, 10);
-    if (responseStatus === 201 || responseStatus === 200) {
-      downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);
-    }
-  };
+  pdfRoute,
+  queryParams = {},
+  fileName = "application.pdf"
+) => {
+  const response = await Digit.CustomService.getResponse({ url: `/studio-pdf/download/${pdfRoute}`, params: queryParams, useCache: false, setTimeParam: false, userDownload: true })
+  const responseStatus = parseInt(response.status, 10);
+  if (responseStatus === 201 || responseStatus === 200) {
+    downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);
+  }
+};
 
-export const  downloadPdf = (blob, fileName) => {
+export const downloadPdf = (blob, fileName) => {
   if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
     var reader = new FileReader();
     reader.readAsDataURL(blob);
