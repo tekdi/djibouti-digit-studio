@@ -21,9 +21,8 @@ const Calculation = () => {
     registryServiceFee: 5000
   });
 
-  const [plotArea, setPlotArea] = useState(0);
   const [calculatedFees, setCalculatedFees] = useState({
-    buildingPermitFees: 0,
+    royaltyFee: 0,
     seismicFees: 0,
     totalTax: 0,
     totalTaxWithService: 0,
@@ -31,7 +30,7 @@ const Calculation = () => {
   });
 
   const [plotInfo, setPlotInfo] = useState({
-    seismicFeesCalculated: 0,
+    plotArea:0,
     cos: 0
   });
 
@@ -39,14 +38,14 @@ const Calculation = () => {
 
   const [costBreakdown, setCostBreakdown] = useState([
     { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id:"Earthwork" },
-    { name: t('CALCULATION_FONDATION'), percentage: 8, amount: 0, id:"Foundation" },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 8, amount: 0, id:"Masonry" },
-    { name: t('CALCULATION_BETON_ARME'), percentage: 8, amount: 0, id: "Reinforced concrete in elevation" },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 8, amount: 0, id: "Floor and wall coverings/Paints"},
-    { name: t('CALCULATION_MENUISERIES'), percentage: 8, amount: 0, id:"Carpentry" },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 8, amount: 0, id:"Electricity" },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 8, amount: 0, id:"Plumbing/Sanitation" },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 8, amount: 0, id:"Sanitation" }
+    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id:"Foundation" },
+    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id:"Masonry" },
+    { name: t('CALCULATION_BETON_ARME'), percentage: 28, amount: 0, id: "Reinforced concrete in elevation" },
+    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints"},
+    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id:"Carpentry" },
+    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id:"Electricity" },
+    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id:"Plumbing/Sanitation" },
+    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id:"Sanitation" }
   ]);
 
 
@@ -65,7 +64,7 @@ const Calculation = () => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
 
-  const request2 = {
+  const calReq = {
     url: "/calculator-service/v1/BPA_PCO/estimate_calculate",
     params: {},
     // body: {'Application':[payload]},
@@ -75,7 +74,21 @@ const Calculation = () => {
         enable: false,
     },
 }
-const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
+const mutation = Digit.Hooks.useCustomAPIMutationHook(calReq);
+
+const updateRequest = {
+  url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
+  method: "PUT",
+  headers: {
+    "X-Tenant-Id": tenantId,
+    "auth-token": Digit.UserService.getUser()?.access_token,
+  },
+  config: {
+    enable: true,
+  },
+};
+
+const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
 
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
@@ -87,7 +100,7 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
   const addFloor = () => {
     const newFloor = { 
-      name: `${t('CALCULATION_ETAGE')} ${floorData.length - 1}`, 
+      name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`), 
       residentialArea: 0, 
       commercialArea: 0, 
       totalArea: 0, 
@@ -139,12 +152,12 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
  
   await mutation.mutate(
     {
-      ...request2,
+      ...calReq,
       body: {'Application': [updatedPayload]}
     },
     {
         onSuccess: (res) => {
-            setCalculationResponse(res?.Application?.[0]?.additionalDetails?.costEstimation)
+            setCalculationResponse(res?.Application?.[0])
         },
         onError: () => {
             console.log("Error occured");
@@ -154,12 +167,50 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
    
   };
 
+  const calculationSubmit = async () => {
+    if (!calculationResponse) return;
+
+    // Create a deep copy of calculationResponse to avoid mutating the original
+    const modifiedCalculationResponse = JSON.parse(JSON.stringify(calculationResponse));
+
+    // Modify the workflow.action in the copys
+    if (modifiedCalculationResponse?.workflow) {
+      modifiedCalculationResponse.workflow.action = "";
+    }
+
+    await mutationPut.mutate(
+      {
+        ...updateRequest,
+        body: {
+          'Application': modifiedCalculationResponse,
+          "RequestInfo":{
+          apiId: "Rainmaker",
+          authToken: Digit.UserService.getUser()?.access_token,
+          userInfo: Digit.UserService.getUser()?.info,
+          msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+        }
+         }
+      },
+      {
+        onSuccess: (res) => {
+          setCalculationResponse(res?.Application?.[0])
+        },
+        onError: () => {
+          console.log("Error occured");
+        },
+      }
+    )
+
+  }
+
   useEffect(()=>{
+
+    const estimation = calculationResponse?.additionalDetails?.costEstimation
 
     setCostBreakdown(prev => 
       prev.map(item => {
         // Find matching entry in API response
-        const matched = calculationResponse?.totalCostBreakdown?.find(apiItem => 
+        const matched = estimation?.totalCostBreakdown?.find(apiItem => 
           apiItem.designationOfWorks === item.id
         );
         
@@ -175,17 +226,17 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
     );
 
     setCalculatedFees({
-      buildingPermitFees: calculationResponse?.eqResistanceCost || 0,
-      seismicFees: calculationResponse?.royaltyFee || 0,
-      totalTax: calculationResponse?.totalTax || 0,
-      totalTaxWithService: calculationResponse?.totalTaxWithServiceCharge || 0,
-      totalProjectValue: calculationResponse?.totalBuildingCost || 0
+      royaltyFee: estimation?.royaltyFee || 0,
+      seismicFees: estimation?.eqResistanceCost || 0,
+      totalTax: estimation?.totalTax || 0,
+      totalTaxWithService: estimation?.totalTaxWithServiceCharge || 0,
+      totalProjectValue: estimation?.totalBuildingCost || 0
     })
 
     setFloorData(prevFloors => 
       prevFloors.map(floor => {
         // Find matching floor in API response
-        const matchingApiFloor = calculationResponse?.floors?.find(
+        const matchingApiFloor = estimation?.floors?.find(
           apiFloor => apiFloor.floorNo === floor.floorNo
         );
         
@@ -200,6 +251,10 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
     );
 
 
+    setPlotInfo({
+      plotArea:(calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
+      cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
+    })
 
   },[calculationResponse])
 
@@ -212,27 +267,27 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
         <div className="fee-rates">
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_RESIDENTIAL')}</h3>
-            <p className='fee-rate-card-value disabled'>FDj {feeRates.residentialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.residentialCost?.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_COMMERCIAL')}</h3>
-            <p className='fee-rate-card-value disabled'>FDj {feeRates.commercialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.commercialCost?.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES')}</h3>
-            <p className='fee-rate-card-value disabled'>{`${feeRates.royaltyFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates?.royaltyFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES')}</h3>
-            <p className='fee-rate-card-value disabled'>{`${feeRates.seismicFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates?.seismicFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_REGISTRY_SERVICE_FEE')}</h3>
-            <p className='fee-rate-card-value disabled'>FDj {feeRates.registryServiceFee.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.registryServiceFee?.toLocaleString()}</p>
           </div>
         </div>
 
@@ -288,7 +343,7 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
                        { floor.totalArea > 0 ? `${floor.totalArea} m²` : "0 m²"}
                     </td>
                     <td className="cost-col">
-                    {floor.cost ? floor.cost.toLocaleString() : 0}
+                    {floor.cost ? floor?.cost?.toLocaleString() : 0}
                     </td>
                   </tr>
                 ))}
@@ -312,39 +367,35 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
         <div className="calculations-section">
           <div className="plot-info">
-            <h3>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
+            <h3 className='plot-info-title'>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
             <div className="info-content">
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SURFACE_PARCELLE')}</span>
-                <span className='fee-rate-card-value disabled'>{plotArea}</span>
-              </div>
-              <div className="fee-rate-card">
-                <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value disabled'>{plotInfo.seismicFeesCalculated}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo?.plotArea}</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_COS')}</span>
-                <span className='fee-rate-card-value disabled'>{plotInfo.cos}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo?.cos}</span>
               </div>
               <div className="fee-rate-card">
-                <span className='fee-rate-card-title'>{t('CALCULATION_BUILDING_PERMIT_TAXES')}</span>
-                <span className='fee-rate-card-value disabled'>{calculatedFees.buildingPermitFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES_CALCULATED')}</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.royaltyFee} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value disabled'>{calculatedFees.seismicFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.seismicFees?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES')}</span>
-                <span className='fee-rate-card-value disabled'>{calculatedFees.totalTax.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTax?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
-                <span className='fee-rate-card-value disabled'>{calculatedFees.totalTaxWithService.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTaxWithService?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_PROJECT_TOTAL_VALUE')}</span>
-                <span className='fee-rate-card-value disabled'>{calculatedFees.totalProjectValue.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalProjectValue?.toLocaleString()} FDj</span>
               </div>
             </div>
           </div>
@@ -365,19 +416,19 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
                   <tr key={index}>
                     <td className="work-col">{item.name}</td>
                     <td className="percentage-col">{item.percentage}%</td>
-                    <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item.amount.toLocaleString()} FDj`}</td>
+                    <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item?.amount?.toLocaleString()} FDj`}</td>
                   </tr>
                 ))}
                 <tr className="total-row">
                   <td className="work-col">{t('CALCULATION_TOTAL')}</td>
                   <td className="percentage-col">{calculateTotalPercentage()}%</td>
-                  <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost().toLocaleString()} FDj`}</td>
+                  <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost()?.toLocaleString()} FDj`}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <button className="action-button">
+          <button className={`action-button ${!calculationResponse ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
             {t('CALCULATION_SAVE')}
           </button>
         </div>
@@ -399,12 +450,15 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
         .page-title {
           font-size: 40px;
           font-weight: 700;
-          margin-bottom: 20px;
+          margin: 0;
         }
 
         .fee-rates {
-          margin-bottom: 30px;
-          gap: 20px;
+          margin-bottom: 24px;
+          margin-top: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
 
         .fee-rate-card {
@@ -412,12 +466,14 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
           padding: 15px;
           border-radius: 4px;
           align-items: center;
+          padding:0
         }
 
         .fee-rate-card-title {
           font-size: 16px;
           font-weight: 400;
           width: 50%;
+          margin:0;
         }
 
         .fee-rate-card-value {
@@ -435,9 +491,9 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
         }
 
         .table-wrapper {
-          border: 1px solid grey;
-          border-top-left-radius: 10px;
-          border-top-right-radius: 10px;
+          border: 1px solid #D6D5D4;
+          border-top-left-radius: 12px;
+          border-top-right-radius: 12px;
           overflow: hidden;
         }
 
@@ -492,13 +548,21 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
         }
 
         input {
-          border: 1px solid black;
-          padding: 16px;
-          border-radius: 12px;
+          border: 1px solid #D4D4D4;;
+          padding: 10px;
+          border-radius: 8px;
           width: 100%;
           box-sizing: border-box;
           font-size: 16px;
           text-align: center;
+        }
+
+        input:active,
+        input:focus,
+        input:focus-visible{
+        border: 1px solid #006769 !important;
+        outline: none !important;
+        box-shadow: none !important;
         }
 
         .button-container {
@@ -506,6 +570,7 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
           justify-content: space-between;
           align-items: center;
           gap: 15px;
+          padding:0;
         }
 
         .action-button {
@@ -527,7 +592,7 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
           justify-content: center;
           gap: 10px;
           background-color: rgb(255, 255, 255);
-          border: 2px solid #006769;
+          border: 1px solid #006769;
           border-radius: 15px;
           margin-left: auto;
 
@@ -560,12 +625,20 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
         }
 
         .plot-info, .fees-summary {
-          padding: 15px;
           border-radius: 4px;
+          padding-left:0
+        }
+
+        .plot-info-title{
+          margin:0
+          margin-bottom:24px;
         }
 
         .info-content {
           margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
 
         .info-row {
@@ -595,9 +668,11 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
         .input-with-unit input {
           width: 100%;
-          padding-right: 20px;
           font-size: 16px;
           text-align: center;
+          color:"#363636";
+          padding-right: 40px;
+          box-sizing: border-box;
         }
 
         .text-input, .cost-input {
@@ -615,7 +690,7 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
         .unit {
           position: absolute;
-          right: 20px;
+          right: 10px;
           font-size: 16px;
           font-weight: 500;
           top: 50%;
@@ -645,6 +720,10 @@ const mutation = Digit.Hooks.useCustomAPIMutationHook(request2);
 
         .disabled{
          color:"#848484"
+        }
+        .disabled-btn{
+          background-color: #d4d4d4;
+          pointer-events: none;
         }
       `}</style>
     </div>
