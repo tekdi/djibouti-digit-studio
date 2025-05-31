@@ -308,7 +308,10 @@ const TextInput = (props) => {
                   }
                 }
               }}
-              required={props.required}
+              // required={props.required}
+              onInvalid={(e) => {
+                e.preventDefault();
+              }}
             />
             {renderSuffix()}
             {props.signature && props.signatureImg}
@@ -325,6 +328,9 @@ const TextInput = (props) => {
           <div className={inputContainerClass}>
             {renderPrefix()}
             <input
+            onInvalid={(e) => {
+              e.preventDefault();
+            }}
               type={
                 props?.validation && props.ValidationRequired
                   ? props?.validation?.type
@@ -364,13 +370,13 @@ const TextInput = (props) => {
               maxLength={props.populators?.maxLength}
               max={props.populators?.max}
               min={props.populators?.min}
-              required={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation
-                  : props.isRequired ||
-                    (props.type === "date" &&
-                      (props.name === "fromDate" ? data.toDate : data.fromDate))
-              }
+              // required={
+              //   props?.validation && props.ValidationRequired
+              //     ? props?.validation
+              //     : props.isRequired ||
+              //       (props.type === "date" &&
+              //         (props.name === "fromDate" ? data.toDate : data.fromDate))
+              // }
               pattern={props?.validation?.regex}
               readOnly={props.nonEditable}
               title={
