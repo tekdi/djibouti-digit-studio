@@ -116,7 +116,7 @@ const DigitDemoViewComponent = () => {
   };
 
   const handleCalculationClick = () => {
-    history.push("/digit-studio/citizen/calculation");
+    history.push({ pathname: `/${window.contextPath}/employee/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`})
   };
 
   const handleTemplateDownload = async () => {

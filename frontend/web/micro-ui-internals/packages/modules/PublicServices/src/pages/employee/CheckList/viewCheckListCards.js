@@ -40,6 +40,7 @@ const ViewCheckListCards = ({checkListCodes, applicationId, state}) => {
             {
                 onSuccess: (res) => {
                     setCardItems(res?.ServiceDefinitions);
+                    localStorage.setItem("checklistStatus", res?.ServiceDefinitions?.[0]?.code);
                 },
                 onError: () => {
                     console.log("Error occured");

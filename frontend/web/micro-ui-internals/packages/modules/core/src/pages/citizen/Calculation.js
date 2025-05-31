@@ -1,132 +1,95 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
-import axios from 'axios';
 
 const Calculation = () => {
   const { t } = useTranslation();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const queryStrings = Digit.Hooks.useQueryParams();
+
   const [floorData, setFloorData] = useState([
-    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 },
-    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 },
-    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 }
+    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:0 },
+    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:1 },
+    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:2 }
   ]);
 
+
   const [feeRates, setFeeRates] = useState({
-    residentialCost: 0,
-    commercialCost: 0,
-    royaltyFeePercentage: 0,
-    seismicFeePercentage: 0,
-    registryServiceFee: 0
+    residentialCost: 50000,
+    commercialCost: 30000,
+    royaltyFeePercentage: 1.5,
+    seismicFeePercentage: 1,
+    registryServiceFee: 5000
   });
 
-  const [plotArea, setPlotArea] = useState(0);
   const [calculatedFees, setCalculatedFees] = useState({
-    buildingPermitFees: 0,
+    royaltyFee: 0,
     seismicFees: 0,
-    totalFees: 0,
-    totalFeesWithService: 0,
+    totalTax: 0,
+    totalTaxWithService: 0,
     totalProjectValue: 0
   });
 
   const [plotInfo, setPlotInfo] = useState({
-    seismicFeesCalculated: 0,
+    plotArea:0,
     cos: 0
   });
 
+  const [calculationResponse, setCalculationResponse] = useState();
+
   const [costBreakdown, setCostBreakdown] = useState([
-    { name: t('CALCULATION_TERRASSEMENT'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_FONDATION'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_BETON_ARME'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_MENUISERIES'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 0, amount: 0 },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 0, amount: 0 }
+    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id:"Earthwork" },
+    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id:"Foundation" },
+    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id:"Masonry" },
+    { name: t('CALCULATION_BETON_ARME'), percentage: 28, amount: 0, id: "Reinforced concrete in elevation" },
+    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints"},
+    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id:"Carpentry" },
+    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id:"Electricity" },
+    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id:"Plumbing/Sanitation" },
+    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id:"Sanitation" }
   ]);
 
-  useEffect(() => {
-    // Function to fetch data from API
-    const fetchData = async () => {
-      try {
-        // API endpoint will need to be updated when it's available
-        const response = await axios.get('/api/bpa/application/latest');
 
-        // Extract fee rates from response
-        const costEstimation = response.data.Application[0].additionalDetails.costEstimation;
-        setFeeRates({
-          residentialCost: costEstimation?.costPerSqmLivingSpace,
-          commercialCost: costEstimation?.costPerSqmCommercialSpace,
-          royaltyFeePercentage: costEstimation?.royaltyPer,
-          seismicFeePercentage: costEstimation?.eqResistancePer,
-          registryServiceFee: costEstimation?.registryServiceFee
-        });
+  const request = {
+    url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
+    headers: {
+      "X-Tenant-Id": tenantId,
+      "auth-token": Digit.UserService.getUser()?.access_token,
+    },
+    method: "GET",
+    params: {
+      applicationNumber: queryStrings?.applicationNumber,
+      tenantId: tenantId,
+    },
+  };
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
+  let response = data ? data?.Application?.[0] : {};
 
-        // Extract floor data from response
-        const apiFloors = costEstimation.floors;
-        if (apiFloors && apiFloors.length > 0) {
-          const mappedFloors = apiFloors.map((floor, index) => {
-            let floorName;
-            if (index === 0) {
-              floorName = t('CALCULATION_RDC');
-            } else if (index === 1) {
-              floorName = t('CALCULATION_1ER_ETAGE');
-            } else if (index === 2) {
-              floorName = t('CALCULATION_TERRASSE');
-            } else {
-              floorName = `${t('CALCULATION_ETAGE')} ${index}`;
-            }
+  const calReq = {
+    url: "/calculator-service/v1/BPA_PCO/estimate_calculate",
+    params: {},
+    // body: {'Application':[payload]},
+    method: "POST",
+    headers: {},
+    config: {
+        enable: false,
+    },
+}
+const mutation = Digit.Hooks.useCustomAPIMutationHook(calReq);
 
-            return {
-              name: floorName,
-              residentialArea: floor?.builtUpAreaLiving || 0,
-              commercialArea: floor?.builtupAreaCommercial || 0,
-              totalArea: floor?.totalAreaPerLevel || 0,
-              cost: floor?.floorCost || 0
-            };
-          });
-          setFloorData(mappedFloors);
-        }
+const updateRequest = {
+  url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
+  method: "PUT",
+  headers: {
+    "X-Tenant-Id": tenantId,
+    "auth-token": Digit.UserService.getUser()?.access_token,
+  },
+  config: {
+    enable: true,
+  },
+};
 
-        // Extract total values
-        setCalculatedFees({
-          buildingPermitFees: costEstimation?.royaltyFee || 0,
-          seismicFees: costEstimation?.eqResistanceCost || 0,
-          totalFees: costEstimation?.totalTax || 0,
-          totalFeesWithService: costEstimation?.totalTaxWithServiceCharge || 0,
-          totalProjectValue: costEstimation?.totalBuildingCost || 0
-        });
-
-        // Update cost breakdown from API when available
-        // This is placeholder logic - replace with actual API data mapping
-        if (costEstimation?.totalBuildingCost) {
-          const total = costEstimation.totalBuildingCost;
-          const updatedBreakdown = costBreakdown.map(item => ({
-            ...item,
-            amount: Math.round(total * (item.percentage / 100))
-          }));
-          setCostBreakdown(updatedBreakdown);
-        }
-
-        // Update plot area and info values
-        const landandProjectDetails = response.data.Application[0].serviceDetails.landandProjectDesignDetails?.[0];
-        if (landandProjectDetails) {
-          setPlotArea(landandProjectDetails.area ? Number(landandProjectDetails.area) : 0);
-
-          // Update plot info (these fields might be differently named in the API)
-          setPlotInfo({
-            seismicFeesCalculated: landandProjectDetails.seismicFeesCalculated || 0,
-            cos: landandProjectDetails.projectedCos || 0
-          });
-        }
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    // Uncomment this when the API is ready
-    // fetchData();
-  }, [t]);
+const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
+const checklistStatus = localStorage.getItem('checklistStatus')
 
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
@@ -137,66 +100,195 @@ const Calculation = () => {
   };
 
   const addFloor = () => {
-    setFloorData([...floorData, { name: `${t('CALCULATION_ETAGE')} ${floorData.length}`, residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0 }]);
+    const newFloor = { 
+      name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`), 
+      residentialArea: 0, 
+      commercialArea: 0, 
+      totalArea: 0, 
+      cost: 0,
+      floorNo: floorData.length - 1
+    };
+    
+    const newFloorData = [...floorData];
+    // Insert at the second-to-last position (last position is terrace)
+    newFloorData.splice(floorData.length - 1, 0, newFloor);
+    setFloorData(newFloorData);
   };
 
   const calculateFees = async () => {
-    // When API is ready, we'll call it here
-    try {
-      // Mock API call for now - replace with actual API call when ready
-      // const response = await axios.post('/api/bpa/application/calculate', {
-      //   floors: floorData.map(floor => ({
-      //     builtUpAreaLiving: floor.residentialArea,
-      //     builtupAreaCommercial: floor.commercialArea
-      //   }))
-      // });
 
-      // For now, just update the UI with calculated values
-      const updatedFloors = [...floorData];
-      updatedFloors.forEach((floor, index) => {
-        updatedFloors[index].cost = Math.round(
-          (floor.residentialArea * feeRates.residentialCost) +
-          (floor.commercialArea * feeRates.commercialCost)
-        );
-      });
-      setFloorData(updatedFloors);
-
-      alert(t('CALCULATION_CALCUL_EFFECTUE'));
-    } catch (error) {
-      console.error('Error calculating fees:', error);
-      alert('Error calculating fees');
+    const updatedCostEstimation = {
+      "costPerSqmLivingSpace": feeRates.residentialCost,
+      "costPerSqmCommercialSpace": feeRates.commercialCost,
+      "royaltyPer": feeRates.royaltyFeePercentage,
+      "eqResistancePer": feeRates.seismicFeePercentage,
+      "eqResistanceCost": 0,
+      "royaltyFee": 0,
+      "registryServiceFee": 5000,
+      "totalBuildingCost": 0,
+      "totalTax": 0,
+      "totalTaxWithServiceCharge": 0,
+      "floors": floorData.map((floor, index) => ({
+        floorNo: index,
+        builtUpAreaLiving: floor.residentialArea,
+        builtupAreaCommercial: floor.commercialArea,
+        totalAreaPerLevel: floor.totalArea,
+        floorCost: floor.cost
+      })),
+      "totalCostBreakdown": costBreakdown.map(item => ({
+        designationOfWorks: item.id,
+        percentage: item.percentage,
+        amount: item.amount
+      }))
+    };
+  
+    const clonedPayload = JSON.parse(JSON.stringify(response));
+    const updatedPayload = {
+      ...clonedPayload,
+      additionalDetails: {
+        ...(clonedPayload.additionalDetails || {}),
+        costEstimation: updatedCostEstimation || {}
+      }
+    };
+ 
+  await mutation.mutate(
+    {
+      ...calReq,
+      body: {'Application': [updatedPayload]}
+    },
+    {
+        onSuccess: (res) => {
+            setCalculationResponse(res?.Application?.[0])
+        },
+        onError: () => {
+            console.log("Error occured");
+        },
     }
+)
+   
   };
 
+  const calculationSubmit = async () => {
+    if (!calculationResponse) return;
+
+    // Create a deep copy of calculationResponse to avoid mutating the original
+    const modifiedCalculationResponse = JSON.parse(JSON.stringify(calculationResponse));
+
+    // Modify the workflow.action in the copys
+    if (modifiedCalculationResponse?.workflow) {
+      modifiedCalculationResponse.workflow.action = "";
+    }
+
+    await mutationPut.mutate(
+      {
+        ...updateRequest,
+        body: {
+          'Application': modifiedCalculationResponse,
+          "RequestInfo":{
+          apiId: "Rainmaker",
+          authToken: Digit.UserService.getUser()?.access_token,
+          userInfo: Digit.UserService.getUser()?.info,
+          msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+        }
+         }
+      },
+      {
+        onSuccess: (res) => {
+          setCalculationResponse(res?.Application?.[0])
+        },
+        onError: () => {
+          console.log("Error occured");
+        },
+      }
+    )
+
+  }
+
+  useEffect(()=>{
+
+    const estimation = calculationResponse?.additionalDetails?.costEstimation
+
+    setCostBreakdown(prev => 
+      prev.map(item => {
+        // Find matching entry in API response
+        const matched = estimation?.totalCostBreakdown?.find(apiItem => 
+          apiItem.designationOfWorks === item.id
+        );
+        
+        // Update if match found, otherwise keep original values
+        return matched 
+          ? { 
+              ...item, 
+              amount: matched.amount,
+              percentage: matched.percentage 
+            }
+          : item;
+      })
+    );
+
+    setCalculatedFees({
+      royaltyFee: estimation?.royaltyFee || 0,
+      seismicFees: estimation?.eqResistanceCost || 0,
+      totalTax: estimation?.totalTax || 0,
+      totalTaxWithService: estimation?.totalTaxWithServiceCharge || 0,
+      totalProjectValue: estimation?.totalBuildingCost || 0
+    })
+
+    setFloorData(prevFloors => 
+      prevFloors.map(floor => {
+        // Find matching floor in API response
+        const matchingApiFloor = estimation?.floors?.find(
+          apiFloor => apiFloor.floorNo === floor.floorNo
+        );
+        
+        // If found, update the cost and areas, otherwise keep original values
+        return matchingApiFloor 
+          ? {
+              ...floor,
+              cost: matchingApiFloor.floorCost,
+            }
+          : floor;
+      })
+    );
+
+
+    setPlotInfo({
+      plotArea:(calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
+      cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
+    })
+
+  },[calculationResponse])
+
+
   return (
-    <div className="calculation-container">
+    <div className="calculation-container" style={queryStrings?.state !== checklistStatus?.split(".")[1] ? { pointerEvents: "none", opacity:0.7 } : {}}>
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
         <div className="fee-rates">
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_RESIDENTIAL')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.residentialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.residentialCost?.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_COMMERCIAL')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.commercialCost.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.commercialCost?.toLocaleString()}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES')}</h3>
-            <p className='fee-rate-card-value'>{feeRates.royaltyFeePercentage} % du devis estimatif</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates?.royaltyFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES')}</h3>
-            <p className='fee-rate-card-value'>{feeRates.seismicFeePercentage} % du devis estimatif</p>
+            <p className='fee-rate-card-value disabled'>{`${feeRates?.seismicFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
           </div>
 
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_REGISTRY_SERVICE_FEE')}</h3>
-            <p className='fee-rate-card-value'>FDj {feeRates.registryServiceFee.toLocaleString()}</p>
+            <p className='fee-rate-card-value disabled'>FDj {feeRates?.registryServiceFee?.toLocaleString()}</p>
           </div>
         </div>
 
@@ -249,39 +341,10 @@ const Calculation = () => {
                       </div>
                     </td>
                     <td className="total-col">
-                      {floor.name === t('CALCULATION_TERRASSE') ? (
-                        <div className="input-with-unit">
-                          <input
-                            type="number"
-                            value={floor.totalArea === 0 ? "" : floor.totalArea}
-                            onChange={(e) => {
-                              const updatedFloors = [...floorData];
-                              updatedFloors[index].totalArea = e.target.value ? Number(e.target.value) : 0;
-                              setFloorData(updatedFloors);
-                            }}
-                            placeholder=""
-                          />
-                          <span className="unit">m</span>
-                        </div>
-                      ) : (
-                        floor.totalArea > 0 ? `${floor.totalArea}m` : "m"
-                      )}
+                       { floor.totalArea > 0 ? `${floor.totalArea} m²` : "0 m²"}
                     </td>
                     <td className="cost-col">
-                      {floor.name === t('CALCULATION_TERRASSE') ? (
-                        <input
-                          type="number"
-                          value={floor.cost === 0 ? "" : floor.cost}
-                          onChange={(e) => {
-                            const updatedFloors = [...floorData];
-                            updatedFloors[index].cost = e.target.value ? Number(e.target.value) : 0;
-                            setFloorData(updatedFloors);
-                          }}
-                          className="cost-input"
-                        />
-                      ) : (
-                        floor.cost ? floor.cost.toLocaleString() : 0
-                      )}
+                    {floor.cost ? floor?.cost?.toLocaleString() : 0}
                     </td>
                   </tr>
                 ))}
@@ -305,39 +368,35 @@ const Calculation = () => {
 
         <div className="calculations-section">
           <div className="plot-info">
-            <h3>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
+            <h3 className='plot-info-title'>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
             <div className="info-content">
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SURFACE_PARCELLE')}</span>
-                <span className='fee-rate-card-value'>{plotArea}</span>
-              </div>
-              <div className="fee-rate-card">
-                <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value'>{plotInfo.seismicFeesCalculated}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo?.plotArea}</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_COS')}</span>
-                <span className='fee-rate-card-value'>{plotInfo.cos}</span>
+                <span className='fee-rate-card-value disabled'>{plotInfo?.cos}</span>
               </div>
               <div className="fee-rate-card">
-                <span className='fee-rate-card-title'>{t('CALCULATION_BUILDING_PERMIT_TAXES')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.buildingPermitFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES_CALCULATED')}</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.royaltyFee} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.seismicFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.seismicFees?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalFees.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTax?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalFeesWithService.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTaxWithService?.toLocaleString()} FDj</span>
               </div>
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_PROJECT_TOTAL_VALUE')}</span>
-                <span className='fee-rate-card-value'>{calculatedFees.totalProjectValue.toLocaleString()} FDj</span>
+                <span className='fee-rate-card-value disabled'>{calculatedFees?.totalProjectValue?.toLocaleString()} FDj</span>
               </div>
             </div>
           </div>
@@ -358,19 +417,19 @@ const Calculation = () => {
                   <tr key={index}>
                     <td className="work-col">{item.name}</td>
                     <td className="percentage-col">{item.percentage}%</td>
-                    <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item.amount.toLocaleString()} FDj`}</td>
+                    <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item?.amount?.toLocaleString()} FDj`}</td>
                   </tr>
                 ))}
                 <tr className="total-row">
                   <td className="work-col">{t('CALCULATION_TOTAL')}</td>
                   <td className="percentage-col">{calculateTotalPercentage()}%</td>
-                  <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost().toLocaleString()} FDj`}</td>
+                  <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost()?.toLocaleString()} FDj`}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <button className="action-button">
+          <button className={`action-button ${!calculationResponse ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
             {t('CALCULATION_SAVE')}
           </button>
         </div>
@@ -378,8 +437,7 @@ const Calculation = () => {
 
       <style jsx>{`
         .calculation-container {
-          padding: 20px;
-          margin: 50px;
+          padding: 24px;
           border-radius: 15px;
           background-color: #fff;
           width: 100%;
@@ -393,12 +451,15 @@ const Calculation = () => {
         .page-title {
           font-size: 40px;
           font-weight: 700;
-          margin-bottom: 20px;
+          margin: 0;
         }
 
         .fee-rates {
-          margin-bottom: 30px;
-          gap: 20px;
+          margin-bottom: 24px;
+          margin-top: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
 
         .fee-rate-card {
@@ -406,12 +467,14 @@ const Calculation = () => {
           padding: 15px;
           border-radius: 4px;
           align-items: center;
+          padding:0
         }
 
         .fee-rate-card-title {
           font-size: 16px;
           font-weight: 400;
           width: 50%;
+          margin:0;
         }
 
         .fee-rate-card-value {
@@ -429,9 +492,9 @@ const Calculation = () => {
         }
 
         .table-wrapper {
-          border: 1px solid grey;
-          border-top-left-radius: 10px;
-          border-top-right-radius: 10px;
+          border: 1px solid #D6D5D4;
+          border-top-left-radius: 12px;
+          border-top-right-radius: 12px;
           overflow: hidden;
         }
 
@@ -486,13 +549,21 @@ const Calculation = () => {
         }
 
         input {
-          border: 1px solid black;
-          padding: 16px;
-          border-radius: 12px;
+          border: 1px solid #D4D4D4;;
+          padding: 10px;
+          border-radius: 8px;
           width: 100%;
           box-sizing: border-box;
           font-size: 16px;
           text-align: center;
+        }
+
+        input:active,
+        input:focus,
+        input:focus-visible{
+        border: 1px solid #006769 !important;
+        outline: none !important;
+        box-shadow: none !important;
         }
 
         .button-container {
@@ -500,6 +571,7 @@ const Calculation = () => {
           justify-content: space-between;
           align-items: center;
           gap: 15px;
+          padding:0;
         }
 
         .action-button {
@@ -521,7 +593,7 @@ const Calculation = () => {
           justify-content: center;
           gap: 10px;
           background-color: rgb(255, 255, 255);
-          border: 2px solid #006769;
+          border: 1px solid #006769;
           border-radius: 15px;
           margin-left: auto;
 
@@ -554,12 +626,20 @@ const Calculation = () => {
         }
 
         .plot-info, .fees-summary {
-          padding: 15px;
           border-radius: 4px;
+          padding-left:0
+        }
+
+        .plot-info-title{
+          margin:0
+          margin-bottom:24px;
         }
 
         .info-content {
           margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
         }
 
         .info-row {
@@ -589,9 +669,11 @@ const Calculation = () => {
 
         .input-with-unit input {
           width: 100%;
-          padding-right: 20px;
           font-size: 16px;
           text-align: center;
+          color:"#363636";
+          padding-right: 40px;
+          box-sizing: border-box;
         }
 
         .text-input, .cost-input {
@@ -609,7 +691,7 @@ const Calculation = () => {
 
         .unit {
           position: absolute;
-          right: 20px;
+          right: 10px;
           font-size: 16px;
           font-weight: 500;
           top: 50%;
@@ -635,6 +717,14 @@ const Calculation = () => {
         .amount-col {
           width: 40%;
           text-align: center;
+        }
+
+        .disabled{
+         color:"#848484"
+        }
+        .disabled-btn{
+          background-color: #d4d4d4;
+          pointer-events: none;
         }
       `}</style>
     </div>

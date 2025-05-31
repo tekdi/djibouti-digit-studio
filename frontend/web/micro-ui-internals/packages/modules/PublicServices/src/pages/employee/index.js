@@ -12,6 +12,7 @@ import InboxService from "./DigitDemo/InboxService";
 import ViewCheckListCards from "./CheckList/viewCheckListCards";
 import CreateCheckList from "./CheckList/createCheckList";
 import ViewApplication from "./CheckList/viewApplication";
+import Calculation from "../../../../core/src/pages/citizen/Calculation";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/viewapp`} component={() => <ViewCheckListCards />} />
         <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
         <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
+        <PrivateRoute path={`${path}/calculation`} component={() => <Calculation />} />
       </AppContainer>
     </Switch>
   );

@@ -213,10 +213,6 @@ const Home = ({
             <Search />
           </Route>
 
-          <Route path={`${path}/calculation`}>
-            <Calculation />
-          </Route>
-
           <ErrorBoundary initData={initData}>
             {appRoutes}
             {ModuleLevelLinkHomePages}
