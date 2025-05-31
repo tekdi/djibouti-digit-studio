@@ -86,16 +86,12 @@ const EmployeeApp = ({
             style={
               isUserProfile
                 ? { padding: 0, paddingTop: "80px", marginLeft: mobileView ? "" : "64px" }
-                : { "--banner-url": `url(${stateInfo?.bannerUrl})`, padding: "0px"}
+                : { "--banner-url": `url(${stateInfo?.bannerUrl})`, padding: "0px" }
             }
           >
             <Switch>
-            <Route path={`${path}/user/login`}>
-                {userDetails?.access_token ? (
-                  <Redirect to={`/${window?.contextPath}/employee`} />
-                ) : (
-                  <EmployeeLogin />
-                )}
+              <Route path={`${path}/user/login`}>
+                {userDetails?.access_token ? <Redirect to={`/${window?.contextPath}/employee`} /> : <EmployeeLogin />}
               </Route>
               <Route path={`${path}/user/language-selection`}>
                 <Redirect to={`/${window?.contextPath}/employee/user/login`} />
@@ -113,7 +109,7 @@ const EmployeeApp = ({
                 <ErrorComponent
                   initData={initData}
                   goToHome={() => {
-                    history.push(`/${window?.contextPath}/${Digit?.UserService?.getType?.()}`);
+                    history.push(`/${window?.contextPath}/${Digit?.UserService?.getType?.()}/publicservices/modules?selectedPath=Apply`);
                   }}
                 />
               </Route>
@@ -146,7 +142,11 @@ const EmployeeApp = ({
             <div className="employee-home-footer">
               <img
                 alt="Powered by DIGIT"
-                src={i18n.language === "en_IN" ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER"): "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"}
+                src={
+                  i18n.language === "en_IN"
+                    ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")
+                    : "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"
+                }
                 style={{ height: "1.1em", cursor: "pointer" }}
                 onClick={() => {
                   window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
