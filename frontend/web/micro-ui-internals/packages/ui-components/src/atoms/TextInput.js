@@ -4,10 +4,12 @@ import { SVG } from "./SVG";
 import StringManipulator from "./StringManipulator";
 import { Colors} from "../constants/colors/colorconstants";
 import { getUserType } from "../utils/digitUtils";
+import { useTranslation } from "react-i18next";
 
 
 const TextInput = (props) => {
   const user_type = getUserType();
+  const {t} = useTranslation();
   const [date, setDate] = useState(props?.type === "date" && props?.value);
   const [visibility, setVisibility] = useState(false);
   const [inputType, setInputType] = useState(props?.type || "text");
@@ -252,7 +254,7 @@ const TextInput = (props) => {
               className={inputClassNameForMandatory}
               placeholder={StringManipulator(
                 "TOSENTENCECASE",
-                props.placeholder || props.populators?.placeholder
+                t(props.placeholder || props.populators?.placeholder)
               )}
               onChange={(event) => {
                     if (props?.type === "number" && props?.populators?.maxLength) {
@@ -333,7 +335,7 @@ const TextInput = (props) => {
               className={inputClassName}
               placeholder={StringManipulator(
                 "TOSENTENCECASE",
-                props.placeholder || props.populators?.placeholder
+                t(props.placeholder || props.populators?.placeholder)
               )}
               onChange={(event) => {
                 if (props?.type === "number" && props?.maxLength) {

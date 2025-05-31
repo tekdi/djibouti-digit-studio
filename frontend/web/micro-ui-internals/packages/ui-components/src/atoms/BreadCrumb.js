@@ -132,7 +132,7 @@ const BreadCrumb = (props) => {
                   </Link>
                 ) : (
                   <Link
-                    to={{ pathname: crumb.internalLink, state: { count: crumb?.count }, search: crumb?.query  }}
+                    onClick={() => handleRedirect(crumb?.internalLink)}
                     className="digit-bread-crumb-content"
                   >
                     {crumb?.icon && crumb.icon}
