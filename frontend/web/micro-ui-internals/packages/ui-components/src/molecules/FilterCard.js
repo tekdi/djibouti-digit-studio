@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, { useState, useEffect, useRef, Fragment, useTransition } from "react";
 import { SVG } from "../atoms/SVG";
 import PropTypes from 'prop-types';
 import Button from "../atoms/Button";
 import { CustomSVG } from "../atoms";
+import { useTranslation } from "react-i18next";
 
 const FilterCard = ({
   title,
@@ -24,6 +25,7 @@ const FilterCard = ({
   contentClassName,
   handleFilterRefresh
 }) => {
+  const {t} = useTranslation()
   const [isOverflowing, setIsOverflowing] = useState(false);
   const childrenWrapRef = useRef(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -105,7 +107,7 @@ const FilterCard = ({
         } ${isOverflowing ? "with-shadow" : ""}`}
       >
         {primaryActionLabel && onPrimaryPressed && (
-          <Button label={primaryActionLabel} onClick={onPrimaryPressed} />
+          <Button label={t(primaryActionLabel)} onClick={onPrimaryPressed} />
         )}
 
         {secondaryActionLabel && onSecondaryPressed && (
@@ -130,7 +132,7 @@ const FilterCard = ({
           />
         )}
         {primaryActionLabel && onPrimaryPressed && (
-          <Button label={primaryActionLabel} onClick={onPrimaryPressed} />
+          <Button label={t(primaryActionLabel)} onClick={onPrimaryPressed} />
         )}
       </div>
     );
@@ -201,7 +203,7 @@ const FilterCard = ({
           ) : (
             <>
               {renderContent()}
-              {(secondaryActionLabel || primaryActionLabel) && renderButtons()}
+              {t(secondaryActionLabel || primaryActionLabel) && renderButtons()}
             </>
           )}
         </div>
