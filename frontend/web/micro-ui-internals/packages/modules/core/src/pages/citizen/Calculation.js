@@ -100,6 +100,9 @@ const checklistStatus = localStorage.getItem('checklistStatus')
   };
 
   const addFloor = () => {
+    if (floorData.length >= 10) {
+      return;
+    }
     const newFloor = { 
       name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`), 
       residentialArea: 0, 
@@ -206,58 +209,71 @@ const checklistStatus = localStorage.getItem('checklistStatus')
 
   useEffect(()=>{
 
-    const estimation = calculationResponse?.additionalDetails?.costEstimation
-
+    const estimation = calculationResponse?.additionalDetails?.costEstimation;
+    const fallbackEstimation = response?.additionalDetails?.costEstimation;
+    
     setCostBreakdown(prev => 
       prev.map(item => {
-        // Find matching entry in API response
+        // First try to find in current estimation
         const matched = estimation?.totalCostBreakdown?.find(apiItem => 
           apiItem.designationOfWorks === item.id
         );
         
-        // Update if match found, otherwise keep original values
-        return matched 
+        // If not found in current estimation, try fallback estimation
+        const fallbackMatch = !matched && fallbackEstimation?.totalCostBreakdown?.find(apiItem => 
+          apiItem.designationOfWorks === item.id
+        );
+        
+        // Update if match found in either source, otherwise keep original values
+        return matched || fallbackMatch
           ? { 
               ...item, 
-              amount: matched.amount,
-              percentage: matched.percentage 
+              amount: (matched || fallbackMatch).amount,
+              percentage: (matched || fallbackMatch).percentage 
             }
           : item;
       })
     );
 
     setCalculatedFees({
-      royaltyFee: estimation?.royaltyFee || 0,
-      seismicFees: estimation?.eqResistanceCost || 0,
-      totalTax: estimation?.totalTax || 0,
-      totalTaxWithService: estimation?.totalTaxWithServiceCharge || 0,
-      totalProjectValue: estimation?.totalBuildingCost || 0
+      royaltyFee: estimation?.royaltyFee || fallbackEstimation?.royaltyFee || 0,
+      seismicFees: estimation?.eqResistanceCost || fallbackEstimation?.eqResistanceCost || 0,
+      totalTax: estimation?.totalTax || fallbackEstimation?.totalTax || 0,
+      totalTaxWithService: estimation?.totalTaxWithServiceCharge || fallbackEstimation?.totalTaxWithServiceCharge || 0,
+      totalProjectValue: estimation?.totalBuildingCost || fallbackEstimation?.totalBuildingCost || 0
     })
 
     setFloorData(prevFloors => 
       prevFloors.map(floor => {
-        // Find matching floor in API response
+        // First try to find in current estimation
         const matchingApiFloor = estimation?.floors?.find(
           apiFloor => apiFloor.floorNo === floor.floorNo
         );
         
-        // If found, update the cost and areas, otherwise keep original values
-        return matchingApiFloor 
+        // If not found in estimation, try fallback response
+        const fallbackFloor = !matchingApiFloor && fallbackEstimation?.floors?.find(
+          apiFloor => apiFloor.floorNo === floor.floorNo
+        );
+        
+        // Update if match found in either source, otherwise keep original values
+        return matchingApiFloor || fallbackFloor
           ? {
               ...floor,
-              cost: matchingApiFloor.floorCost,
+              cost: (matchingApiFloor || fallbackFloor).floorCost,
+              residentialArea: (matchingApiFloor || fallbackFloor).builtUpAreaLiving, 
+              commercialArea: (matchingApiFloor || fallbackFloor).builtupAreaCommercial, 
+              totalArea: (matchingApiFloor || fallbackFloor).totalAreaPerLevel, 
             }
           : floor;
       })
     );
 
-
     setPlotInfo({
-      plotArea:(calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
-      cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
+      plotArea:(calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || response?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
+      cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || response?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
     })
 
-  },[calculationResponse])
+  },[calculationResponse, response])
 
 
   return (
@@ -351,7 +367,7 @@ const checklistStatus = localStorage.getItem('checklistStatus')
                 <tr className="button-row">
                   <td colSpan="5">
                     <div className="button-container">
-                      <button className="add-floor-button" onClick={addFloor}>
+                      <button className={`add-floor-button ${floorData?.length >=10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
                         <h1 className='add-floor-button-title'>{t('CALCULATION_AJOUTER_ETAGE')}</h1>
                         <span className="add-floor-button-icon">+</span>
                       </button>
@@ -726,6 +742,10 @@ const checklistStatus = localStorage.getItem('checklistStatus')
           background-color: #d4d4d4;
           pointer-events: none;
         }
+        .disable-floor-btn{
+          opacity: 0.5;
+          pointer-events: none;
+          }
       `}</style>
     </div>
   );

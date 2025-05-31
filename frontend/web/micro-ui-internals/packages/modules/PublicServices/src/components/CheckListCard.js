@@ -14,11 +14,11 @@ const CheckListCard = (props) => {
 
   const style = {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: "1rem",
     width: "100%",
     position: "relative",
-    padding: "20px",
+    padding: "20px"
   };
 
   const request = {
@@ -87,7 +87,8 @@ const CheckListCard = (props) => {
           <p style={{ color: "black", fontSize: "24px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word" }}>
             {props.t(props.item.code)}
           </p>
-          {filled  ? (
+          {/* {
+          filled  ? (
             <button
               style={{
                 border: "1px solid rgb(209, 213, 219)",
@@ -105,7 +106,8 @@ const CheckListCard = (props) => {
             >
               {t("VIEW_RESPONSE")}
             </button>
-          ) : (
+          ) : 
+          ( */}
             <button
               style={{
                 border: "1px solid rgb(209, 213, 219)",
@@ -114,6 +116,8 @@ const CheckListCard = (props) => {
                 color: "#006769",
                 borderRadius: "10px",
                 padding: "8px",
+                fontSize:"16px",
+                fontWeight:500
               }}
               onClick={() =>
                 history.push(
@@ -124,7 +128,7 @@ const CheckListCard = (props) => {
             >
               {t("FILL_CHECKLIST")}
             </button>
-          )}
+          {/* )} */}
         </Card>
       ) : (
         <Loader />

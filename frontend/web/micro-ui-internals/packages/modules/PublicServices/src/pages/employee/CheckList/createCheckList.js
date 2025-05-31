@@ -270,14 +270,14 @@ const CreateCheckList = () => {
   }>
         <FormComposerV2
           defaultValues={defValues}
-          label={t("Submit")}
+          label={t("BPA_SUBMIT")}
           config={config}
           onFormValueChange={(setValue, formData) => {
             handleFormValueChange(formData);
           }}
           onSubmit={onSubmit}
           fieldStyle={{ marginRight: 2 }}
-          draftLabel={t("Save as Draft")}
+          draftLabel={t("BPA_SAVE_AS_DRAFT")}
           onDraftLabelClick={onSaveAsDraft}
           heading={t(`CHECKLIST_HEADING`)}
         />

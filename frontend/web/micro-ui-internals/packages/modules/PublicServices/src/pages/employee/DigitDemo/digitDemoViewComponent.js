@@ -325,14 +325,14 @@ const DigitDemoViewComponent = () => {
             >
               {t("CALCULATION_OF_RIGHTS")}
             </h2>
-            <p
+            {/* <p
               style={{
                 color: '#4b5563',
                 marginTop: '0.25rem',
               }}
             >
               {t("CREATE_THE_PAYMENT_RECEIPT_FOR_THE_CITIZEN")}
-            </p>
+            </p> */}
             <button
               onClick={handleCalculationClick}
               style={{
@@ -341,6 +341,7 @@ const DigitDemoViewComponent = () => {
                 border: '1px solid #d1d5db',
                 color: '#006769',
                 fontWeight: 500,
+                fontSize:"16px",
                 padding: '0.5rem 0',
                 borderRadius: '0.5rem',
                 backgroundColor: 'white',

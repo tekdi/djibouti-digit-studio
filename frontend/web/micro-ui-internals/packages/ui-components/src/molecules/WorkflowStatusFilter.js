@@ -47,7 +47,7 @@ const WorkflowStatusFilter = ({ props, t, populators, formData,inboxResponse,dis
             checked={formData?.[populators.name]?.[row.uuid]}
             label={t(
               Digit.Utils.locale.getTransformedLocale(
-                `${populators.labelPrefix}${row?.businessService}_STATE_${row?.state}`
+                `${populators.labelPrefix}${row?.businessService}_${row?.state}`
               )
             )}
             isIntermediate={populators?.isIntermediate}
