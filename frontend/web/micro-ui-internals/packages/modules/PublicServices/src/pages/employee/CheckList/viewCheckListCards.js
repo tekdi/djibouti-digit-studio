@@ -6,7 +6,7 @@ import transformViewCheckList from "../../../utils/createUtils.js"
 import CheckListCard from "../../../components/CheckListCard.js";
 import { useTranslation } from "react-i18next";
 
-const ViewCheckListCards = ({checkListCodes, applicationId}) => {
+const ViewCheckListCards = ({checkListCodes, applicationId, state}) => {
     const { t } = useTranslation();
 
     const code = checkListCodes;
@@ -56,7 +56,7 @@ const ViewCheckListCards = ({checkListCodes, applicationId}) => {
         <React.Fragment>
             {
                 cardItems.map((item, index) => (
-                    <CheckListCard item={item} t={t} accid={accountID} />
+                    <CheckListCard item={item} t={t} accid={accountID} state={state} />
                 ))
             }
         </React.Fragment>

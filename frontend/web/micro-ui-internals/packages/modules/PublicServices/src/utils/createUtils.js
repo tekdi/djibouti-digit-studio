@@ -178,22 +178,28 @@ export const transformViewApplication = (id, accid, tenantId) => {
       rowVersion: 1,
       isDeleted: false,
     },
-    apiOperation: "DRAFT",
+    apiOperation: "CREATE",
   };
   return requestBody;
 };
 
 const transformViewCheckList = (code) => {
+  code = [];
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let requestBody = {
     ServiceDefinitionCriteria: {
-      code: code,
       tenantId: tenantId,
     },
     includeDeleted: true,
   };
+
+  if (Array.isArray(code) && code.length > 0) {
+    requestBody.ServiceDefinitionCriteria.code = code;
+  }
+
   return requestBody;
 };
+
 
 export const transformCreateCheckList = (id, accid, data, action = "SUBMIT") => {
   const tenantId = Digit.ULBService.getCurrentTenantId();

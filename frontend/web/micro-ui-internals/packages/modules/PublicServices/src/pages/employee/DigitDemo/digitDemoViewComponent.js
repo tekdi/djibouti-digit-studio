@@ -123,7 +123,7 @@ const DigitDemoViewComponent = () => {
     try {
       const params = {
         tenantId,
-        serviceCode: service,
+        serviceCode: queryStrings?.serviceCode,
         applicationNumber: queryStrings?.applicationNumber,
         pdfKey: "pco-permit"
       };
@@ -162,7 +162,7 @@ const DigitDemoViewComponent = () => {
 
         downloadPdf(
           new Blob([response.data], { type: "application/pdf" }),
-          `${state?.applicationNumber}_receipt.pdf`
+          `${queryStrings?.applicationNumber}_receipt.pdf`
         );
       } catch (err) {
         console.error(err);
@@ -199,8 +199,8 @@ const DigitDemoViewComponent = () => {
 
         </div>
       } */}
-      <div style={{ width: "100%", display: "flex", marginTop:'20px' }}>
-        <div style={{ width: "65%", margin:'0 15px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ width: "100%", display: "flex", marginTop: '20px' }}>
+        <div style={{ width: "65%", margin: '0px 30px 0 5px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
           <div style={{
             boxShadow: '1px 5px 7px 2px #adadad',
@@ -218,35 +218,39 @@ const DigitDemoViewComponent = () => {
 
           </div>
         </div>
-        <div style={{ width: "35%", marginRight:'10px' }}>
+        <div style={{ width: "35%", marginRight: '10px' }}>
           <div style={{
             boxShadow: '1px 5px 7px 2pxrgb(207, 205, 205)',
             borderRadius: '1rem',
             marginBottom: '15px',
             backgroundColor: 'rgba(255, 255, 255, var(--bg-opacity))'
           }}>
-            <ViewCheckListCards applicationId={data?.Application?.[0]?.id} checkListCodes={checkListCodes} />
+            <ViewCheckListCards applicationId={data?.Application?.[0]?.id} state={data?.Application?.[0]?.processInstance?.[0]?.state?.state} checkListCodes={checkListCodes} />
           </div>
           <div style={{
             borderRadius: '1rem',
             width: 'fit-content',
-            position:'absolute',
-            top:'80px',
-            right:'10px',
-            display:'flex',
-            gap:'10px',
-            height:'70px'
+            position: 'absolute',
+            top: '90px',
+            right: '10px',
+            display: 'flex',
+            gap: '10px',
+            height: '70px',
           }}>
-          {processInstanceState === 'PERMIT_GRANTED' && (
-            <Button
-              label={t("CS_COMMON_DOWNLOAD")}
-              onClick={() => handleTemplateDownload()}
-              className="employee-download-btn-className"
-              variation="tertiary"
-              type="button"
-              icon="FileDownload"
-            />
-          )}
+            {processInstanceState === 'PERMIT_GRANTED' && (
+              <Button
+                label={t("CS_COMMON_DOWNLOAD")}
+                onClick={() => handleTemplateDownload()}
+                className="employee-download-btn-className"
+                variation="tertiary"
+                type="button"
+                icon="FileDownload"
+                style={{
+                  marginTop: '15px',
+                  backgroundColor: 'transparent'
+                }}
+              />
+            )}
             <WorkflowActions
               forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
               businessService={selectedBusinessService?.code || matchedBusinessServices[0]?.code}
@@ -315,6 +319,7 @@ const DigitDemoViewComponent = () => {
                 fontSize: '1.5rem',
                 fontWeight: 700,
                 marginTop: '1rem',
+                wordBreak: 'break-word',
               }}
             >
               {t("CALCULATION_OF_RIGHTS")}

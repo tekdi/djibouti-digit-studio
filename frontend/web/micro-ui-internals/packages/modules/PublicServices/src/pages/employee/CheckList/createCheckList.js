@@ -14,6 +14,7 @@ const CreateCheckList = () => {
   const accid = queryStrings?.accid;
   const id = queryStrings?.id;
   const code = queryStrings?.code;
+  const state = queryStrings?.state;
   const { t } = useTranslation();
   const [cardItems, setCardItems] = useState([]);
   const [formData, setFormData] = useState({});
@@ -259,8 +260,14 @@ const CreateCheckList = () => {
   };
 
   return (
+
     <div>
       {config && loading ? (
+       <div  style={
+         (state !== code.split(".")[1])
+      ? { pointerEvents: 'none', opacity: 0.7 }
+      : {}
+  }>
         <FormComposerV2
           defaultValues={defValues}
           label={t("Submit")}
@@ -274,6 +281,7 @@ const CreateCheckList = () => {
           onDraftLabelClick={onSaveAsDraft}
           heading={t(`CHECKLIST_HEADING`)}
         />
+        </div>
       ) : (
         <Loader />
       )}
