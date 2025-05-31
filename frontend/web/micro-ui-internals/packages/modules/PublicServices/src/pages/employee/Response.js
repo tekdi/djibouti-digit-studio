@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  Banner,
   Card,
   LinkLabel,
   AddFileFilled,
@@ -12,6 +11,7 @@ import {
   ArrowRightInbox,
   ArrowDown
 } from "@egovernments/digit-ui-react-components";
+import Banner from "../../../../../ui-components/src/atoms/Banner";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const Response = () => {
@@ -95,8 +95,13 @@ const Response = () => {
   };
 
   return (
-    <Card>
+    <div style={{width: "100%", padding: "16px", marginTop: "16px", height: "50%"}}>
       <Banner
+        style={{
+          borderRadius: "10px",
+          width: "100%",
+          height: "300px",
+        }}
         successful={isResponseSuccess}
         message={t(state?.message || "SUCCESS")}
         info={`${state?.showID ? t("COMMON_APPLICATION_ID") : ""}`}
@@ -120,7 +125,7 @@ const Response = () => {
           <SubmitBar style={{borderRadius: "10px"}} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
         </Link>
       </ActionBar>
-    </Card>
+    </div>
   );
 };
 
