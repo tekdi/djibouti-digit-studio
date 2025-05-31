@@ -14,7 +14,7 @@ const EmployeeApp = ({ path }) => {
   //const commonProps = { stateCode:"pb", cityCode:"pb.abianakhurd", moduleCode:"WS" };
   return (
     <React.Fragment>
-      <div className="engagement-citizen-wrapper">
+      <div className="">
       {!location.pathname.includes("response") && <BackButton>{t("CS_COMMON_BACK")}</BackButton>}
       <Switch>
           <Route path={`${path}/open-view`} render={()=><OpenView />} />

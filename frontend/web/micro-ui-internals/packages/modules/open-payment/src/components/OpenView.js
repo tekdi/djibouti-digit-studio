@@ -35,8 +35,8 @@ const OpenView = () => {
     bill?.billDetails
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
-  
-  const onSubmit = async () => {    
+
+  const onSubmit = async () => {
     if(window.location.href.includes("employee"))
     {
       const body = {
@@ -82,7 +82,7 @@ const OpenView = () => {
         },
         {
           onSuccess: (data) => {
-           
+
             if (data?.Payments?.[0].paymentDetails[0].businessService && data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode && data?.Payments?.[0]?.tenantId) {
               history.push(`/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}`,{iSuccess:true, applicationNumber:data?.Payments?.[0].paymentDetails?.[0]?.receiptNumber,...state});
               //setHasRedirected(true);  // Mark that redirection has happened
@@ -127,9 +127,9 @@ const OpenView = () => {
           },
         },
       };
-  
+
       try {
-        
+
         const data = await Digit.PaymentService.createCitizenReciept(bill?.tenantId, filterData);
         //dummy response
       //   const data = {
@@ -229,21 +229,21 @@ const OpenView = () => {
               "additionalField4",
               "additionalField5",
             ];
-  
+
             // override default date for UPYOG Custom pay
             gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-  
+
             gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
             gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
             // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
             // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-  
+
             // var formdata = new FormData();
-  
+
             for (var key of orderForNDSLPaymentSite) {
-  
+
               // formdata.append(key,gatewayParam[key]);
-  
+
               newForm.append(
                 $("<input>", {
                   name: key,
@@ -255,12 +255,12 @@ const OpenView = () => {
             $(document.body).append(newForm);
             newForm.submit();
             makePayment(gatewayParam.txURL,newForm);
-  
+
           } catch (e) {
             console.log("Error in payment redirect ", e);
             //window.location = redirectionUrl;
           }
-        
+
        // window.location = redirectUrl;
       } catch (error) {
         let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
@@ -271,7 +271,7 @@ const OpenView = () => {
         setShowToast({ key: true, label: t(messageToShow) });
       }
     }
-    
+
 
   }
 
@@ -279,51 +279,75 @@ const OpenView = () => {
     return <Loader />
   }
   return (
-    <>
-    <Card>
-      <Header className="works-header-search">{t("OP_PAYMENT_DETAILS")}</Header>
-      <StatusTable>
-          <Row label={t("OP_CONSUMER_NAME")}  text={bill?.payerName || t("ES_COMMON_NA")} />
-          <Row label={t("OP_CONSUMER_EMAIL")}  text={bill?.payerEmail || t("ES_COMMON_NA")} />
-          <Row label={t("OP_CONSUMER_ADDRESS")}  text={bill?.payerAddress || t("ES_COMMON_NA")} />
-          <Row label={t("OP_CONSUMER_PHNO")}  text={bill?.mobileNumber || t("ES_COMMON_NA")} />
-          <Row label={t("ES_PAYMENT_TAXHEADS")} labelStyle={{ fontWeight: "bold" }} textStyle={{ fontWeight: "bold" }} text={t("ES_PAYMENT_AMOUNT")} />
-          {/* <hr style={{ width: "40%" }} className="underline" /> */}
-          {bill?.billDetails?.[0]?.billAccountDetails
-            ?.sort((a, b) => a.order - b.order)
-            .map((amountDetails, index) => (
-              <Row
-                key={index + "taxheads"}
-                labelStyle={{ fontWeight: "normal" }}
-                textStyle={{ textAlign: "right", maxWidth: "100px" }}
-                label={t(amountDetails.taxHeadCode)}
-                text={"₹ " + amountDetails.amount?.toFixed(2)}
-              />
-            ))}
+    <div style={{ backgroundColor: "white", borderRadius: "15px"}} className="digit-results-table-wrapper">
+      <div style={{width: "100%", padding: "20px",marginLeft: "20px"}}>
+        <Header style={{ marginBottom: "20px" }}>{t("OP_PAYMENT_DETAILS")}</Header>
+        <StatusTable>
+          <div style={{marginTop: "16px"}}>
+            <Row label={t("OP_CONSUMER_NAME")} text={bill?.payerName || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
+            <Row label={t("OP_CONSUMER_EMAIL")} text={bill?.payerEmail || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
+            <Row label={t("OP_CONSUMER_ADDRESS")} text={bill?.payerAddress || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
+            <Row label={t("OP_CONSUMER_PHNO")} text={bill?.mobileNumber || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
+          </div>
 
-          {arrears?.toFixed?.(2) ? (
+          <div style={{ margin: "24px 0" }}>
             <Row
-              labelStyle={{ fontWeight: "normal" }}
-              textStyle={{ textAlign: "right", maxWidth: "100px" }}
-              label={t("COMMON_ARREARS")}
-              text={"₹ " + arrears?.toFixed?.(2) || Number(0).toFixed(2)}
+              label={t("ES_PAYMENT_TAXHEADS")}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              textStyle={{ fontWeight: "bold", fontSize: "16px", textAlign: "right" }}
+              text={t("ES_PAYMENT_AMOUNT")}
             />
-          ) : null}
+            <div style={{ margin: "16px 0" }}>
+              {bill?.billDetails?.[0]?.billAccountDetails
+                ?.sort((a, b) => a.order - b.order)
+                .map((amountDetails, index) => (
+                  <Row
+                    key={index + "taxheads"}
+                      labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                    label={t(amountDetails.taxHeadCode)}
+                    text={"FDj " + amountDetails.amount?.toFixed(0)}
+                  />
+                ))}
+            </div>
 
-          <hr style={{ width: "40%" }} className="underline" />
-          <Row
-            label={t("CS_PAYMENT_TOTAL_AMOUNT")}
-            labelStyle={{ fontWeight: "bold" }}
-            textStyle={{ fontWeight: "bold", textAlign: "right", maxWidth: "100px" }}
-            text={"₹ " + Number(bill?.totalAmount).toFixed(2)}
-          />
+            {arrears?.toFixed?.(2) ? (
+              <div style={{ margin: "16px 0", paddingTop: "16px" }}>
+              <Row
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                label={t("COMMON_ARREARS")}
+                text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
+              />
+            </div>
+            ) : null}
+
+            <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
+              <Row
+                label={t("CS_PAYMENT_TOTAL_AMOUNT")}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginTop: "24px", width: "100%" ,display: "flex", justifyContent: "end"}}>
+            <SubmitBar
+              style={{
+                // width: "100%",
+                marginRight: "55px",
+                marginBottom: "0px",
+                borderRadius: "10px",
+              }}
+              disabled={Number(bill?.totalAmount) === 0}
+              onSubmit={onSubmit}
+              label={t("OP_PROCEED_TO_PAY")}
+            />
+          </div>
         </StatusTable>
-    </Card>
-    <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
-          {/* {displayMenu ? <Menu localeKeyPrefix={"ES_COMMON"} options={ACTIONS} t={t} onSelect={onActionSelect} /> : null} */}
-          <SubmitBar disabled={Number(bill?.totalAmount) === 0} onSubmit={onSubmit} label={t("OP_PROCEED_TO_PAY")} />
-    </ActionBar>
-    {showToast && (
+      </div>
+      {showToast && (
         <Toast
           error={showToast.key}
           label={t(showToast.label)}
@@ -332,7 +356,7 @@ const OpenView = () => {
           }}
         />
       )}
-    </>
+    </div>
   )
 }
 

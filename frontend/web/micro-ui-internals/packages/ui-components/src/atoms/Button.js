@@ -132,7 +132,7 @@ const Button = (props) => {
         } ${props?.size ? props?.size : ""}`}
       >
         {!props?.isSuffix && props?.icon && icon}
-        <h2 style={{ ...props?.textStyles, color: props?.gradient ? "white" : "#006769", fontSize: props?.gradient ? "20px" : "16px" }} className="digit-button-label">
+        <h2 style={{ color: props?.gradient ? "white" : "#006769", fontSize: props?.gradient ? "20px" : "16px", ...props?.textStyles}} className="digit-button-label">
           {formattedLabel}
         </h2>
         {props?.isSuffix && props?.icon && icon}

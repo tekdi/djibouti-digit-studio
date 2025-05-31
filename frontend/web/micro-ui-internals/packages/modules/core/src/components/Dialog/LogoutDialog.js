@@ -127,34 +127,34 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
         display: "flex",
         flex: 1,
         width: "100%",
-        padding: "18px",
+        padding: "5px",
         justifyContent: "end",
-        gap: "15px",
+        gap: "20px",
       }}
       style={{
         borderRadius: "10px",
       }}
       popupModuleStyles={{
-        width: "30%"
+        width: "40%"
       }}
       actionCancelLabelStyle={{
-        width:"100%",
+        width:"90%",
         backgroundColor: "#FFFFFF",
         borderRadius: "10px"
       }}
        actionCancleTextStyle={{
         width: "100%",
-        fontSize: "16px",
+        fontSize: "14px",
       }}
       actionSaveOnSubmitStyle={{
         backgroundColor: "#006769",
         borderRadius: "10px",
         color: "white",
-        width: "100%",
+        width: "90%",
       }}
       actionSaveTextStyle={{
         width: "100%",
-        fontSize: "16px",
+        fontSize: "14px",
         color: "white"
       }}
     >

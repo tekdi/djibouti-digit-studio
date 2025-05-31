@@ -3,7 +3,7 @@ import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { colorCodes } from "../configs/UICustomizations";
 
-const ApplicationDataView = ({serviceCode, data, status, applicationNumber }) => {
+const ApplicationDataView = ({serviceCode, data, status, applicationNumber, businessService }) => {
   const { t } = useTranslation();
 
   if (!data) return null;
@@ -242,7 +242,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber }) =>
         width: "fit-content"
       }}
     >
-      {t(status)}
+      {t(businessService + "_" + status)}
     </p>
   </div>
   <div style={{ display: "flex", width: "100%" }}>

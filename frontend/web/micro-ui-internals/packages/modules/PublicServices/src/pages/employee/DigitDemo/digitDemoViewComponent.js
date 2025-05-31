@@ -212,6 +212,7 @@ const DigitDemoViewComponent = () => {
             <ApplicationDataView
               serviceCode={serviceCode}
               status={config?.apiResponse?.processInstance[0]?.state.state}
+              businessService={response?.businessService?.toUpperCase()}
               applicationNumber={config?.apiResponse?.applicationNumber}
               data={applicationData}
             />

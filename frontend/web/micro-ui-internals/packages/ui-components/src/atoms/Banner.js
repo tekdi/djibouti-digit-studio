@@ -15,7 +15,6 @@ const Successful = (props) => {
       }`}
       style={props?.props?.style ? props?.props?.style : {}}
     >
-      <header style={props?.props?.headerStyles ? props?.props?.headerStyles : {}}>{props.props.message}</header>
       <div>
         {props.props.whichSvg === "tick" ? (
           <div>
@@ -26,6 +25,7 @@ const Successful = (props) => {
         ) : (
           props?.props?.svg
         )}
+        <header style={props?.props?.headerStyles ? props?.props?.headerStyles : {}}>{props.props.message}</header>
         {(props?.props?.complaintNumber || props.props.info) && (
           <h2 style={props?.props?.infoStyles ? props?.props?.infoStyles : {}}>
             {props?.props?.complaintNumber ? t("CS_PGR_COMPLAINT_NUMBER") : props.props.info}
@@ -50,6 +50,7 @@ const Successful = (props) => {
           </div>
         )}
       </div>
+
     </div>
   );
 };
