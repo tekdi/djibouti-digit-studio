@@ -205,6 +205,7 @@ export const InboxConfig = () => {
             {
               label: "BUSINESS_SERVICE_LABEL",
               jsonPath: "businessObject.businessService",
+              additionalCustomization: true,
             },
             {
               label: "WORKFLOW_STATUS",

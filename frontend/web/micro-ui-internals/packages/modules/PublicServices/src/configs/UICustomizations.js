@@ -177,6 +177,13 @@ export const UICustomizations = {
           </div>
         );
       }
+      if (key === "BUSINESS_SERVICE_LABEL") {
+        return (
+          <div>
+            {t(`${row?.businessObject?.businessService}`)}
+          </div>
+        );
+      }
     },
     selectionHandler: (event) => {}, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)
     actionSelectHandler: (index, label, selectedRows) => {}, // actionSelectHandler : Is used to handle onClick functions of table action button on row selections, gets index,label and selectedRows as props
