@@ -250,7 +250,7 @@ const RenderFormFields = ({ data, ...props }) => {
             rules={{ required: populators?.isMandatory }}
             render={(props) => {
               return (
-                <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
+                <div style={{ display: "grid", gridAutoFlow: "row",width:"100%", gap:"8px" }}>
                   <WorkflowStatusFilter inboxResponse={data} props={props} populators={populators} t={t} formData={formData} />
                 </div>
               );
