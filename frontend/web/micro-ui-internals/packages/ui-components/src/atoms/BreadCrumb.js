@@ -62,6 +62,9 @@ const BreadCrumb = (props) => {
       }
     }
     window.history.back();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const handleConfirmBack = () => {
