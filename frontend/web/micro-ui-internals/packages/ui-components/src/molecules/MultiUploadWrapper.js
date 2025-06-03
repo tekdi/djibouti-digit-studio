@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import PropTypes from "prop-types";
 import UploadFile from "../atoms/UploadFile";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import Loader from "../atoms/Loader";
 
 const displayError = ({ t, error, name }, customErrorMsg) => (
   <span style={{ display: "flex", flexDirection: "column" }}>

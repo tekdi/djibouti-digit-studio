@@ -175,7 +175,6 @@ const DigitDemoViewComponent = () => {
 
   return (
     <React.Fragment>
-
       {/* {
         <div className={"employee-application-details"} style={{ alignItems: "center", marginBottom: "24px" }}>
           <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
@@ -199,15 +198,16 @@ const DigitDemoViewComponent = () => {
 
         </div>
       } */}
-      <div style={{ width: "100%", display: "flex", marginTop: '20px' }}>
-        <div style={{ width: "65%", margin: '0px 30px 0 5px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
-          <div style={{
-            boxShadow: '1px 5px 7px 2px #adadad',
-            borderRadius: '1rem',
-            padding: '10px',
-            backgroundColor: 'rgba(255, 255, 255, var(--bg-opacity))'
-          }}>
+      <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
+        <div style={{ width: "65%", margin: "0px 30px 0 5px", display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div
+            style={{
+              boxShadow: "1px 5px 7px 2pxrgb(247, 24, 24)",
+              borderRadius: "1rem",
+              padding: "10px",
+              backgroundColor: "0 1px 2px 0 rgba(0, 0, 0, 0.16)",
+            }}
+          >
             {/* <ViewComposer data={config} isLoading={false} /> */}
             <ApplicationDataView
               serviceCode={serviceCode}
@@ -216,29 +216,37 @@ const DigitDemoViewComponent = () => {
               applicationNumber={config?.apiResponse?.applicationNumber}
               data={applicationData}
             />
-
           </div>
         </div>
-        <div style={{ width: "35%", marginRight: '10px' }}>
-          <div style={{
-            boxShadow: '1px 5px 7px 2pxrgb(207, 205, 205)',
-            borderRadius: '1rem',
-            marginBottom: '15px',
-            backgroundColor: 'rgba(255, 255, 255, var(--bg-opacity))'
-          }}>
-            <ViewCheckListCards applicationId={data?.Application?.[0]?.id} state={data?.Application?.[0]?.processInstance?.[0]?.state?.state} checkListCodes={checkListCodes} />
+        <div style={{ width: "35%", marginRight: "10px" }}>
+          <div
+            style={{
+              boxShadow: "1px 5px 7px 2pxrgb(207, 205, 205)",
+              borderRadius: "1rem",
+              marginBottom: "15px",
+              marginTop:'10px',
+              backgroundColor: "rgba(255, 255, 255, var(--bg-opacity))",
+            }}
+          >
+            <ViewCheckListCards
+              applicationId={data?.Application?.[0]?.id}
+              state={data?.Application?.[0]?.processInstance?.[0]?.state?.state}
+              checkListCodes={checkListCodes}
+            />
           </div>
-          <div style={{
-            borderRadius: '1rem',
-            width: 'fit-content',
-            position: 'absolute',
-            top: '90px',
-            right: '10px',
-            display: 'flex',
-            gap: '10px',
-            height: '70px',
-          }}>
-            {processInstanceState === 'PERMIT_GRANTED' && (
+          <div
+            style={{
+              borderRadius: "1rem",
+              width: "fit-content",
+              position: "absolute",
+              top: "90px",
+              right: "10px",
+              display: "flex",
+              gap: "10px",
+              height: "70px",
+            }}
+          >
+            {processInstanceState === "PERMIT_GRANTED" && (
               <Button
                 label={t("CS_COMMON_DOWNLOAD")}
                 onClick={() => handleTemplateDownload()}
@@ -247,8 +255,8 @@ const DigitDemoViewComponent = () => {
                 type="button"
                 icon="FileDownload"
                 style={{
-                  marginTop: '15px',
-                  backgroundColor: 'transparent'
+                  marginTop: "15px",
+                  backgroundColor: "transparent",
                 }}
               />
             )}
@@ -263,16 +271,16 @@ const DigitDemoViewComponent = () => {
               isDisabled={!selectedBusinessService}
               moduleCode={response?.module}
               ActionBarStyle={{
-                position: 'relative',
-                boxShadow: 'none',
-                backgroundColor: 'transparent',
-                marginBottom: '1rem'
+                position: "relative",
+                boxShadow: "none",
+                backgroundColor: "transparent",
+                marginBottom: "1rem",
               }}
               MenuStyle={{
-                top: '100%',
-                bottom: 'unset',
-                backgroundColor: '#006769',
-                color: 'white'
+                top: "100%",
+                bottom: "unset",
+                backgroundColor: "#006769",
+                color: "white",
               }}
               {...(matchedBusinessServices.length > 1 && {
                 actionFields: [
@@ -286,8 +294,8 @@ const DigitDemoViewComponent = () => {
                     isSearchable={false}
                     onOptionSelect={(value) => setSelectedBusinessService(value)}
                     menuStyle={{
-                      top: '100%',
-                      bottom: 'unset'
+                      top: "100%",
+                      bottom: "unset",
                     }}
                   />,
                 ],
@@ -296,11 +304,11 @@ const DigitDemoViewComponent = () => {
           </div>
           <div
             style={{
-              borderRadius: '1rem',
+              borderRadius: "1rem",
               boxShadow:
-                'rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px',
-              padding: '1.5rem',
-              backgroundColor: 'white',
+                "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px",
+              padding: "1.5rem",
+              backgroundColor: "white",
             }}
           >
             {/* <span
@@ -317,10 +325,10 @@ const DigitDemoViewComponent = () => {
             </span> */}
             <h2
               style={{
-                fontSize: '1.5rem',
+                fontSize: "40px",
                 fontWeight: 700,
-                marginTop: '1rem',
-                wordBreak: 'break-word',
+                marginTop: "1rem",
+                wordBreak: "break-word",
               }}
             >
               {t("CALCULATION_OF_RIGHTS")}
@@ -336,16 +344,16 @@ const DigitDemoViewComponent = () => {
             <button
               onClick={handleCalculationClick}
               style={{
-                marginTop: '1.5rem',
-                width: '100%',
-                border: '1px solid #d1d5db',
-                color: '#006769',
+                marginTop: "1.5rem",
+                width: "100%",
+                border: "1px solid #006769",
+                color: "#006769",
                 fontWeight: 500,
-                fontSize:"16px",
-                padding: '0.5rem 0',
-                borderRadius: '0.5rem',
-                backgroundColor: 'white',
-                cursor: 'pointer',
+                fontSize: "16px",
+                padding: "0.5rem 0",
+                borderRadius: "0.5rem",
+                backgroundColor: "white",
+                cursor: "pointer",
               }}
             >
               {t("EDIT")}
@@ -354,23 +362,21 @@ const DigitDemoViewComponent = () => {
           <div
             style={{
               marginTop: "1rem",
-              borderRadius: '1rem',
+              borderRadius: "1rem",
               boxShadow:
-                'rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px',
-              padding: '1.5rem',
-              backgroundColor: 'white',
+                "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px",
+              padding: "1.5rem",
+              backgroundColor: "white",
             }}
           >
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>
-              {t("TRACK_REQUEST")}
-            </h2>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>{t("TRACK_REQUEST")}</h2>
 
             <div style={{ position: "relative", paddingLeft: "2rem" }}>
               <div
                 style={{
                   position: "absolute",
-                  top: '24px',
-                  left: '43px',
+                  top: "24px",
+                  left: "43px",
                   height: "calc(100% - 70px)",
                   width: "2px",
                   backgroundColor: "#d1d5db",
@@ -378,7 +384,7 @@ const DigitDemoViewComponent = () => {
               />
 
               {[...workflowDetails?.timeline].reverse().map((instance, index) => {
-                const isCurrentState = index === (workflowDetails?.timeline?.length - 1);
+                const isCurrentState = index === workflowDetails?.timeline?.length - 1;
                 return (
                   <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
                     <div
@@ -396,29 +402,40 @@ const DigitDemoViewComponent = () => {
                         color: isCurrentState ? "white" : "inherit",
                         marginRight: "0.75rem",
                         flexShrink: 0,
-                        zIndex: '999'
+                        zIndex: "999",
                       }}
                     >
                       {index + 1}
                     </div>
-                    <div style={{
-                      width: "100%",
-                      minWidth: 0,
-                      wordBreak: "break-word"
-                    }}>
-                      <p style={{
-                        fontSize: "0.9rem",
-                        color: isCurrentState ? "#C84C0E" : "#374151",
-                        fontWeight: isCurrentState ? "600" : "normal",
-                        marginTop: '5px',
-                        overflowWrap: "break-word",
-                        whiteSpace: "normal"
-                      }}>
+                    <div
+                      style={{
+                        width: "100%",
+                        minWidth: 0,
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: "16px",
+                          color: isCurrentState ? "#C84C0E" : "#505A5F",
+                          fontWeight: "400",
+                          marginTop: "5px",
+                          overflowWrap: "break-word",
+                          whiteSpace: "normal",
+                          fontFamily: "Inter",
+                        }}
+                      >
                         {t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`)}
-                        <span style={{
-                          color: isCurrentState ? "#C84C0E" : "#6b7280",
-                          display: "inline-block"
-                        }}> ({instance?.auditDetails?.created})</span>
+                        <span
+                          style={{
+                            color: isCurrentState ? "#C84C0E" : "#6b7280",
+                            display: "inline-block",
+                            fontFamily: "Inter",
+                          }}
+                        >
+                          {" "}
+                          ({instance?.auditDetails?.created})
+                        </span>
                       </p>
                       {instance?.comment && (
                         <div
@@ -428,30 +445,37 @@ const DigitDemoViewComponent = () => {
                             padding: "0.75rem",
                             borderRadius: "0.5rem",
                             fontSize: "0.85rem",
-                            color: "#374151",
+                            color: "#505A5F",
                             backgroundColor: isCurrentState ? "rgba(200, 76, 14, 0.05)" : "#f9fafb",
-                            wordBreak: "break-word"
+                            wordBreak: "break-word",
+                            fontFamily: "Inter",
                           }}
                         >
-                          <strong style={{
-                            display: "block",
-                            marginBottom: "0.25rem",
-                            marginTop: '5px',
-                            color: isCurrentState ? "#C84C0E" : "inherit"
-                          }}>
-                            Commentaires
+                          <strong
+                            style={{
+                              display: "block",
+                              marginBottom: "0.25rem",
+                              marginTop: "5px",
+                              color: isCurrentState ? "#C84C0E" : "inherit",
+                              fontFamily: "Inter",
+                            }}
+                          >
+                            {t("COMMENT")}
                           </strong>
                           {instance?.comment}
                         </div>
                       )}
                       {instance?.assignes?.length > 0 && (
-                        <div style={{
-                          marginTop: "0.5rem",
-                          fontSize: "0.85rem",
-                          color: isCurrentState ? "#C84C0E" : "#6b7280",
-                          wordBreak: "break-word"
-                        }}>
-                          Assigné à: {instance?.assignes?.map(assignee => assignee?.name).join(", ")}
+                        <div
+                          style={{
+                            marginTop: "0.5rem",
+                            fontSize: "0.85rem",
+                            color: isCurrentState ? "#C84C0E" : "#6b7280",
+                            wordBreak: "break-word",
+                            fontFamily: "Inter",
+                          }}
+                        >
+                          {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
                         </div>
                       )}
                     </div>
@@ -467,7 +491,6 @@ const DigitDemoViewComponent = () => {
         {displayMenu ? <Menu localeKeyPrefix={"WORKS"} options={actionULB} optionKey={"name"} t={t} onSelect={onActionSelect} /> : null}
         <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
       </ActionBar> */}
-
     </React.Fragment>
   );
 };

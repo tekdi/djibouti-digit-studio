@@ -148,13 +148,13 @@ const UploadAndDownloadDocumentHandler = ({
           ...doc,
           templatePDFKey: "",
           templatedownloadURL: "",
-          name: t(`${localePrefix}_${doc?.code}_UPLOAD`),
+          name: `${localePrefix}_${doc?.code}_UPLOAD`
         }
       ];
     }
     return {
       ...doc,
-      name: t(`${localePrefix}_${doc?.code}_UPLOAD`)
+      name: `${localePrefix}_${doc?.code}_UPLOAD`
     };// Just the original if no keys present
   });
   // if (!docConfig && flow !== "WORKFLOW") return null;

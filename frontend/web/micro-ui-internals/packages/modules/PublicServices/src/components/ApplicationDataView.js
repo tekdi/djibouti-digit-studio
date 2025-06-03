@@ -79,19 +79,18 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
             return (
               <div key={key}>
                 {renderedValue === "checked" ? (
-                  <div className="fields-container">
+                  <div className="fields-container" style={{ width: "100%" }}>
                     <span
                       className="digit-custom-checkbox digit-custom-checkbox-emp"
                       style={{
                         border: "3px solid grey",
                         display: "inline-block",
                         borderRadius: "6px",
-                        padding: "2px",
                         marginRight: "8px",
-                        height: "35px",
+                        height: "27px",
                       }}
                     >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="20" height="20"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_105_1500)">
                           <path
                             d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -100,7 +99,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
                         </g>
                         <defs>
                           <clipPath id="clip0_105_1500">
-                            <rect width="24" height="24" fill="white" />
+                            <rect width="20" height="20"  fill="white" />
                           </clipPath>
                         </defs>
                       </svg>
@@ -123,20 +122,19 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
 
   const renderCheckbox = (key, checked) => {
     return (
-      <div key={key} className="fields-container">
+      <div key={key} style={{ width: "100%" }} className="fields-container">
         <span
           className="digit-custom-checkbox digit-custom-checkbox-emp"
           style={{
             border: "3px solid grey",
             display: "inline-block",
             borderRadius: "6px",
-            padding: "2px",
             marginRight: "8px",
-            height: "35px",
+            height: "27px",
           }}
         >
           {checked && (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clipPath="url(#clip0_105_1500)">
                 <path
                   d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -145,7 +143,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
               </g>
               <defs>
                 <clipPath id="clip0_105_1500">
-                  <rect width="24" height="24" fill="white" />
+                  <rect width="20" height="20" fill="white" />
                 </clipPath>
               </defs>
             </svg>
@@ -225,7 +223,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
   };
 
   return (
-    <Card style={{ borderRadius: "1rem" }}>
+    <Card style={{ borderRadius: "1rem", padding: "30px" }}>
       <CardHeader style={{ marginLeft: "12px" }}>{t("BPA_BPA_PCO_APPLICANTDETAILS")}</CardHeader>
       <div style={{ padding: "16px" }}>
         <div style={{ display: "flex", width: "100%" }}>
@@ -266,22 +264,21 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         {renderSection(serviceDetails.landInfo, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
         {renderSection(serviceDetails.designOffice, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
         {renderDocuments()}
-          <div className="fields-container">
+          <div style={{ width: "100%" }} className="fields-container">
           <span
             className="digit-custom-checkbox digit-custom-checkbox-emp"
             style={{
               border: "3px solid grey",
               display: "inline-block",
               borderRadius: "6px",
-              padding: "2px",
               marginRight: "8px",
-              height: "35px",
+              height: "27px",
               cursor: "pointer"
             }}
             onClick={() => setIsAttested(!isAttested)}
           >
 
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clipPath="url(#clip0_105_1500)">
                   <path
                     d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -290,7 +287,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
                 </g>
                 <defs>
                   <clipPath id="clip0_105_1500">
-                    <rect width="24" height="24" fill="white" />
+                    <rect width="20" height="20" fill="white" />
                   </clipPath>
                 </defs>
               </svg>
@@ -351,6 +348,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         }
         .file-name {
           color: #505a5f !important;
+          text-align: center;
         }
         .file-id {
           color: #505a5f;

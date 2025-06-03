@@ -45,11 +45,11 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
             const renderedValue = renderValue(value);
             const label =
               renderedValue === "checked" ? (
-                <div style={{ fontSize: "16px", marginLeft: "10px" }} className="field-label">
+                <div style={{ marginLeft: "10px" }} className="field-label">
                   {t(serviceCode + "_" + key.toUpperCase())}
                 </div>
               ) : (
-                <div style={{ fontSize: "19px" }} className="field-label">
+                <div className="field-label">
                   {t(serviceCode + "_" + key.toUpperCase())}
                 </div>
               );
@@ -65,12 +65,11 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                         border: "3px solid grey",
                         display: "inline-block",
                         borderRadius: "6px",
-                        padding: "2px",
                         marginRight: "8px",
-                        height: "35px",
+                        height: "27px",
                       }}
                     >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_105_1500)">
                           <path
                             d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -79,7 +78,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                         </g>
                         <defs>
                           <clipPath id="clip0_105_1500">
-                            <rect width="24" height="24" fill="white" />
+                            <rect width="20" height="20" fill="white" />
                           </clipPath>
                         </defs>
                       </svg>
@@ -112,7 +111,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
 
             return (
               <div key={docType} className="fields-container">
-                <div className="field-label" style={{ width: "65%", fontSize: "16px", fontWeight: "500" }}>
+                <div className="field-label" style={{ width: "65%"}}>
                   {t(docType)}
                 </div>
                 <div className="field-value">

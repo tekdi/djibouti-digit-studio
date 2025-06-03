@@ -84,9 +84,9 @@ const CheckListCard = (props) => {
               {t("READY")}
             </span> */}
           {/* <TextBlock style={{color:'black',fontSize:'40px', fontWeight:'700' }} body={props.t(props.item.code)} /> */}
-          <p style={{ color: "black", fontSize: "24px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word" }}>
+          <h2 style={{ color: "black", fontSize: "40px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word", margin: "15px 0" }}>
             {props.t(props.item.code)}
-          </p>
+          </h2>
           {/* {
           filled  ? (
             <button
@@ -106,28 +106,28 @@ const CheckListCard = (props) => {
             >
               {t("VIEW_RESPONSE")}
             </button>
-          ) : 
+          ) :
           ( */}
-            <button
-              style={{
-                border: "1px solid rgb(209, 213, 219)",
-                width: "100%",
-                backgroundColor: "white",
-                color: "#006769",
-                borderRadius: "10px",
-                padding: "8px",
-                fontSize:"16px",
-                fontWeight:500
-              }}
-              onClick={() =>
-                history.push(
-                  `/${window.contextPath}/employee/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&state=${props?.state}`,
-                  { redirectionUrl: `${window.location.href}`}
-                )
-              }
-            >
-              {t("FILL_CHECKLIST")}
-            </button>
+          <button
+            style={{
+              border: "1px solid #006769",
+              width: "100%",
+              backgroundColor: "white",
+              color: "#006769",
+              borderRadius: "10px",
+              padding: "8px",
+              fontSize: "16px",
+              fontWeight: 500,
+            }}
+            onClick={() =>
+              history.push(
+                `/${window.contextPath}/employee/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&state=${props?.state}`,
+                { redirectionUrl: `${window.location.href}` }
+              )
+            }
+          >
+            {t("FILL_CHECKLIST")}
+          </button>
           {/* )} */}
         </Card>
       ) : (
