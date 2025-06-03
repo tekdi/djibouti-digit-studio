@@ -155,12 +155,15 @@ const WorkflowActions = ({
     setDisplayMenu(false);
     setSelectedAction(action);
     if (action.action.includes("MAKE_PAYMENT")) {
-      history.push(
-        `/${window.contextPath}/employee/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}`,
-        {
-          redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`,
-        }
-      );
+      // history.push(
+      //   `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}`,
+      //   {
+      //     redirectionUrl: `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`,
+      //   }
+      // );
+      const redirectionUrl = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`;
+
+      window.location = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }
 
     //here check if actin is edit then do a history.push acc to the businessServ and action

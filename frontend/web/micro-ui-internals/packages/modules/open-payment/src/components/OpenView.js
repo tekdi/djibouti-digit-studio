@@ -106,7 +106,7 @@ const OpenView = () => {
           billId: bill.id,
           consumerCode: bill.consumerCode,
           productInfo: "Common Payment",
-          gateway: "PAYGOV",
+          gateway: "D-MONEY",
           taxAndPayments: [
             {
               billId: bill.id,
@@ -117,7 +117,7 @@ const OpenView = () => {
             name:  bill?.payerName,
             mobileNumber:  bill?.mobileNumber,
             tenantId: bill?.tenantId,
-            emailId: "sriranjan.srivastava@owc.com"
+            emailId: bill?.payerEmail
           },
           // success
           // callbackUrl: `${window.location.protocol}//${window.location.host}/${window.contextPath}/citizen/openpayment/success?consumerCode=${queryParams.consumerCode}&tenantId=${queryParams.tenantId}&businessService=${queryParams.businessService}`,
@@ -126,11 +126,33 @@ const OpenView = () => {
             isWhatsapp: false,
           },
         },
+        RequestInfo:{
+          apiId: "Rainmaker",
+          authToken: Digit.UserService.getUser()?.access_token,
+          userInfo: Digit.UserService.getUser()?.info,
+          msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+        }
       };
 
       try {
 
-        const data = await Digit.PaymentService.createCitizenReciept(bill?.tenantId, filterData);
+        mutation.mutate(
+          {
+            url: `/pg-service/transaction/v1/_create?tenantId=${bill?.tenantId}`,
+            body: filterData,
+            headers:{ "X-Tenant-Id": bill?.tenantId }
+          },
+          {
+            onSuccess: (data) => {
+              const redirectUrl = data?.Transaction?.redirectUrl;
+              window.location = redirectUrl;
+
+            },
+            onError: () => {
+              <Toast label={t("CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER")} />;
+            },
+          }
+        );
         //dummy response
       //   const data = {
       //     "ResponseInfo": {
@@ -193,76 +215,77 @@ const OpenView = () => {
       //         "bankTransactionNo": null
       //     }
       // }
-        const redirectUrl = data?.Transaction?.redirectUrl;
-          // paygov
-          try {
-            const gatewayParam = redirectUrl
-              ?.split("?")
-              ?.slice(1)
-              ?.join("?")
-              ?.split("&")
-              ?.reduce((curr, acc) => {
-                var d = acc.split("=");
-                curr[d[0]] = d[1];
-                return curr;
-              }, {});
-            var newForm = $("<form>", {
-              action: gatewayParam.txURL,
-              method: "POST",
-              target: "_top",
-            });
-            const orderForNDSLPaymentSite = [
-              "checksum",
-              "messageType",
-              "merchantId",
-              "serviceId",
-              "orderId",
-              "customerId",
-              "transactionAmount",
-              "currencyCode",
-              "requestDateTime",
-              "successUrl",
-              "failUrl",
-              "additionalField1",
-              "additionalField2",
-              "additionalField3",
-              "additionalField4",
-              "additionalField5",
-            ];
+        // const redirectUrl = data?.Transaction?.redirectUrl;
+        //   // paygov
+        //   try {
+        //     const gatewayParam = redirectUrl
+        //       ?.split("?")
+        //       ?.slice(1)
+        //       ?.join("?")
+        //       ?.split("&")
+        //       ?.reduce((curr, acc) => {
+        //         var d = acc.split("=");
+        //         curr[d[0]] = d[1];
+        //         return curr;
+        //       }, {});
+        //     var newForm = $("<form>", {
+        //       action: gatewayParam.txURL,
+        //       method: "POST",
+        //       target: "_top",
+        //     });
+        //     const orderForNDSLPaymentSite = [
+        //       "checksum",
+        //       "messageType",
+        //       "merchantId",
+        //       "serviceId",
+        //       "orderId",
+        //       "customerId",
+        //       "transactionAmount",
+        //       "currencyCode",
+        //       "requestDateTime",
+        //       "successUrl",
+        //       "failUrl",
+        //       "additionalField1",
+        //       "additionalField2",
+        //       "additionalField3",
+        //       "additionalField4",
+        //       "additionalField5",
+        //     ];
 
-            // override default date for UPYOG Custom pay
-            gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
+        //     // override default date for UPYOG Custom pay
+        //     gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
 
-            gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-            gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-            // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
-            // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
+        //     gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+        //     gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+        //     // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
+        //     // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
 
-            // var formdata = new FormData();
+        //     // var formdata = new FormData();
 
-            for (var key of orderForNDSLPaymentSite) {
+        //     for (var key of orderForNDSLPaymentSite) {
 
-              // formdata.append(key,gatewayParam[key]);
+        //       // formdata.append(key,gatewayParam[key]);
 
-              newForm.append(
-                $("<input>", {
-                  name: key,
-                  value: gatewayParam[key],
-                  // type: "hidden",
-                })
-              );
-            }
-            $(document.body).append(newForm);
-            newForm.submit();
-            makePayment(gatewayParam.txURL,newForm);
+        //       newForm.append(
+        //         $("<input>", {
+        //           name: key,
+        //           value: gatewayParam[key],
+        //           // type: "hidden",
+        //         })
+        //       );
+        //     }
+        //     $(document.body).append(newForm);
+        //     newForm.submit();
+        //     makePayment(gatewayParam.txURL,newForm);
 
-          } catch (e) {
-            console.log("Error in payment redirect ", e);
-            //window.location = redirectionUrl;
-          }
+        //   } catch (e) {
+        //     console.log("Error in payment redirect ", e);
+        //     //window.location = redirectionUrl;
+        //   }
 
        // window.location = redirectUrl;
-      } catch (error) {
+      } 
+      catch (error) {
         let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
         if (error.response?.data?.Errors?.[0]) {
           const { code, message } = error.response?.data?.Errors?.[0];
