@@ -4,6 +4,7 @@ import { InboxConfig } from "../../../configs/inboxGenericConfig";
 import { InboxSearchComposer, Loader } from "@egovernments/digit-ui-components";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { getParallelWorkflow } from "../../../utils";
 
 const InboxService = () => {
   const { t } = useTranslation();
@@ -23,8 +24,7 @@ const InboxService = () => {
           params: { tenantId: tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
-            "auth-token":
-              Digit.UserService.getUser()?.access_token,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
         });
 
@@ -41,26 +41,36 @@ const InboxService = () => {
     fetchBusinessServices();
   }, [tenantId]);
 
+  const requestCriteria = {
+    url: "/egov-mdms-service/v2/_search",
+    body: {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        schemaCode: "Studio.ServiceConfiguration",
+      },
+    },
+  };
+
+  const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
   const updatedConfig = useMemo(() => {
-    return Digit.Utils.preProcessMDMSConfigInboxSearch(
-      t,
-      configs,
-      "sections.filter.uiConfig.fields",
-      {
-        updateDependent: [
-          {
-            key: "businessService",
-            value: servicesData.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase()).map((ob) => ({
+    return Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.filter.uiConfig.fields", {
+      updateDependent: [
+        {
+          key: "businessService",
+          value: servicesData
+            .filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
+            .map((ob) => ({
               code: ob?.businessService,
               name: ob?.businessService,
+              parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
             })),
-          },
-        ],
-      }
-    );
-  }, [t, configs, servicesData]);
+        },
+      ],
+    });
+  }, [t, configs, servicesData, data]);
 
-  if (isLoading) return <Loader />;
+  if (isLoading || moduleListLoading) return <Loader />;
 
   return (
     <React.Fragment>
