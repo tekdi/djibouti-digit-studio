@@ -99,9 +99,12 @@ const CheckListCard = (props) => {
                 padding: "8px",
               }}
               onClick={() =>
-                history.push(
-                  `/${window.contextPath}/employee/publicservices/viewresponse?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}`
-                )
+                history.push({ Add commentMore actions
+                  pathname:`/${window.contextPath}/employee/publicservices/viewresponse?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}`,
+                  state:{
+                      cardItems:props.item,Add commentMore actions
+                  },
+                })
               }
             >
               {t("VIEW_RESPONSE")}
