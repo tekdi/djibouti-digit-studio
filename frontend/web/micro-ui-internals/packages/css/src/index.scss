@@ -475,11 +475,13 @@ input[type="number"] {
     button {
       height: 40px;
       width: 153px;
-      border-radius: 0px;
+      border-radius: 12px;
       padding: 8px 24px;
       color: white;
       cursor: pointer;
       background-color: theme(colors.primary.main);
+      font-size: 16px;
+      font-weight: 500;
     }
   }
 }

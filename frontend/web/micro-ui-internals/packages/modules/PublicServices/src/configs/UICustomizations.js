@@ -35,7 +35,7 @@ function formatCreatedTime(timestamp) {
   return `${day} ${month}, ${year}`;
 }
 
-const userType = Digit.UserService.getType().toLowerCase();
+const userType = Digit.UserService.getUser()?.info?.type.toLowerCase();
 
 export const UICustomizations = {
   searchGenericConfig: {
@@ -148,6 +148,13 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
       data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
+      if(data?.state?.filterForm?.state)
+        {
+          const statusKeys = data?.state?.filterForm?.state;
+          data.body.inbox.moduleSearchCriteria.status = [];
+          data.body.inbox.moduleSearchCriteria.status = Object.keys(statusKeys).filter(key => statusKeys[key]);
+          data.state.filterForm.state = "";
+        }
 
       return data;
     },
@@ -187,6 +194,74 @@ export const UICustomizations = {
       }
       if (key === "BUSINESS_SERVICE_LABEL") {
         return <div>{t(`${row?.businessObject?.businessService}`)}</div>;
+      }
+    },
+    selectionHandler: (event) => {}, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)
+    actionSelectHandler: (index, label, selectedRows) => {}, // actionSelectHandler : Is used to handle onClick functions of table action button on row selections, gets index,label and selectedRows as props
+    footerActionHandler: (index, event) => {}, // footerActionHandler : Is used to handle onclick functions of footer action buttons, gets index and event as props
+  },
+
+  citizenInboxGenericConfig: {
+    preProcess: (data, additionalDetails) => {
+      const { module } = useParams();
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+      // data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
+      data.body.inbox.moduleSearchCriteria.businessService = "BPA_PCO";
+      data.body.inbox.moduleSearchCriteria.module = `${module}`;
+      // data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
+      data.body.inbox.processSearchCriteria.businessService = ["BPA_PCO"];
+      data.body.inbox.processSearchCriteria.tenantId = tenantId;
+      data.body.inbox.tenantId = tenantId;
+      delete data.body.inbox.moduleSearchCriteria.assignee;
+      data.method = "GET";
+      data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
+      data.params = {applicationNumber: data?.state?.searchForm?.applicationNumber
+        , sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder
+      }
+
+      return data;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const statusKey = row?.processInstance?.[0]?.state?.state || "";
+      const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD", "#4B4B4B"];
+
+      console.log(row, key, column, value, t, searchResult);
+      if (key === "APPLICATION_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${window.contextPath}/${userType}/publicservices/${row?.module}/${row?.businessService}/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+            <div style={{ color: "#949494" }}>{formatCreatedTime(row?.auditDetails?.createdTime)}</div>
+          </span>
+        );
+      }
+      if (key === "APPLICANT_NAME") {
+        return (
+          <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "4px" }}>
+            <div>{row?.applicants?.[0]?.name}</div>
+            <div style={{ color: "#949494" }}>{row?.processInstance?.[0].assigner?.name}</div>
+          </div>
+        );
+      }
+      if (key === "WORKFLOW_STATUS") {
+        return (
+          <div>
+            <span style={{ backgroundColor: bgColor, color: textColor, width: "fit-content", padding: "4px 12px", borderRadius: "6px" }}>
+              {t(`${row?.businessService}_${statusKey}`)}
+            </span>
+          </div>
+        );
+      }
+      if (key === "BUSINESS_SERVICE_LABEL") {
+        return (
+          <div>
+            {t(`${row?.businessService}`)}
+          </div>
+        );
       }
     },
     selectionHandler: (event) => {}, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)

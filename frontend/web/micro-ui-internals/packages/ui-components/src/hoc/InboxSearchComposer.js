@@ -151,7 +151,9 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     var { isLoading, data, revalidate, isFetching, error, refetch } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
   }
 
-  const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles;
+  const userObject = Digit.SessionStorage.get("User")
+
+  const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles || userObject?.info?.roles;
   const roleLabel = roles?.some(role => role?.code === "BPA_ARCHITECT") ? "BPA_ARCHITECT" : roles && roles[0]?.code;
 
   const closeToast = () => {
@@ -191,7 +193,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     <InboxContext.Provider value={{ state, dispatch }}>
       <div className="digit-inbox-search-composer-header-action-wrapper">
         {configs?.headerLabel && <HeaderComponent className="digit-inbox-search-composer-header">
-          {`${t(configs?.headerLabel)}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name}! (${t(roleLabel)})`}
+          {`${t(configs?.headerLabel)}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name || userObject?.info?.name}! (${t(roleLabel)})`}
           </HeaderComponent>}
 
         {configs?.type === "inbox" && configs?.sections?.search?.show && (

@@ -448,7 +448,7 @@ export const FormComposer = (props) => {
                       props.onPrevious();
                     }}
                   >
-                    Previous
+                   {t('BPA_BPA_PCO_PREVIOUS')}
                   </button>
                 )}
 

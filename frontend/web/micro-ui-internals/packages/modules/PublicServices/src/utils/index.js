@@ -129,7 +129,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
-      status: "ACTIVE",
+      status: isLastStep ? "ACTIVE" : "INACTIVE",
       channel: "counter",
       reference: null,
       workflowStatus: "applied",
