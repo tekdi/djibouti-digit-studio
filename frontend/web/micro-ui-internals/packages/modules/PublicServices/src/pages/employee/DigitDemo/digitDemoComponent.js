@@ -9,6 +9,17 @@ import { transformToApplicationPayload } from "../../../utils";
 import { Loader } from "@egovernments/digit-ui-react-components";
 import SummaryView from "../../../components/SummaryView";
 
+// Add styles for disabled inputs
+const disabledInputStyles = `
+  input:disabled, textarea:disabled, select:disabled {
+    background-color: #f0f0f0 !important;
+    color: #888 !important;
+    cursor: not-allowed !important;
+    border: 1px solid #ddd !important;
+    opacity: 0.7 !important;
+  }
+`;
+
 const DigitDemoComponent = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -26,6 +37,19 @@ const DigitDemoComponent = () => {
   const [formData, setFormData] = useState(savedFormData);
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
+
+  // Add useEffect to inject styles
+  useEffect(() => {
+    // Create style element
+    const styleEl = document.createElement('style');
+    styleEl.innerHTML = disabledInputStyles;
+    document.head.appendChild(styleEl);
+
+    // Clean up on unmount
+    return () => {
+      document.head.removeChild(styleEl);
+    };
+  }, []);
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -177,12 +201,64 @@ const DigitDemoComponent = () => {
     }
   };
 
+
+       if (currentFormConfig.name === "landandProjectDesignDetails") {
+         // Safely access nested properties
+         const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
+
+         if (landDetails && landDetails.definitiveLandTitle && landDetails.definitiveLandTitle.code) {
+           // Safely convert to uppercase
+           const definitiveLandTitleCode = landDetails.definitiveLandTitle.code.toUpperCase();
+           const registrationCertificate =
+             landDetails.registrationCertificate && landDetails.registrationCertificate.code
+               ? landDetails.registrationCertificate.code.toUpperCase()
+               : "";
+            const workType = landDetails.workType?.code?.toUpperCase();
+
+           // Only proceed if currentFormConfig and its body exist
+           if (currentFormConfig && currentFormConfig.body) {
+             // Create a new copy of the body array
+             currentFormConfig.body = currentFormConfig.body.map((field) => {
+               if (field && field.populators && field.populators.name === "tfNo") {
+                 return {
+                   ...field,
+                   populators: {
+                     ...field.populators,
+                     disable: definitiveLandTitleCode === "NO",
+                     required: definitiveLandTitleCode !== "NO",
+                   },
+                 };
+               }
+               else if (field && field.populators && field.populators.name === "noOfUnits") {
+                 return {
+                   ...field,
+                   populators: {
+                     ...field.populators,
+                     disable: workType === "OTHERS" || workType !== "HOUSING",
+                     required: workType !== "OTHERS" || workType === "HOUSING",
+                   },
+                 };
+                }
+                else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
+                  return {
+                    ...field,
+                    populators: {
+                      ...field.populators,
+                      disable: workType === "HOUSING" || workType !== "OTHERS",
+                      required: workType !== "HOUSING" || workType === "OTHERS",
+                   },
+                 };
+               }
+               return field;
+             });
+           }
+         }
+       }
+
   const onFormValueChange = (_, updatedData) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
     const updatedSectionData = updatedData[sectionName] || updatedData;
-
     const updatedFormData = { ...formData, [sectionName]: updatedSectionData };
-
     // Compare current with session data
     const sessionSectionData = sessionData?.[sectionName];
     const hasChanged = JSON.stringify(sessionSectionData) !== JSON.stringify(updatedSectionData);

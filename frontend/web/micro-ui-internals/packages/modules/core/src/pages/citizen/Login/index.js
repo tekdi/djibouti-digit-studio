@@ -108,6 +108,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const selectMobileNumber = async (mobileNumber) => {
     setCanSubmitNo(false);
+
+    // Check if mobile number starts with 77
+    if (!mobileNumber?.mobileNumber?.startsWith("77")) {
+      setError(t("CORE_COMMON_MOBILE_NUMBER_INVALID") + " " + t("CORE_COMMON_MOBILE_NUMBER_SHOULD_START_WITH_77"));
+      setCanSubmitNo(true);
+      return;
+    }
+
     setParmas({ ...params, ...mobileNumber });
     const data = {
       ...mobileNumber,

@@ -27,7 +27,7 @@ export const generateFormConfig = (config, module, service) => {
         error: field?.validation?.message || "field is required",
         required: !!field.required,
         validation: field?.validation,
-        disable: field.disable,
+        disable: field.disabled,
         defaultValue: field.defaultValue,
         prefix: field.prefix,
         reference: field.reference,
@@ -97,6 +97,15 @@ export const generateFormConfig = (config, module, service) => {
     if (field.type === "object") {
       stepForms.push(createChildForm(field));
     } else if (field.type === "array") {
+      if (field?.items?.properties) {
+        field.items.properties = field.items.properties.map((item) => {
+          if (item.name === "tfNo" || item.name === "noOfUnits" || item.name === "detailsOnOtherType") {
+            return { ...item, disabled: true };
+          }
+          return item;
+        });
+      }
+
       stepForms.push(createMultiChildForm(field));
     } else {
       basicFields.push(createField(field));
