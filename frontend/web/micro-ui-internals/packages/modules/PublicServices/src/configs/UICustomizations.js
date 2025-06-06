@@ -35,7 +35,7 @@ function formatCreatedTime(timestamp) {
   return `${day} ${month}, ${year}`;
 }
 
-const userType = Digit.UserService.getUser()?.info?.type.toLowerCase();
+const userType = Digit.UserService.getType().toLowerCase();
 
 export const UICustomizations = {
   searchGenericConfig: {
@@ -148,13 +148,12 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
       data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
-      if(data?.state?.filterForm?.state)
-        {
-          const statusKeys = data?.state?.filterForm?.state;
-          data.body.inbox.moduleSearchCriteria.status = [];
-          data.body.inbox.moduleSearchCriteria.status = Object.keys(statusKeys).filter(key => statusKeys[key]);
-          data.state.filterForm.state = "";
-        }
+      if (data?.state?.filterForm?.state) {
+        const statusKeys = data?.state?.filterForm?.state;
+        data.body.inbox.moduleSearchCriteria.status = [];
+        data.body.inbox.moduleSearchCriteria.status = Object.keys(statusKeys).filter((key) => statusKeys[key]);
+        data.state.filterForm.state = "";
+      }
 
       return data;
     },
@@ -216,9 +215,7 @@ export const UICustomizations = {
       data.method = "GET";
       data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
       data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
-      data.params = {applicationNumber: data?.state?.searchForm?.applicationNumber
-        , sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder
-      }
+      data.params = { applicationNumber: data?.state?.searchForm?.applicationNumber, sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder };
 
       return data;
     },
@@ -257,11 +254,7 @@ export const UICustomizations = {
         );
       }
       if (key === "BUSINESS_SERVICE_LABEL") {
-        return (
-          <div>
-            {t(`${row?.businessService}`)}
-          </div>
-        );
+        return <div>{t(`${row?.businessService}`)}</div>;
       }
     },
     selectionHandler: (event) => {}, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)

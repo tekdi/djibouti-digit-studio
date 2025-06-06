@@ -211,7 +211,7 @@ const WorkflowActions = ({
     //   }
     //here we can add cases of toast messages,edit application and more...
     // the default result is setting the modal to show
-    action !== "PAY" && setShowModal(true);
+    action !== "MAKE_PAYMENT" && setShowModal(true);
   };
 
   const submitAction = (data, selectAction) => {
