@@ -283,6 +283,7 @@ const UploadAndDownloadDocumentHandler = ({
                         setuploadedstate={value}
                         showHintBelow={Boolean(item?.hintText)}
                         hintText={item?.hintText}
+                        name={item?.name}
                         allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
                         allowedMaxSizeInMB={item?.maxSizeInMB || 5}
                         maxFilesAllowed={item?.maxFilesAllowed || 1}

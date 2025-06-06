@@ -68,6 +68,7 @@ const MultiUploadWrapper = ({
   customClass = "",
   customErrorMsg,
   containerStyles,
+  name,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -80,6 +81,9 @@ const MultiUploadWrapper = ({
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
     const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
+    if(state?.length >= 0 && name) {
+      newUploads[0][0] = `${name}`;
+    }
     return [...state, ...newUploads];
   };
 

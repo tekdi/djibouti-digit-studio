@@ -153,9 +153,9 @@ const FileUpload = (props) => {
             uploadResult.forEach(({ file, error }) => {
               const existingErrorIndex = prevErrors.findIndex((item) => item.file === file);
               if (existingErrorIndex !== -1) {
-                prevErrors[existingErrorIndex].error = error; 
+                prevErrors[existingErrorIndex].error = error;
               } else {
-                newErrors.push({ file, error }); 
+                newErrors.push({ file, error });
               }
             });
             return [...prevErrors, ...newErrors];
@@ -409,6 +409,7 @@ const FileUpload = (props) => {
                       error={fileErrors[0]?.error}
                       onTagClick={() => handleFileClick(index, file)}
                       onErrorClick={(e) => e.stopPropagation()}
+                      t={t}
                     />
                   );
                 })}

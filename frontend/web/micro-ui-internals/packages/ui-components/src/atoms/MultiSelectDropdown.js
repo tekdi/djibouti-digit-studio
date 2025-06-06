@@ -721,9 +721,9 @@ const MultiSelectDropdown = ({
             className="digit-multiselectdropdown-label"
             title={
               alreadyQueuedSelectedState.length > 0
-                ? `${variant === "treemultiselect" 
-                    ? countFinalChildOptions(alreadyQueuedSelectedState) 
-                    : alreadyQueuedSelectedState.length} 
+                ? `${variant === "treemultiselect"
+                    ? countFinalChildOptions(alreadyQueuedSelectedState)
+                    : alreadyQueuedSelectedState.length}
                    ${defaultUnit} Selected`
                 : defaultLabel
             }
@@ -799,6 +799,7 @@ const MultiSelectDropdown = ({
                     }
                     hideClose={isClose}
                     className="multiselectdropdown-tag"
+                    t={t}
                   />
                 );
               })}

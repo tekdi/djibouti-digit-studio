@@ -38,18 +38,6 @@ const DigitDemoComponent = () => {
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
 
-  // Add useEffect to inject styles
-  useEffect(() => {
-    // Create style element
-    const styleEl = document.createElement('style');
-    styleEl.innerHTML = disabledInputStyles;
-    document.head.appendChild(styleEl);
-
-    // Clean up on unmount
-    return () => {
-      document.head.removeChild(styleEl);
-    };
-  }, []);
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -106,6 +94,21 @@ const DigitDemoComponent = () => {
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
 
+  useEffect(() => {
+    if (currentFormConfig?.name === "landandProjectDesignDetails") {
+      const styleEl = document.createElement("style");
+      styleEl.innerHTML = disabledInputStyles;
+      document.head.appendChild(styleEl);
+
+      // Cleanup function
+      return () => {
+        document.head.removeChild(styleEl);
+      };
+    }
+    // Even if the condition is false, return a cleanup function (no-op)
+    return () => {};
+  }, [currentFormConfig]);
+
   const persistData = (updatedFormData, updatedStep) => {
     localStorage.setItem("formData", JSON.stringify(updatedFormData));
     localStorage.setItem("currentStep", updatedStep.toString());
@@ -113,7 +116,7 @@ const DigitDemoComponent = () => {
     setSessionData(updatedFormData);
   };
   const onSubmit = async (data) => {
-    const sectionName = currentFormConfig.name || `section_${currentStep}`;
+    const sectionName = currentFormConfig?.name || `section_${currentStep}`;
     const updatedFormData =
       currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents"
         ? { ...formData, ...data }
@@ -202,7 +205,7 @@ const DigitDemoComponent = () => {
   };
 
 
-       if (currentFormConfig.name === "landandProjectDesignDetails") {
+       if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
          // Safely access nested properties
          const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
 
@@ -213,7 +216,7 @@ const DigitDemoComponent = () => {
              landDetails.registrationCertificate && landDetails.registrationCertificate.code
                ? landDetails.registrationCertificate.code.toUpperCase()
                : "";
-            const workType = landDetails.workType?.code?.toUpperCase();
+           const workType = landDetails.workType?.code?.toUpperCase();
 
            // Only proceed if currentFormConfig and its body exist
            if (currentFormConfig && currentFormConfig.body) {
@@ -228,24 +231,30 @@ const DigitDemoComponent = () => {
                      required: definitiveLandTitleCode !== "NO",
                    },
                  };
-               }
-               else if (field && field.populators && field.populators.name === "noOfUnits") {
+               } else if (field && field.populators && field.populators.name === "noOfUnits") {
                  return {
                    ...field,
                    populators: {
                      ...field.populators,
                      disable: workType === "OTHERS" || workType !== "HOUSING",
-                     required: workType !== "OTHERS" || workType === "HOUSING",
+                     required:
+                       (workType !== "HOUSING" && workType !== "OTHERS") ? false : (workType !== "OTHERS") ? true : (workType === "HOUSING") ? true : false,
                    },
                  };
-                }
-                else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
-                  return {
-                    ...field,
-                    populators: {
-                      ...field.populators,
-                      disable: workType === "HOUSING" || workType !== "OTHERS",
-                      required: workType !== "HOUSING" || workType === "OTHERS",
+               } else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
+                 return {
+                   ...field,
+                   populators: {
+                     ...field.populators,
+                     disable: workType === "HOUSING" || workType !== "OTHERS",
+                     required:
+                       workType !== "HOUSING" && workType !== "OTHERS"
+                         ? false
+                         : workType !== "HOUSING"
+                         ? true
+                         : workType === "OTHERS"
+                         ? true
+                         : false,
                    },
                  };
                }
