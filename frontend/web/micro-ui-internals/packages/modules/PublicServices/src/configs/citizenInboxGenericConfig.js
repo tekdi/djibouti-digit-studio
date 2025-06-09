@@ -17,7 +17,6 @@ export const citizenInboxGenericConfig = (tenantId, individualId) => {
             moduleName: "public-services",
           },
           moduleSearchCriteria: {
-            sortOrder: "ASC",
             module: "public-services",
           },
         },
@@ -139,22 +138,22 @@ export const citizenInboxGenericConfig = (tenantId, individualId) => {
             //         //   }]
             //     },
             // },
-            {
-              label: `${prefix}_BUSINESS_SERVICE`,
-              isMandatory: true,
-              key: "businessService",
-              type: "multiselectdropdown",
-              disable: false,
-              preProcess: {
-                updateDependent: ["populators.options"],
-              },
-              populators: {
-                name: "businessService",
-                optionsKey: "name",
-                options: [],
-                defaultValue: ["BPA_PCO"],
-              },
-            },
+            // {
+            //   label: `${prefix}_BUSINESS_SERVICE`,
+            //   isMandatory: true,
+            //   key: "businessService",
+            //   type: "multiselectdropdown",
+            //   disable: false,
+            //   preProcess: {
+            //     updateDependent: ["populators.options"],
+            //   },
+            //   populators: {
+            //     name: "businessService",
+            //     optionsKey: "name",
+            //     options: [],
+            //     defaultValue: ["BPA_PCO"],
+            //   },
+            // },
             // {
             //     label: `${prefix}_COMMON_WARD`,
             //     type: "radioordropdown",

@@ -214,7 +214,7 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "GET";
       data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "created_at" : "ASC";
       data.params = { applicationNumber: data?.state?.searchForm?.applicationNumber, sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder };
 
       return data;
