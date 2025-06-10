@@ -174,6 +174,27 @@ const MultiUploadWrapper = ({
           setFileErrors([]);
         }}
         accept={acceptFiles}
+        allowedFileTypes={(() => {
+          // Try to extract file types from regex pattern
+          const regexStr = allowedFileTypesRegex?.toString() || '';
+          // First try to match pattern like /(.*?)(pdf|jpg|png)$/
+          const match1 = regexStr.match(/\(.*?\)\((.*?)\)\$/);
+          if (match1 && match1[1]) {
+            return match1[1].split('|');
+          }
+          // Then try to match pattern like /(.*?)(pdf|jpg|png)/
+          const match2 = regexStr.match(/\(.*?\)\((.*?)\)/);
+          if (match2 && match2[1]) {
+            return match2[1].split('|');
+          }
+          // If no match, extract from acceptFiles
+          if (acceptFiles) {
+            return acceptFiles.split(',')
+              .map(type => type.trim().replace('.', '').replace('image/', '').replace('*', ''))
+              .filter(Boolean);
+          }
+          return [];
+        })()}
         message={t(`NO_FILE_SELECTED`)}
         customClass={customClass}
         enableButton={enableButton}

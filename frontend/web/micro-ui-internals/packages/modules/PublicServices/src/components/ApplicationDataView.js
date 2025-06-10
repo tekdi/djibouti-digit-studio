@@ -355,6 +355,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         .file-name {
           color: #505a5f !important;
           text-align: center;
+          width:90% !important;
         }
         .file-id {
           color: #505a5f;
