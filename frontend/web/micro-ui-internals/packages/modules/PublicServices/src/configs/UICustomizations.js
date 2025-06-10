@@ -7,7 +7,6 @@ import React from "react";
 //how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
 // var Digit = window.Digit || {};
-
 const businessServiceMap = {};
 
 const inboxModuleNameMap = {};
@@ -130,13 +129,19 @@ export const UICustomizations = {
 
   InboxGenericConfig: {
     preProcess: (data, additionalDetails) => {
+      console.log(data, "data");
       const { module } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
-      // data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
-      data.body.inbox.moduleSearchCriteria.businessService = "BPA_PCO";
+
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
-      // data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
-      data.body.inbox.processSearchCriteria.businessService = ["BPA_PCO"];
+      if (data?.state?.filterForm?.businessService) {
+        data.body.inbox.moduleSearchCriteria.businessService =
+          data?.state?.filterForm?.businessService?.map((bs) => bs.code).join(",") || "undefined";
+        data.body.inbox.processSearchCriteria.businessService =
+          data?.state?.filterForm?.businessService?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) ||
+          [];
+      }
+
       if (data?.state?.searchForm?.businessService?.parallelWorkflow?.length > 0) {
         data.body.inbox.processSearchCriteria.businessService = [
           ...data.body.inbox.processSearchCriteria.businessService,

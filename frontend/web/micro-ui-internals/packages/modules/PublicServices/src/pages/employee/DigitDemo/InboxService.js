@@ -14,8 +14,6 @@ const InboxService = () => {
   const [servicesData, setServicesData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const configs = InboxConfig();
-
   useEffect(() => {
     const fetchBusinessServices = async () => {
       setIsLoading(true);
@@ -53,18 +51,22 @@ const InboxService = () => {
 
   const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
+  const businessServices = servicesData
+    .filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
+    .map((ob) => ({
+      code: ob?.businessService,
+      name: ob?.businessService,
+      parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
+    }));
+
+  const configs = InboxConfig(businessServices);
+
   const updatedConfig = useMemo(() => {
     return Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.filter.uiConfig.fields", {
       updateDependent: [
         {
           key: "businessService",
-          value: servicesData
-            .filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
-            .map((ob) => ({
-              code: ob?.businessService,
-              name: ob?.businessService,
-              parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
-            })),
+          value: businessServices,
         },
       ],
     });

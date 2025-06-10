@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
-export const InboxConfig = () => {
+export const InboxConfig = (businessServices) => {
   const { module } = useParams();
   const prefix = `${module?.toUpperCase()}`;
 
@@ -14,10 +14,11 @@ export const InboxConfig = () => {
       requestBody: {
         inbox: {
           processSearchCriteria: {
-            businessService: [],
+            businessService: businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [],
             moduleName: "public-services",
           },
           moduleSearchCriteria: {
+            businessService: businessServices?.map((bs) => bs.code)?.join(",") || "undefined",
             sortOrder: "ASC",
             module: "public-services",
           },
