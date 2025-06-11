@@ -3,17 +3,15 @@ import { useTranslation } from "react-i18next";
 import ActionBar from "./ActionBar";
 import ActionModal from "./ActionModal";
 
-// import Toast from "./Toast";
-import { useHistory } from "react-router-dom";
 import { Toast, Button, Loader } from "@egovernments/digit-ui-components";
 import { useMutation } from "react-query";
-import { useQuery, useQueryClient } from "react-query";
 
 import { Request } from "./Request";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-import { useWorkflowDetailsWorks } from "../utils";
+import { useWorkflowDetails } from "../utils";
 import CustomActionDropdown from "./CustomActionDropdown";
 
+// Custom service wrapper for API requests
 export const CustomService = {
   getResponse: ({
     url,
@@ -29,34 +27,43 @@ export const CustomService = {
     method = "POST",
   }) =>
     Request({
-      url: url,
+      url,
       data: body,
       useCache,
       userService,
-      method: method,
-      auth: auth,
-      params: params,
-      headers: headers,
-      plainAccessRequest: plainAccessRequest,
-      userDownload: userDownload,
+      method,
+      auth,
+      params,
+      headers,
+      plainAccessRequest,
+      userDownload,
       setTimeParam,
     }),
 };
 
+// Function to handle application update
 const ApplicationUpdateActionsCustom = async ({ url, body, headers }) => {
   try {
-    //here need to update this object to send
-    const response = await CustomService.getResponse({ url, body, useCache: false, setTimeParam: false, method: "PUT", headers });
+    const response = await CustomService.getResponse({
+      url,
+      body,
+      useCache: false,
+      setTimeParam: false,
+      method: "PUT",
+      headers,
+    });
     return response;
   } catch (error) {
-    throw new Error(error?.response?.data?.Errors[0].message);
+    throw new Error(error?.response?.data?.Errors[0]?.message);
   }
 };
 
+// Custom hook to mutate update action
 const useUpdateCustom = (url, headers) => {
   return useMutation((applicationData) => ApplicationUpdateActionsCustom({ url, body: applicationData, headers }));
 };
 
+// Main Workflow Actions component
 const WorkflowActions = ({
   businessService,
   tenantId,
@@ -76,8 +83,7 @@ const WorkflowActions = ({
   isDisabled,
   ...props
 }) => {
-  const history = useHistory();
-  const { estimateNumber, mbNumber, workOrderNumber } = Digit.Hooks.useQueryParams();
+  const { estimateNumber } = Digit.Hooks.useQueryParams();
   applicationNo = applicationNo ? applicationNo : estimateNumber;
   const { module, service } = useParams();
 
@@ -91,16 +97,13 @@ const WorkflowActions = ({
   const queryStrings = Digit.Hooks.useQueryParams();
 
   const { t } = useTranslation();
-  let user = Digit.UserService.getUser();
+  const user = Digit.UserService.getUser();
 
-  let workflowDetails = useWorkflowDetailsWorks({
-    tenantId: tenantId,
+  const workflowDetails = useWorkflowDetails({
+    tenantId,
     id: applicationNo,
     moduleCode: businessService,
-    config: {
-      enabled: true,
-      cacheTime: 0,
-    },
+    config: { enabled: true, cacheTime: 0 },
   });
 
   const menuRef = useRef();
@@ -108,28 +111,22 @@ const WorkflowActions = ({
   const userRoles = user?.info?.roles?.map((e) => e.code);
   let isSingleButton = false;
   let isMenuBotton = false;
+  // Filter actions based on user roles
   let actions =
-    workflowDetails?.data?.actionState?.nextActions?.filter((e) => {
-      return userRoles.some((role) => e.roles?.includes(role)) || !e.roles;
-    }) ||
-    workflowDetails?.data?.nextActions?.filter((e) => {
-      return userRoles.some((role) => e.roles?.includes(role)) || !e.roles;
-    });
+    workflowDetails?.data?.actionState?.nextActions?.filter((e) => userRoles?.some((role) => e.roles?.includes(role)) || !e.roles) ||
+    workflowDetails?.data?.nextActions?.filter((e) => userRoles?.some((role) => e.roles?.includes(role)) || !e.roles);
 
-  const closeMenu = () => {
-    setDisplayMenu(false);
-  };
+  // UI utility to close action menu
+  const closeMenu = () => setDisplayMenu(false);
 
   const closeToast = () => {
-    setTimeout(() => {
-      setShowToast(null);
-    }, 5000);
+    setTimeout(() => setShowToast(null), 5000);
   };
 
-  setTimeout(() => {
-    setShowToast(null);
-  }, 20000);
+  // Kill stale toasts after 20s
+  setTimeout(() => setShowToast(null), 20000);
 
+  // Clicking outside closes menu
   Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
 
   if (actions?.length > 0) {
@@ -137,6 +134,7 @@ const WorkflowActions = ({
     isSingleButton = false;
   }
 
+  // Handle modal close
   const closeModal = () => {
     setSelectedAction(null);
     setShowModal(false);
@@ -144,23 +142,11 @@ const WorkflowActions = ({
     closeToast();
   };
 
+  // Handle action selection
   const onActionSelect = (action) => {
-    // const bsContract = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("contract");
-    // const bsEstimate = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("estimate")
-    // const bsAttendance = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("muster roll")
-    // const bsPurchaseBill = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("works.purchase")
-    // const bsRevisedWO = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("revisedWO");
-    // const bsMeasurement = Digit?.Customizations?.["commonUiConfig"]?.getBusinessService("measurement");
-
     setDisplayMenu(false);
     setSelectedAction(action);
     if (action.action.includes("MAKE_PAYMENT")) {
-      // history.push(
-      //   `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}`,
-      //   {
-      //     redirectionUrl: `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`,
-      //   }
-      // );
       const redirectionUrl = `/${
         window.contextPath
       }/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${
@@ -173,47 +159,9 @@ const WorkflowActions = ({
         props?.serviceConfig?.data?.bill?.BusinessService?.code
       }&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }
-
-    //here check if actin is edit then do a history.push acc to the businessServ and action
-    //send appropriate states over
-
-    //   if(bsEstimate === businessService && action?.action === "RE-SUBMIT"){
-    //      editCallback()
-    //       return
-    //   }
-
-    //   if(bsContract === businessService && action?.action === "EDIT"){
-    //     history.push(`/${window?.contextPath}/employee/contracts/create-contract?tenantId=${tenantId}&workOrderNumber=${applicationNo}`);
-    //     return
-    // }
-    //   if(bsAttendance === businessService && action?.action === "RE-SUBMIT"){
-    //       editCallback()
-    //       return
-    //   }
-    //   if(bsAttendance === businessService && action?.action === "APPROVE"){
-    //     WorflowValidation(setShowModal);
-    //     return
-    //   }
-
-    //   if(bsPurchaseBill === businessService && action?.action==="RE-SUBMIT"){
-    //     history.push(`/${window?.contextPath}/employee/expenditure/create-purchase-bill?tenantId=${tenantId}&billNumber=${editApplicationNumber}&workOrderNumber=${fullData?.contract?.contractNumber}`);
-    //     return
-    //   }
-
-    //   if(bsMeasurement === businessService && action?.action?.includes("RE-SUBMIT")){
-    //     history.push(`/${window?.contextPath}/employee/measurement/update?tenantId=${tenantId}&workOrderNumber=${workOrderNumber}&mbNumber=${mbNumber}`);
-    //     return
-    //   }
-
-    //   if(bsRevisedWO === businessService && action?.action === "EDIT"){
-    //     editCallback()
-    //     return
-    //   }
-    //here we can add cases of toast messages,edit application and more...
-    // the default result is setting the modal to show
-    action !== "MAKE_PAYMENT" && setShowModal(true);
   };
 
+  // Workflow submit logic
   const submitAction = (data, selectAction) => {
     setShowModal(false);
     setIsEnableLoader(true);
@@ -239,27 +187,25 @@ const WorkflowActions = ({
         callback?.onSuccess?.();
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate();
-
-        //COMMENTING THIS FOR NOW BECAUSE DUE TO THIS TOAST IS NOT SHOWING SINCE THE WHOLE PARENT COMP RE-RENDERS
-        // setStateChanged(`WF_UPDATE_SUCCESS_${selectAction.action}`)
       },
     });
   };
 
-  //if workflowDetails are loading then a loader is displayed in workflowTimeline comp anyway
   if (isEnableLoader || workflowDetails?.isLoading) {
     return <Loader />;
   }
 
+  // Add i18n-friendly display names for action dropdown
   actions?.forEach((action) => {
     action.displayname = `WF_${module.toUpperCase()}_${businessService?.toUpperCase()?.replaceAll(/[./-]/g, "_")}_ACTION_${action?.action?.replaceAll(
       /[./-]/g,
       "_"
     )}`;
   });
+
   return (
     <React.Fragment>
-      {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && (
+      {!workflowDetails?.isLoading && isMenuBotton && (
         <ActionBar
           style={{ ...ActionBarStyle }}
           actionFields={
@@ -268,16 +214,14 @@ const WorkflowActions = ({
                   ...props?.actionFields,
                   <Button
                     t={t}
-                    type={workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions ? "actionButton" : "submit"}
+                    type="actionButton"
                     options={actions}
                     label={t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`)}
                     variation={"primary"}
                     optionsKey={"displayname"}
                     isSearchable={false}
                     isDisabled={isDisabled}
-                    onOptionSelect={(option) => {
-                      onActionSelect(option);
-                    }}
+                    onOptionSelect={onActionSelect}
                     menuStyles={MenuStyle}
                   ></Button>,
                 ]
@@ -294,16 +238,15 @@ const WorkflowActions = ({
                 ]
           }
           setactionFieldsToRight={true}
-          // className={"new-actionbar"}
         />
       )}
-      {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && (
+      {!workflowDetails?.isLoading && isSingleButton && (
         <ActionBar
           style={{ ...ActionBarStyle }}
           actionFields={[
             ...actionFields,
             <Button
-              type={"submit"}
+              type="submit"
               value={actions?.[0]?.action}
               name={actions?.[0]?.action}
               isDisabled={isDisabled}
@@ -312,14 +255,11 @@ const WorkflowActions = ({
                   `${forcedActionPrefix || `WF_${module?.toUpperCase()}_${businessService?.toUpperCase()}_ACTION`}_${actions?.[0]?.action}`
                 )
               )}
-              variation={"primary"}
-              onClick={(e) => {
-                onActionSelect(actions?.[0] || {});
-              }}
+              variation="primary"
+              onClick={() => onActionSelect(actions?.[0])}
             ></Button>,
           ]}
           setactionFieldsToRight={true}
-          className={"new-actionbar"}
         />
       )}
       {showModal && (
@@ -335,16 +275,9 @@ const WorkflowActions = ({
           moduleCode={moduleCode}
         />
       )}
-      {showToast && (
-        <Toast
-          type={showToast?.type}
-          label={t(showToast?.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-          isDleteBtn={showToast?.isDleteBtn}
-        />
-      )}
+
+      {/* Toast display */}
+      {showToast && <Toast error={showToast?.type === "error"} label={t(showToast.label)} />}
     </React.Fragment>
   );
 };

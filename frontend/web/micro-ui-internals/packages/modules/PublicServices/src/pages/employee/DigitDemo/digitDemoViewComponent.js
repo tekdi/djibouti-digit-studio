@@ -1,17 +1,17 @@
-import { Header, SubmitBar, Menu, Card, Loader, ViewComposer, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, Loader, ViewComposer, MultiLink } from "@egovernments/digit-ui-react-components";
 import { Button } from "@egovernments/digit-ui-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { downloadStudioPDF, generateViewConfigFromResponse } from "../../../utils";
 import WorkflowActions from "../../../components/WorkflowActions";
 import ViewCheckListCards from "../CheckList/viewCheckListCards";
-import { useWorkflowDetailsWorks, processBusinessServices } from "../../../utils";
+import { useWorkflowDetails, processBusinessServices } from "../../../utils";
+
 import ApplicationDataView from "../../../components/ApplicationDataView";
 
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
-  const history = useHistory();
   const queryStrings = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedBusinessService, setSelectedBusinessService] = useState(null);
@@ -19,9 +19,10 @@ const DigitDemoViewComponent = () => {
   const { module, service } = useParams();
   const serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
-  const [current, setCurrent] = useState(Date.now());
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
+
+  //to get the fetched application details
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
     headers: {
@@ -38,6 +39,7 @@ const DigitDemoViewComponent = () => {
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
 
+  //To fetch the service config for the module and service
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
     body: {
@@ -52,7 +54,8 @@ const DigitDemoViewComponent = () => {
 
   const serviceConfig = serviceConfigData?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
 
-  let { data: workflowDetails, isLoading: workflowLoading } = useWorkflowDetailsWorks({
+  //To fetch the workflow details for the application to handle parallel workflow
+  let { data: workflowDetails, isLoading: workflowLoading } = useWorkflowDetails({
     tenantId: tenantId,
     id: queryStrings?.applicationNumber,
     moduleCode: queryStrings?.businessService || serviceConfig?.data?.workflow?.businessService,
@@ -63,6 +66,7 @@ const DigitDemoViewComponent = () => {
     },
   });
 
+  // Util method to generate view config for view composer
   let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService || selectedBusinessService?.code, serviceConfig);
 
   // Extract the required data for ApplicationDataView
@@ -80,20 +84,26 @@ const DigitDemoViewComponent = () => {
     // Guard clause to avoid calling with missing inputs
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
 
+    //To get the eligible business service for the current state of the application
     processBusinessServices(serviceConfig, tenantId, queryStrings?.applicationNumber, workflowDetails, userRoles, t).then((matched) => {
       setMatchedBusinessServices(matched);
     });
   }, [workflowDetails]);
 
+  // Auto select business service if there's only one match
   useEffect(() => {
     if (matchedBusinessServices.length === 1 && !selectedBusinessService) {
       setSelectedBusinessService(matchedBusinessServices[0]);
     }
   }, [matchedBusinessServices, selectedBusinessService]);
+
+  // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances[0].state?.state}`] : [];
   if (isLoading || workflowLoading || ServiceConfigLoading) {
     return <Loader />;
   }
+
+  // Generate PDF download options from config
   const generateDownloadOptions = () => {
     return serviceConfig?.data?.pdf
       .filter((obj) => obj?.states?.includes(response?.workflowStatus))
@@ -111,7 +121,7 @@ const DigitDemoViewComponent = () => {
     downloadStudioPDF(
       "pdf/generatepdf",
       { applicationNumber: queryStrings?.applicationNumber, tenantId, serviceCode: queryStrings?.serviceCode, pdfKey: key },
-      `Muster-roll-${"aaaaaaa"}.pdf`
+      `Application-${queryStrings?.applicationNumber}.pdf`
     );
   };
 
@@ -483,11 +493,6 @@ const DigitDemoViewComponent = () => {
           </div>
         </div>
       </div>
-
-      {/* <ActionBar>
-        {displayMenu ? <Menu localeKeyPrefix={"WORKS"} options={actionULB} optionKey={"name"} t={t} onSelect={onActionSelect} /> : null}
-        <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-      </ActionBar> */}
     </React.Fragment>
   );
 };

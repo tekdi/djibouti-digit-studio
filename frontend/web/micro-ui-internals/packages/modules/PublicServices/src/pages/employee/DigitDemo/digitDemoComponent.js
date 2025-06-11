@@ -1,9 +1,7 @@
 import { FormComposerV2, Stepper, Toast } from "@egovernments/digit-ui-components";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
-import { serviceConfigPGR } from "../../../configs/serviceConfigurationPGR";
-import { serviceConfig } from "../../../configs/serviceConfiguration";
 import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaUtil";
 import { transformToApplicationPayload } from "../../../utils";
 import { Loader } from "@egovernments/digit-ui-react-components";
@@ -29,16 +27,16 @@ const DigitDemoComponent = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
 
-  // Load from localStorage
+  // Get persisted state from localStorage
   const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
-  let savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+  const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
 
   const [currentStep, setCurrentStep] = useState(savedStep);
   const [formData, setFormData] = useState(savedFormData);
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
 
-
+  // Fetch service configuration from MDMS
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
     body: {
@@ -51,6 +49,8 @@ const DigitDemoComponent = () => {
   const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const config = data?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
+
+  // Fetch workflow details if available
   const workflowrequestCriteria = {
     url: "/egov-workflow-v2/egov-wf/businessservice/_search",
     params: {
@@ -58,7 +58,7 @@ const DigitDemoComponent = () => {
       businessServices: config?.data?.workflow?.businessService,
     },
     config: {
-      enabled: config?.data?.workflow?.businessService ? true : false,
+      enabled: Boolean(config?.data?.workflow?.businessService),
     },
   };
 
@@ -70,29 +70,21 @@ const DigitDemoComponent = () => {
     module,
   };
 
-  // const configMap = {
-  //   pgr: serviceConfigPGR,
-  //   TradeLicense: serviceConfig
-  // };
-  // console.log(configMap[module],"configMap")
-
+  //logic to handle steps in apply screen flow
   const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
-  console.log(rawConfig, "rawconfig");
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
   const currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode;
   const isLastStep = currentStep === rawConfig.length;
 
-  const reqCreate = {
+  const mutation = Digit.Hooks.useCustomAPIMutationHook({
     url: `/public-service/v1/application/${schemaCode}`,
     method: isLastStep ? "PUT" : "POST",
-    headers: { "x-tenant-id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
+    headers: { "x-tenant-id": tenantId },
     config: {
       enable: true,
     },
-  };
-
-  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
+  });
 
   useEffect(() => {
     if (currentFormConfig?.name === "landandProjectDesignDetails") {
@@ -109,6 +101,7 @@ const DigitDemoComponent = () => {
     return () => {};
   }, [currentFormConfig]);
 
+  //this to maintain the current state of the application entered by user
   const persistData = (updatedFormData, updatedStep) => {
     localStorage.setItem("formData", JSON.stringify(updatedFormData));
     localStorage.setItem("currentStep", updatedStep.toString());
@@ -117,10 +110,9 @@ const DigitDemoComponent = () => {
   };
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig?.name || `section_${currentStep}`;
-    const updatedFormData =
-      currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents"
-        ? { ...formData, ...data }
-        : { ...formData, [sectionName]: data };
+    const updatedFormData = ["multiChildForm", "documents"].includes(currentFormConfig?.type)
+      ? { ...formData, ...data }
+      : { ...formData, [sectionName]: data };
 
     const docStep = rawConfig.findIndex((item) => item.type === "documents");
     const beforeDocStep = currentStep === docStep;
@@ -204,86 +196,73 @@ const DigitDemoComponent = () => {
     }
   };
 
+  if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
+    // Safely access nested properties
+    const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
 
-       if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
-         // Safely access nested properties
-         const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
+    if (landDetails && landDetails.definitiveLandTitle && landDetails.definitiveLandTitle.code) {
+      // Safely convert to uppercase
+      const definitiveLandTitleCode = landDetails.definitiveLandTitle.code.toUpperCase();
+      const registrationCertificate =
+        landDetails.registrationCertificate && landDetails.registrationCertificate.code ? landDetails.registrationCertificate.code.toUpperCase() : "";
+      const workType = landDetails.workType?.code?.toUpperCase();
 
-         if (landDetails && landDetails.definitiveLandTitle && landDetails.definitiveLandTitle.code) {
-           // Safely convert to uppercase
-           const definitiveLandTitleCode = landDetails.definitiveLandTitle.code.toUpperCase();
-           const registrationCertificate =
-             landDetails.registrationCertificate && landDetails.registrationCertificate.code
-               ? landDetails.registrationCertificate.code.toUpperCase()
-               : "";
-           const workType = landDetails.workType?.code?.toUpperCase();
-
-           // Only proceed if currentFormConfig and its body exist
-           if (currentFormConfig && currentFormConfig.body) {
-             // Create a new copy of the body array
-             currentFormConfig.body = currentFormConfig.body.map((field) => {
-               if (field && field.populators && field.populators.name === "tfNo") {
-                 return {
-                   ...field,
-                   populators: {
-                     ...field.populators,
-                     disable: definitiveLandTitleCode === "NO",
-                     required: definitiveLandTitleCode !== "NO",
-                   },
-                 };
-               } else if (field && field.populators && field.populators.name === "noOfUnits") {
-                 return {
-                   ...field,
-                   populators: {
-                     ...field.populators,
-                     disable: workType === "OTHERS" || workType !== "HOUSING",
-                     required:
-                       (workType !== "HOUSING" && workType !== "OTHERS") ? false : (workType !== "OTHERS") ? true : (workType === "HOUSING") ? true : false,
-                   },
-                 };
-               } else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
-                 return {
-                   ...field,
-                   populators: {
-                     ...field.populators,
-                     disable: workType === "HOUSING" || workType !== "OTHERS",
-                     required:
-                       workType !== "HOUSING" && workType !== "OTHERS"
-                         ? false
-                         : workType !== "HOUSING"
-                         ? true
-                         : workType === "OTHERS"
-                         ? true
-                         : false,
-                   },
-                 };
-               }
-               return field;
-             });
-           }
-         }
-       }
+      // Only proceed if currentFormConfig and its body exist
+      if (currentFormConfig && currentFormConfig.body) {
+        // Create a new copy of the body array
+        currentFormConfig.body = currentFormConfig.body.map((field) => {
+          if (field && field.populators && field.populators.name === "tfNo") {
+            return {
+              ...field,
+              populators: {
+                ...field.populators,
+                disable: definitiveLandTitleCode === "NO",
+                required: definitiveLandTitleCode !== "NO",
+              },
+            };
+          } else if (field && field.populators && field.populators.name === "noOfUnits") {
+            return {
+              ...field,
+              populators: {
+                ...field.populators,
+                disable: workType === "OTHERS" || workType !== "HOUSING",
+                required:
+                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "OTHERS" ? true : workType === "HOUSING" ? true : false,
+              },
+            };
+          } else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
+            return {
+              ...field,
+              populators: {
+                ...field.populators,
+                disable: workType === "HOUSING" || workType !== "OTHERS",
+                required:
+                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "HOUSING" ? true : workType === "OTHERS" ? true : false,
+              },
+            };
+          }
+          return field;
+        });
+      }
+    }
+  }
 
   const onFormValueChange = (_, updatedData) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
     const updatedSectionData = updatedData[sectionName] || updatedData;
-    const updatedFormData = { ...formData, [sectionName]: updatedSectionData };
-    // Compare current with session data
     const sessionSectionData = sessionData?.[sectionName];
     const hasChanged = JSON.stringify(sessionSectionData) !== JSON.stringify(updatedSectionData);
 
     if (hasChanged) {
+      const updatedFormData = { ...formData, [sectionName]: updatedSectionData };
       setFormData(updatedFormData);
       persistData(updatedFormData, currentStep);
     }
   };
 
-  const closeToast = () => {
-    setShowToast(false);
-  };
-  if (moduleListLoading || workflowDetailsLoading) {
-    return <Loader />;
-  }
+  const closeToast = () => setShowToast(false);
+
+  if (moduleListLoading || workflowDetailsLoading) return <Loader />;
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
@@ -296,7 +275,7 @@ const DigitDemoComponent = () => {
         </div>
       ) : (
         <FormComposerV2
-          key={currentFormConfig?.name}
+          key={`${currentStep}-${currentFormConfig?.name}`}
           heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length - 1 ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
           config={[

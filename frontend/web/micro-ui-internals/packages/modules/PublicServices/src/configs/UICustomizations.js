@@ -166,7 +166,6 @@ export const UICustomizations = {
       const statusKey = row?.ProcessInstance?.state?.state?.toUpperCase();
       const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD", "#4B4B4B"];
 
-      console.log(row, key, column, value, t, searchResult);
       if (key === "APPLICATION_NUMBER") {
         return (
           <span className="link">

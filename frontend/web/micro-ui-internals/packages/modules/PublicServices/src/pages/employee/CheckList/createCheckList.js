@@ -160,7 +160,6 @@ const CreateCheckList = () => {
   }, [cardItems]);
 
   const onSubmit = async (data) => {
-    console.log(data, "data");
     const fetchdata = async (data) => {
       await umutation.mutate(
         {

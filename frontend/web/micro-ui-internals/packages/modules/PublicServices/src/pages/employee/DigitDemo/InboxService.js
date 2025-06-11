@@ -14,6 +14,7 @@ const InboxService = () => {
   const [servicesData, setServicesData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  //fetch all the services configured for the tenant
   useEffect(() => {
     const fetchBusinessServices = async () => {
       setIsLoading(true);
@@ -39,6 +40,7 @@ const InboxService = () => {
     fetchBusinessServices();
   }, [tenantId]);
 
+  //To fetch the service configurations of the services
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
     body: {
@@ -59,8 +61,10 @@ const InboxService = () => {
       parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
     }));
 
+  // To fetch the generic inbox config for inboxSearchComposer
   const configs = InboxConfig(businessServices);
 
+  // Preprocess and inject dynamic values into config
   const updatedConfig = useMemo(() => {
     return Digit.Utils.preProcessMDMSConfigInboxSearch(t, configs, "sections.filter.uiConfig.fields", {
       updateDependent: [

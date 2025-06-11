@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-//import modal from './config/configEstimateModal'
+// Importing configuration for modal
 import configModal from "./modalConfig";
 import Modal from "./Modal";
 
-import { Loader } from "@egovernments/digit-ui-components";
-import { FormComposerV2 } from "@egovernments/digit-ui-components";
+// External components
+import { Loader, FormComposerV2 } from "@egovernments/digit-ui-components";
 
+// Basic heading component
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
+// SVG Close icon
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />
@@ -26,6 +28,7 @@ const CloseBtn = (props) => {
   );
 };
 
+// Payload builder for submitting workflow actions
 const updatePayload = (applicationDetails, data, action, businessService) => {
   const workflow = {
     comment: data.comments,
@@ -46,12 +49,12 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     action: action.action,
     businessService: businessService,
   };
-  //filtering out the data
-  Object.keys(workflow).forEach((key, index) => {
+
+  Object.keys(workflow).forEach((key) => {
     if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
   });
-  // ap[0] = {...ap[0]wor:{}}
-  applicationDetails = { ...applicationDetails, workflow: workflow };
+
+  applicationDetails = { ...applicationDetails, workflow };
   return {
     Application: applicationDetails,
   };
@@ -59,25 +62,27 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
 
 const WorkflowPopup = ({ applicationDetails, ...props }) => {
   const { action, tenantId, t, closeModal, submitAction, businessService, moduleCode } = props;
-  // const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService, action)
 
-  // const [approvers,setApprovers] = useState([])
+  // Enable assignee dropdown based on config
+  const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService, action);
+
   const [config, setConfig] = useState(null);
   const [modalSubmit, setModalSubmit] = useState(true);
-  //hrms user search
 
-  // let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: action?.assigneeRoles?.toString(), isActive: true }, tenantId, null, null, { enabled: action?.assigneeRoles?.length > 0 && enableAssignee });
-  let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
+  // Get HRMS employee list
+  let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
     { roles: action?.assigneeRoles?.toString(), isActive: true },
     tenantId,
     null,
     null,
-    { enabled: action?.assigneeRoles?.length > 0 }
+    { enabled: action?.assigneeRoles?.length > 0 && enableAssignee }
   );
 
   assigneeOptions = assigneeOptions?.Employees;
+  // Add fallback name
   assigneeOptions?.map((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
 
+  // Request criteria for Document config
   const requestCriteria = {
     url: "/egov-mdms-service/v1/_search",
     body: {
@@ -98,31 +103,33 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     changeQueryName: "documentConfig",
   };
 
+  // Load Document config
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
+  // Set config when HRMS and MDMS data is available
   useEffect(() => {
-    if (businessService === "muster-roll-approval" && action.action === "APPROVE") {
-      setModalSubmit(false);
-    }
-  }, [businessService]);
-
-  useEffect(() => {
-    if (assigneeOptions?.length >= 0 && data) {
-      setConfig(configModal(t, action, assigneeOptions, businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig));
-    } else {
-      setConfig(configModal(t, action, undefined, businessService, moduleCode, data?.MdmsRes?.DigitStudio?.DocumentConfig));
+    if (data) {
+      setConfig(
+        configModal(
+          t,
+          action,
+          assigneeOptions?.length >= 0 ? assigneeOptions : undefined,
+          businessService,
+          moduleCode,
+          data?.MdmsRes?.DigitStudio?.DocumentConfig2
+        )
+      );
     }
   }, [assigneeOptions, data]);
 
+  // Form submit handler
   const _submit = (data) => {
-    if (data?.document) Object.values(data?.document).flat();
-    //const updatePayload = Digit?.Customizations?.["commonUiConfig"]?.updatePayload(applicationDetails, data, action, businessService)
-    const customupdatePayload = updatePayload(applicationDetails, data, action, businessService);
-    //calling submitAction
-    submitAction(customupdatePayload, action);
+    const customPayload = updatePayload(applicationDetails, data, action, businessService);
+    submitAction(customPayload, action);
   };
 
-  const modalCallBack = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+  // Optional: to enable or disable modal submit dynamically
+  const modalCallBack = (setValue, formData) => {
     Digit?.Customizations?.["commonUiConfig"]?.enableModalSubmit(businessService, action, setModalSubmit, formData);
   };
 
@@ -136,7 +143,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={(data) => {
-        console.log(data.target.value, "coming here");
+        console.log(data.target.value, "data on save"); // Not required?
       }}
       formId="modal-action"
       isDisabled={!modalSubmit}
