@@ -30,7 +30,7 @@ export const generateFormConfig = (config, module, service) => {
         ...field?.populators, // Spread additional populators if provided
         name: field.name,
         optionsKey: "name",
-        error: field?.validation?.message || "field is required",
+        error: field?.validation?.message || "REQUIRED_ERR",
         required: !!field.required,
         validation: {
           minlength: field?.minLength,

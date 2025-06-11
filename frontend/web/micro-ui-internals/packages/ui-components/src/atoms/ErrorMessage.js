@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { SVG } from "./SVG";
 import StringManipulator from "./StringManipulator";
 import { Colors} from "../constants/colors/colorconstants";
+import { useTranslation } from "react-i18next";
 
 const ErrorMessage = ({
   wrapperClassName = "",
@@ -15,7 +16,7 @@ const ErrorMessage = ({
   truncateMessage,
   maxLength,
 }) => {
-
+  const {t} = useTranslation();
   const IconColor = Colors.lightTheme.alert.error;
 
   return (
@@ -34,11 +35,11 @@ const ErrorMessage = ({
         {truncateMessage
           ? StringManipulator(
               "TOSENTENCECASE",
-              StringManipulator("TRUNCATESTRING", message, {
+              StringManipulator("TRUNCATESTRING", t(message), {
                 maxLength: maxLength || 256,
               })
             )
-          : StringManipulator("TOSENTENCECASE", message)}
+          : StringManipulator("TOSENTENCECASE", t(message))}
       </div>
     </div>
   );

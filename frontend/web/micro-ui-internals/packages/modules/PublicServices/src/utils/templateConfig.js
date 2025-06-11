@@ -147,7 +147,11 @@ export const ApplicantFields =  [{
           "format": "text",
           "required": true,
           "maxLength": 256,
-          "minLength": 2
+          "minLength": 2,
+          "validation": {
+            "regex": "^.{2,256}$",
+            "message": "NAME_LENGTH_ERR",
+          }
         },
         {
           "name": "address",
@@ -155,8 +159,22 @@ export const ApplicantFields =  [{
           "label": "Address",
           "format": "text",
           "required": true,
-          "maxLength": 500,
-          "minLength": 2
+          "maxLength": 256,
+          "minLength": 2,
+          "validation": {
+            "regex": "^.{2,256}$",
+             "message": "NAME_LENGTH_ERR",
+           }
+        },
+        {
+          "name": "IDType",
+          "label": "ID type",
+          "disable" : false,
+          "type": "string",
+          "format": "radioordropdown",
+          "required": true,
+          "schema": "BPA.IdentityType",
+          "reference": "mdms",
         },
         {
           "name": "nationalIdNumber",
@@ -165,11 +183,11 @@ export const ApplicantFields =  [{
           "format": "number",
           "required": true,
           "validation": {
-           "regex": "^(\\d{6}|\\d{12})$",
-            "message": "Only valid contact number is allowed",
+            "regex": "^\\d{1,30}$",
+            "message": "ID_NUMBER_ERR",
           },
-          "maxLength": 12,
-          "minLength": 6
+          "maxLength": 30,
+          "minLength": 1
         },
         {
           "name": "telephone",
@@ -179,7 +197,7 @@ export const ApplicantFields =  [{
           "required": true,
           "validation": {
             "regex": "(^$|^77[0-9]{6}$)",
-            "message": "Only valid contact number is allowed",
+            "message": "TELEPHONE_NUMBER_ERR",
           },
           "placeholder":"00 00 00 00",
           "maxLength": 8,
