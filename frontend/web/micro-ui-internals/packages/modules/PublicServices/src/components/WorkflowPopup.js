@@ -28,7 +28,7 @@ const CloseBtn = (props) => {
 
 const updatePayload = (applicationDetails, data, action, businessService) => {
   const workflow = {
-    comments: data.comments,
+    comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
           .flat()

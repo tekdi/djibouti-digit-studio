@@ -63,29 +63,19 @@ const Modal = ({
         <div className="modal-container">
           <div className="modal-header">
             <HeaderBar
-            style={{ display:'flex', alignItems:'center', fontSize:'16px', fontWeight:'600', wordBreak:'break-word'}}
+              style={{ display: "flex", alignItems: "center", fontSize: "16px", fontWeight: "600", wordBreak: "break-word" }}
               main={headerBarMain}
             />
           </div>
-          <div style={{overflowY:'auto', width:'100%'}}>
-            {children}
-          </div>
+          <div style={{ overflowY: "auto", width: "100%" }}>{children}</div>
           <div className="modal-actions">
             {actionCancelLabel && (
-              <button
-                className="btn-cancel"
-                onClick={actionCancelOnSubmit}
-              >
+              <button className="btn-cancel" onClick={actionCancelOnSubmit}>
                 {actionCancelLabel}
               </button>
             )}
             {!hideSubmit && (
-              <button
-                className="btn-confirm"
-                onClick={actionSaveOnSubmit}
-                form={formId}
-                disabled={isDisabled}
-              >
+              <button className="btn-confirm" onClick={actionSaveOnSubmit} form={formId} disabled={isDisabled}>
                 {actionSaveLabel}
               </button>
             )}
@@ -113,7 +103,7 @@ const Modal = ({
           border-radius: 12px;
           width: 50%;
           ${popupStyles}
-          }
+        }
 
         .modal-header {
           margin-bottom: 16px;
@@ -142,14 +132,15 @@ const Modal = ({
         .btn-cancel {
           min-width: 80px;
           padding: 8px 24px;
-          border: 1px solid #00796B;
+          border: 1px solid #00796b;
           border-radius: 4px;
           font-size: 16px;
           font-weight: 600;
           background-color: #fff;
-          color: #00796B;
+          color: #00796b;
           cursor: pointer;
           word-break: break-word;
+          border-radius: 10px;
           ${style}
         }
 
@@ -160,7 +151,7 @@ const Modal = ({
         .btn-confirm {
           min-width: 80px;
           padding: 8px 24px;
-          background-color: #00796B;
+          background-color: #00796b;
           border: none;
           border-radius: 4px;
           font-size: 16px;
@@ -168,6 +159,7 @@ const Modal = ({
           color: #fff;
           cursor: pointer;
           word-break: break-word;
+          border-radius: 10px;
           ${style}
         }
 
@@ -176,7 +168,7 @@ const Modal = ({
         }
 
         .btn-confirm:disabled {
-          background-color: #D6D5D4;
+          background-color: #d6d5d4;
           cursor: not-allowed;
         }
       `}</style>
