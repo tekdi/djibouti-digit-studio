@@ -12,22 +12,34 @@ const RadioButtons = (props) => {
     props.onSelect(value);
   }
 
-  const isAnyPreselected = props?.options?.some(
-    (option) => props?.value === option?.code && props?.disabled
-  );
+  const isAnyPreselected = props?.options?.some((option) => props?.value === option?.code && props?.disabled);
 
   return (
-    <div style={props?.style} className={`digit-radio-options-wrap ${props?.alignVertical ? "vertical" : ""} ${props?.additionalWrapperClass ? props?.additionalWrapperClass : ""}`}>
+    <div
+      style={props?.style}
+      className={`digit-radio-options-wrap ${props?.alignVertical ? "vertical" : ""} ${
+        props?.additionalWrapperClass ? props?.additionalWrapperClass : ""
+      }`}
+    >
       {props?.options?.map((option, ind) => {
         if (props?.optionsKey && !props?.isDependent) {
           return (
-            <div className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${(props?.value === option?.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`} key={ind}>
-              <span className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${(props?.value === option?.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""}`}>
+            <div
+              className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${
+                props?.value === option?.code && props?.disabled ? "preselected" : ""
+              } ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`}
+              key={ind}
+            >
+              <span
+                className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${
+                  props?.value === option?.code && props?.disabled ? "preselected" : ""
+                } ${isAnyPreselected ? "has-preselected" : ""}`}
+              >
                 <input
                   className="digit-radio-btn"
                   type="radio"
                   value={option}
-                  checked={(selected === option?.code) || isEqual(selected, option) ? 1 : 0}
+                  checked={selected?.code === option?.code || isEqual(selected, option) ? 1 : 0}
                   onChange={() => selectOption(option)}
                   disabled={props?.disabled}
                   name={props?.name}
@@ -37,17 +49,23 @@ const RadioButtons = (props) => {
                 <span className="digit-radio-btn-checkmark"></span>
               </span>
               <label style={props?.inputStyle} for={props?.id}>
-                {StringManipulator(
-                  "TOSENTENCECASE",
-                  t(option[props?.optionsKey])
-                )}
+                {StringManipulator("TOSENTENCECASE", t(option[props?.optionsKey]))}
               </label>
             </div>
           );
         } else if (props?.optionsKey && props?.isDependent) {
           return (
-            <div className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${(props?.value === option?.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`} key={ind}>
-              <span className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${(props?.value === option?.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""}`}>
+            <div
+              className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${
+                props?.value === option?.code && props?.disabled ? "preselected" : ""
+              } ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`}
+              key={ind}
+            >
+              <span
+                className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${
+                  props?.value === option?.code && props?.disabled ? "preselected" : ""
+                } ${isAnyPreselected ? "has-preselected" : ""}`}
+              >
                 <input
                   className="digit-radio-btn"
                   type="radio"
@@ -62,18 +80,23 @@ const RadioButtons = (props) => {
                 <span className="digit-radio-btn-checkmark"></span>
               </span>
               <label style={props?.inputStyle} for={props?.id}>
-                {StringManipulator("TOSENTENCECASE",t(
-                  props?.labelKey
-                    ? `${props?.labelKey}_${option?.code}`
-                    : option?.code
-                ))}
+                {StringManipulator("TOSENTENCECASE", t(props?.labelKey ? `${props?.labelKey}_${option?.code}` : option?.code))}
               </label>
             </div>
           );
         } else {
           return (
-            <div className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${(props?.value === option.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`} key={ind}>
-              <span className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${(props?.value === option.code && props?.disabled) ? "preselected" : ""} ${isAnyPreselected ? "has-preselected" : ""}`}>
+            <div
+              className={`radio-option-container ${props?.disabled ? "disabled" : ""} ${
+                props?.value === option.code && props?.disabled ? "preselected" : ""
+              } ${isAnyPreselected ? "has-preselected" : ""} ${props?.isLabelFirst ? "label-first" : ""}`}
+              key={ind}
+            >
+              <span
+                className={`digit-radio-btn-wrap ${props?.disabled ? "disabled" : ""} ${
+                  props?.value === option.code && props?.disabled ? "preselected" : ""
+                } ${isAnyPreselected ? "has-preselected" : ""}`}
+              >
                 <input
                   className="digit-radio-btn"
                   type="radio"
