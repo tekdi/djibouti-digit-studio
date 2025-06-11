@@ -3,7 +3,16 @@ import FieldController from "./FieldController";
 import { Button } from "@egovernments/digit-ui-react-components";
 
 const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues, errors, props, defaultValues }) => {
-  const [instances, setInstances] = useState([{ id: Date.now() }]);
+  const [instances, setInstances] = useState(() => {
+    const defaultData = defaultValues?.[config.name];
+    if (Array.isArray(defaultData) && defaultData.length > 0) {
+      return defaultData.map((item, index) => ({
+        id: Date.now() + index,
+      }));
+    } else {
+      return [{ id: Date.now() }];
+    }
+  });
 
   const addInstance = () => {
     setInstances((prev) => [...prev, { id: Date.now() }]);
@@ -14,7 +23,7 @@ const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues,
   };
 
   return (
-    <div style={{width:"80%"}}>
+    <div style={{ width: "80%" }}>
       {instances.map((inst, idx) => (
         <div
           key={inst.id}
@@ -44,21 +53,21 @@ const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues,
           {config.body.map((field, i) => {
             const fieldName = `${config.name}.${idx}.${field.populators.name}`;
             return (
-              <div style={{marginBottom:"0.75rem"}}>
-              <FieldController
-                key={`${fieldName}_${i}`}
-                type={field.type}
-                populators={{ ...field.populators, name: fieldName }}
-                isMandatory={field.populators?.required}
-                disable={field.populators?.disable}
-                component={field.component}
-                config={field}
-                control={control}
-                props={props}
-                formData={formData}
-                errors={errors}
-                defaultValues={defaultValues}
-              />
+              <div style={{ marginBottom: "0.75rem" }}>
+                <FieldController
+                  key={`${fieldName}_${i}`}
+                  type={field.type}
+                  populators={{ ...field.populators, name: fieldName }}
+                  isMandatory={field.populators?.required}
+                  disable={field.populators?.disable}
+                  component={field.component}
+                  config={field}
+                  control={control}
+                  props={props}
+                  formData={formData}
+                  errors={errors}
+                  defaultValues={defaultValues}
+                />
               </div>
             );
           })}
