@@ -156,6 +156,7 @@ const WorkflowActions = ({
         props?.serviceConfig?.data?.bill?.BusinessService?.code
       }&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }
+    action !== "MAKE_PAYMENT" && setShowModal(true);
   };
 
   // Workflow submit logic

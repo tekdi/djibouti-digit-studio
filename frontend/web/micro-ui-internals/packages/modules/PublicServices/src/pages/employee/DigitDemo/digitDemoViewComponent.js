@@ -2,7 +2,7 @@ import { Header, Loader, ViewComposer, MultiLink } from "@egovernments/digit-ui-
 import { Button } from "@egovernments/digit-ui-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { downloadStudioPDF, generateViewConfigFromResponse } from "../../../utils";
 import WorkflowActions from "../../../components/WorkflowActions";
 import ViewCheckListCards from "../CheckList/viewCheckListCards";
@@ -21,6 +21,7 @@ const DigitDemoViewComponent = () => {
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
+  const history = useHistory();
 
   //to get the fetched application details
   const request = {
@@ -126,8 +127,10 @@ const DigitDemoViewComponent = () => {
   };
 
   const handleCalculationClick = () => {
+    const userDetails = Digit.UserService.getUser();
+    const userType = userDetails?.info?.type?.toLowerCase();
     history.push({
-      pathname: `/${window.contextPath}/employee/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`,
+      pathname: `/${window.contextPath}/${userType}/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`,
     });
   };
 
