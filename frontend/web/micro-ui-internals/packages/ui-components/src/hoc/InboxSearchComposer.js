@@ -38,7 +38,8 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
   const [popup, setPopup] = useState(false);
 
   const [apiDetails, setApiDetails] = useState(configs?.apiDetails);
-  const userType = Digit.UserService.getType().toLowerCase();
+  const userDetails = Digit.UserService.getUser();
+  const userType = userDetails?.info?.type?.toLowerCase();
 
   if (!hasRun.current) {
     hasRun.current = true;
@@ -151,10 +152,10 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     var { isLoading, data, revalidate, isFetching, error, refetch } = Digit.Hooks.useCustomAPIHook(updatedReqCriteria);
   }
 
-  const userObject = Digit.SessionStorage.get("User")
+  const userObject = Digit.SessionStorage.get("User");
 
   const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles || userObject?.info?.roles;
-  const roleLabel = roles?.some(role => role?.code === "BPA_ARCHITECT") ? "BPA_ARCHITECT" : roles && roles[0]?.code;
+  const roleLabel = roles?.some((role) => role?.code === "BPA_ARCHITECT") ? "BPA_ARCHITECT" : roles && roles[0]?.code;
 
   const closeToast = () => {
     setTimeout(() => {
@@ -192,24 +193,26 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
   return (
     <InboxContext.Provider value={{ state, dispatch }}>
       <div className="digit-inbox-search-composer-header-action-wrapper">
-        {configs?.headerLabel && <HeaderComponent className="digit-inbox-search-composer-header">
-          {`${t(configs?.headerLabel)}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name || userObject?.info?.name}! (${t(roleLabel)})`}
-          </HeaderComponent>}
+        {configs?.headerLabel && (
+          <HeaderComponent className="digit-inbox-search-composer-header">
+            {`${t(configs?.headerLabel)}, ${apiDetails?.requestBody?.RequestInfo?.userInfo?.name || userObject?.info?.name}! (${t(roleLabel)})`}
+          </HeaderComponent>
+        )}
 
         {configs?.type === "inbox" && configs?.sections?.search?.show && (
-            <MediaQuery minWidth={426}>
-              <div className="digit-section search">
-                <SearchComponent
-                  uiConfig={configs?.sections?.search?.uiConfig}
-                  header={configs?.sections?.search?.label}
-                  screenType={configs.type}
-                  fullConfig={configs}
-                  data={data}
-                  showTabCount={configs?.sections?.search?.uiConfig?.showTabCount}
-                />
-              </div>
-            </MediaQuery>
-          )}
+          <MediaQuery minWidth={426}>
+            <div className="digit-section search">
+              <SearchComponent
+                uiConfig={configs?.sections?.search?.uiConfig}
+                header={configs?.sections?.search?.label}
+                screenType={configs.type}
+                fullConfig={configs}
+                data={data}
+                showTabCount={configs?.sections?.search?.uiConfig?.showTabCount}
+              />
+            </div>
+          </MediaQuery>
+        )}
 
         {Digit.Utils.didEmployeeHasAtleastOneRole(configs?.actions?.actionRoles) && (
           <Button
@@ -226,7 +229,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
       </div>
       <div className="digit-inbox-search-component-wrapper ">
         <div className={`digit-sections-parent ${configs?.type}`}>
-          {configs?.sections?.links?.show && configs?.sections?.links?.uiConfig?.links?.length>0 && (
+          {configs?.sections?.links?.show && configs?.sections?.links?.uiConfig?.links?.length > 0 && (
             <MediaQuery minWidth={426}>
               <div className="digit-section links">
                 <InboxSearchLinks

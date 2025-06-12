@@ -17,10 +17,12 @@ import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
+  const userDetails = Digit.UserService.getUser();
+  const userType = userDetails?.info?.type?.toLowerCase();
 
   const crumbs = [
     {
-      internalLink: `/${window?.contextPath}/${Digit.UserService.getType().toLowerCase()}/publicservices/modules?selectedPath=Apply`,
+      internalLink: `/${window?.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`,
       content: t("HOME"),
       show: true,
     },

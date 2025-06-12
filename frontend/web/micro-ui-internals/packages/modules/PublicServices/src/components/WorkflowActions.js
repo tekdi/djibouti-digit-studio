@@ -98,6 +98,7 @@ const WorkflowActions = ({
 
   const { t } = useTranslation();
   const user = Digit.UserService.getUser();
+  const userType = user?.info?.type?.toLowerCase();
 
   const workflowDetails = useWorkflowDetails({
     tenantId,
@@ -147,15 +148,11 @@ const WorkflowActions = ({
     setDisplayMenu(false);
     setSelectedAction(action);
     if (action.action.includes("MAKE_PAYMENT")) {
-      const redirectionUrl = `/${
-        window.contextPath
-      }/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${
-        queryStrings?.serviceCode
-      }`;
+      const redirectionUrl = `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`;
 
       window.location = `/${
         window.contextPath
-      }/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
+      }/${userType}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
         props?.serviceConfig?.data?.bill?.BusinessService?.code
       }&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }

@@ -34,7 +34,8 @@ function formatCreatedTime(timestamp) {
   return `${day} ${month}, ${year}`;
 }
 
-const userType = Digit.UserService.getType().toLowerCase();
+const userDetails = Digit.UserService.getUser();
+const userType = userDetails?.info?.type?.toLowerCase();
 
 export const UICustomizations = {
   searchGenericConfig: {
