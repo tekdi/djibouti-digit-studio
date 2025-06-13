@@ -14,6 +14,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
+          timeout: 60m
           script: |
             cd /home/ubuntu/phase2/digit-studio
             ./deploy.sh
