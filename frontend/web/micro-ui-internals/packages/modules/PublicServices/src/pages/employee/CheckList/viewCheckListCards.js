@@ -2,66 +2,66 @@ import React from "react";
 import { Card, TextBlock, Button } from "@egovernments/digit-ui-components";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import transformViewCheckList from "../../../utils/createUtils.js"
+import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
 import { useTranslation } from "react-i18next";
 
-const ViewCheckListCards = ({checkListCodes, applicationId, state}) => {
-    const { t } = useTranslation();
+const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
+  const { t } = useTranslation();
 
-    const code = checkListCodes;
-    //businessService.workflowstate
-    //applicationid
-    const accountID = applicationId;
-    const [cardItems, setCardItems] = useState([]);
+  const code = checkListCodes;
+  //businessService.workflowstate
+  //applicationid
+  const accountID = applicationId;
+  const [cardItems, setCardItems] = useState([]);
 
-    const request = {
+  const request = {
+    url: "/health-service-request/service/definition/v1/_search",
+    params: {},
+    body: {},
+    method: "POST",
+    headers: {},
+    config: {
+      enable: false,
+    },
+  };
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(request);
+
+  const getcarditems = async (code) => {
+    await mutation.mutate(
+      {
         url: "/health-service-request/service/definition/v1/_search",
-        params: {},
-        body: {},
         method: "POST",
-        headers: {},
+        body: transformViewCheckList(code),
         config: {
-            enable: false,
+          enable: false,
         },
-    }
-    const mutation = Digit.Hooks.useCustomAPIMutationHook(request);
-
-    const getcarditems = async (code) => {
-        await mutation.mutate(
-            {
-                url: "/health-service-request/service/definition/v1/_search",
-                method: "POST",
-                body: transformViewCheckList(code),
-                config: {
-                    enable: false,
-                },
-            },
-            {
-                onSuccess: (res) => {
-                    setCardItems(res?.ServiceDefinitions);
-                    localStorage.setItem("checklistStatus", res?.ServiceDefinitions?.[0]?.code);
-                },
-                onError: () => {
-                    console.log("Error occured");
-                },
-            }
-        )
-    }
-
-    useEffect(() => {
-        getcarditems(code);
-    }, []);
-
-    return (
-        <React.Fragment>
-            {
-                cardItems.map((item, index) => (
-                    <CheckListCard item={item} t={t} accid={accountID} state={state} />
-                ))
-            }
-        </React.Fragment>
+      },
+      {
+        onSuccess: (res) => {
+          setCardItems(res?.ServiceDefinitions);
+          localStorage.setItem("checklistStatus", res?.ServiceDefinitions?.[0]?.code);
+        },
+        onError: () => {
+          console.log("Error occured");
+        },
+      }
     );
+  };
+
+  useEffect(() => {
+    getcarditems(code);
+  }, []);
+
+  return (
+    <React.Fragment>
+      {cardItems
+        .sort((a, b) => a.auditDetails.createdTime - b.auditDetails.createdTime)
+        .map((item, index) => (
+          <CheckListCard item={item} t={t} accid={accountID} state={state} />
+        ))}
+    </React.Fragment>
+  );
 };
 
 export default ViewCheckListCards;

@@ -11,6 +11,8 @@ const CheckListCard = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const { t } = useTranslation();
+  const userDetails = Digit.UserService.getUser();
+  const userType = userDetails?.info?.type?.toLowerCase();
 
   const style = {
     display: "flex",
@@ -67,27 +69,31 @@ const CheckListCard = (props) => {
   }, [props.item.id, props.accid]);
 
   return (
-    <div>
+    <div style={{ marginBottom: "15px" }}>
       {loading ? (
         <Card type="primary" style={style}>
-          {/* <span
+          {filled ? (
+            <span
               style={{
-                fontSize: '0.75rem',
-                position:'absolute',
-                top:'10px',
-                left:'20px',
+                fontSize: "0.75rem",
+                position: "absolute",
+                top: "10px",
+                left: "20px",
                 fontWeight: 500,
-                color: '#166534',
-                backgroundColor: '#dcfce7',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '9999px',
+                color: "#166534",
+                backgroundColor: "#dcfce7",
+                padding: "0.25rem 0.5rem",
+                borderRadius: "9999px",
               }}
             >
-              {t("READY")}
-            </span> */}
+              {t("REPORT_DONE")}
+            </span>
+          ) : (
+            ""
+          )}
           {/* <TextBlock style={{color:'black',fontSize:'40px', fontWeight:'700' }} body={props.t(props.item.code)} /> */}
           <h2 style={{ color: "black", fontSize: "40px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word", margin: "15px 0" }}>
-            {props.t(props.item.code)}
+            {props.t(props.item.clientId)}
           </h2>
           {/* {
           filled  ? (
@@ -127,7 +133,7 @@ const CheckListCard = (props) => {
             }}
             onClick={() =>
               history.push(
-                `/${window.contextPath}/employee/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&state=${props?.state}`,
+                `/${window.contextPath}/${userType}/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&clientId=${props.item.clientId}&state=${props?.state}`,
                 { redirectionUrl: `${window.location.href}` }
               )
             }

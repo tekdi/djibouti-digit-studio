@@ -183,7 +183,7 @@ export const transformViewApplication = (id, accid, tenantId) => {
   return requestBody;
 };
 
-const transformViewCheckList = (code) => {
+const transformViewCheckList = (code, id) => {
   code = [];
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let requestBody = {
@@ -193,13 +193,16 @@ const transformViewCheckList = (code) => {
     includeDeleted: true,
   };
 
+  if (id) {
+    requestBody.ServiceDefinitionCriteria.ids = [id];
+  }
+
   if (Array.isArray(code) && code.length > 0) {
     requestBody.ServiceDefinitionCriteria.code = code;
   }
 
   return requestBody;
 };
-
 
 export const transformCreateCheckList = (id, accid, data, action = "SUBMIT") => {
   const tenantId = Digit.ULBService.getCurrentTenantId();

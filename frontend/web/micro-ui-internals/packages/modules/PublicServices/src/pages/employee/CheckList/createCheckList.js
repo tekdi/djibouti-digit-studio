@@ -14,6 +14,7 @@ const CreateCheckList = () => {
   const accid = queryStrings?.accid;
   const id = queryStrings?.id;
   const code = queryStrings?.code;
+  const clientId = queryStrings?.clientId;
   const state = queryStrings?.state;
   const { t } = useTranslation();
   const [cardItems, setCardItems] = useState([]);
@@ -125,12 +126,12 @@ const CreateCheckList = () => {
     );
   };
 
-  const getcarditems = async (code) => {
+  const getcarditems = async (code, id) => {
     await smutation.mutate(
       {
         url: "/health-service-request/service/definition/v1/_search",
         method: "POST",
-        body: transformViewCheckList(code),
+        body: transformViewCheckList(code, id),
         config: {
           enable: false,
         },
@@ -149,8 +150,8 @@ const CreateCheckList = () => {
   };
 
   useEffect(() => {
-    getcarditems([code]);
-  }, [code]);
+    getcarditems([code], id);
+  }, [code, id]);
 
   useEffect(() => {
     if (cardItems && cardItems.length > 0) {
@@ -279,7 +280,7 @@ const CreateCheckList = () => {
             fieldStyle={{ marginRight: 2 }}
             draftLabel={t("BPA_SAVE_AS_DRAFT")}
             onDraftLabelClick={onSaveAsDraft}
-            heading={t(`CHECKLIST_HEADING`)}
+            heading={t(clientId)}
           />
         </div>
       ) : (
