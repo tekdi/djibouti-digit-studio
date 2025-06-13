@@ -4,7 +4,7 @@ on:
     branches:
       - djibouti-frontend
 jobs:
-  deploy_to_server1:
+  deploy_on_eks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
