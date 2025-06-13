@@ -69,6 +69,7 @@ Scalable support for new departments and use cases
 ## 🤝 Contributing
 Contributions are welcome! Please refer to the contributing guide for guidelines on submitting issues or pull requests.
 
+
 ## 📬 Contact
 For any questions or support, reach out to the core team 
 
