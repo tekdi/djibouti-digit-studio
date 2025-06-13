@@ -15,7 +15,7 @@ const CustomActionDropdown = ({
   const title = t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`);
 
   return (
-    <div style={{ position: 'relative', padding:'15px' }}>
+    <div style={{ position: 'relative', padding: '15px' }}>
       <select
         className="custom-action-dropdown"
         disabled={isDisabled}
@@ -26,9 +26,9 @@ const CustomActionDropdown = ({
           }
         }}
         style={{
-          padding: "10px 12px",
+          padding: "10px 35px",
           borderRadius: "4px",
-          borderRadius:'10px',
+          borderRadius: '10px',
           backgroundColor: isDisabled ? "#f0f0f0" : "white",
           cursor: isDisabled ? "not-allowed" : "pointer",
           minWidth: "200px",
@@ -39,7 +39,7 @@ const CustomActionDropdown = ({
         }}
         title={title}
       >
-        <option  value="" disabled selected hidden>
+        <option value="" disabled selected hidden>
           {title}
         </option>
         {actions?.map((action) => (
@@ -50,15 +50,15 @@ const CustomActionDropdown = ({
               backgroundColor: "white",
               padding: "10px",
               cursor: "pointer",
-              color:'black'
+              color: 'black'
             }}
           >
             {t(action.displayname)}
           </option>
         ))}
       </select>
-    <style>
-  {`
+      <style>
+        {`
     .custom-action-dropdown {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='white' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -76,7 +76,7 @@ const CustomActionDropdown = ({
       color: black !important;
     }
   `}
-</style>
+      </style>
 
     </div>
   );
