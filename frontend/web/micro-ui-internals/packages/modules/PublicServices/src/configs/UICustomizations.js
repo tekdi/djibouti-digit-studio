@@ -91,7 +91,9 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link
-                to={`/${window.contextPath}/${userType}/publicservices/${row?.module}/${row?.businessService}/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+                to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.module}/${
+                  row?.businessService
+                }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
               >
                 {String(value ? value : t("ES_COMMON_NA"))}
               </Link>
@@ -105,7 +107,9 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_WAGESEEKER_ID")
-          link = `/${window.contextPath}/${userType}/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+          link = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${
+            row[key]
+          }`;
       });
       return link;
     },
@@ -118,7 +122,9 @@ export const UICustomizations = {
     actionSelectHandler: (index, label, selectedRows) => {}, // actionSelectHandler : Is used to handle onClick functions of table action button on row selections, gets index,label and selectedRows as props
     footerActionHandler: (index, event) => {}, // footerActionHandler : Is used to handle onclick functions of footer action buttons, gets index and event as props
     linkColumnHandler: (row) => {
-      const url = `/${window.contextPath}/${userType}/microplan/view-main?tenantId=${row?.tenantId}&uniqueIdentifier=${row?.uniqueIdentifier}`;
+      const url = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/microplan/view-main?tenantId=${
+        row?.tenantId
+      }&uniqueIdentifier=${row?.uniqueIdentifier}`;
       const history = useHistory();
       history.push(url);
       //window.location.href = url;
@@ -234,7 +240,9 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${window.contextPath}/${userType}/publicservices/${row?.module}/${row?.businessService}/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+              to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.module}/${
+                row?.businessService
+              }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
