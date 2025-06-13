@@ -59,7 +59,7 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-studio";
   window.Digit.Customizations = {
     PGR: pgrCustomizations,
     commonUiConfig: UICustomizations,

@@ -34,9 +34,6 @@ function formatCreatedTime(timestamp) {
   return `${day} ${month}, ${year}`;
 }
 
-const userDetails = Digit.UserService.getUser();
-const userType = userDetails?.info?.type?.toLowerCase();
-
 export const UICustomizations = {
   searchGenericConfig: {
     customValidationCheck: (data) => {
@@ -171,7 +168,11 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${window.contextPath}/${userType}/publicservices/${row?.businessObject?.module}/${row?.businessObject?.businessService}/ViewScreen?applicationNumber=${row?.businessObject?.applicationNumber}&serviceCode=${row?.businessObject?.serviceCode}&businessService=${row?.ProcessInstance?.businessService}`}
+              to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.businessObject?.module}/${
+                row?.businessObject?.businessService
+              }/ViewScreen?applicationNumber=${row?.businessObject?.applicationNumber}&serviceCode=${
+                row?.businessObject?.serviceCode
+              }&businessService=${row?.ProcessInstance?.businessService}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>

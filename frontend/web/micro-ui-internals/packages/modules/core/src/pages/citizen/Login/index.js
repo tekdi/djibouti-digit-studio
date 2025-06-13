@@ -199,6 +199,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
         // Show success modal and then set user after a short delay
         setUser({ info, ...tokens });
+        Digit.UserService.setUser(user);
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);

@@ -202,10 +202,11 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
 
       setShowSuccessModal(true);
-
+      setUser({ info, ...tokens });
+      Digit.UserService.setUser(user);
+      
       setTimeout(() => {
         setShowSuccessModal(false);
-        setUser({ info, ...tokens });
       }, 2000);
     } catch (err) {
       setCanSubmitOtp(true); // Re-enable if submission fails
