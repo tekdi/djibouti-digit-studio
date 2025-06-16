@@ -26,7 +26,6 @@ const Response = () => {
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
   const tenantId = Digit?.ULBService?.getStateId();
-  const isOpenPaymentUrl = window.location.href.includes("openpayment");
 
   const handleTemplateDownload = async () => {
     try {
@@ -34,7 +33,7 @@ const Response = () => {
         tenantId,
         serviceCode: queryStrings?.serviceCode,
         applicationNumber: state?.applicationNumber,
-        pdfKey: isOpenPaymentUrl ? "payment-receipt" : "application-receipt",
+        pdfKey: "application-receipt",
       };
 
       let url = `/studio-pdf/public-service/download/pdf`;
@@ -91,7 +90,7 @@ const Response = () => {
   };
 
   return (
-    <div style={{width: "100%", padding: "16px", marginTop: "16px", height: "50%"}}>
+    <div style={{ width: "100%", padding: "16px", marginTop: "16px", height: "50%" }}>
       <Banner
         style={{
           borderRadius: "10px",
@@ -109,18 +108,10 @@ const Response = () => {
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
         </LinkLabel>
-        {service === "BPA_PCO" && (
-          <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
-            <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-            {t("CS_COMMON_DOWNLOAD_RECEIPT")}
-          </LinkLabel>
-        )}
-        {isOpenPaymentUrl && (
-          <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
-            <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-            {t("CS_COMMON_DOWNLOAD_RECEIPT")}
-          </LinkLabel>
-        )}
+        <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+          <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
+          {t("CS_COMMON_DOWNLOAD_RECEIPT")}
+        </LinkLabel>
       </div>
       <ActionBar>
         <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
