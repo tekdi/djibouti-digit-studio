@@ -46,15 +46,15 @@ const Calculation = () => {
   const [calculationResponse, setCalculationResponse] = useState();
 
   const [costBreakdown, setCostBreakdown] = useState([
-    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id: "Earthwork" },
-    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id: "Foundation" },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id: "Masonry" },
-    { name: t('CALCULATION_BETON_ARME'), percentage: 28, amount: 0, id: "Reinforced concrete in elevation" },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints" },
-    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id: "Carpentry" },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id: "Electricity" },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id: "Plumbing/Sanitation" },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id: "Sanitation" }
+    { name: 'CALCULATION_TERRASSEMENT', percentage: 8, amount: 0, id:"CALCULATION_TERRASSEMENT" },
+    { name: 'CALCULATION_FONDATION', percentage: 10, amount: 0, id:"CALCULATION_FONDATION" },
+    { name: 'CALCULATION_MACONNERIE', percentage: 9, amount: 0, id:"CALCULATION_MACONNERIE" },
+    { name: 'CALCULATION_BETON_ARME', percentage: 28, amount: 0, id: "CALCULATION_BETON_ARME" },
+    { name: 'CALCULATION_REVETEMENTS', percentage: 20, amount: 0, id: "CALCULATION_REVETEMENTS"},
+    { name: 'CALCULATION_MENUISERIES', percentage: 11, amount: 0, id:"CALCULATION_MENUISERIES" },
+    { name: 'CALCULATION_ELECTRICITE', percentage: 6, amount: 0, id:"CALCULATION_ELECTRICITE" },
+    { name: 'CALCULATION_PLOMBERIE', percentage: 3, amount: 0, id:"CALCULATION_PLOMBERIE" },
+    { name: 'CALCULATION_ASSAINISSEMENT', percentage: 5, amount: 0, id:"CALCULATION_ASSAINISSEMENT" }
   ]);
 
 
@@ -443,7 +443,7 @@ const Calculation = () => {
               <tbody>
                 {costBreakdown.map((item, index) => (
                   <tr key={index}>
-                    <td className="work-col">{item.name}</td>
+                    <td className="work-col">{t(item.name)}</td>
                     <td className="percentage-col">{item.percentage}%</td>
                     <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item?.amount?.toLocaleString()} FDj`}</td>
                   </tr>

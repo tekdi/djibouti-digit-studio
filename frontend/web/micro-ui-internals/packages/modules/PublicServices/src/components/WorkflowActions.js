@@ -154,7 +154,7 @@ const WorkflowActions = ({
         window.contextPath
       }/${userType}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
         props?.serviceConfig?.data?.bill?.BusinessService?.code
-      }&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
+      }&applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }
     action !== "MAKE_PAYMENT" && setShowModal(true);
   };
