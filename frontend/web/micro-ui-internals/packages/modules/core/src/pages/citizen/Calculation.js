@@ -97,8 +97,6 @@ const Calculation = () => {
   };
 
   const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
-  const checklistStatus = localStorage.getItem('checklistStatus')
-
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
   };
