@@ -275,7 +275,7 @@ const WorkflowActions = ({
       )}
 
       {/* Toast display */}
-      {showToast && <Toast error={showToast?.type === "error"} label={t(showToast.label)} />}
+      {showToast && <Toast type={showToast?.type} label={t(showToast.label)} />}
     </React.Fragment>
   );
 };
