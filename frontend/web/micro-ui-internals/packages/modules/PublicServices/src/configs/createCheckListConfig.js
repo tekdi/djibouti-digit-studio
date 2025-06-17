@@ -1,12 +1,11 @@
 import React from "react";
-
 /**
  * Generates a checklist configuration used for form rendering.
  * Each field is configured based on its dataType and whether it has sub-conditions.
  * @param {Array} item - The checklist definition, usually with attributes.
  * @returns {Array} A configuration object compatible with FormComposer.
  */
-export const CreateCheckListConfig = (item) => {
+export const CreateCheckListConfig = (item, t) => {
   if (!Array.isArray(item) || item.length === 0) return [];
   let response = item?.[0];
 
@@ -49,6 +48,7 @@ export const CreateCheckListConfig = (item) => {
           name: field.code,
           hideInForm: false,
           alignVertical: true,
+          placeholder: t(`ENTER_${label.split(".")[0]}_${field.code}`), // Add placeholder for text input fields
         },
       };
     }

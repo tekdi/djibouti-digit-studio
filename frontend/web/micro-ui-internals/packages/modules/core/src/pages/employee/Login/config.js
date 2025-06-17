@@ -14,10 +14,10 @@ export const loginConfig = [
           name: "username",
         },
         name: "username",
-        error: "Please enter a valid email address (example: user@domain.com)",
+        error: "PLEASE_ENTER_VALID_EMAIL",
         validation: {
           required: true,
-          title: "Please enter a valid email address (example: user@domain.com)",
+          title: "PLEASE_ENTER_VALID_EMAIL",
         },
 
         isMandatory: true,
