@@ -27,9 +27,11 @@ const ModulePageComponent = () => {
   const hasNoData = detailsConfig.length === 0 && !isLoading;
 
   const userDetails = Digit.UserService.getUser();
+  const roles = userDetails?.info?.roles;
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isCitizen = userDetails?.info?.roles?.some((role) => role.code === "CITIZEN");
-  const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
+  const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
 
   if (isLoading) {
     return <Loader />;
@@ -122,9 +124,26 @@ const ModulePageComponent = () => {
               </Card>
             )}
 
+            {/* Search application */}
+            {isDirector && (
+              <Card key={`${index}-search`} className="product-card module-card">
+                <div className="product-header inbox-header">
+                  <HeaderComponent className="product-title">{t("SEARCH_HEADER")}</HeaderComponent>
+                </div>
+                <div className="">
+                  <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/search`}>
+                    {t("BPA_SEARCH")}
+                  </Link>
+                  <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
+                  </svg>
+                </div>
+              </Card>
+            )}
+
             {/* My application Card */}
             {isCitizen && (
-              <Card key={`${index}-inbox`} className="product-card module-card">
+              <Card key={`${index}-my-application`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
                   <div className="product-icon">

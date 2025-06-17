@@ -65,6 +65,7 @@ export const UICustomizations = {
       if (custom?.todate) data.params.todate = Digit.Utils.date.convertDateToEpoch(custom?.todate);
       if (custom?.fromdate) data.params.fromdate = Digit.Utils.date.convertDateToEpoch(custom?.fromdate);
       if (data?.state?.searchForm?.businessService) data.url = `${data.url}/${data?.state?.searchForm?.businessService?.serviceCode}`;
+      if (data?.state?.searchForm?.applicationNumber) data.url = `${data.url}?applicationNumber=${data?.state?.searchForm?.applicationNumber}`;
       if (data?.state?.searchForm?.businessService) data.config = { enabled: true };
       delete data.body.SearchCriteria.custom;
       //   const { field, value, isActive } = custom || {};
@@ -86,21 +87,46 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      switch (key) {
-        case `${row?.module.toUpperCase()}_APPLICATION_NUMBER`:
-          return (
-            <span className="link">
-              <Link
-                to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.module}/${
-                  row?.businessService
-                }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
-              >
-                {String(value ? value : t("ES_COMMON_NA"))}
-              </Link>
+      const statusKey = row?.processInstance?.[0]?.state?.state?.toUpperCase();
+      const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD", "#4B4B4B"];
+
+      if (key === "APPLICATION_NUMBER") {
+        return (
+          <span className="link">
+            <Link
+              to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.module}/${
+                row?.businessService
+              }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}&businessService=${
+                row?.processInstance?.[0]?.businessService
+              }`}
+            >
+              {String(value ? value : t("ES_COMMON_NA"))}
+            </Link>
+            <div style={{ color: "#949494" }}>{formatCreatedTime(row?.auditDetails?.createdTime)}</div>
+          </span>
+        );
+      }
+      if (key === "APPLICANT_NAME") {
+        const applicantName = row?.applicants?.[0]?.name || t("ES_COMMON_NA");
+        const assignerName = row?.processInstance?.[0]?.assigner?.name || t("ES_COMMON_NA");
+        return (
+          <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", gap: "4px" }}>
+            <div>{applicantName}</div>
+            <div style={{ color: "#949494" }}>{assignerName}</div>
+          </div>
+        );
+      }
+      if (key === "WORKFLOW_STATUS") {
+        return (
+          <div>
+            <span style={{ backgroundColor: bgColor, color: textColor, width: "fit-content", padding: "4px 12px", borderRadius: "6px" }}>
+              {statusKey ? t(`${row?.businessService}_${statusKey}`.toUpperCase()) : t("ES_COMMON_NA")}
             </span>
-          );
-        default:
-          return t("ES_COMMON_NA");
+          </div>
+        );
+      }
+      if (key === "BUSINESS_SERVICE_LABEL") {
+        return <div>{t(`${row?.businessService || "ES_COMMON_NA"}`)}</div>;
       }
     },
     MobileDetailsOnClick: (row, tenantId) => {

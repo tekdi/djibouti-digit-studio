@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState,useMemo,useRef,useLayoutEffect } from "react";
-import { useForm,useWatch} from "react-hook-form";
+import React, { useContext, useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { InboxContext } from "../hoc/InboxSearchComposerContext";
 import RenderFormFields from "../molecules/RenderFormFields";
 import HeaderComponent from "../atoms/HeaderComponent";
-import LinkLabel from '../atoms/LinkLabel';
+import LinkLabel from "../atoms/LinkLabel";
 import SubmitBar from "../atoms/SubmitBar";
 import Toast from "../atoms/Toast";
 import { CustomSVG } from "./CustomSVG";
@@ -14,34 +14,43 @@ import FilterCard from "../molecules/FilterCard";
 import { SVG } from "./SVG";
 
 const setUIConf = (uiConfig) => {
-  if(uiConfig.additionalTabs)
-    return [{...uiConfig},...uiConfig?.additionalTabs]
-  return [{uiConfig}]
-}
+  if (uiConfig.additionalTabs) return [{ ...uiConfig }, ...uiConfig?.additionalTabs];
+  return [{ uiConfig }];
+};
 
-const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullConfig, data,activeLink,browserSession,showTab,showTabCount=false, tabData, onTabChange}) => {
-  
+const SearchComponent = ({
+  uiConfig,
+  header = "",
+  screenType = "search",
+  fullConfig,
+  data,
+  activeLink,
+  browserSession,
+  showTab,
+  showTabCount = false,
+  tabData,
+  onTabChange,
+}) => {
   //whenever activeLink changes we'll change uiConfig
   // const [activeLink,setActiveLink] = useState(uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0]?.name)
-  const [allUiConfigs,setAllUiConfigs] = useState(setUIConf(uiConfig))
+  const [allUiConfigs, setAllUiConfigs] = useState(setUIConf(uiConfig));
   const { t } = useTranslation();
-  const { state, dispatch } = useContext(InboxContext)
-  const [showToast,setShowToast] = useState(null)
+  const { state, dispatch } = useContext(InboxContext);
+  const [showToast, setShowToast] = useState(null);
   let updatedFields = [];
-  const {apiDetails} = fullConfig
-  const customDefaultPagination = fullConfig?.sections?.searchResult?.uiConfig?.customDefaultPagination || null
-  const [session,setSession,clearSession] = browserSession || []
+  const { apiDetails } = fullConfig;
+  const customDefaultPagination = fullConfig?.sections?.searchResult?.uiConfig?.customDefaultPagination || null;
+  const [session, setSession, clearSession] = browserSession || [];
   const buttonWrapperRef = useRef(null);
   const [addMargin, setAddMargin] = useState(false);
-  
-  if (fullConfig?.postProcessResult){
+
+  if (fullConfig?.postProcessResult) {
     //conditions can be added while calling postprocess function to pass different params
-    Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(data, uiConfig) 
+    Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.postProcess(data, uiConfig);
   }
 
-  const defValuesFromSession = uiConfig?.type === "search" ? session?.searchForm : session?.filterForm
-  
-  	
+  const defValuesFromSession = uiConfig?.type === "search" ? session?.searchForm : session?.filterForm;
+
   const {
     register,
     handleSubmit,
@@ -61,7 +70,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     // defaultValues: {...uiConfig?.defaultValues,...defValuesFromSession}
     // defaultValues:defaultValuesFromSession
   });
-  
+
   const formData = watch();
 
   const checkKeyDown = (e) => {
@@ -72,12 +81,12 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   };
 
   useEffect(() => {
-    updatedFields = Object.values(formState?.dirtyFields)
-  }, [formState])
+    updatedFields = Object.values(formState?.dirtyFields);
+  }, [formState]);
 
   useEffect(() => {
-    clearSearch()
-  }, [activeLink])
+    clearSearch();
+  }, [activeLink]);
 
   useLayoutEffect(() => {
     if (buttonWrapperRef.current) {
@@ -92,103 +101,106 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       setAddMargin(isAligned);
     }
   }, []);
-  
-  const onSubmit = (data,e) => {
+
+  const onSubmit = (data, e) => {
     e?.preventDefault?.();
     //here -> added a custom validator function, if required add in UICustomizations
-    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
-    if(isAnyError) {
-      setShowToast(isAnyError)
-      setTimeout(closeToast,3000)
-      return
+    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck
+      ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data)
+      : false;
+    if (isAnyError) {
+      setShowToast(isAnyError);
+      setTimeout(closeToast, 3000);
+      return;
     }
 
-    if(updatedFields?.length >= (activeLink ? allUiConfigs?.filter(uiConf => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.minReqFields : uiConfig?.minReqFields)) {
-     // here based on screenType call respective dispatch fn
+    if (
+      updatedFields?.length >=
+      (activeLink
+        ? allUiConfigs?.filter((uiConf) => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.minReqFields
+        : uiConfig?.minReqFields)
+    ) {
+      // here based on screenType call respective dispatch fn
       dispatch({
         type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
         state: {
-          ...data
-        }
-      })
+          ...data,
+        },
+      });
       //here reset tableForm as well when search
       dispatch({
         type: "tableForm",
-        state: { limit:10,offset:0 }
-      })
+        state: { limit: 10, offset: 0 },
+      });
     } else {
-      setShowToast({ type:"warning", label: t("ES_COMMON_MIN_SEARCH_CRITERIA_MSG") })
+      setShowToast({ type: "warning", label: t("ES_COMMON_MIN_SEARCH_CRITERIA_MSG") });
       setTimeout(closeToast, 3000);
     }
-  }
+  };
 
   const clearSearch = () => {
-    
-    reset(uiConfig?.defaultValues)
+    reset(uiConfig?.defaultValues);
     dispatch({
-      type: uiConfig?.type === "filter"? "clearFilterForm" :"clearSearchForm",
-      state: { ...uiConfig?.defaultValues }
-      //need to pass form with empty strings 
-    })
+      type: uiConfig?.type === "filter" ? "clearFilterForm" : "clearSearchForm",
+      state: { ...uiConfig?.defaultValues },
+      //need to pass form with empty strings
+    });
     //here reset tableForm as well
     dispatch({
       type: "tableForm",
-      state: { limit:10,offset:0 }
-      //need to pass form with empty strings 
-    })
-  }
+      state: { limit: 10, offset: 0 },
+      //need to pass form with empty strings
+    });
+  };
 
   //call this fn whenever session gets updated
   const setDefaultValues = () => {
-    reset({...uiConfig?.defaultValues,...defValuesFromSession})
-  }
+    reset({ ...uiConfig?.defaultValues, ...defValuesFromSession });
+  };
 
   //adding this effect because simply setting session to default values is not working
   useEffect(() => {
-    setDefaultValues()
-  }, [session])
-  
- 
+    setDefaultValues();
+  }, [session]);
+
   const closeToast = () => {
     setShowToast(null);
-  }
+  };
 
   const handleFilterRefresh = () => {
-    reset(uiConfig?.defaultValues)
+    reset(uiConfig?.defaultValues);
     dispatch({
       type: "clearFilterForm",
-      state: { ...uiConfig?.defaultValues }
-      //need to pass form with empty strings 
-    })
-  }
+      state: { ...uiConfig?.defaultValues },
+      //need to pass form with empty strings
+    });
+  };
 
   const renderHeader = () => {
-    switch(uiConfig?.type) {
-      case "filter" : {
+    switch (uiConfig?.type) {
+      case "filter": {
         return (
           <div className="digit-filter-header-wrapper">
-            <div className="icon-filter"><CustomSVG.FilterIcon></CustomSVG.FilterIcon></div>
+            <div className="icon-filter">
+              <CustomSVG.FilterIcon></CustomSVG.FilterIcon>
+            </div>
             <div className="label">{t(header)}</div>
-            <div className="icon-refresh" onClick={handleFilterRefresh}><CustomSVG.RefreshIcon></CustomSVG.RefreshIcon></div>
+            <div className="icon-refresh" onClick={handleFilterRefresh}>
+              <CustomSVG.RefreshIcon></CustomSVG.RefreshIcon>
+            </div>
           </div>
-        )
+        );
       }
-      default : {
-        return <HeaderComponent styles={uiConfig?.headerStyle}>{t(header)}</HeaderComponent>
+      default: {
+        return <HeaderComponent styles={uiConfig?.headerStyle}>{t(header)}</HeaderComponent>;
       }
     }
-  }
+  };
 
   const renderContent = () => {
     return (
       <RenderFormFields
-        fields={
-          activeLink
-            ? allUiConfigs?.filter(
-                (uiConf) => activeLink?.name === uiConf.uiConfig.navLink
-              )?.[0]?.uiConfig?.fields
-            : uiConfig?.fields
-        }
+        fields={activeLink ? allUiConfigs?.filter((uiConf) => activeLink?.name === uiConf.uiConfig.navLink)?.[0]?.uiConfig?.fields : uiConfig?.fields}
         control={control}
         formData={formData}
         errors={errors}
@@ -206,10 +218,10 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
 
   const navConfigMain = tabData?.map((tab) => ({
     key: tab.key,
-    label: showTabCount? `${t(tab?.label)}(${data?.count || data?.TotalCount || data?.totalCount})`: t(tab?.label) || `Tab ${tab.key + 1}`,
+    label: showTabCount ? `${t(tab?.label)}(${data?.count || data?.TotalCount || data?.totalCount})` : t(tab?.label) || `Tab ${tab.key + 1}`,
     active: tab.active,
   }));
-  
+
   const activeTab = tabData?.find((tab) => tab.active)?.key || 0;
 
   return (
@@ -246,87 +258,51 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
       ) : (
         <div className={"digit-search-wrapper"}>
           {header && renderHeader()}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            onKeyDown={(e) => checkKeyDown(e)}
-          >
+          <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <div>
-              {uiConfig?.showFormInstruction && (
-                <p className="search-instruction-header">
-                  {t(uiConfig?.showFormInstruction)}
-                </p>
-              )}
-              <div
-                className={`digit-search-field-wrapper ${screenType} ${
-                  uiConfig?.formClassName ? uiConfig?.formClassName : ""
-                }`}
-              >
+              {uiConfig?.showFormInstruction && <p className="search-instruction-header">{t(uiConfig?.showFormInstruction)}</p>}
+              <div className={`digit-search-field-wrapper ${screenType} ${uiConfig?.formClassName ? uiConfig?.formClassName : ""}`}>
                 {renderContent()}
-                  <div
-                    className={`digit-search-button-wrapper ${screenType} ${uiConfig?.type
-                      } ${uiConfig?.searchWrapperClassName} ${addMargin ? "add-margin" : "donot-add-margin"
-                      }`}
-                    style={uiConfig?.searchWrapperStyles}
-                    ref={buttonWrapperRef}
-                  >
-                    {/* {uiConfig?.secondaryLabel && (
-                    <Button
-                      variation="teritiary"
-                      label={t(uiConfig?.secondaryLabel)}
-                      type="button"
-                      size={"medium"}
-                      onClick={clearSearch}
-                    />
+                <div
+                  className={`digit-search-button-wrapper ${screenType} ${uiConfig?.type} ${uiConfig?.searchWrapperClassName} ${
+                    addMargin ? "add-margin" : "donot-add-margin"
+                  }`}
+                  style={uiConfig?.searchWrapperStyles}
+                  ref={buttonWrapperRef}
+                >
+                  {uiConfig?.isPopUp && uiConfig?.primaryLabel && (
+                    <Button variation="primary" label={t(uiConfig?.primaryLabel)} type="submit" size={"medium"} onClick={(e) => handleSubmit(e)} />
+                  )}
+                  {!uiConfig?.isPopUp && uiConfig?.primaryLabel && (
+                    // <Button
+                    //   variation="primary"
+                    //   label={''}
+                    //   type="submit"
+                    //   size={"medium"}
+                    //   onClick={(e) => handleSubmit(e)}
+                    // >
+
+                    // </Button>
+                    <button type="submit" className="digit-search-button-wrapper-search-icon" onClick={(e) => handleSubmit(e)}>
+                      <SVG.Search width="18px" height="18px" fill="#FFFFFF" />
+                    </button>
+                  )}
+                  {/* {uiConfig?.secondaryLabel && (
+                    <Button variation="teritiary" label={t(uiConfig?.secondaryLabel)} type="button" size={"medium"} onClick={clearSearch} />
                   )} */}
-                    {uiConfig?.isPopUp && uiConfig?.primaryLabel && (
-                      <Button
-                        variation="primary"
-                        label={t(uiConfig?.primaryLabel)}
-                        type="submit"
-                        size={"medium"}
-                        onClick={(e) => handleSubmit(e)}
-                      />
-                    )}
-                    {!uiConfig?.isPopUp && uiConfig?.primaryLabel && (
-                      // <Button
-                      //   variation="primary"
-                      //   label={''}
-                      //   type="submit"
-                      //   size={"medium"}
-                      //   onClick={(e) => handleSubmit(e)}
-                      // >
+                </div>
 
-                      // </Button>
-                      <button type="submit" className="digit-search-button-wrapper-search-icon" onClick={(e) => handleSubmit(e)}>
-                        <SVG.Search
-                          width="18px"
-                          height="18px"
-                          fill="#FFFFFF"
-                        />
-                      </button>
-                    )}
-                  </div>
-
-
-                  {/* <Link className="digit-submit-bar create-application-button" to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
+                {/* <Link className="digit-submit-bar create-application-button" to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
                   Commencer une nouvelle demande
                   </Link> */}
-
-                </div>
               </div>
+            </div>
           </form>
-          {showToast && (
-            <Toast
-              type={showToast?.type}
-              label={t(showToast?.label)}
-              isDleteBtn={true}
-              onClose={closeToast}
-            />
-          )}
+          {showToast && <Toast type={showToast?.type} label={t(showToast?.label)} isDleteBtn={true} onClose={closeToast} />}
         </div>
       )}
     </Tab>
   );
-}
+};
 
-export default SearchComponent
+export default SearchComponent;

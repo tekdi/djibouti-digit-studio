@@ -177,12 +177,12 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
     }
   }, [additionalConfig?.search?.callRefetch]);
 
-  useEffect(() => {
-    return () => {
-      revalidate();
-      setEnable(false);
-    };
-  });
+  // useEffect(() => {
+  //   return () => {
+  //     revalidate();
+  //     setEnable(false);
+  //   };
+  // });
 
   //for mobile view
   const handlePopupClose = () => {

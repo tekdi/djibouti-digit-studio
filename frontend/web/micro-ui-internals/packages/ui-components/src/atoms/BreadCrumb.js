@@ -12,14 +12,9 @@ const BreadCrumb = (props) => {
   useEffect(() => {
     if (props?.maxItems && props?.crumbs.length > props?.maxItems && !expanded) {
       const startCrumbs = props.crumbs.slice(0, props?.itemsBeforeCollapse || Math.ceil(props.maxItems / 2));
-      const endCrumbs = props.crumbs.slice(
-        -1 * (props?.itemsAfterCollapse || Math.floor(props.maxItems / 2))
-      );
+      const endCrumbs = props.crumbs.slice(-1 * (props?.itemsAfterCollapse || Math.floor(props.maxItems / 2)));
 
-      let updatedCrumbs = startCrumbs.concat(
-        [{ show: true, content: props?.expandText || "..." }],
-        endCrumbs
-      );
+      let updatedCrumbs = startCrumbs.concat([{ show: true, content: props?.expandText || "..." }], endCrumbs);
       setCrumbsToDisplay(updatedCrumbs);
     } else {
       setCrumbsToDisplay([...props.crumbs]);
@@ -40,11 +35,14 @@ const BreadCrumb = (props) => {
       return index === validCrumbs.length - 1;
     }
 
-    return validCrumbs?.findIndex((ob) => {
-      const linkToCheck = ob?.externalLink || ob?.internalLink;
-      const currentLink = crumbsToDisplay?.[index]?.externalLink || crumbsToDisplay?.[index]?.internalLink;
-      return linkToCheck === currentLink;
-    }) === validCrumbs?.length - 1;
+    return (
+      validCrumbs?.findIndex((ob) => {
+        const linkToCheck = ob?.externalLink || ob?.internalLink;
+        const currentLink = crumbsToDisplay?.[index]?.externalLink || crumbsToDisplay?.[index]?.internalLink;
+        return linkToCheck === currentLink;
+      }) ===
+      validCrumbs?.length - 1
+    );
   }
 
   const handleCrumbClick = () => {
@@ -62,9 +60,9 @@ const BreadCrumb = (props) => {
       }
     }
     window.history.back();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1000);
   };
 
   const handleConfirmBack = () => {
@@ -80,73 +78,55 @@ const BreadCrumb = (props) => {
 
   return (
     <>
-      <ol
-        className={`digit-bread-crumb ${props?.className ? props?.className : ""}`}
-        style={props?.style}
-      >
-        <div className="digit-bread-crumb-back-icon" onClick={handleBackClick}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clipPath="url(#clip0_41_3825)">
-              <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#0B0C0C" />
-            </g>
-            <defs>
-              <clipPath id="clip0_41_3825">
-                <rect width="24" height="24" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </div>
+      <ol className={`digit-bread-crumb ${props?.className ? props?.className : ""}`} style={props?.style}>
+        {validCrumbsMain?.length > 1 && (
+          <div className="digit-bread-crumb-back-icon" onClick={handleBackClick}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clipPath="url(#clip0_41_3825)">
+                <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#0B0C0C" />
+              </g>
+              <defs>
+                <clipPath id="clip0_41_3825">
+                  <rect width="24" height="24" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
+        )}
 
         {validCrumbsMain?.map((crumb, ci) => {
           if (!crumb?.show) return null;
           if (crumb?.isBack)
             return (
-              <li
-                key={ci}
-                style={props?.itemStyle}
-                className="digit-bread-crumb--item back-crumb-item"
-              >
+              <li key={ci} style={props?.itemStyle} className="digit-bread-crumb--item back-crumb-item">
                 <span onClick={handleBackClick}>{crumb.content}</span>
               </li>
             );
 
           return (
             <Fragment key={ci}>
-              <li
-                style={props?.itemStyle}
-                className="digit-bread-crumb--item"
-              >
+              <li style={props?.itemStyle} className="digit-bread-crumb--item">
                 {isLast(ci) || (!crumb?.internalLink && !crumb?.externalLink) ? (
                   <span
                     className={`digit-bread-crumb-content ${isLast(ci) ? "current" : "default"}`}
                     style={props?.spanStyle}
-                    onClick={(crumb.content === "..." || crumb.content === props?.expandText) ? handleCrumbClick : null}
+                    onClick={crumb.content === "..." || crumb.content === props?.expandText ? handleCrumbClick : null}
                   >
                     {crumb?.icon && crumb.icon}
                     {crumb.content}
                   </span>
                 ) : crumb?.externalLink ? (
-                  <Link
-                    className="digit-bread-crumb-content"
-                    onClick={() => handleRedirect(crumb?.externalLink)}
-                  >
+                  <Link className="digit-bread-crumb-content" onClick={() => handleRedirect(crumb?.externalLink)}>
                     {crumb?.icon && crumb.icon}
                     {crumb.content}
                   </Link>
                 ) : (
-                  <Link
-                    onClick={() => handleRedirect(crumb?.internalLink)}
-                    className="digit-bread-crumb-content"
-                  >
+                  <Link onClick={() => handleRedirect(crumb?.internalLink)} className="digit-bread-crumb-content">
                     {crumb?.icon && crumb.icon}
                     {crumb.content}
                   </Link>
                 )}
-                {!isLast(ci) && (
-                  <div className="digit-bread-crumb-seperator">
-                    {props?.customSeparator ? props?.customSeparator : "/"}
-                  </div>
-                )}
+                {!isLast(ci) && <div className="digit-bread-crumb-seperator">{props?.customSeparator ? props?.customSeparator : "/"}</div>}
               </li>
             </Fragment>
           );
@@ -175,7 +155,7 @@ BreadCrumb.propTypes = {
   maxItems: PropTypes.number,
   itemsAfterCollapse: PropTypes.number,
   itemsBeforeCollapse: PropTypes.number,
-  expandText: PropTypes.string
+  expandText: PropTypes.string,
 };
 
 export default BreadCrumb;
