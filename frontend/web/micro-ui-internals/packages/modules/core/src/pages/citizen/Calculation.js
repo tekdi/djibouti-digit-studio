@@ -5,11 +5,19 @@ const Calculation = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  const userDetails = Digit.UserService.getUser();
+  const isHOD = userDetails?.info?.roles?.some(
+    (role) => role.code.includes("HOD")
+  );
+  let styleCondition = {};
+  if (!isHOD && state !== code.split(".")[1]) {
+    styleCondition = { pointerEvents: "none", opacity: 0.7 };
+  }
 
   const [floorData, setFloorData] = useState([
-    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:0 },
-    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:1 },
-    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo:2 }
+    { name: t('CALCULATION_RDC'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo: 0 },
+    { name: t('CALCULATION_1ER_ETAGE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo: 1 },
+    { name: t('CALCULATION_TERRASSE'), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo: 2 }
   ]);
 
 
@@ -30,22 +38,22 @@ const Calculation = () => {
   });
 
   const [plotInfo, setPlotInfo] = useState({
-    plotArea:0,
+    plotArea: 0,
     cos: 0
   });
 
   const [calculationResponse, setCalculationResponse] = useState();
 
   const [costBreakdown, setCostBreakdown] = useState([
-    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id:"Earthwork" },
-    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id:"Foundation" },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id:"Masonry" },
+    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id: "Earthwork" },
+    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id: "Foundation" },
+    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id: "Masonry" },
     { name: t('CALCULATION_BETON_ARME'), percentage: 28, amount: 0, id: "Reinforced concrete in elevation" },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints"},
-    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id:"Carpentry" },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id:"Electricity" },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id:"Plumbing/Sanitation" },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id:"Sanitation" }
+    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints" },
+    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id: "Carpentry" },
+    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id: "Electricity" },
+    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id: "Plumbing/Sanitation" },
+    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id: "Sanitation" }
   ]);
 
 
@@ -71,25 +79,24 @@ const Calculation = () => {
     method: "POST",
     headers: {},
     config: {
-        enable: false,
+      enable: false,
     },
-}
-const mutation = Digit.Hooks.useCustomAPIMutationHook(calReq);
+  }
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(calReq);
 
-const updateRequest = {
-  url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
-  method: "PUT",
-  headers: {
-    "X-Tenant-Id": tenantId,
-    "auth-token": Digit.UserService.getUser()?.access_token,
-  },
-  config: {
-    enable: true,
-  },
-};
+  const updateRequest = {
+    url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
+    method: "PUT",
+    headers: {
+      "X-Tenant-Id": tenantId,
+      "auth-token": Digit.UserService.getUser()?.access_token,
+    },
+    config: {
+      enable: true,
+    },
+  };
 
-const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
-const checklistStatus = localStorage.getItem('checklistStatus')
+  const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
 
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
@@ -103,15 +110,15 @@ const checklistStatus = localStorage.getItem('checklistStatus')
     if (floorData.length >= 10) {
       return;
     }
-    const newFloor = { 
-      name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`), 
-      residentialArea: 0, 
-      commercialArea: 0, 
-      totalArea: 0, 
+    const newFloor = {
+      name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`),
+      residentialArea: 0,
+      commercialArea: 0,
+      totalArea: 0,
       cost: 0,
       floorNo: floorData.length - 1
     };
-    
+
     const newFloorData = [...floorData];
     // Insert at the second-to-last position (last position is terrace)
     newFloorData.splice(floorData.length - 1, 0, newFloor);
@@ -144,7 +151,7 @@ const checklistStatus = localStorage.getItem('checklistStatus')
         amount: item.amount
       }))
     };
-  
+
     const clonedPayload = JSON.parse(JSON.stringify(response));
     const updatedPayload = {
       ...clonedPayload,
@@ -153,22 +160,22 @@ const checklistStatus = localStorage.getItem('checklistStatus')
         costEstimation: updatedCostEstimation || {}
       }
     };
- 
-  await mutation.mutate(
-    {
-      ...calReq,
-      body: {'Application': [updatedPayload]}
-    },
-    {
+
+    await mutation.mutate(
+      {
+        ...calReq,
+        body: { 'Application': [updatedPayload] }
+      },
+      {
         onSuccess: (res) => {
-            setCalculationResponse(res?.Application?.[0])
+          setCalculationResponse(res?.Application?.[0])
         },
         onError: () => {
-            console.log("Error occured");
+          console.log("Error occured");
         },
-    }
-)
-   
+      }
+    )
+
   };
 
   const calculationSubmit = async () => {
@@ -187,13 +194,13 @@ const checklistStatus = localStorage.getItem('checklistStatus')
         ...updateRequest,
         body: {
           'Application': modifiedCalculationResponse,
-          "RequestInfo":{
-          apiId: "Rainmaker",
-          authToken: Digit.UserService.getUser()?.access_token,
-          userInfo: Digit.UserService.getUser()?.info,
-          msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+          "RequestInfo": {
+            apiId: "Rainmaker",
+            authToken: Digit.UserService.getUser()?.access_token,
+            userInfo: Digit.UserService.getUser()?.info,
+            msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+          }
         }
-         }
       },
       {
         onSuccess: (res) => {
@@ -207,30 +214,30 @@ const checklistStatus = localStorage.getItem('checklistStatus')
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
     const estimation = calculationResponse?.additionalDetails?.costEstimation;
     const fallbackEstimation = response?.additionalDetails?.costEstimation;
-    
-    setCostBreakdown(prev => 
+
+    setCostBreakdown(prev =>
       prev.map(item => {
         // First try to find in current estimation
-        const matched = estimation?.totalCostBreakdown?.find(apiItem => 
+        const matched = estimation?.totalCostBreakdown?.find(apiItem =>
           apiItem.designationOfWorks === item.id
         );
-        
+
         // If not found in current estimation, try fallback estimation
-        const fallbackMatch = !matched && fallbackEstimation?.totalCostBreakdown?.find(apiItem => 
+        const fallbackMatch = !matched && fallbackEstimation?.totalCostBreakdown?.find(apiItem =>
           apiItem.designationOfWorks === item.id
         );
-        
+
         // Update if match found in either source, otherwise keep original values
         return matched || fallbackMatch
-          ? { 
-              ...item, 
-              amount: (matched || fallbackMatch).amount,
-              percentage: (matched || fallbackMatch).percentage 
-            }
+          ? {
+            ...item,
+            amount: (matched || fallbackMatch).amount,
+            percentage: (matched || fallbackMatch).percentage
+          }
           : item;
       })
     );
@@ -243,41 +250,41 @@ const checklistStatus = localStorage.getItem('checklistStatus')
       totalProjectValue: estimation?.totalBuildingCost || fallbackEstimation?.totalBuildingCost || 0
     })
 
-    setFloorData(prevFloors => 
+    setFloorData(prevFloors =>
       prevFloors.map(floor => {
         // First try to find in current estimation
         const matchingApiFloor = estimation?.floors?.find(
           apiFloor => apiFloor.floorNo === floor.floorNo
         );
-        
+
         // If not found in estimation, try fallback response
         const fallbackFloor = !matchingApiFloor && fallbackEstimation?.floors?.find(
           apiFloor => apiFloor.floorNo === floor.floorNo
         );
-        
+
         // Update if match found in either source, otherwise keep original values
         return matchingApiFloor || fallbackFloor
           ? {
-              ...floor,
-              cost: (matchingApiFloor || fallbackFloor).floorCost,
-              residentialArea: (matchingApiFloor || fallbackFloor).builtUpAreaLiving, 
-              commercialArea: (matchingApiFloor || fallbackFloor).builtupAreaCommercial, 
-              totalArea: (matchingApiFloor || fallbackFloor).totalAreaPerLevel, 
-            }
+            ...floor,
+            cost: (matchingApiFloor || fallbackFloor).floorCost,
+            residentialArea: (matchingApiFloor || fallbackFloor).builtUpAreaLiving,
+            commercialArea: (matchingApiFloor || fallbackFloor).builtupAreaCommercial,
+            totalArea: (matchingApiFloor || fallbackFloor).totalAreaPerLevel,
+          }
           : floor;
       })
     );
 
     setPlotInfo({
-      plotArea:(calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || response?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
+      plotArea: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || response?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
       cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || response?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
     })
 
-  },[calculationResponse, response])
+  }, [calculationResponse, response])
 
 
   return (
-    <div className="calculation-container" style={queryStrings?.state !== checklistStatus?.split(".")[1] ? { pointerEvents: "none", opacity:0.7 } : {}}>
+    <div className="calculation-container" style={styleCondition}>
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
@@ -357,17 +364,17 @@ const checklistStatus = localStorage.getItem('checklistStatus')
                       </div>
                     </td>
                     <td className="total-col">
-                       { floor.totalArea > 0 ? `${floor.totalArea} m²` : "0 m²"}
+                      {floor.totalArea > 0 ? `${floor.totalArea} m²` : "0 m²"}
                     </td>
                     <td className="cost-col">
-                    {floor.cost ? floor?.cost?.toLocaleString() : 0}
+                      {floor.cost ? floor?.cost?.toLocaleString() : 0}
                     </td>
                   </tr>
                 ))}
                 <tr className="button-row">
                   <td colSpan="5">
                     <div className="button-container">
-                      <button className={`add-floor-button ${floorData?.length >=10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
+                      <button className={`add-floor-button ${floorData?.length >= 10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
                         <h1 className='add-floor-button-title'>{t('CALCULATION_AJOUTER_ETAGE')}</h1>
                         <span className="add-floor-button-icon">+</span>
                       </button>
