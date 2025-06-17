@@ -166,7 +166,7 @@ const CreateCheckList = () => {
   useEffect(() => {
     if (cardItems && cardItems.length > 0) {
       getapp(id, accid);
-      setConfig(CreateCheckListConfig(cardItems));
+      setConfig(CreateCheckListConfig(cardItems, t));
     }
   }, [cardItems]);
 

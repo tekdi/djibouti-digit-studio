@@ -8,10 +8,19 @@ let documentFileTypeMappings = {
   xls: "vnd.ms-excel",
   xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   csv: "csv",
+  dwg: "dwg",
+  dxf: "dxf",
+  skp: "skp",
+  pla: "pla",
+  pln: "pln",
+  rvt: "rvt",
+  rfa: "rfa",
+  zip: "zip",
+  rar: "rar",
+  sevenz: "7z",
 };
 
 export const getRegex = (allowedFormats) => {
-  // console.log(allowedFormats);
   // if(allowedFormats?.length) {
   //   const obj = { "expression" : `/(.*?)(${allowedFormats?.join('|')})$/`}
   //   const stringified = JSON.stringify(obj);
@@ -32,7 +41,7 @@ export const getRegex = (allowedFormats) => {
     exceptedFileTypes = exceptedFileTypes.join("|");
     return new RegExp(`(.*?)(${exceptedFileTypes})$`);
   }
-  return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet)$/;
+  return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet|dwg|dxf|skp|pla|pln|rvt|rfa|zip|rar)$/;
 };
 
 // export { documentFileTypeMappings, getRegex };
