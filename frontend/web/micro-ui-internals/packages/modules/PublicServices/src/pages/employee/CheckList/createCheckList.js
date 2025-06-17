@@ -27,6 +27,16 @@ const CreateCheckList = () => {
 
   const [config, setConfig] = useState(null);
 
+  const userDetails = Digit.UserService.getUser();
+
+  const isHOD = userDetails?.info?.roles?.some(
+    (role) => role.code.includes("HOD")
+  );
+  let styleCondition = {};
+  if (!isHOD && state !== code.split(".")[1]) {
+    styleCondition = { pointerEvents: "none", opacity: 0.7 };
+  }
+
   const closeToast = () => {
     setTimeout(() => {
       setShowToast(null);
@@ -268,7 +278,7 @@ const CreateCheckList = () => {
   return (
     <div>
       {config && loading ? (
-        <div style={state !== code.split(".")[1] ? { pointerEvents: "none", opacity: 0.7 } : {}}>
+        <div style={styleCondition}>
           <FormComposerV2
             defaultValues={defValues}
             label={t("BPA_SUBMIT")}
