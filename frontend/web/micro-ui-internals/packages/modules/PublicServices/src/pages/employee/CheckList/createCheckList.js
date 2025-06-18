@@ -171,7 +171,6 @@ const CreateCheckList = () => {
   }, [cardItems]);
 
   const onSubmit = async (data) => {
-    debugger
     const fetchdata = async (data) => {
       await umutation.mutate(
         {
