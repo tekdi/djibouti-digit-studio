@@ -254,30 +254,32 @@ const Calculation = () => {
       totalProjectValue: estimation?.totalBuildingCost || fallbackEstimation?.totalBuildingCost || 0
     })
 
-    setFloorData(prevFloors =>
-      prevFloors.map(floor => {
-        // First try to find in current estimation
-        const matchingApiFloor = estimation?.floors?.find(
-          apiFloor => apiFloor.floorNo === floor.floorNo
-        );
 
-        // If not found in estimation, try fallback response
-        const fallbackFloor = !matchingApiFloor && fallbackEstimation?.floors?.find(
-          apiFloor => apiFloor.floorNo === floor.floorNo
-        );
+    if (fallbackEstimation?.floors?.length > 0) {
+      const floor = fallbackEstimation.floors.map((item, index) => {
+        const totalFloors = fallbackEstimation.floors.length;
+        let floorKey;
 
-        // Update if match found in either source, otherwise keep original values
-        return matchingApiFloor || fallbackFloor
-          ? {
-            ...floor,
-            cost: (matchingApiFloor || fallbackFloor).floorCost,
-            residentialArea: (matchingApiFloor || fallbackFloor).builtUpAreaLiving,
-            commercialArea: (matchingApiFloor || fallbackFloor).builtupAreaCommercial,
-            totalArea: (matchingApiFloor || fallbackFloor).totalAreaPerLevel,
-          }
-          : floor;
-      })
-    );
+        if (item.floorNo === 0) {
+          floorKey = "CALCULATION_RDC";
+        } else if (item.floorNo === totalFloors - 1) {
+          floorKey = "CALCULATION_TERRASSE";
+        } else {
+          floorKey = `CALCULATION_${item.floorNo}ER_ETAGE`;
+        }
+
+        return {
+          name: floorKey,
+          residentialArea: item.builtUpAreaLiving,
+          commercialArea: item.builtupAreaCommercial,
+          totalArea: item.totalAreaPerLevel,
+          cost: item.floorCost,
+          floorNo: item.floorNo,
+        };
+      });
+
+      setFloorData(floor);
+    }
 
     setPlotInfo({
       plotArea: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || response?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
@@ -335,7 +337,7 @@ const Calculation = () => {
               <tbody>
                 {floorData.map((floor, index) => (
                   <tr key={index}>
-                    <td className="niveau-col">{floor.name}</td>
+                    <td className="niveau-col">{t(floor.name)}</td>
                     <td className="area-col">
                       <div className="input-with-unit">
                         <input
