@@ -6,11 +6,12 @@ const Calculation = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
   const userDetails = Digit.UserService.getUser();
+  const checklistStatus = localStorage.getItem('checklistStatus');
   const isHOD = userDetails?.info?.roles?.some(
     (role) => role.code.includes("HOD")
   );
   let styleCondition = {};
-  if (!isHOD && state !== code.split(".")[1]) {
+  if (!isHOD && queryStrings?.state !== checklistStatus?.split(".")[1]) {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
   }
 
@@ -98,6 +99,7 @@ const Calculation = () => {
 
   const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
 
+
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
   };
@@ -105,6 +107,7 @@ const Calculation = () => {
   const calculateTotalPercentage = () => {
     return costBreakdown.reduce((total, item) => total + item.percentage, 0);
   };
+
 
   const addFloor = () => {
     if (floorData.length >= 10) {
@@ -168,7 +171,8 @@ const Calculation = () => {
       },
       {
         onSuccess: (res) => {
-          setCalculationResponse(res?.Application?.[0])
+          setCalculationResponse(res?.Application?.[0]);
+
         },
         onError: () => {
           console.log("Error occured");
@@ -284,7 +288,8 @@ const Calculation = () => {
 
 
   return (
-    <div className="calculation-container" style={styleCondition}>
+    <div className="calculation-container" style={styleCondition}
+    >
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
