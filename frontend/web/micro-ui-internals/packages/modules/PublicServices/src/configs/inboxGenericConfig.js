@@ -18,7 +18,7 @@ export const InboxConfig = (businessServices) => {
             moduleName: "public-services",
           },
           moduleSearchCriteria: {
-            businessService: businessServices?.map((bs) => bs.code)?.join(",") || "undefined",
+            businessService: businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [],
             sortOrder: "ASC",
             module: "public-services",
           },

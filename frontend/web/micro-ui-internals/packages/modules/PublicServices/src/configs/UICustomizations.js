@@ -166,7 +166,8 @@ export const UICustomizations = {
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
       if (data?.state?.filterForm?.businessService) {
         data.body.inbox.moduleSearchCriteria.businessService =
-          data?.state?.filterForm?.businessService?.map((bs) => bs.code).join(",") || "undefined";
+          data?.state?.filterForm?.businessService?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) ||
+          [];
         data.body.inbox.processSearchCriteria.businessService =
           data?.state?.filterForm?.businessService?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) ||
           [];
