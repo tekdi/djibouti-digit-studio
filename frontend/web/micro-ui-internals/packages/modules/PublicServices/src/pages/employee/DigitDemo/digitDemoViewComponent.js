@@ -21,6 +21,7 @@ const DigitDemoViewComponent = () => {
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
+  const [isCalculatioDone,setIsCalculationDone] = useState(false);
   const history = useHistory();
 
   //to get the fetched application details
@@ -39,6 +40,7 @@ const DigitDemoViewComponent = () => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
+  console.log(data?.Application, "data?.Application");
 
   //To fetch the service config for the module and service
   const requestCriteria = {
@@ -81,6 +83,10 @@ const DigitDemoViewComponent = () => {
     },
   };
 
+useEffect(() => {
+  const costEstimationExists = response?.additionalDetails?.costEstimation;
+  setIsCalculationDone(!!costEstimationExists);
+}, [data?.Application]);
   useEffect(() => {
     // Guard clause to avoid calling with missing inputs
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
@@ -323,18 +329,20 @@ const DigitDemoViewComponent = () => {
               backgroundColor: "white",
             }}
           >
-            {/* <span
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                color: '#166534',
-                backgroundColor: '#dcfce7',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '9999px',
-              }}
+            {isCalculatioDone &&
+            <span
+            style={{
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              color: "#166534",
+              backgroundColor: "#dcfce7",
+              padding: "0.25rem 0.5rem",
+              borderRadius: "9999px",
+            }}
             >
-              {t("READY")}
-            </span> */}
+              {t("REPORT_DONE")}
+            </span>
+            }
             <h2
               style={{
                 fontSize: "40px",
@@ -463,7 +471,7 @@ const DigitDemoViewComponent = () => {
                             fontFamily: "Inter",
                           }}
                         >
-                         <p
+                          <p
                             style={{
                               marginTop: "5px",
                               color: "black",
