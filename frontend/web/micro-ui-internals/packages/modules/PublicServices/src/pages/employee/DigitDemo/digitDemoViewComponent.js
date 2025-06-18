@@ -40,7 +40,6 @@ const DigitDemoViewComponent = () => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
-  console.log(data?.Application, "data?.Application");
 
   //To fetch the service config for the module and service
   const requestCriteria = {
