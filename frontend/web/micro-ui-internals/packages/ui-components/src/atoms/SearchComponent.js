@@ -283,7 +283,12 @@ const SearchComponent = ({
                     // >
 
                     // </Button>
-                    <button type="submit" className="digit-search-button-wrapper-search-icon" onClick={(e) => handleSubmit(e)}>
+                    <button
+                      style={screenType === "search" ? { marginTop: "6px" } : {}}
+                      type="submit"
+                      className="digit-search-button-wrapper-search-icon"
+                      onClick={(e) => handleSubmit(e)}
+                    >
                       <SVG.Search width="18px" height="18px" fill="#FFFFFF" />
                     </button>
                   )}
