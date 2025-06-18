@@ -19,7 +19,7 @@ const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
-  const pathname = location.pathname.split("/").pop();
+  const pathname = location.pathname.replace(/\/$/, '').split("/").pop();
 
   const crumbs = [
     {
@@ -29,7 +29,7 @@ const SampleBreadCrumbs = ({ location }) => {
     },
   ];
 
-  if (pathname !== "modules") {
+  if (pathname && pathname !== "modules") {
     crumbs.push({
       content: t(pathname.toUpperCase()),
       show: true,

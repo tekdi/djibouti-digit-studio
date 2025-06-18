@@ -54,18 +54,19 @@ const BreadCrumb = (props) => {
     if (location.pathname.includes("/publicservices/BPA/BPA_PCO/Apply")) {
       const formData = JSON.parse(localStorage.getItem("formData") || "{}");
 
-      if (Object.keys(formData).length > 1) {
+      if (Object.keys(formData).length > 0) {
         setShowBackConfirmation(true);
         return;
       }
     }
     window.history.back();
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1000);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const handleConfirmBack = () => {
+    localStorage.removeItem("formData");
     setShowBackConfirmation(false);
     window.history.back();
   };

@@ -200,12 +200,10 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
       const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
       Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
-
       setShowSuccessModal(true);
-      setUser({ info, ...tokens });
-      Digit.UserService.setUser(user);
-      
       setTimeout(() => {
+   setUser({ info, ...tokens });
+   Digit.UserService.setUser(user);
         setShowSuccessModal(false);
       }, 2000);
     } catch (err) {
