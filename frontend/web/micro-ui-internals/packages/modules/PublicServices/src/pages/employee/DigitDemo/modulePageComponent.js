@@ -60,24 +60,28 @@ const ModulePageComponent = () => {
         {detailsConfig?.map((product, index) => (
           <React.Fragment key={index}>
             {/* BPA_PCO Card */}
-            {queryStrings?.selectedPath === "Apply" &&
-              isArchitect &&
-              product?.businessServices.map((bs) => (
-                <Card key={`${index}-bpa`} className="product-card module-card">
-                  <div className="product-header inbox-header">
-                    <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
-                  </div>
-                  <div className="">
-                    <Link
-                      key={bs?.businessService}
-                      className="link request-button"
-                      to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
-                    >
-                      {t(bs?.businessService)}
-                    </Link>
-                  </div>
-                </Card>
-              ))}
+            {queryStrings?.selectedPath === "Apply" && isArchitect && (
+              <Card key={`${index}-bpa`} className="product-card module-card">
+                <div className="product-header inbox-header">
+                  <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
+                </div>
+                <ul className="list-disc space-y-2 pt-2">
+                  {product?.businessServices
+                    .sort((a, b) => a.auditDetails.createdTime - b.auditDetails.createdTime)
+                    .map((bs) => (
+                      <li style={{ marginBottom: "15px" }} key={bs?.businessService}>
+                        <Link
+                          key={bs?.businessService}
+                          className="link request-button"
+                          to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
+                        >
+                          {t(bs?.businessService)}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </Card>
+            )}
 
             {/* Inbox Card */}
             {!isCitizen && (
@@ -187,6 +191,11 @@ const ModulePageComponent = () => {
             )}
 
             <style jsx>{`
+              .list-disc {
+                list-style: disc;
+                margin: 0;
+                padding-left: 20px;
+              }
               .module-card {
                 width: 100%;
                 min-width: 400px;

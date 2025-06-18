@@ -382,7 +382,7 @@ export const transformResponseforModulePage = (data) => {
   // Process each item
   data.forEach((item) => {
     const module = item.module;
-
+    const auditDetails = item.auditDetails;
     // If module is already processed, add the businessService to its list
     if (!moduleData[module]) {
       moduleData[module] = {
@@ -395,7 +395,7 @@ export const transformResponseforModulePage = (data) => {
     }
 
     // Add the businessService to the set (to ensure uniqueness)
-    moduleData[module].businessServices.add({ businessService: item.businessService, serviceCode: item?.serviceCode });
+    moduleData[module].businessServices.add({ businessService: item.businessService, serviceCode: item?.serviceCode, auditDetails: auditDetails });
   });
 
   // Convert the moduleData object to an array of objects
