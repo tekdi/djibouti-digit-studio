@@ -46,15 +46,15 @@ const Calculation = () => {
   const [calculationResponse, setCalculationResponse] = useState();
 
   const [costBreakdown, setCostBreakdown] = useState([
-    { name: t('CALCULATION_TERRASSEMENT'), percentage: 8, amount: 0, id: "Earthwork" },
-    { name: t('CALCULATION_FONDATION'), percentage: 10, amount: 0, id: "Foundation" },
-    { name: t('CALCULATION_MACONNERIE'), percentage: 9, amount: 0, id: "Masonry" },
-    { name: t('CALCULATION_BETON_ARME'), percentage: 28, amount: 0, id: "Reinforced concrete in elevation" },
-    { name: t('CALCULATION_REVETEMENTS'), percentage: 20, amount: 0, id: "Floor and wall coverings/Paints" },
-    { name: t('CALCULATION_MENUISERIES'), percentage: 11, amount: 0, id: "Carpentry" },
-    { name: t('CALCULATION_ELECTRICITE'), percentage: 6, amount: 0, id: "Electricity" },
-    { name: t('CALCULATION_PLOMBERIE'), percentage: 3, amount: 0, id: "Plumbing/Sanitation" },
-    { name: t('CALCULATION_ASSAINISSEMENT'), percentage: 5, amount: 0, id: "Sanitation" }
+    { name: 'CALCULATION_TERRASSEMENT', percentage: 8, amount: 0, id:"CALCULATION_TERRASSEMENT" },
+    { name: 'CALCULATION_FONDATION', percentage: 10, amount: 0, id:"CALCULATION_FONDATION" },
+    { name: 'CALCULATION_MACONNERIE', percentage: 9, amount: 0, id:"CALCULATION_MACONNERIE" },
+    { name: 'CALCULATION_BETON_ARME', percentage: 28, amount: 0, id: "CALCULATION_BETON_ARME" },
+    { name: 'CALCULATION_REVETEMENTS', percentage: 20, amount: 0, id: "CALCULATION_REVETEMENTS"},
+    { name: 'CALCULATION_MENUISERIES', percentage: 11, amount: 0, id:"CALCULATION_MENUISERIES" },
+    { name: 'CALCULATION_ELECTRICITE', percentage: 6, amount: 0, id:"CALCULATION_ELECTRICITE" },
+    { name: 'CALCULATION_PLOMBERIE', percentage: 3, amount: 0, id:"CALCULATION_PLOMBERIE" },
+    { name: 'CALCULATION_ASSAINISSEMENT', percentage: 5, amount: 0, id:"CALCULATION_ASSAINISSEMENT" }
   ]);
 
 
@@ -254,30 +254,32 @@ const Calculation = () => {
       totalProjectValue: estimation?.totalBuildingCost || fallbackEstimation?.totalBuildingCost || 0
     })
 
-    setFloorData(prevFloors =>
-      prevFloors.map(floor => {
-        // First try to find in current estimation
-        const matchingApiFloor = estimation?.floors?.find(
-          apiFloor => apiFloor.floorNo === floor.floorNo
-        );
 
-        // If not found in estimation, try fallback response
-        const fallbackFloor = !matchingApiFloor && fallbackEstimation?.floors?.find(
-          apiFloor => apiFloor.floorNo === floor.floorNo
-        );
+    if (fallbackEstimation?.floors?.length > 0) {
+      const floor = fallbackEstimation.floors.map((item, index) => {
+        const totalFloors = fallbackEstimation.floors.length;
+        let floorKey;
 
-        // Update if match found in either source, otherwise keep original values
-        return matchingApiFloor || fallbackFloor
-          ? {
-            ...floor,
-            cost: (matchingApiFloor || fallbackFloor).floorCost,
-            residentialArea: (matchingApiFloor || fallbackFloor).builtUpAreaLiving,
-            commercialArea: (matchingApiFloor || fallbackFloor).builtupAreaCommercial,
-            totalArea: (matchingApiFloor || fallbackFloor).totalAreaPerLevel,
-          }
-          : floor;
-      })
-    );
+        if (item.floorNo === 0) {
+          floorKey = "CALCULATION_RDC";
+        } else if (item.floorNo === totalFloors - 1) {
+          floorKey = "CALCULATION_TERRASSE";
+        } else {
+          floorKey = `CALCULATION_${item.floorNo}ER_ETAGE`;
+        }
+
+        return {
+          name: floorKey,
+          residentialArea: item.builtUpAreaLiving,
+          commercialArea: item.builtupAreaCommercial,
+          totalArea: item.totalAreaPerLevel,
+          cost: item.floorCost,
+          floorNo: item.floorNo,
+        };
+      });
+
+      setFloorData(floor);
+    }
 
     setPlotInfo({
       plotArea: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || response?.serviceDetails?.landandProjectDesignDetails?.[0]?.area || 0),
@@ -335,7 +337,7 @@ const Calculation = () => {
               <tbody>
                 {floorData.map((floor, index) => (
                   <tr key={index}>
-                    <td className="niveau-col">{floor.name}</td>
+                    <td className="niveau-col">{t(floor.name)}</td>
                     <td className="area-col">
                       <div className="input-with-unit">
                         <input
@@ -443,7 +445,7 @@ const Calculation = () => {
               <tbody>
                 {costBreakdown.map((item, index) => (
                   <tr key={index}>
-                    <td className="work-col">{item.name}</td>
+                    <td className="work-col">{t(item.name)}</td>
                     <td className="percentage-col">{item.percentage}%</td>
                     <td className="amount-col">{item.amount === 0 ? "0 FDj" : `${item?.amount?.toLocaleString()} FDj`}</td>
                   </tr>
