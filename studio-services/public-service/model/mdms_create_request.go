@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -16,7 +17,6 @@ type Mdms struct {
 	Data       interface{} `json:"data"` // Flexible field for multiple types
 	IsActive   bool        `json:"isActive"`
 }
-
 
 // Schema Type: ACCESSCONTROL-ACTIONS-TEST.actions-test
 type MdmsActionData struct {
@@ -35,7 +35,7 @@ type MdmsActionData struct {
 // Schema Type: ACCESSCONTROL-ROLEACTIONS.roleactions
 type MdmsRoleActionData struct {
 	RoleCode   string `json:"rolecode"`
-	ActionID   string `json:"actionid"`
+	ActionID   int64  `json:"actionid"`
 	ActionCode string `json:"actioncode"`
 	TenantID   string `json:"tenantId"`
 }

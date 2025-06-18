@@ -8,7 +8,6 @@ import (
 	"os"
 	"public-service/model"
 	"public-service/repository"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -58,7 +57,7 @@ func (s *MDMSV2Service) SearchMDMS(tenantId, schemaCode, serviceName, module str
 	return resp, nil
 }
 
-func (s *MDMSV2Service) createMDMSRoleActionMapping(tenantId string, actionid string, requestInfo model.RequestInfo) (map[string]interface{}, error) {
+func (s *MDMSV2Service) createMDMSRoleActionMapping(tenantId string, actionid int64, requestInfo model.RequestInfo) (map[string]interface{}, error) {
 
 	url := os.Getenv("MDMS_SERVICE_HOST") + RoleActionCreatePath
 
@@ -150,9 +149,9 @@ func (s *MDMSV2Service) createMDMSActionTest(tenantId string, serviceCode string
 	respJSON, _ := json.MarshalIndent(resp, "", "  ")
 	log.Println("MDMS Create ActionTest Response:\n", string(respJSON))
 	var roleMappingErr error
-	const attempts = 10    //we are doing this aspersister was taking sometimetopersist the above action-test data hence was getting reference doesn't exist error 
+	const attempts = 10 //we are doing this aspersister was taking sometimetopersist the above action-test data hence was getting reference doesn't exist error
 	for i := 0; i < attempts; i++ {
-		_, roleMappingErr = s.createMDMSRoleActionMapping(tenantId, strconv.FormatInt(newID, 10), requestInfo)
+		_, roleMappingErr = s.createMDMSRoleActionMapping(tenantId, newID, requestInfo)
 		if roleMappingErr == nil {
 			break
 		}
