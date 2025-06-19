@@ -84,13 +84,14 @@ export const AddressFields = [
     }
   ]
 
-export const ApplicantFields =  [{
-    "name": "applicantDetails",
-    "label": "Applicant Details ",
-    "type": "array",
-    "items":{
-      "type": "object",
-      "properties": [
+export const ApplicantFields = [
+  {
+    name: "applicantDetails",
+    label: "Applicant Details ",
+    type: "array",
+    items: {
+      type: "object",
+      properties: [
         // {
         //   "name": "OwnerName",
         //   "label": "Owner Name ",
@@ -132,112 +133,118 @@ export const ApplicantFields =  [{
         //   "schema": "common-masters.GenderType"
         // },
         {
-          "name": "wayToAddress",
-          "type": "string",
-          "label": "Preferred Way to Address",
-          "format": "radioordropdown",
-          "schema": "common-masters.GenderType",
-          "required": true,
-          "reference": "mdms"
+          name: "wayToAddress",
+          type: "string",
+          placeholder: "ENTER_WAY_TO_ADDRESS",
+          label: "Preferred Way to Address",
+          format: "radioordropdown",
+          schema: "common-masters.GenderType",
+          required: true,
+          reference: "mdms",
         },
         {
-          "name": "legalName",
-          "type": "string",
-          "label": "Legal Name",
-          "format": "text",
-          "required": true,
-          "maxLength": 256,
-          "minLength": 2,
-          "validation": {
-            "regex": "^.{2,256}$",
-            "message": "NAME_LENGTH_ERR",
-          }
-        },
-        {
-          "name": "address",
-          "type": "string",
-          "label": "Address",
-          "format": "text",
-          "required": true,
-          "maxLength": 256,
-          "minLength": 2,
-          "validation": {
-            "regex": "^.{2,256}$",
-             "message": "NAME_LENGTH_ERR",
-           }
-        },
-        {
-          "name": "IDType",
-          "label": "ID type",
-          "disable" : false,
-          "type": "string",
-          "format": "radioordropdown",
-          "required": true,
-          "schema": "BPA.IdentityType",
-          "reference": "mdms",
-        },
-        {
-          "name": "nationalIdNumber",
-          "type": "string",
-          "label": "National Identification Number (CIN)",
-          "format": "number",
-          "required": true,
-          "validation": {
-            "regex": "^\\d{1,30}$",
-            "message": "ID_NUMBER_ERR",
+          name: "legalName",
+          type: "string",
+          label: "Legal Name",
+          format: "text",
+          placeholder: "ENTER_LEGAL_NAME",
+          required: true,
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "NAME_LENGTH_ERR",
           },
-          "maxLength": 30,
-          "minLength": 1
         },
         {
-          "name": "telephone",
-          "type": "string",
-          "label": "Telephone",
-          "format": "mobileNumber",
-          "required": true,
-          "validation": {
-            "regex": "(^$|^77[0-9]{6}$)",
-            "message": "TELEPHONE_NUMBER_ERR",
+          name: "address",
+          type: "string",
+          label: "Address",
+          placeholder: "ENTER_ADDRESS",
+          format: "text",
+          required: true,
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "NAME_LENGTH_ERR",
           },
-          "placeholder":"00 00 00 00",
-          "maxLength": 8,
-          "minLength": 8
         },
         {
-          "name": "eligibilityDeclaration",
-          "type": "string",
-          "label": "I certify I am entitled to request this authorization",
-          "format": "checkbox",
-          "withoutLabel": true,
-          "required": true
+          name: "IDType",
+          label: "ID type",
+          disable: false,
+          type: "string",
+          format: "radioordropdown",
+          required: true,
+          schema: "BPA.IdentityType",
+          reference: "mdms",
         },
         {
-          "name": "accuracyDeclaration",
-          "type": "string",
-          "label": "I, the undersigned, author of the request, certify that the information provided is correct",
-          "format": "checkbox",
-          "withoutLabel": true,
-          "required": true
+          name: "nationalIdNumber",
+          type: "string",
+          label: "National Identification Number (CIN)",
+          placeholder: "ENTER_NATIONAL_ID_NUMBER",
+          format: "number",
+          required: true,
+          validation: {
+            regex: "^\\d{1,30}$",
+            message: "ID_NUMBER_ERR",
+          },
+          maxLength: 30,
+          minLength: 1,
         },
         {
-          "name": "taxCalculationAgreement",
-          "type": "string",
-          "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
-          "format": "checkbox",
-          "withoutLabel": true,
-          "required": true
+          name: "telephone",
+          type: "string",
+          label: "Telephone",
+          format: "mobileNumber",
+          required: true,
+          validation: {
+            regex: "(^$|^77[0-9]{6}$)",
+            message: "TELEPHONE_NUMBER_ERR",
+          },
+          placeholder: "00 00 00 00",
+          maxLength: 8,
+          minLength: 8,
         },
         {
-          "name": "checkValidation",
-          "type": "string",
-          "label": "The phone number will be used for communication regarding the application and payment details",
-          "format": "checkbox",
-          "withoutLabel": true,
-          "required": true
-        }
-      ]
-    }
-  }]
+          name: "eligibilityDeclaration",
+          type: "string",
+          label: "I certify I am entitled to request this authorization",
+          format: "checkbox",
+          withoutLabel: true,
+          required: true,
+        },
+        {
+          name: "accuracyDeclaration",
+          type: "string",
+          label: "I, the undersigned, author of the request, certify that the information provided is correct",
+          format: "checkbox",
+          withoutLabel: true,
+          required: true,
+        },
+        {
+          name: "taxCalculationAgreement",
+          type: "string",
+          label:
+            "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
+          format: "checkbox",
+          withoutLabel: true,
+          required: true,
+        },
+        {
+          name: "checkValidation",
+          type: "string",
+          label: "The phone number will be used for communication regarding the application and payment details",
+          format: "checkbox",
+          withoutLabel: true,
+          required: true,
+        },
+      ],
+    },
+  },
+];
 
 export const documentFields = [
   {
