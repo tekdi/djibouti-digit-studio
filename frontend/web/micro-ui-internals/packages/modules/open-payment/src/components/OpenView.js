@@ -1,14 +1,22 @@
 import { Loader, StatusTable, Row, Card, Header, SubmitBar, ActionBar, Toast } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { makePayment } from "../utils/payGov";
 import { CustomisedHooks } from "../hooks";
-import $ from "jquery";
 import { useHistory, useLocation } from "react-router-dom";
+import TextInput from "../../../../ui-components/src/atoms/TextInput";
+import MultiUploadWrapper from "../../../../ui-components/src/molecules/MultiUploadWrapper";
 
 const OpenView = () => {
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
+  const [paymentMode, setPaymentMode] = useState("cash");
+  const [formData, setFormData] = useState({
+    receiptNo: "",
+    receiptDate: "",
+    chequeNo: "",
+    chequeDate: "",
+    payReceipt:""
+  });
   const queryParams = Digit.Hooks.useQueryParams();
   const mutation = CustomisedHooks?.Hooks?.openpayment?.useCreatePayment();
   const history = useHistory();
@@ -70,7 +78,7 @@ const OpenView = () => {
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
 
-  const onSubmit = async () => {
+  const handlePaymentSubmit = async () => {
     if (window.location.href.includes("employee")) {
       const body = {
         Payment: {
@@ -96,14 +104,20 @@ const OpenView = () => {
               billId: bill?.id,
               totalDue: bill?.totalAmount,
               totalAmountPaid: bill?.totalAmount,
+              // manualReceiptNumber:'', // from formData Date(ManualRecieptDetails.manualReceiptDate).getTime()
+              // manualReceiptDate:''// from formData
             },
           ],
           tenantId: queryParams.tenantId,
           totalDue: bill?.totalAmount,
           totalAmountPaid: bill?.totalAmount,
-          paymentMode: "CASH",
+          paymentMode: "CASH", // dynamic mode from formData
           payerName: bill?.payerName,
           paidBy: "OWNER",
+          // instrumentDate:'',// cheque date only if cheque new Date(recieptRequest?.Payment?.instrumentDate).getTime()
+          // instrumentNumber:'', // cheque no only if cheque
+          // fileStoreId:''
+
         },
       };
 
@@ -339,41 +353,201 @@ const OpenView = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   if (isLoading || isLoadingCalc) {
     return <Loader />;
   }
   return (
-    <div>
-      <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
-        <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
-          <Header style={{ marginBottom: "20px" }}>{t("OP_PAYMENT_DETAILS")}</Header>
-          <StatusTable>
-            <div style={{ marginTop: "16px" }}>
-              <Row
-                label={t("OP_CONSUMER_NAME")}
-                text={bill?.payerName || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_EMAIL")}
-                text={bill?.payerEmail || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_ADDRESS")}
-                text={bill?.payerAddress || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_PHNO")}
-                text={bill?.mobileNumber || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-            </div>
+    <div className="cards-container">
+      <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
+        <SubmitBar
+          style={{
+            // width: "100%",
+            marginRight: "55px",
+            marginBottom: "0px",
+            borderRadius: "10px",
+          }}
+          disabled={Number(bill?.totalAmount) === 0}
+          label={t("OP_PROCEED_TO_PAY")}
+          form="payment-form"
+          onSubmit={handlePaymentSubmit}
+        />
+      </div>
+
+      <div className="digit-results-payment-mode-wrapper">
+        <div className="payment-mode-card">
+          <Header className="header">{t("MODE_OF_PAYMENT")}</Header>
+          <div className="payment-mode-wrapper">
+
+            <form onSubmit={handlePaymentSubmit} className="form" id="payment-form">
+              <div className="radio-wrapper">
+                <div className="input-label">{t('SELECT_PAYMENT_METHOD')}</div>
+                <div className="radio-label-wrapper">
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="paymentMode"
+                      value="CASH"
+                      checked={paymentMode === "CASH"}
+                      onChange={() => setPaymentMode("CASH")}
+                      className="custom-radio"
+                    />
+                    {t('PAYMENT_CASH')}
+                  </label>
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="paymentMode"
+                      value="CHEQUE"
+                      checked={paymentMode === "CHEQUE"}
+                      onChange={() => setPaymentMode("CHEQUE")}
+                      className="custom-radio"
+                    />
+                    {t('PAYMENT_CHEQUE')}
+                  </label>
+                </div>
+              </div>
+
+              <div className="input-wrapper">
+                <label className="input-label">
+                  {t('RECEIPT_NO')}
+                </label>
+                <TextInput
+                  t={t}
+                  style={{ width: "100%" }}
+                  type={"text"}
+                  isMandatory={true}
+                  optionKey="i18nKey"
+                  name="receiptNo"
+                  value={formData.receiptNo}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <label className="input-label">
+                  {t('RECEIPT_DATE')}
+                </label>
+                <TextInput
+                  t={t}
+                  style={{ width: "100%" }}
+                  type={"date"}
+                  isMandatory={true}
+                  optionKey="i18nKey"
+                  name="receiptDate"
+                  value={formData.receiptDate}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {paymentMode === "CHEQUE" && (
+                <>
+                  <div className="input-wrapper">
+                    <label className="input-label">
+                      {t('CHEQUE_NO')}
+                    </label>
+
+                    <TextInput
+                      t={t}
+                      style={{ width: "100%" }}
+                      type={"text"}
+                      isMandatory={true}
+                      optionKey="i18nKey"
+                      name="chequeNo"
+                      value={formData.chequeNo}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="input-wrapper">
+                    <label className="input-label">
+                      {t('CHEQUE_DATE')}
+                    </label>
+
+                    <TextInput
+                      t={t}
+                      style={{ width: "100%" }}
+                      type={"date"}
+                      isMandatory={true}
+                      optionKey="i18nKey"
+                      name="chequeDate"
+                      value={formData.chequeDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                </>
+              )}
+
+              <div className="input-wrapper">
+                <label className="input-label">
+                  {t('UPLOAD_PAYMENT_RECEIPT')}
+                </label>
+
+                {/* <TextInput
+                      t={t}
+                      style={{ width: "100%" }}
+                      type={"file"}
+                      isMandatory={true}
+                      optionKey="i18nKey"
+                      name="paymentReceipt"
+                    /> */}
+
+                <MultiUploadWrapper
+                  t={t}
+                  module="works"
+                  tenantId={Digit.ULBService.getCurrentTenantId()}
+                  getFormState={() => { }}
+                  // setuploadedstate={formData.payReceipt}
+                  allowedFileTypesRegex={".pdf"}
+                  allowedMaxSizeInMB={10}
+                  // hintText={t(config?.populators?.hintText)}
+                  maxFilesAllowed={1}
+                // extraStyleName={{ padding: "0.5rem" }}
+                //customClass={populators?.customClass}
+                />
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
+      <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
+        <Header>{t("OP_PAYMENT_DETAILS")}</Header>
+        <StatusTable>
+          <div style={{ marginTop: "16px" }}>
+            <Row
+              label={t("OP_CONSUMER_NAME")}
+              text={bill?.payerName || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_EMAIL")}
+              text={bill?.payerEmail || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_ADDRESS")}
+              text={bill?.payerAddress || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_PHNO")}
+              text={bill?.mobileNumber || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+          </div>
 
             <div style={{ margin: "24px 0" }}>
               <Row
@@ -407,41 +581,27 @@ const OpenView = () => {
                 </div>
               ) : null}
 
-              <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
-                <Row
-                  label={t("CS_PAYMENT_TOTAL_AMOUNT")}
-                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                  textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                  text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
-                />
-              </div>
-            </div>
-
-            <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
-              <SubmitBar
-                style={{
-                  // width: "100%",
-                  marginRight: "55px",
-                  marginBottom: "0px",
-                  borderRadius: "10px",
-                }}
-                disabled={Number(bill?.totalAmount) === 0}
-                onSubmit={onSubmit}
-                label={t("OP_PROCEED_TO_PAY")}
+            <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
+              <Row
+                label={t("CS_PAYMENT_TOTAL_AMOUNT")}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
               />
             </div>
-          </StatusTable>
-        </div>
-        {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
+          </div>
+        </StatusTable>
       </div>
+      {showToast && (
+        <Toast
+          error={showToast.key}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
+    </div>
 
       {costEstimation ? (
         <div className="digit-results-calculation-wrapper">
@@ -576,6 +736,21 @@ const OpenView = () => {
               </div>
             </div>
           </div>
+          <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
+            <SubmitBar
+              style={{
+                // width: "100%",
+                marginRight: "55px",
+                marginBottom: "0px",
+                borderRadius: "10px",
+              }}
+              disabled={Number(bill?.totalAmount) === 0}
+              label={t("OP_PROCEED_TO_PAY")}
+              form="payment-form"
+              onSubmit={handlePaymentSubmit}
+            />
+          </div>
+
         </div>
       ) : (
         ""
