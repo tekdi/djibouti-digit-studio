@@ -19,10 +19,11 @@ const ResponseEmployee = () => {
   const history = useHistory();
   const { state } = useLocation();
   const queryStrings = Digit.Hooks.useQueryParams();
-  const { businessService, consumerCode, tenantId } = useParams();
+  const { businessService, consumerCode } = useParams();
   const [isResponseSuccess, setIsResponseSuccess] = useState(state?.iSuccess || false);
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
+  const tenantId = Digit?.ULBService?.getStateId();
 
   const handleTemplateDownload = async () => {
     try {

@@ -53,7 +53,7 @@ const OpenView = () => {
       tenantId: queryParams?.tenantId,
     },
   };
-  const { isLoadingCalc, data:calculation } = Digit.Hooks.useCustomAPIHook(requestCalculation);
+  const { isLoadingCalc, data: calculation } = Digit.Hooks.useCustomAPIHook(requestCalculation);
   const costEstimation = calculation?.Application[0]?.additionalDetails?.costEstimation;
   const applicationData = calculation?.Application[0];
 
@@ -122,7 +122,7 @@ const OpenView = () => {
             ) {
               history.push(
                 `/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}`,
-                { iSuccess: true, applicationNumber: data?.Payments?.[0].paymentDetails?.[0]?.receiptNumber, ...state }
+                { iSuccess: true, applicationNumber: data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode, ...state }
               );
               //setHasRedirected(true);  // Mark that redirection has happened
             } else {
@@ -344,136 +344,135 @@ const OpenView = () => {
   }
   return (
     <div>
-    <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
-      <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
-        <Header style={{ marginBottom: "20px" }}>{t("OP_PAYMENT_DETAILS")}</Header>
-        <StatusTable>
-          <div style={{ marginTop: "16px" }}>
-            <Row
-              label={t("OP_CONSUMER_NAME")}
-              text={bill?.payerName || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_EMAIL")}
-              text={bill?.payerEmail || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_ADDRESS")}
-              text={bill?.payerAddress || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_PHNO")}
-              text={bill?.mobileNumber || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-          </div>
-
-          <div style={{ margin: "24px 0" }}>
-            <Row
-              label={t("ES_PAYMENT_TAXHEADS")}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              textStyle={{ fontWeight: "bold", fontSize: "16px", textAlign: "right" }}
-              text={t("ES_PAYMENT_AMOUNT")}
-            />
-            <div style={{ margin: "16px 0" }}>
-              {bill?.billDetails?.[0]?.billAccountDetails
-                ?.sort((a, b) => a.order - b.order)
-                .map((amountDetails, index) => (
-                  <Row
-                    key={index + "taxheads"}
-                    labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                    textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                    label={t(amountDetails.taxHeadCode)}
-                    text={"FDj " + amountDetails.amount?.toFixed(0)}
-                  />
-                ))}
-            </div>
-
-            {arrears?.toFixed?.(2) ? (
-              <div style={{ margin: "16px 0", paddingTop: "16px" }}>
-                <Row
-                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                  textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                  label={t("COMMON_ARREARS")}
-                  text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
-                />
-              </div>
-            ) : null}
-
-            <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
+      <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
+        <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
+          <Header style={{ marginBottom: "20px" }}>{t("OP_PAYMENT_DETAILS")}</Header>
+          <StatusTable>
+            <div style={{ marginTop: "16px" }}>
               <Row
-                label={t("CS_PAYMENT_TOTAL_AMOUNT")}
+                label={t("OP_CONSUMER_NAME")}
+                text={bill?.payerName || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
                 labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
+              />
+              <Row
+                label={t("OP_CONSUMER_EMAIL")}
+                text={bill?.payerEmail || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+              <Row
+                label={t("OP_CONSUMER_ADDRESS")}
+                text={bill?.payerAddress || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+              <Row
+                label={t("OP_CONSUMER_PHNO")}
+                text={bill?.mobileNumber || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
               />
             </div>
-          </div>
 
-          <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
-            <SubmitBar
-              style={{
-                // width: "100%",
-                marginRight: "55px",
-                marginBottom: "0px",
-                borderRadius: "10px",
-              }}
-              disabled={Number(bill?.totalAmount) === 0}
-              onSubmit={onSubmit}
-              label={t("OP_PROCEED_TO_PAY")}
-            />
-          </div>
-        </StatusTable>
+            <div style={{ margin: "24px 0" }}>
+              <Row
+                label={t("ES_PAYMENT_TAXHEADS")}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                textStyle={{ fontWeight: "bold", fontSize: "16px", textAlign: "right" }}
+                text={t("ES_PAYMENT_AMOUNT")}
+              />
+              <div style={{ margin: "16px 0" }}>
+                {bill?.billDetails?.[0]?.billAccountDetails
+                  ?.sort((a, b) => a.order - b.order)
+                  .map((amountDetails, index) => (
+                    <Row
+                      key={index + "taxheads"}
+                      labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                      textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                      label={t(amountDetails.taxHeadCode)}
+                      text={"FDj " + amountDetails.amount?.toFixed(0)}
+                    />
+                  ))}
+              </div>
+
+              {arrears?.toFixed?.(2) ? (
+                <div style={{ margin: "16px 0", paddingTop: "16px" }}>
+                  <Row
+                    labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                    textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                    label={t("COMMON_ARREARS")}
+                    text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
+                  />
+                </div>
+              ) : null}
+
+              <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
+                <Row
+                  label={t("CS_PAYMENT_TOTAL_AMOUNT")}
+                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                  textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                  text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
+              <SubmitBar
+                style={{
+                  // width: "100%",
+                  marginRight: "55px",
+                  marginBottom: "0px",
+                  borderRadius: "10px",
+                }}
+                disabled={Number(bill?.totalAmount) === 0}
+                onSubmit={onSubmit}
+                label={t("OP_PROCEED_TO_PAY")}
+              />
+            </div>
+          </StatusTable>
+        </div>
+        {showToast && (
+          <Toast
+            error={showToast.key}
+            label={t(showToast.label)}
+            onClose={() => {
+              setShowToast(null);
+            }}
+          />
+        )}
       </div>
-      {showToast && (
-        <Toast
-          error={showToast.key}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
-      )}
-    </div>
 
-      {costEstimation ?
+      {costEstimation ? (
         <div className="digit-results-calculation-wrapper">
           <div>
-            <Header className="calculation-header">{t('CALCULATION_TITLE')}</Header>
+            <Header className="calculation-header">{t("CALCULATION_TITLE")}</Header>
           </div>
           <div className="calculation-wrapper">
-
             <div className="fee-rates">
               <div className="fee-rate-card">
-                <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_RESIDENTIAL')}</h3>
-                <p className='fee-rate-card-value'>FDj {costEstimation?.costPerSqmLivingSpace?.toLocaleString()}</p>
+                <h3 className="fee-rate-card-title">{t("CALCULATION_COST_RESIDENTIAL")}</h3>
+                <p className="fee-rate-card-value">FDj {costEstimation?.costPerSqmLivingSpace?.toLocaleString()}</p>
               </div>
 
               <div className="fee-rate-card">
-                <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_COMMERCIAL')}</h3>
-                <p className='fee-rate-card-value'>FDj {costEstimation?.costPerSqmCommercialSpace?.toLocaleString()}</p>
+                <h3 className="fee-rate-card-title">{t("CALCULATION_COST_COMMERCIAL")}</h3>
+                <p className="fee-rate-card-value">FDj {costEstimation?.costPerSqmCommercialSpace?.toLocaleString()}</p>
               </div>
 
               <div className="fee-rate-card">
-                <h3 className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES')}</h3>
-                <p className='fee-rate-card-value'>{`${costEstimation?.royaltyPer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+                <h3 className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES")}</h3>
+                <p className="fee-rate-card-value">{`${costEstimation?.royaltyPer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
               </div>
 
               <div className="fee-rate-card">
-                <h3 className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES')}</h3>
-                <p className='fee-rate-card-value'>{`${costEstimation?.eqResistancePer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+                <h3 className="fee-rate-card-title">{t("CALCULATION_SEISMIC_FEES")}</h3>
+                <p className="fee-rate-card-value">{`${costEstimation?.eqResistancePer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
               </div>
 
               <div className="fee-rate-card">
-                <h3 className='fee-rate-card-title'>{t('CALCULATION_REGISTRY_SERVICE_FEE')}</h3>
-                <p className='fee-rate-card-value'>FDj {costEstimation?.registryServiceFee?.toLocaleString()}</p>
+                <h3 className="fee-rate-card-title">{t("CALCULATION_REGISTRY_SERVICE_FEE")}</h3>
+                <p className="fee-rate-card-value">FDj {costEstimation?.registryServiceFee?.toLocaleString()}</p>
               </div>
             </div>
 
@@ -482,38 +481,30 @@ const OpenView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th className="niveau-col">{t('CALCULATION_NIVEAU')}</th>
-                      <th className="area-col">{t('CALCULATION_SURFACE_HABITATION')}</th>
-                      <th className="area-col">{t('CALCULATION_SURFACE_COMMERCIALE')}</th>
-                      <th className="area-col">{t('CALCULATION_TOTAL_SUPERFICIE')}</th>
-                      <th className="area-col">{t('CALCULATION_ESTIMATION_COUTS')}</th>
+                      <th className="niveau-col">{t("CALCULATION_NIVEAU")}</th>
+                      <th className="area-col">{t("CALCULATION_SURFACE_HABITATION")}</th>
+                      <th className="area-col">{t("CALCULATION_SURFACE_COMMERCIALE")}</th>
+                      <th className="area-col">{t("CALCULATION_TOTAL_SUPERFICIE")}</th>
+                      <th className="area-col">{t("CALCULATION_ESTIMATION_COUTS")}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {costEstimation?.floors?.map((floor, index) => (
                       <tr key={index}>
                         <td className="niveau-col floor-col">
-
-                          {index === 0 ? t('CALCULATION_RDC') : ""}
-                          {index === costEstimation?.floors.length - 1 ? t('CALCULATION_TERRASSE') : ""}
-                          {index !== 0 && index !== costEstimation?.floors.length - 1 && t(`CALCULATION_${index}ER_ETAGE`)}</td>
+                          {index === 0 ? t("CALCULATION_RDC") : ""}
+                          {index === costEstimation?.floors.length - 1 ? t("CALCULATION_TERRASSE") : ""}
+                          {index !== 0 && index !== costEstimation?.floors.length - 1 && t(`CALCULATION_${index}ER_ETAGE`)}
+                        </td>
 
                         <td className="area-col">
-                          <div className="input-with-unit">
-                            {floor?.builtUpAreaLiving === 0 ? "" : floor?.builtUpAreaLiving} m²
-                          </div>
+                          <div className="input-with-unit">{floor?.builtUpAreaLiving === 0 ? "" : floor?.builtUpAreaLiving} m²</div>
                         </td>
                         <td className="area-col">
-                          <div className="input-with-unit">
-                            {floor?.builtupAreaCommercial === 0 ? "" : floor?.builtupAreaCommercial} m²
-                          </div>
+                          <div className="input-with-unit">{floor?.builtupAreaCommercial === 0 ? "" : floor?.builtupAreaCommercial} m²</div>
                         </td>
-                        <td className="total-col">
-                          {floor?.totalAreaPerLevel > 0 ? `${floor?.totalAreaPerLevel} m²` : "0 m²"}
-                        </td>
-                        <td className="cost-col">
-                          {floor?.floorCost ? floor?.floorCost?.toLocaleString() : 0}
-                        </td>
+                        <td className="total-col">{floor?.totalAreaPerLevel > 0 ? `${floor?.totalAreaPerLevel} m²` : "0 m²"}</td>
+                        <td className="cost-col">{floor?.floorCost ? floor?.floorCost?.toLocaleString() : 0}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -523,35 +514,35 @@ const OpenView = () => {
 
             <div className="calculations-section">
               <div className="plot-info">
-                <h3 className='plot-info-title'>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
+                <h3 className="plot-info-title">{t("CALCULATION_COEFFICIENTS_SOL")}</h3>
                 <div className="info-content">
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_SURFACE_PARCELLE')}</span>
-                    <span className='fee-rate-card-value'>{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.area}</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_SURFACE_PARCELLE")}</span>
+                    <span className="fee-rate-card-value">{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.area}</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_COS')}</span>
-                    <span className='fee-rate-card-value'>{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.projectedCos}</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_COS")}</span>
+                    <span className="fee-rate-card-value">{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.projectedCos}</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_ROYALTY_FEES_CALCULATED')}</span>
-                    <span className='fee-rate-card-value'>{costEstimation?.royaltyFee} FDj</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES_CALCULATED")}</span>
+                    <span className="fee-rate-card-value">{costEstimation?.royaltyFee} FDj</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_SEISMIC_FEES_CALCULATED')}</span>
-                    <span className='fee-rate-card-value'>{costEstimation?.eqResistanceCost?.toLocaleString()} FDj</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_SEISMIC_FEES_CALCULATED")}</span>
+                    <span className="fee-rate-card-value">{costEstimation?.eqResistanceCost?.toLocaleString()} FDj</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES')}</span>
-                    <span className='fee-rate-card-value'>{costEstimation?.totalTax?.toLocaleString()} FDj</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_TOTAL_TAXES")}</span>
+                    <span className="fee-rate-card-value">{costEstimation?.totalTax?.toLocaleString()} FDj</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
-                    <span className='fee-rate-card-value'>{costEstimation?.totalTaxWithServiceCharge?.toLocaleString()} FDj</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_TOTAL_TAXES_WITH_SERVICE")}</span>
+                    <span className="fee-rate-card-value">{costEstimation?.totalTaxWithServiceCharge?.toLocaleString()} FDj</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className='fee-rate-card-title'>{t('CALCULATION_PROJECT_TOTAL_VALUE')}</span>
-                    <span className='fee-rate-card-value'>{costEstimation?.totalBuildingCost?.toLocaleString()} FDj</span>
+                    <span className="fee-rate-card-title">{t("CALCULATION_PROJECT_TOTAL_VALUE")}</span>
+                    <span className="fee-rate-card-value">{costEstimation?.totalBuildingCost?.toLocaleString()} FDj</span>
                   </div>
                 </div>
               </div>
@@ -562,9 +553,9 @@ const OpenView = () => {
                 <table>
                   <thead>
                     <tr>
-                      <th className="work-col">{t('CALCULATION_WORK_DESIGNATION')}</th>
-                      <th className="percentage-col">{t('CALCULATION_WORK_PERCENTAGES')}</th>
-                      <th className="amount-col">{t('CALCULATION_AMOUNT')}</th>
+                      <th className="work-col">{t("CALCULATION_WORK_DESIGNATION")}</th>
+                      <th className="percentage-col">{t("CALCULATION_WORK_PERCENTAGES")}</th>
+                      <th className="amount-col">{t("CALCULATION_AMOUNT")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -576,23 +567,19 @@ const OpenView = () => {
                       </tr>
                     ))}
                     <tr className="total-row">
-                      <td className="work-col">{t('CALCULATION_TOTAL')}</td>
+                      <td className="work-col">{t("CALCULATION_TOTAL")}</td>
                       <td className="percentage-col">{calculateTotalPercentage()}%</td>
                       <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost()?.toLocaleString()} FDj`}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
             </div>
-
           </div>
-
         </div>
-        :
+      ) : (
         ""
-      }
-
+      )}
     </div>
   );
 };
