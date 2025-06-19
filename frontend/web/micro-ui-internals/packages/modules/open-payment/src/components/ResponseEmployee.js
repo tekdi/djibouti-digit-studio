@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, LinkLabel, AddFileFilled, ArrowLeftWhite, ActionBar, SubmitBar, ArrowRightInbox } from "@egovernments/digit-ui-react-components";
+import {
+  Card,
+  LinkLabel,
+  AddFileFilled,
+  ArrowLeftWhite,
+  ActionBar,
+  SubmitBar,
+  ArrowRightInbox,
+  ArrowDown,
+} from "@egovernments/digit-ui-react-components";
 import Banner from "../../../../ui-components/src/atoms/Banner";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -91,7 +100,7 @@ const ResponseEmployee = () => {
         whichSvg={`${isResponseSuccess ? "tick" : null}`}
         applicationNumber={state?.applicationNumber}
       />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t("BPA_BPA_PCO_VIEW_APPLICATION")}
