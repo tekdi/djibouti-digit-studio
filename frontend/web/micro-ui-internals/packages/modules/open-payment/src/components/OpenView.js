@@ -15,7 +15,7 @@ const OpenView = () => {
     receiptDate: "",
     chequeNo: "",
     chequeDate: "",
-    payReceipt:""
+    payReceipt: "",
   });
   const queryParams = Digit.Hooks.useQueryParams();
   const mutation = CustomisedHooks?.Hooks?.openpayment?.useCreatePayment();
@@ -117,7 +117,6 @@ const OpenView = () => {
           // instrumentDate:'',// cheque date only if cheque new Date(recieptRequest?.Payment?.instrumentDate).getTime()
           // instrumentNumber:'', // cheque no only if cheque
           // fileStoreId:''
-
         },
       };
 
@@ -135,7 +134,7 @@ const OpenView = () => {
               data?.Payments?.[0]?.tenantId
             ) {
               history.push(
-                `/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}`,
+                `/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}?serviceCode=${queryParams?.serviceCode}`,
                 { iSuccess: true, applicationNumber: data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode, ...state }
               );
               //setHasRedirected(true);  // Mark that redirection has happened
@@ -382,10 +381,9 @@ const OpenView = () => {
         <div className="payment-mode-card">
           <Header className="header">{t("MODE_OF_PAYMENT")}</Header>
           <div className="payment-mode-wrapper">
-
             <form onSubmit={handlePaymentSubmit} className="form" id="payment-form">
               <div className="radio-wrapper">
-                <div className="input-label">{t('SELECT_PAYMENT_METHOD')}</div>
+                <div className="input-label">{t("SELECT_PAYMENT_METHOD")}</div>
                 <div className="radio-label-wrapper">
                   <label className="radio-label">
                     <input
@@ -396,7 +394,7 @@ const OpenView = () => {
                       onChange={() => setPaymentMode("CASH")}
                       className="custom-radio"
                     />
-                    {t('PAYMENT_CASH')}
+                    {t("PAYMENT_CASH")}
                   </label>
                   <label className="radio-label">
                     <input
@@ -407,15 +405,13 @@ const OpenView = () => {
                       onChange={() => setPaymentMode("CHEQUE")}
                       className="custom-radio"
                     />
-                    {t('PAYMENT_CHEQUE')}
+                    {t("PAYMENT_CHEQUE")}
                   </label>
                 </div>
               </div>
 
               <div className="input-wrapper">
-                <label className="input-label">
-                  {t('RECEIPT_NO')}
-                </label>
+                <label className="input-label">{t("RECEIPT_NO")}</label>
                 <TextInput
                   t={t}
                   style={{ width: "100%" }}
@@ -429,9 +425,7 @@ const OpenView = () => {
               </div>
 
               <div className="input-wrapper">
-                <label className="input-label">
-                  {t('RECEIPT_DATE')}
-                </label>
+                <label className="input-label">{t("RECEIPT_DATE")}</label>
                 <TextInput
                   t={t}
                   style={{ width: "100%" }}
@@ -447,9 +441,7 @@ const OpenView = () => {
               {paymentMode === "CHEQUE" && (
                 <>
                   <div className="input-wrapper">
-                    <label className="input-label">
-                      {t('CHEQUE_NO')}
-                    </label>
+                    <label className="input-label">{t("CHEQUE_NO")}</label>
 
                     <TextInput
                       t={t}
@@ -464,9 +456,7 @@ const OpenView = () => {
                   </div>
 
                   <div className="input-wrapper">
-                    <label className="input-label">
-                      {t('CHEQUE_DATE')}
-                    </label>
+                    <label className="input-label">{t("CHEQUE_DATE")}</label>
 
                     <TextInput
                       t={t}
@@ -479,14 +469,11 @@ const OpenView = () => {
                       onChange={handleChange}
                     />
                   </div>
-
                 </>
               )}
 
               <div className="input-wrapper">
-                <label className="input-label">
-                  {t('UPLOAD_PAYMENT_RECEIPT')}
-                </label>
+                <label className="input-label">{t("UPLOAD_PAYMENT_RECEIPT")}</label>
 
                 {/* <TextInput
                       t={t}
@@ -501,53 +488,51 @@ const OpenView = () => {
                   t={t}
                   module="works"
                   tenantId={Digit.ULBService.getCurrentTenantId()}
-                  getFormState={() => { }}
+                  getFormState={() => {}}
                   // setuploadedstate={formData.payReceipt}
                   allowedFileTypesRegex={".pdf"}
                   allowedMaxSizeInMB={10}
                   // hintText={t(config?.populators?.hintText)}
                   maxFilesAllowed={1}
-                // extraStyleName={{ padding: "0.5rem" }}
-                //customClass={populators?.customClass}
+                  // extraStyleName={{ padding: "0.5rem" }}
+                  //customClass={populators?.customClass}
                 />
               </div>
-
             </form>
           </div>
         </div>
-
       </div>
 
-    <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
-      <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
-        <Header>{t("OP_PAYMENT_DETAILS")}</Header>
-        <StatusTable>
-          <div style={{ marginTop: "16px" }}>
-            <Row
-              label={t("OP_CONSUMER_NAME")}
-              text={bill?.payerName || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_EMAIL")}
-              text={bill?.payerEmail || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_ADDRESS")}
-              text={bill?.payerAddress || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-            <Row
-              label={t("OP_CONSUMER_PHNO")}
-              text={bill?.mobileNumber || t("ES_COMMON_NA")}
-              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-            />
-          </div>
+      <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
+        <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
+          <Header>{t("OP_PAYMENT_DETAILS")}</Header>
+          <StatusTable>
+            <div style={{ marginTop: "16px" }}>
+              <Row
+                label={t("OP_CONSUMER_NAME")}
+                text={bill?.payerName || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+              <Row
+                label={t("OP_CONSUMER_EMAIL")}
+                text={bill?.payerEmail || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+              <Row
+                label={t("OP_CONSUMER_ADDRESS")}
+                text={bill?.payerAddress || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+              <Row
+                label={t("OP_CONSUMER_PHNO")}
+                text={bill?.mobileNumber || t("ES_COMMON_NA")}
+                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+              />
+            </div>
 
             <div style={{ margin: "24px 0" }}>
               <Row
@@ -581,27 +566,27 @@ const OpenView = () => {
                 </div>
               ) : null}
 
-            <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
-              <Row
-                label={t("CS_PAYMENT_TOTAL_AMOUNT")}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
-              />
+              <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
+                <Row
+                  label={t("CS_PAYMENT_TOTAL_AMOUNT")}
+                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                  textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                  text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
+                />
+              </div>
             </div>
-          </div>
-        </StatusTable>
+          </StatusTable>
+        </div>
+        {showToast && (
+          <Toast
+            error={showToast.key}
+            label={t(showToast.label)}
+            onClose={() => {
+              setShowToast(null);
+            }}
+          />
+        )}
       </div>
-      {showToast && (
-        <Toast
-          error={showToast.key}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
-      )}
-    </div>
 
       {costEstimation ? (
         <div className="digit-results-calculation-wrapper">
@@ -750,7 +735,6 @@ const OpenView = () => {
               onSubmit={handlePaymentSubmit}
             />
           </div>
-
         </div>
       ) : (
         ""
