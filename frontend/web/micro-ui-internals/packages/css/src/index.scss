@@ -780,6 +780,27 @@ input[type="number"] {
 .digit-results-table-wrapper {
   box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.15);
   height: fit-content !important;
+  width: 100%;
+.employee-data-table {
+    max-width: 70%;
+
+    .value {
+      width: fit-content !important;
+      padding: 0 !important;
+    }
+
+    h2 {
+      width: 50% !important;
+    }
+
+    .row {
+      gap: 50px !important;
+    }
+  }
+
+  .h1 {
+    font-size: 40px;
+  }
 
   .digit-card-component {
     padding: 0 !important;
@@ -833,6 +854,73 @@ input[type="number"] {
   }
 }
 
+.digit-results-payment-mode-wrapper {
+  width: 50%;
+  border-radius: 15px;
+  background: white;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .radio-wrapper {
+    display: flex;
+  }
+
+  .input-wrapper {
+    display: flex;
+    gap: 16px;
+  }
+
+  .payment-mode-card {
+    padding: 32px 40px;
+
+    .input-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0B0C0C !important;
+      width: 50%;
+      word-break: break-all;
+    }
+
+    .radio-label-wrapper {
+      display: flex;
+      gap: 16px;
+    }
+
+    .radio-label {
+      font-size: 16px;
+      font-weight: 400;
+      color: #0B0C0C !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      input {
+        width: 24px;
+        height: 24px;
+        margin: 0;
+      }
+
+      input[type="radio"] {
+        accent-color: #006769;
+        border: 1px solid #006769;
+      }
+    }
+  }
+
+  .header {
+    margin-bottom: 24px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: #0b0c0c !important;
+  }
+}
+
 .digit-table-loader{
   min-height:530px  !important;
 }
@@ -843,7 +931,6 @@ input[type="number"] {
   border-radius: 15px;
   width: 100%;
   padding: 24px;
-  margin-top: 40px;
 
   .calculation-container {
     padding: 24px;
@@ -882,7 +969,8 @@ input[type="number"] {
     display: flex;
     border-radius: 4px;
     align-items: center;
-    padding: 0
+    padding: 0;
+    gap:50px;
   }
 
   .fee-rate-card-title {
@@ -894,7 +982,7 @@ input[type="number"] {
   }
 
   .fee-rate-card-value {
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 400;
     color: #0B0C0C;
     margin: 0;
@@ -1132,6 +1220,7 @@ input[type="number"] {
 
   .cost-table-wrapper {
     margin-bottom: 15px;
+    width: fit-content !important;
   }
 
   .cost-breakdown-row-wrapper {
@@ -1169,4 +1258,16 @@ input[type="number"] {
     pointer-events: none;
   }
 
+}
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  button {
+    margin-right: 0 !important;
+  }
 }
