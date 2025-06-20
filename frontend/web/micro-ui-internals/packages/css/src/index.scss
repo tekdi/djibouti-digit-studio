@@ -900,6 +900,10 @@ input[type="number"] {
   border-radius: 15px;
   background: white;
 
+  @media (max-width:768px) {
+    width: 100%;
+  }
+
   .form {
     display: flex;
     flex-direction: column;
@@ -908,6 +912,11 @@ input[type="number"] {
 
   .radio-wrapper {
     display: flex;
+    gap: 16px;
+  }
+
+  .radio-wrapper-citizen{
+    flex-direction: column;
   }
 
   .input-wrapper {
@@ -922,13 +931,19 @@ input[type="number"] {
       font-size: 18px;
       font-weight: 700;
       color: #0B0C0C !important;
-      width: 50%;
+      width: 60%;
       word-break: break-all;
+    }
+
+    .star{
+      color: #B91900;
+      margin-left: 4px;
     }
 
     .radio-label-wrapper {
       display: flex;
       gap: 16px;
+      width: 100%;
     }
 
     .radio-label {
@@ -1317,7 +1332,6 @@ input[type="number"] {
 
 button.submit-bar {
   background: linear-gradient(90deg, rgb(1, 103, 105) 0%, rgb(114, 130, 105) 100%);
-  width: 100%;
   border-radius: 10px;
   color: white;
 }
@@ -1360,4 +1374,29 @@ button.submit-bar {
 .responsive-box {
   width: 100%;
   max-width: 450px;
+}
+
+.engagement-citizen-wrapper{
+  width: 100% !important;
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+  padding-bottom: 56px !important;
+
+  .data-table{
+    max-width: 70% !important;
+  }
+
+  .value{
+    text-align: left !important;
+    padding-left: 0 !important;
+  }
+
+  .row {
+    border: none !important;
+    gap: 50px !important;
+
+    h2{
+      width: 50% !important;
+    }
+  }
 }

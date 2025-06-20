@@ -9,18 +9,20 @@ import MultiUploadWrapper from "../../../../ui-components/src/molecules/MultiUpl
 const OpenView = () => {
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
-  const [paymentMode, setPaymentMode] = useState("cash");
+  const [paymentMode, setPaymentMode] = useState("CASH");
+  const [paymentGateway, setPaymentGateway] = useState("D-MONEY");
   const [formData, setFormData] = useState({
     receiptNo: "",
     receiptDate: "",
     chequeNo: "",
     chequeDate: "",
-    payReceipt: "",
+    fileStoreId:""
   });
   const queryParams = Digit.Hooks.useQueryParams();
   const mutation = CustomisedHooks?.Hooks?.openpayment?.useCreatePayment();
   const history = useHistory();
   const { state } = useLocation();
+  const userType = Digit.UserService.getType().toLowerCase();
 
   useEffect(() => {
     if (showToast) {
@@ -78,8 +80,38 @@ const OpenView = () => {
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
 
-  const handlePaymentSubmit = async () => {
-    if (window.location.href.includes("employee")) {
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    if (userType === "employee") {
+
+      const mandatoryFields = [
+        {value: formData.receiptNo, name: "receiptNo"},
+        {value: formData.receiptDate, name: "receiptDate"},
+        {value: formData.fileStoreId, name: "fileStoreId"}  // Must not be empty string
+      ];
+      
+      if (paymentMode === "CHEQUE") {
+        mandatoryFields.push(
+          {value: formData.chequeNo, name: "chequeNo"},
+          {value: formData.chequeDate, name: "chequeDate"}
+        );
+      }
+
+      // Check for empty fields
+      const emptyFields = mandatoryFields.filter(field => 
+        field.value === "" || field.value === null || field.value === undefined
+      );
+
+      if (emptyFields.length > 0) {
+        setShowToast({
+          key: true,
+          label: t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")
+        });
+        
+        return;
+      }
+
+
       const body = {
         Payment: {
           // mobileNumber: paymentData.mobileNumber,
@@ -104,21 +136,25 @@ const OpenView = () => {
               billId: bill?.id,
               totalDue: bill?.totalAmount,
               totalAmountPaid: bill?.totalAmount,
-              // manualReceiptNumber:'', // from formData Date(ManualRecieptDetails.manualReceiptDate).getTime()
-              // manualReceiptDate:''// from formData
+              manualReceiptNumber:formData?.receiptNo, 
+              manualReceiptDate:formData?.receiptDate ? new Date(formData?.receiptDate).getTime() : null
             },
           ],
           tenantId: queryParams.tenantId,
           totalDue: bill?.totalAmount,
           totalAmountPaid: bill?.totalAmount,
-          paymentMode: "CASH", // dynamic mode from formData
+          paymentMode: paymentMode,
           payerName: bill?.payerName,
           paidBy: "OWNER",
-          // instrumentDate:'',// cheque date only if cheque new Date(recieptRequest?.Payment?.instrumentDate).getTime()
-          // instrumentNumber:'', // cheque no only if cheque
-          // fileStoreId:''
+          fileStoreId:formData?.fileStoreId
+
         },
       };
+
+      if (paymentMode === "CHEQUE") {
+        body.Payment.instrumentNumber = formData?.chequeNo;
+        body.Payment.instrumentDate = formData?.chequeDate ? new Date(formData?.chequeDate).getTime() : null;
+      }
 
       mutation.mutate(
         {
@@ -149,7 +185,7 @@ const OpenView = () => {
         }
       );
     }
-    if (!window.location.href.includes("employee")) {
+    if (userType === "citizen") {
       const filterData = {
         Transaction: {
           tenantId: bill?.tenantId,
@@ -158,7 +194,7 @@ const OpenView = () => {
           billId: bill.id,
           consumerCode: bill.consumerCode,
           productInfo: "Common Payment",
-          gateway: "D-MONEY",
+          gateway: paymentGateway,
           taxAndPayments: [
             {
               billId: bill.id,
@@ -357,11 +393,21 @@ const OpenView = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleFileStoreId = (files) => {
+    if (files.length > 0) {
+      // Extract just the fileStoreId string from the object
+      const fileStoreId = files[0][1]?.fileStoreId?.fileStoreId || "";
+      setFormData(prev => ({ ...prev, fileStoreId }));
+    } else {
+      setFormData(prev => ({ ...prev, fileStoreId: "" }));
+    }
+  };
+
   if (isLoading || isLoadingCalc) {
     return <Loader />;
   }
   return (
-    <div className="cards-container">
+    <form className="cards-container" id="payment-form" onSubmit={handlePaymentSubmit} noValidate>
       <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
         <SubmitBar
           style={{
@@ -373,7 +419,7 @@ const OpenView = () => {
           disabled={Number(bill?.totalAmount) === 0}
           label={t("OP_PROCEED_TO_PAY")}
           form="payment-form"
-          onSubmit={handlePaymentSubmit}
+          submit={true}
         />
       </div>
 
@@ -381,9 +427,9 @@ const OpenView = () => {
         <div className="payment-mode-card">
           <Header className="header">{t("MODE_OF_PAYMENT")}</Header>
           <div className="payment-mode-wrapper">
-            <form onSubmit={handlePaymentSubmit} className="form" id="payment-form">
+           {userType === "employee" && <div className="form">
               <div className="radio-wrapper">
-                <div className="input-label">{t("SELECT_PAYMENT_METHOD")}</div>
+                <label className="input-label">{t('SELECT_PAYMENT_METHOD')}</label>
                 <div className="radio-label-wrapper">
                   <label className="radio-label">
                     <input
@@ -411,94 +457,113 @@ const OpenView = () => {
               </div>
 
               <div className="input-wrapper">
-                <label className="input-label">{t("RECEIPT_NO")}</label>
+                <label className="input-label">{t("RECEIPT_NO")}<span className="star">*</span></label>
                 <TextInput
                   t={t}
                   style={{ width: "100%" }}
                   type={"text"}
-                  isMandatory={true}
+                  required={true}
                   optionKey="i18nKey"
                   name="receiptNo"
                   value={formData.receiptNo}
                   onChange={handleChange}
+                  placeholder={"ENTER_RECEIPT_NUMBER"}
                 />
               </div>
 
               <div className="input-wrapper">
-                <label className="input-label">{t("RECEIPT_DATE")}</label>
+                <label className="input-label">{t("RECEIPT_DATE")}<span className="star">*</span></label>
                 <TextInput
                   t={t}
                   style={{ width: "100%" }}
                   type={"date"}
-                  isMandatory={true}
+                  required={true}
                   optionKey="i18nKey"
                   name="receiptDate"
                   value={formData.receiptDate}
                   onChange={handleChange}
+                  placeholder={"ENTER_RECEIPT_DATE"}
                 />
               </div>
 
               {paymentMode === "CHEQUE" && (
                 <>
                   <div className="input-wrapper">
-                    <label className="input-label">{t("CHEQUE_NO")}</label>
+                    <label className="input-label">{t("CHEQUE_NO")}<span className="star">*</span></label>
 
                     <TextInput
                       t={t}
                       style={{ width: "100%" }}
                       type={"text"}
-                      isMandatory={true}
+                      required={paymentMode === "CHEQUE"}
                       optionKey="i18nKey"
                       name="chequeNo"
                       value={formData.chequeNo}
                       onChange={handleChange}
+                      placeholder={"ENTER_CHEQUE_NUMBER"}
+                      populators={{ 
+                        minLength: 6,
+                        maxLength: 6
+                      }}
                     />
                   </div>
 
                   <div className="input-wrapper">
-                    <label className="input-label">{t("CHEQUE_DATE")}</label>
+                    <label className="input-label">{t("CHEQUE_DATE")}<span className="star">*</span></label>
 
                     <TextInput
                       t={t}
                       style={{ width: "100%" }}
                       type={"date"}
-                      isMandatory={true}
+                      required={paymentMode === "CHEQUE"}
                       optionKey="i18nKey"
                       name="chequeDate"
                       value={formData.chequeDate}
                       onChange={handleChange}
+                      placeholder={"ENTER_CHEQUE_DATE"}
                     />
                   </div>
                 </>
               )}
 
               <div className="input-wrapper">
-                <label className="input-label">{t("UPLOAD_PAYMENT_RECEIPT")}</label>
-
-                {/* <TextInput
-                      t={t}
-                      style={{ width: "100%" }}
-                      type={"file"}
-                      isMandatory={true}
-                      optionKey="i18nKey"
-                      name="paymentReceipt"
-                    /> */}
+                <label className="input-label">
+                  {t('UPLOAD_PAYMENT_RECEIPT')}<span className="star">*</span>
+                </label>
 
                 <MultiUploadWrapper
                   t={t}
                   module="works"
                   tenantId={Digit.ULBService.getCurrentTenantId()}
-                  getFormState={() => {}}
-                  // setuploadedstate={formData.payReceipt}
-                  allowedFileTypesRegex={".pdf"}
+                  getFormState={handleFileStoreId}
+                  allowedFileTypesRegex={/pdf/}
                   allowedMaxSizeInMB={10}
-                  // hintText={t(config?.populators?.hintText)}
                   maxFilesAllowed={1}
-                  // extraStyleName={{ padding: "0.5rem" }}
-                  //customClass={populators?.customClass}
+                  containerStyles={{width:"100%"}}
+                  acceptFiles = ".pdf"
+                  required={true}
                 />
+                
               </div>
-            </form>
+            </div>}
+            {userType === "citizen" && <div className="form">
+              <div className="radio-wrapper radio-wrapper-citizen">
+                <label className="input-label">{t('SELECT_PAYMENT_GATEWAY')}</label>
+                <div className="radio-label-wrapper">
+                  <label className="radio-label">
+                    <input
+                      type="radio"
+                      name="paymentGateway"
+                      value="D-MONEY"
+                      checked={true}
+                      className="custom-radio"
+                      onChange={()=>setPaymentGateway("D-MONEY")}
+                    />
+                    {t("PAYMENT_DMONEY")}
+                  </label>
+                </div>
+              </div>
+            </div>}
           </div>
         </div>
       </div>
@@ -732,14 +797,14 @@ const OpenView = () => {
               disabled={Number(bill?.totalAmount) === 0}
               label={t("OP_PROCEED_TO_PAY")}
               form="payment-form"
-              onSubmit={handlePaymentSubmit}
+              submit={true}
             />
           </div>
         </div>
       ) : (
         ""
       )}
-    </div>
+    </form>
   );
 };
 

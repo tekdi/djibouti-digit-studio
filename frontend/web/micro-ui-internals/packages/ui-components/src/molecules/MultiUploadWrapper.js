@@ -69,6 +69,7 @@ const MultiUploadWrapper = ({
   customErrorMsg,
   containerStyles,
   name,
+  required
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -198,6 +199,7 @@ const MultiUploadWrapper = ({
         message={t(`NO_FILE_SELECTED`)}
         customClass={customClass}
         enableButton={enableButton}
+        required={required}
       />
       <span style={{ display: "flex" }}>
         {fileErrors.length
@@ -225,6 +227,7 @@ MultiUploadWrapper.propTypes = {
   customClass: PropTypes.string,
   customErrorMsg: PropTypes.string,
   containerStyles: PropTypes.object,
+  required: PropTypes.bool,
 };
 
 export default MultiUploadWrapper;

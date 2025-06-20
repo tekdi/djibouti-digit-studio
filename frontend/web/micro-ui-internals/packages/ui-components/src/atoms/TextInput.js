@@ -312,6 +312,7 @@ const TextInput = (props) => {
               onInvalid={(e) => {
                 e.preventDefault();
               }}
+              required={props.required}
             />
             {renderSuffix()}
             {props.signature && props.signatureImg}
@@ -403,6 +404,7 @@ const TextInput = (props) => {
                   }
                 }
               }}
+              required={props.required}
             />
             {renderSuffix()}
             {props.signature && props.signatureImg}
