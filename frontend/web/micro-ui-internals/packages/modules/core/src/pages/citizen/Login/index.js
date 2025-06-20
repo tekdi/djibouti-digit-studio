@@ -13,7 +13,7 @@ const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
 const DEFAULT_REDIRECT_URL = `/${window?.contextPath || "digit-studio"}/citizen`;
 
-/* set citizen details to enable backward compatiable */
+
 const setCitizenDetail = (userObject, token, tenantId) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
   localStorage.setItem("Citizen.tenant-id", tenantId);
@@ -171,7 +171,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp } = params;
+      const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
@@ -202,9 +202,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
           history.replace(redirectPath);
         }, 2000);
-      } else if (!isUserRegistered) {
+      } else {
+        // Registration flow
         const requestData = {
-          name: legalName,
+          name: name,
           username: mobileNumber,
           otpReference: otp,
           tenantId: stateCode,
@@ -215,8 +216,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = Digit.ULBService.getStateId();
         }
-
         setUser({ info, ...tokens });
+        Digit.UserService.setUser(user);
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+          history.replace(redirectPath);
+        }, 2000);
       }
     } catch (err) {
       setCanSubmitOtp(true);
