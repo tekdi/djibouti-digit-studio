@@ -13,7 +13,7 @@ const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
 const DEFAULT_REDIRECT_URL = `/${window?.contextPath || "digit-studio"}/citizen`;
 
-/* set citizen details to enable backward compatiable */
+
 const setCitizenDetail = (userObject, token, tenantId) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
   localStorage.setItem("Citizen.tenant-id", tenantId);
@@ -129,15 +129,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
       } else {
-        setError("User not registered.");
         setCanSubmitNo(true);
+        if (!(location.state && location.state.role === "FSM_DSO")) {
+          history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+        }
       }
-      // else {
-      //   setCanSubmitNo(true);
-      //   if (!(location.state && location.state.role === "FSM_DSO")) {
-      //     history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
-      //   }
-      // }
       if (location.state?.role) {
         setCanSubmitNo(true);
         setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
@@ -175,7 +171,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
-      const { mobileNumber, otp } = params;
+      const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
           username: mobileNumber,
@@ -206,8 +202,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
           history.replace(redirectPath);
         }, 2000);
-      } else if (!isUserRegistered) {
+      } else {
+        // Registration flow
         const requestData = {
+          name: name,
           username: mobileNumber,
           otpReference: otp,
           tenantId: stateCode,
@@ -218,8 +216,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = Digit.ULBService.getStateId();
         }
-
         setUser({ info, ...tokens });
+        Digit.UserService.setUser(user);
+        setShowSuccessModal(true);
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+          history.replace(redirectPath);
+        }, 2000);
       }
     } catch (err) {
       setCanSubmitOtp(true);
@@ -314,7 +318,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             />
           </Route>
           <Route path={`${path}/name`}>
-            <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
+            <SelectName
+              config={{
+                ...stepItems[2],
+                texts: { ...stepItems[1].texts, cardText: `+253 ${params.mobileNumber || ""}` }
+              }}
+              onSelect={selectName}
+              t={t}
+              mobileNumber={params.mobileNumber || ""}
+              isDisabled={canSubmitName}
+            />
           </Route>
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
