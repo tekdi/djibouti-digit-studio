@@ -51,7 +51,7 @@ const BreadCrumb = (props) => {
 
   const handleBackClick = () => {
     // Check if we're on the BPA form page
-    if (location.pathname.includes("/publicservices/BPA/BPA_PCO/Apply")) {
+    if (location.pathname.includes("Apply")) {
       const formData = JSON.parse(localStorage.getItem("formData") || "{}");
 
       if (Object.keys(formData).length > 0) {
