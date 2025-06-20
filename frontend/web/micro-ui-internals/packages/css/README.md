@@ -29,7 +29,7 @@ After adding the dependency in your package.json:
 Add the following to your HTML head:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.16/dist/index.css" />
+<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.17/dist/index.css" />
 ```
 
 ### Method 2: Import in JavaScript
