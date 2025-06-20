@@ -547,8 +547,6 @@ input[type="number"] {
   }
 }
 
-.applications-list-container {}
-
 .complaint-summary {
   @media (min-width: 780px) {
     flex: 1 0 auto;
@@ -1327,7 +1325,7 @@ button.submit-bar {
 .form-title {
   color: rgb(17, 24, 39);
   text-align: center;
-  font-family: Inter;
+  font-family: "Inter", sans-serif;
   font-size: 26px;
   margin-bottom: 2rem;
 }
@@ -1340,18 +1338,16 @@ button.submit-bar {
   outline: 2px solid transparent;
   outline-offset: 2px;
   display: block;
-  width: 100%;
   height: 2.5rem;
   --bg-opacity: 1;
   background-color: #fff;
   line-height: 20px;
   font-style: normal;
   padding-left: .75rem;
-  font-family: Inter, Roboto, sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 1rem;
   border: .094rem solid #d4d4d4;
   color: #363636;
-  line-height: 1.5rem;
 }
 
 .center-container {

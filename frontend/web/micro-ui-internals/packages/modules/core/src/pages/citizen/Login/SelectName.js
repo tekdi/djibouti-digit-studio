@@ -34,7 +34,7 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
           <form onSubmit={handleSubmit}>
             <div>
               <header className="form-title">{t("REGISTER_AS_CITIZEN_USER")}</header>
-              <h2 class="digit-card-label ">{t("BPA_BPA_PCO_LEGALNAME")}</h2>
+              <h2 className="digit-card-label ">{t("BPA_BPA_PCO_LEGALNAME")}</h2>
               <input
                 type="text"
                 name="name"
@@ -46,7 +46,7 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
               />
             </div>
             <div>
-              <h2 class="digit-card-label ">{t("CORE_COMMON_MOBILE_NUMBER")}</h2>
+              <h2 className="digit-card-label ">{t("CORE_COMMON_MOBILE_NUMBER")}</h2>
               <input
                 className="input-box"
                 type="text"
