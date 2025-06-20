@@ -101,6 +101,11 @@ export const useSearchGenericConfig = () => {
               secondaryLabel: "ARCHITECT_NAME",
             },
             {
+              label: `REGION`,
+              jsonPath: "serviceDetails.landandProjectDesignDetails[0].region",
+              additionalCustomization: true,
+            },
+            {
               label: `BUSINESS_SERVICE_LABEL`,
               jsonPath: "businessService",
               additionalCustomization: true,

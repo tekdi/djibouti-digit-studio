@@ -204,6 +204,11 @@ export const InboxConfig = (businessServices) => {
               secondaryLabel: "ARCHITECT_NAME",
             },
             {
+              label: "REGION",
+              jsonPath: "businessObject.serviceDetails.landandProjectDesignDetails[0].region",
+              additionalCustomization: true,
+            },
+            {
               label: "BUSINESS_SERVICE_LABEL",
               jsonPath: "businessObject.businessService",
               additionalCustomization: true,

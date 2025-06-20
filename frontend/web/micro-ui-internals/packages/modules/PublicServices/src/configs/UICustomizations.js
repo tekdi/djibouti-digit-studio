@@ -116,6 +116,9 @@ export const UICustomizations = {
           </div>
         );
       }
+      if (key === "REGION") {
+        return <div>{t(`${row?.serviceDetails?.landandProjectDesignDetails?.[0]?.region || "ES_COMMON_NA"}`)}</div>;
+      }
       if (key === "WORKFLOW_STATUS") {
         return (
           <div>
@@ -220,6 +223,9 @@ export const UICustomizations = {
             <div style={{ color: "#949494" }}>{row?.ProcessInstance?.assigner?.name}</div>
           </div>
         );
+      }
+      if (key === "REGION") {
+        return <div>{t(`${row?.businessObject?.serviceDetails?.landandProjectDesignDetails?.[0]?.region || "ES_COMMON_NA"}`)}</div>;
       }
       if (key === "WORKFLOW_STATUS") {
         return (
