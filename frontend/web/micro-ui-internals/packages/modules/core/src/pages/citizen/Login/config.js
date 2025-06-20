@@ -32,7 +32,6 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_LOGIN_PROVIDE_NAME",
-      cardText: "CS_LOGIN_NAME_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
     },
@@ -42,11 +41,25 @@ export const loginSteps = [
         type: "text",
         name: "name",
         error: "CORE_COMMON_NAME_VALIDMSG",
+        placeholder: "CORE_COMMON_NAME",
         validation: {
           required: true,
           minLength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          pattern: /^[^{0-9}^\$\"<>?\\~!@#$%^()+={}\[\]*,/_:;""'']{1,50}$/i,
         },
+      },
+      {
+        label: "CORE_COMMON_MOBILE_NUMBER",
+        type: "text",
+        name: "mobileNumber",
+        error: "CORE_COMMON_MOBILE_NUMBER_VALIDMSG",
+        placeholder: "+25312345678",
+        validation: {
+          required: true,
+          minLength: 8,
+          maxLength: 8,
+        },
+        disabled: true,
       },
     ],
   },
