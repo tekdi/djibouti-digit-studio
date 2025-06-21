@@ -263,6 +263,7 @@ const UploadFile = (props) => {
                   target.value = "";
                 }
               }}
+              required={props.required}
             />
           </div>
         </TooltipWrapper>
@@ -297,6 +298,7 @@ UploadFile.propTypes = {
   customClass: PropTypes.string,
   uploadedFiles: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object]))),
   enableButton: PropTypes.bool,
+  required: PropTypes.bool,
   showHint: PropTypes.bool,
   buttonType: PropTypes.string,
   onUpload: PropTypes.func.isRequired,
