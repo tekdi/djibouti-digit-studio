@@ -6,23 +6,24 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/lib/pq"
 	"log"
+	"public-service/config"
+	producer "public-service/kafka/producer"
 	"public-service/model"
 	"strings"
 	"time"
-	"public-service/config"
-	producer "public-service/kafka/producer"
+
+	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type PublicRepository struct {
-	db *sql.DB
+	db            *sql.DB
 	kafkaProducer *producer.PublicServiceProducer
 }
 
 func NewPublicRepository(db *sql.DB, kafkaProducer *producer.PublicServiceProducer) *PublicRepository {
-	return &PublicRepository{db: db,kafkaProducer: kafkaProducer}
+	return &PublicRepository{db: db, kafkaProducer: kafkaProducer}
 }
 func (r PublicRepository) CreateService(ctx context.Context, req model.ServiceRequest, tenantId string) (model.ServiceResponse, error) {
 	searchCriteria := model.SearchCriteria{
@@ -99,6 +100,7 @@ func (r PublicRepository) CreateService(ctx context.Context, req model.ServiceRe
 				BusinessService:   req.Service.BusinessService,
 				Status:            req.Service.Status,
 				ServiceCode:       req.Service.ServiceCode,
+				DisplayOrder:      req.Service.DisplayOrder,
 				AdditionalDetails: req.Service.AdditionalDetails,
 				AuditDetails: model.AuditDetails{
 					CreatedBy:        createdBy,
@@ -120,7 +122,7 @@ func (r PublicRepository) SearchService(ctx context.Context, criteria model.Sear
 
 	queryBuilder.WriteString(`
 		SELECT 
-			id, tenant_id, module, business_service, status, service_code, additional_details,
+			id, tenant_id, module, business_service, status, service_code, display_order, additional_details,
 			createdby, last_modifiedby, created_at, updated_at
 		FROM service
 	`)
@@ -178,6 +180,7 @@ func (r PublicRepository) SearchService(ctx context.Context, criteria model.Sear
 			id                                                     uuid.UUID
 			tenantId, module, businessService, status, serviceCode string
 			additionalDetailsJSON                                  []byte
+			displayOrder                                           int64
 			createdBy, lastModifiedBy                              uuid.UUID
 			createdAt, updatedAt                                   time.Time
 		)
@@ -189,6 +192,7 @@ func (r PublicRepository) SearchService(ctx context.Context, criteria model.Sear
 			&businessService,
 			&status,
 			&serviceCode,
+			&displayOrder,
 			&additionalDetailsJSON,
 			&createdBy,
 			&lastModifiedBy,
@@ -206,6 +210,7 @@ func (r PublicRepository) SearchService(ctx context.Context, criteria model.Sear
 			BusinessService: businessService,
 			Status:          model.Status(status),
 			ServiceCode:     serviceCode,
+			DisplayOrder:    displayOrder,
 			AuditDetails: model.AuditDetails{
 				CreatedBy:        createdBy,
 				LastModifiedBy:   lastModifiedBy,
