@@ -1,0 +1,2 @@
+ALTER TABLE service
+ADD COLUMN IF NOT EXISTS display_order INTEGER;

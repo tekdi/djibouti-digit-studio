@@ -11,4 +11,5 @@ type Service struct {
 	Status            Status                 `json:"status"`
 	AdditionalDetails map[string]interface{} `json:"additionalDetails"`
 	AuditDetails      AuditDetails           `json:"auditDetails"`
+	DisplayOrder      int64                  `json:"displayOrder"`
 }
