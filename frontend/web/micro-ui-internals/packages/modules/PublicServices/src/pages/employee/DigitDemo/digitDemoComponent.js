@@ -130,6 +130,8 @@ const DigitDemoComponent = () => {
 
     // Only make API call if it's beforeDocStep (first time) or last step
     if (beforeDocStep || isLastStep) {
+      const userDetails = Digit.UserService.getUser();
+      const userType = userDetails?.info?.type?.toLowerCase();
       setIsLoading(true);
       await mutation.mutate(
         {
@@ -149,8 +151,6 @@ const DigitDemoComponent = () => {
               if (!isLastStep) {
                 setCurrentStep(currentStep + 1);
               } else {
-                const userDetails = Digit.UserService.getUser();
-                const userType = userDetails?.info?.type?.toLowerCase();
                 history.push({
                   pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
                   search: `?serviceCode=${schemaCode}&isSuccess=true`,
