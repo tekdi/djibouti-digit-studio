@@ -395,7 +395,12 @@ export const transformResponseforModulePage = (data) => {
     }
 
     // Add the businessService to the set (to ensure uniqueness)
-    moduleData[module].businessServices.add({ businessService: item.businessService, serviceCode: item?.serviceCode, auditDetails: auditDetails });
+    moduleData[module].businessServices.add({
+      businessService: item.businessService,
+      serviceCode: item?.serviceCode,
+      displayOrder: item?.displayOrder,
+      auditDetails: auditDetails,
+    });
   });
 
   // Convert the moduleData object to an array of objects

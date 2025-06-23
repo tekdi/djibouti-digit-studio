@@ -67,7 +67,7 @@ const ModulePageComponent = () => {
                 </div>
                 <ul className="list-disc space-y-2 pt-2">
                   {product?.businessServices
-                    .sort((a, b) => a.auditDetails.createdTime - b.auditDetails.createdTime)
+                    ?.sort((a, b) => a.displayOrder - b.displayOrder)
                     .map((bs) => (
                       <li style={{ marginBottom: "15px" }} key={bs?.businessService}>
                         <Link
