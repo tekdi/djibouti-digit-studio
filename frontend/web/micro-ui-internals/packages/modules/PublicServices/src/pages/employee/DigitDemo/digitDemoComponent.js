@@ -35,7 +35,7 @@ const DigitDemoComponent = () => {
   const [formData, setFormData] = useState(savedFormData);
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
-
+  const [isLoading,setIsLoading] = useState(false);
   // Fetch service configuration from MDMS
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -111,11 +111,11 @@ const DigitDemoComponent = () => {
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig?.name || `section_${currentStep}`;
     const updatedFormData = ["multiChildForm", "documents"].includes(currentFormConfig?.type)
-      ? { ...formData, ...data }
+    ? { ...formData, ...data }
       : { ...formData, [sectionName]: data };
 
-    const docStep = rawConfig.findIndex((item) => item.type === "documents");
-    const beforeDocStep = currentStep === docStep;
+      const docStep = rawConfig.findIndex((item) => item.type === "documents");
+      const beforeDocStep = currentStep === docStep;
 
     setFormData(updatedFormData);
     persistData(updatedFormData, currentStep);
@@ -130,40 +130,43 @@ const DigitDemoComponent = () => {
 
     // Only make API call if it's beforeDocStep (first time) or last step
     if (beforeDocStep || isLastStep) {
+      const userDetails = Digit.UserService.getUser();
+      const userType = userDetails?.info?.type?.toLowerCase();
+      setIsLoading(true);
       await mutation.mutate(
         {
           body: isLastStep
             ? transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, isLastStep, responseData)
             : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
-        },
-        {
-          onSuccess: (data) => {
-            setResponseData(data);
-            setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
-            localStorage.removeItem("formData");
-            localStorage.removeItem("currentStep");
-            sessionStorage.removeItem("formData");
+          },
+          {
+            onSuccess: (data) => {
+              setIsLoading(false);
+              setResponseData(data);
+              setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
+              localStorage.removeItem("formData");
+              localStorage.removeItem("currentStep");
+              sessionStorage.removeItem("formData");
 
-            if (!isLastStep) {
-              setCurrentStep(currentStep + 1);
-            } else {
-              const userDetails = Digit.UserService.getUser();
-              const userType = userDetails?.info?.type?.toLowerCase();
-              history.push({
-                pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
-                search: `?serviceCode=${schemaCode}&isSuccess=true`,
-                state: {
-                  message: "COMMON_APPLICATION_CREATED",
-                  showID: true,
-                  applicationNumber: data?.Application?.applicationNumber,
-                  redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+              if (!isLastStep) {
+                setCurrentStep(currentStep + 1);
+              } else {
+                history.push({
+                  pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
+                  search: `?serviceCode=${schemaCode}&isSuccess=true`,
+                  state: {
+                    message: "COMMON_APPLICATION_CREATED",
+                    showID: true,
+                    applicationNumber: data?.Application?.applicationNumber,
+                    redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 },
               });
             }
           },
           onError: () => {
+            setIsLoading(false);
             history.push({
-              pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
+              pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
               search: "?isSuccess=false",
               state: {
                 message: "COMMON_APPLICATION_FAILED",
@@ -263,6 +266,8 @@ const DigitDemoComponent = () => {
   const closeToast = () => setShowToast(false);
 
   if (moduleListLoading || workflowDetailsLoading) return <Loader />;
+
+  if (isLoading) return <Loader />;
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
