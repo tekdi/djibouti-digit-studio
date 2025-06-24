@@ -9,6 +9,9 @@ const ModulePageComponent = () => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  const userDetails = Digit.UserService.getUser();
+  const roles = userDetails?.info?.roles;
+  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
 
   //To fetch the service details configured for the tenant
   const request = {
@@ -22,18 +25,57 @@ const ModulePageComponent = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
+  const businessServices = [...new Set(data?.Services?.map((s) => s.businessService) || [])];
+
+  const { data: inboxData, isLoading: isInboxLoading } = Digit.Hooks.useCustomAPIHook({
+    url: "/inbox/v2/_search",
+    method: "POST",
+    body: {
+      inbox: {
+        limit: 10,
+        offset: 0,
+        processSearchCriteria: {
+          businessService: businessServices,
+          moduleName: "public-services",
+          tenantId: tenantId,
+        },
+        moduleSearchCriteria: {
+          businessService: businessServices,
+          module: data?.Services?.[0]?.module,
+        },
+        tenantId: tenantId,
+      },
+    },
+    config: {
+      enabled: !isCitizen && businessServices.length > 0 && data?.Services?.length > 0,
+    },
+  });
+
+  const { data: citizenApplications, isLoading: isCitizenAppsLoading } = Digit.Hooks.useCustomAPIHook({
+    url: "/public-service/v1/application",
+    method: "GET",
+    params: {
+      tenantId,
+      userId: userDetails?.info?.uuid,
+      status: "ACTIVE",
+      sortby: "ASC",
+    },
+    config: {
+      enabled: !!isCitizen,
+    },
+  });
+
   //  util to transform raw data into UI-friendly structure
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
   const hasNoData = detailsConfig.length === 0 && !isLoading;
 
-  const userDetails = Digit.UserService.getUser();
-  const roles = userDetails?.info?.roles;
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
   const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
 
-  if (isLoading) {
+  const count = isCitizen ? citizenApplications?.application?.length : inboxData?.totalCount;
+
+  if (isLoading || (!isCitizen && isInboxLoading) || (isCitizen && isCitizenAppsLoading)) {
     return <Loader />;
   }
 
@@ -106,7 +148,7 @@ const ModulePageComponent = () => {
                   </div>
                 </div>
                 <div className="inbox-count-container">
-                  <CardText className="product-description inbox-count-number">0</CardText>
+                  <CardText className="product-description inbox-count-number">{count || 0}</CardText>
                   <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
                 </div>
                 <div className="product-button-container">
@@ -117,14 +159,6 @@ const ModulePageComponent = () => {
                     <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
                   </svg>
                 </div>
-                {/* <Link className="link" to={{
-                pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
-                state: {
-                  moduleData:data
-                }
-              }}>
-                Search
-              </Link> */}
               </Card>
             )}
 
@@ -149,7 +183,7 @@ const ModulePageComponent = () => {
             {isCitizen && (
               <Card key={`${index}-my-application`} className="product-card module-card">
                 <div className="product-header inbox-header">
-                  <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
+                  <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
                   <div className="product-icon">
                     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <rect width="56" height="56" rx="2" fill="#006769" />
@@ -168,7 +202,7 @@ const ModulePageComponent = () => {
                   </div>
                 </div>
                 <div className="inbox-count-container">
-                  <CardText className="product-description inbox-count-number">0</CardText>
+                  <CardText className="product-description inbox-count-number">{count || 0}</CardText>
                   <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
                 </div>
                 <div className="product-button-container">
@@ -179,14 +213,6 @@ const ModulePageComponent = () => {
                     <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
                   </svg>
                 </div>
-                {/* <Link className="link" to={{
-                pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
-                state: {
-                  moduleData:data
-                }
-              }}>
-                Search
-              </Link> */}
               </Card>
             )}
 
