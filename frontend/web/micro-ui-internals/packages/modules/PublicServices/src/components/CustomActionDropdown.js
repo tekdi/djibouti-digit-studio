@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 const CustomActionDropdown = ({
-  workflowDetails,
   actions,
   isDisabled,
   onActionSelect,
@@ -19,7 +18,7 @@ const CustomActionDropdown = ({
       <select
         className="custom-action-dropdown"
         disabled={isDisabled}
-        onChange={(e) => {
+        onClick={(e) => {
           const selectedAction = actions.find(action => action.action === e.target.value);
           if (selectedAction) {
             onActionSelect(selectedAction);
