@@ -5,6 +5,7 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
   const [mobileNumber, setMobileNumber] = useState(propMobileNumber);
   const [error, setError] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
+  const {module, service } = useParams();
 
   useEffect(() => {
     setMobileNumber(propMobileNumber || "");
@@ -34,7 +35,7 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
           <form onSubmit={handleSubmit}>
             <div>
               <header className="form-title">{t("REGISTER_AS_CITIZEN_USER")}</header>
-              <h2 className="digit-card-label ">{t("BPA_BPA_PCO_LEGALNAME")}</h2>
+              <h2 className="digit-card-label ">{t(`${module.toUpperCase()}_${service.toUpperCase()}_LEGALNAME`)}</h2>
               <input
                 type="text"
                 name="name"

@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
 export const InboxConfig = (businessServices) => {
-  const { module } = useParams();
+  const { module, service } = useParams();
   const prefix = `${module?.toUpperCase()}`;
 
   return {
@@ -154,7 +154,7 @@ export const InboxConfig = (businessServices) => {
                 name: "businessService",
                 optionsKey: "name",
                 options: [],
-                defaultValue: ["BPA_PCO"],
+                defaultValue: [service.toUpperCase()],
               },
             },
             // {

@@ -51,7 +51,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
 
     // Filter and combine applicant data if this is the applicant section
     let displayData = data;
-    if (sectionTitle === "BPA_BPA_PCO_APPLICANTDETAILS") {
+    if (sectionTitle === `${serviceCode}_APPLICANTDETAILS`) {
       displayData = {
         legalName: data.name,
         address: additionalDetails?.applicants?.address || "-",
@@ -60,7 +60,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
       };
     }
 
-      if (sectionTitle === "BPA_BPA_PCO_DESIGNOFFICEDETAILING") {
+    if (sectionTitle === `${serviceCode}_DESIGNOFFICEDETAILING`) {
         displayData = {
           telephone: `+253 ${data?.telephone}`,
         };
@@ -230,7 +230,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
 
   return (
     <Card style={{ borderRadius: "1rem", padding: "30px" }}>
-      <CardHeader style={{ marginLeft: "12px" }}>{t("BPA_BPA_PCO_APPLICANTDETAILS")}</CardHeader>
+      <CardHeader style={{ marginLeft: "12px" }}>{t(`${serviceCode}_APPLICANTDETAILS`)}</CardHeader>
       <div style={{ padding: "16px" }}>
         <div style={{ display: "flex", width: "100%" }}>
     <p style={{width:'40%'}} className="field-label">{t("CURRENT_STATUS")} </p>
@@ -265,10 +265,10 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
     </p>
   </div>
 
-        {renderSection(applicants[0], "BPA_BPA_PCO_APPLICANTDETAILS")}
+        {renderSection(applicants[0], `${serviceCode}_APPLICANTDETAILS`)}
         {renderDeclarations()}
-        {renderSection(serviceDetails.landInfo, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
-        {renderSection(serviceDetails.designOffice, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
+        {renderSection(serviceDetails.landInfo, `${serviceCode}_LANDANDPROJECTDESIGNDETAILS`)}
+        {renderSection(serviceDetails.designOffice, `${serviceCode}_DESIGNOFFICEDETAILING`)}
         {renderDocuments()}
           <div style={{ width: "100%" }} className="fields-container">
           <span
