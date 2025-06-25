@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/lib/pq"
 	"log"
 	"public-service/config"
 	producer "public-service/kafka/producer"
@@ -15,6 +13,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 type ApplicationRepository struct {
@@ -565,9 +566,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		if len(existingService.Services) == 0 {
 			return model.SearchResponse{}, errors.New("Service with given serviceCode not present in the application. Please create the service.")
 		}
-	}	
-	
-	
+	}
 
 	queryBuilder.WriteString(`
 		SELECT 
@@ -623,6 +622,11 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 	if criteria.UserId != "" {
 		conditions = append(conditions, fmt.Sprintf("ap.user_id = $%d", argPos))
 		args = append(args, criteria.UserId)
+		argPos++
+	}
+	if criteria.CreatedBy != "" {
+		conditions = append(conditions, fmt.Sprintf("a.createdby = $%d", argPos))
+		args = append(args, criteria.CreatedBy)
 		argPos++
 	}
 	if len(conditions) > 0 {
