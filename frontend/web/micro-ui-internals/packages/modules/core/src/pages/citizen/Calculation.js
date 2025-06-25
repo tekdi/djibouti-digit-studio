@@ -44,6 +44,8 @@ const Calculation = () => {
   });
 
   const [calculationResponse, setCalculationResponse] = useState();
+  const [response, setResponse] = useState();
+  const [isSaveBtnDisable, setIsSaveBtnDisable] = useState(true);
 
   const [costBreakdown, setCostBreakdown] = useState([
     { name: 'CALCULATION_TERRASSEMENT', percentage: 8, amount: 0, id:"CALCULATION_TERRASSEMENT" },
@@ -71,7 +73,12 @@ const Calculation = () => {
     },
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
-  let response = data ? data?.Application?.[0] : {};
+
+  useEffect(() => {
+    if (data) {
+      setResponse(data?.Application?.[0] || {});
+    }
+  }, [data]);
 
   const calReq = {
     url: "/calculator-service/v1/BPA_PCO/estimate_calculate",
@@ -172,7 +179,7 @@ const Calculation = () => {
       {
         onSuccess: (res) => {
           setCalculationResponse(res?.Application?.[0]);
-
+          setIsSaveBtnDisable(false)
         },
         onError: () => {
           console.log("Error occured");
@@ -208,10 +215,13 @@ const Calculation = () => {
       },
       {
         onSuccess: (res) => {
-          setCalculationResponse(res?.Application?.[0])
+          setCalculationResponse(res?.Application)
+          setResponse(res?.Application || {});
+          setIsSaveBtnDisable(true)
         },
         onError: () => {
           console.log("Error occured");
+          setIsSaveBtnDisable(false)
         },
       }
     )
@@ -254,10 +264,33 @@ const Calculation = () => {
       totalProjectValue: estimation?.totalBuildingCost || fallbackEstimation?.totalBuildingCost || 0
     })
 
-
-    if (fallbackEstimation?.floors?.length > 0) {
+    if (fallbackEstimation?.floors?.length > 0 && (fallbackEstimation?.floors?.length >= (estimation?.floors?.length || 0)) && !estimation) {
       const floor = fallbackEstimation.floors.map((item, index) => {
         const totalFloors = fallbackEstimation.floors.length;
+        let floorKey;
+
+        if (item.floorNo === 0) {
+          floorKey = "CALCULATION_RDC";
+        } else if (item.floorNo === totalFloors - 1) {
+          floorKey = "CALCULATION_TERRASSE";
+        } else {
+          floorKey = `CALCULATION_${item.floorNo}ER_ETAGE`;
+        }
+
+        return {
+          name: floorKey,
+          residentialArea: item.builtUpAreaLiving,
+          commercialArea: item.builtupAreaCommercial,
+          totalArea: item.totalAreaPerLevel,
+          cost: item.floorCost,
+          floorNo: item.floorNo,
+        };
+      });
+
+      setFloorData(floor);
+    }else if (estimation?.floors?.length > 0){
+      const floor = estimation.floors.map((item, index) => {
+        const totalFloors = estimation.floors.length;
         let floorKey;
 
         if (item.floorNo === 0) {
@@ -459,7 +492,7 @@ const Calculation = () => {
             </table>
           </div>
 
-          <button className={`action-button ${!calculationResponse ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
+          <button className={`action-button ${isSaveBtnDisable ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
             {t('CALCULATION_SAVE')}
           </button>
         </div>
