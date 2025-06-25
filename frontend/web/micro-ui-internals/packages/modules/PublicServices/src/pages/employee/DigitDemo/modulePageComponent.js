@@ -16,7 +16,7 @@ const ModulePageComponent = () => {
   const userDetails = Digit.UserService.getUser();
   const roles = userDetails?.info?.roles;
   const isCitizen = roles?.some((role) => role.code === "CITIZEN");
-  const indId = individualDetails && individualDetails?.Individual?.[0]?.individualId
+  const indId = individualDetails?.Individual?.[0]?.individualId
   const uuid = userDetails?.info?.uuid
 
   //To fetch the service details configured for the tenant
@@ -31,7 +31,7 @@ const ModulePageComponent = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
-  const module = data && data?.Services?.[0]?.module
+  const module = data?.Services?.[0]?.module
 
   //To fetch the service configurations of the services
   const mdmsRequestCriteria = {
@@ -44,9 +44,9 @@ const ModulePageComponent = () => {
     },
   };
 
-  const { isLoading: moduleListLoading, data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
+  const {data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
 
-  const businessServices = servicesData && servicesData?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
+  const businessServices = servicesData?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
     code: ob?.businessService,
     name: ob?.businessService,
     parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
