@@ -619,15 +619,22 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		args = append(args, criteria.Status)
 		argPos++
 	}
-	if criteria.UserId != "" {
-		conditions = append(conditions, fmt.Sprintf("ap.user_id = $%d", argPos))
-		args = append(args, criteria.UserId)
-		argPos++
-	}
-	if criteria.CreatedBy != "" {
-		conditions = append(conditions, fmt.Sprintf("a.createdby = $%d", argPos))
-		args = append(args, criteria.CreatedBy)
-		argPos++
+	if criteria.UserId != "" || criteria.CreatedBy != "" {
+		var orConditions []string
+
+		if criteria.UserId != "" {
+			orConditions = append(orConditions, fmt.Sprintf("ap.user_id = $%d", argPos))
+			args = append(args, criteria.UserId)
+			argPos++
+		}
+		if criteria.CreatedBy != "" {
+			orConditions = append(orConditions, fmt.Sprintf("a.createdby = $%d", argPos))
+			args = append(args, criteria.CreatedBy)
+			argPos++
+		}
+
+		// Combine with OR inside parentheses
+		conditions = append(conditions, "("+strings.Join(orConditions, " OR ")+")")
 	}
 	if len(conditions) > 0 {
 		queryBuilder.WriteString(" WHERE ")
