@@ -1,14 +1,23 @@
-import React from "react";
-import { Card, Button, HeaderComponent, CardText, Loader, SubmitBar } from "@egovernments/digit-ui-components";
+import { Card, CardText, HeaderComponent, Loader } from "@egovernments/digit-ui-components";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { transformResponseforModulePage } from "../../../utils";
+import { getParallelWorkflow, transformResponseforModulePage } from "../../../utils";
 
 const ModulePageComponent = () => {
   const { t } = useTranslation();
+  const [individualDetails, setIndividualDetails] = useState();
+  const [servicesData, setServicesData] = useState([]);
+  const [servicesDataLoading, setServicesDataLoading] = useState(true);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  const userDetails = Digit.UserService.getUser();
+  const roles = userDetails?.info?.roles;
+  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
+  const indId = individualDetails?.Individual?.[0]?.individualId
+  const uuid = userDetails?.info?.uuid
 
   //To fetch the service details configured for the tenant
   const request = {
@@ -22,18 +31,116 @@ const ModulePageComponent = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
+  const module = data?.Services?.[0]?.module
+
+  //To fetch the service configurations of the services
+  const mdmsRequestCriteria = {
+    url: "/egov-mdms-service/v2/_search",
+    body: {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        schemaCode: "Studio.ServiceConfiguration",
+      },
+    },
+  };
+
+  const {data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
+
+  const businessServices = servicesData?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
+    code: ob?.businessService,
+    name: ob?.businessService,
+    parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
+  }));
+
+  const businessServicesList = businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || []
+
+  const { data: inboxData, isLoading: isInboxLoading } = Digit.Hooks.useCustomAPIHook({
+    url: "/inbox/v2/_search",
+    method: "POST",
+    body: {
+      inbox: {
+        limit: 10,
+        offset: 0,
+        processSearchCriteria: {
+          businessService: businessServicesList,
+          moduleName: "public-services",
+          tenantId: tenantId,
+        },
+        moduleSearchCriteria: {
+          businessService: businessServicesList,
+          module: data?.Services?.[0]?.module,
+        },
+        tenantId: tenantId,
+      },
+    },
+    config: {
+      enabled: !isCitizen && businessServicesList?.length > 0,
+    },
+  });
+
+  const { data: citizenApplications, isLoading: isCitizenAppsLoading } = Digit.Hooks.useCustomAPIHook({
+    url: `/public-service/v1/application?tenantId=${tenantId}&userId=${indId}&status=ACTIVE&createdBy=${userDetails?.info?.uuid}`,
+    method: "GET",
+    headers: { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
+    config: {
+      enabled: !!indId && isCitizen,
+    },
+  });
+
+  useEffect(async () => {
+    const fetchBusinessServices = async () => {
+      try {
+        const response = await axios.get("/public-service/v1/service", {
+          params: { tenantId: tenantId },
+          headers: {
+            "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
+          },
+        });
+
+        const services = response?.data?.Services || [];
+        setServicesData(services);
+        setServicesDataLoading(false)
+      } catch (error) {
+        console.error("Error fetching business services:", error);
+        setServicesData([]);
+        setServicesDataLoading(false)
+      }
+    };
+
+    fetchBusinessServices();
+
+    if (!isCitizen) return;
+    try {
+      const response = await axios.post(`/health-individual/v1/_search?tenantId=${tenantId}&limit=1&offset=0`, {
+        "RequestInfo": {
+          apiId: "Rainmaker",
+          authToken: userDetails?.access_token,
+          userInfo: userDetails?.info,
+          msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+        },
+        "Individual": {
+          "userUuid": [
+            uuid
+          ]
+        }
+      });
+      setIndividualDetails(response?.data)
+    } catch (error) {
+      console.error("Error fetching individual details:", error);
+    }
+  }, [])
+
   //  util to transform raw data into UI-friendly structure
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
   const hasNoData = detailsConfig.length === 0 && !isLoading;
 
-  const userDetails = Digit.UserService.getUser();
-  const roles = userDetails?.info?.roles;
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
   const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
+  const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
-  if (isLoading) {
+  if (isLoading || (!isCitizen && (isInboxLoading || servicesDataLoading)) || (isCitizen && isCitizenAppsLoading)) {
     return <Loader />;
   }
 
@@ -106,7 +213,7 @@ const ModulePageComponent = () => {
                   </div>
                 </div>
                 <div className="inbox-count-container">
-                  <CardText className="product-description inbox-count-number">0</CardText>
+                  <CardText className="product-description inbox-count-number">{count}</CardText>
                   <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
                 </div>
                 <div className="product-button-container">
@@ -168,7 +275,7 @@ const ModulePageComponent = () => {
                   </div>
                 </div>
                 <div className="inbox-count-container">
-                  <CardText className="product-description inbox-count-number">0</CardText>
+                  <CardText className="product-description inbox-count-number">{count}</CardText>
                   <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
                 </div>
                 <div className="product-button-container">
