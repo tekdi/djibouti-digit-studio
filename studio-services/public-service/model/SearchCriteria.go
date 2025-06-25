@@ -10,6 +10,7 @@ type SearchCriteria struct {
 	Status            string      `json:"status"`
 	ServiceCode       string      `json:"serviceCode"`
 	UserId            string      `json:"userId"`
+	CreatedBy         string      `json:"createdBy"`
 	Offset            int         `json:"offset"`
 	Limit             int         `json:"limit"`
 	SortBy            string      `json:"sortBy"`
