@@ -15,6 +15,8 @@ const CitizenInboxService = () => {
   const [individualDetails, setIndividualDetails] = useState();
   // const serviceCode = servicesData && servicesData?.[0]?.serviceCode
   const indId = individualDetails && individualDetails?.Individual?.[0]?.individualId
+  const userDetails = Digit.UserService.getUser();
+  const uuid = userDetails?.info?.uuid
 
   useEffect(async () => {
     try {
@@ -32,7 +34,7 @@ const CitizenInboxService = () => {
         },
         "Individual": {
           "userUuid": [
-            userDetails?.info?.uuid
+            uuid
           ]
         }
       });
@@ -67,9 +69,8 @@ const CitizenInboxService = () => {
 
   }, [tenantId])
 
-  const configs = citizenInboxGenericConfig(tenantId,indId);
+  const configs = citizenInboxGenericConfig(tenantId,indId,uuid);
 
-  const userDetails = Digit.UserService.getUser();
 
   const updatedConfig = useMemo(() => {
     return Digit.Utils.preProcessMDMSConfigInboxSearch(

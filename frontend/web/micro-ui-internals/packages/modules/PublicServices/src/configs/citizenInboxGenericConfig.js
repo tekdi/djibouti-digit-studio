@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
-export const citizenInboxGenericConfig = (tenantId, individualId) => {
+export const citizenInboxGenericConfig = (tenantId, individualId, uuid) => {
   const { module } = useParams();
   const prefix = `${module?.toUpperCase()}`;
 
@@ -9,7 +9,7 @@ export const citizenInboxGenericConfig = (tenantId, individualId) => {
     headerLabel: `${prefix}_INBOX_HEADER`,
     type: "inbox",
     apiDetails: {
-      serviceName: `/public-service/v1/application?tenantId=${tenantId}&userId=${individualId}&status=ACTIVE`,
+      serviceName: `/public-service/v1/application?tenantId=${tenantId}&userId=${individualId}&status=ACTIVE&createdBy=${uuid}`,
       requestBody: {
         inbox: {
           processSearchCriteria: {
