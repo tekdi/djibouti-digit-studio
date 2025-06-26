@@ -153,10 +153,17 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
   }
 
   const userObject = Digit.SessionStorage.get("User");
+  const priorityRoles = [
+    "BPA_ARCHITECT",
+    "BPA_HOD",
+    "BPA_AGENTS",
+    "BPA_SDECC_HOD",
+    "BPA_SDECC_AGENTS",
+    "BPA_SDECC_COMM"
+  ];
 
   const roles = apiDetails?.requestBody?.RequestInfo?.userInfo?.roles || userObject?.info?.roles;
-  const roleLabel = roles?.some((role) => role?.code === "BPA_ARCHITECT") ? "BPA_ARCHITECT" : roles && roles[0]?.code;
-
+  const roleLabel = roles?.find((role) => priorityRoles.includes(role?.code))?.code || roles?.[0]?.code;
   const closeToast = () => {
     setTimeout(() => {
       setShowToast(null);
