@@ -15,9 +15,10 @@ const ModulePageComponent = () => {
   const queryStrings = Digit.Hooks.useQueryParams();
   const userDetails = Digit.UserService.getUser();
   const roles = userDetails?.info?.roles;
-  const isCitizen = roles?.some((role) => role.code === "CITIZEN");
-  const indId = individualDetails?.Individual?.[0]?.individualId
-  const uuid = userDetails?.info?.uuid
+  const isCitizen = roles?.length === 1 && roles[0].code === "CITIZEN";
+  const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const indId = individualDetails?.Individual?.[0]?.individualId;
+  const uuid = userDetails?.info?.uuid;
 
   //To fetch the service details configured for the tenant
   const request = {
@@ -31,7 +32,7 @@ const ModulePageComponent = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
-  const module = data?.Services?.[0]?.module
+  const module = data?.Services?.[0]?.module;
 
   //To fetch the service configurations of the services
   const mdmsRequestCriteria = {
@@ -44,15 +45,17 @@ const ModulePageComponent = () => {
     },
   };
 
-  const {data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
+  const { data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
 
-  const businessServices = servicesData?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
-    code: ob?.businessService,
-    name: ob?.businessService,
-    parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
-  }));
+  const businessServices = servicesData
+    ?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
+    ?.map((ob) => ({
+      code: ob?.businessService,
+      name: ob?.businessService,
+      parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
+    }));
 
-  const businessServicesList = businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || []
+  const businessServicesList = businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [];
 
   const { data: inboxData, isLoading: isInboxLoading } = Digit.Hooks.useCustomAPIHook({
     url: "/inbox/v2/_search",
@@ -100,11 +103,11 @@ const ModulePageComponent = () => {
 
         const services = response?.data?.Services || [];
         setServicesData(services);
-        setServicesDataLoading(false)
+        setServicesDataLoading(false);
       } catch (error) {
         console.error("Error fetching business services:", error);
         setServicesData([]);
-        setServicesDataLoading(false)
+        setServicesDataLoading(false);
       }
     };
 
@@ -113,30 +116,27 @@ const ModulePageComponent = () => {
     if (!isCitizen) return;
     try {
       const response = await axios.post(`/health-individual/v1/_search?tenantId=${tenantId}&limit=1&offset=0`, {
-        "RequestInfo": {
+        RequestInfo: {
           apiId: "Rainmaker",
           authToken: userDetails?.access_token,
           userInfo: userDetails?.info,
           msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
         },
-        "Individual": {
-          "userUuid": [
-            uuid
-          ]
-        }
+        Individual: {
+          userUuid: [uuid],
+        },
       });
-      setIndividualDetails(response?.data)
+      setIndividualDetails(response?.data);
     } catch (error) {
       console.error("Error fetching individual details:", error);
     }
-  }, [])
+  }, []);
 
   //  util to transform raw data into UI-friendly structure
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
   const hasNoData = detailsConfig.length === 0 && !isLoading;
 
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
@@ -167,13 +167,19 @@ const ModulePageComponent = () => {
         {detailsConfig?.map((product, index) => (
           <React.Fragment key={index}>
             {/* BPA_PCO Card */}
-            {queryStrings?.selectedPath === "Apply" && isArchitect && (
+            {queryStrings?.selectedPath === "Apply" && (isArchitect || isCitizen) && (
               <Card key={`${index}-bpa`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
                 </div>
                 <ul className="list-disc space-y-2 pt-2">
                   {product?.businessServices
+                    ?.filter((bs) => {
+                      if (isCitizen) {
+                        return bs.businessService === "BPA_PCO_SIMPLE";
+                      }
+                      return true; // show all for non-citizens
+                    })
                     ?.sort((a, b) => a.displayOrder - b.displayOrder)
                     .map((bs) => (
                       <li style={{ marginBottom: "15px" }} key={bs?.businessService}>

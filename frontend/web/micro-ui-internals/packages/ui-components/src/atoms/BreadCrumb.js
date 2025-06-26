@@ -67,6 +67,7 @@ const BreadCrumb = (props) => {
 
   const handleConfirmBack = () => {
     localStorage.removeItem("formData");
+    localStorage.removeItem("currentStep");
     setShowBackConfirmation(false);
     window.history.back();
   };

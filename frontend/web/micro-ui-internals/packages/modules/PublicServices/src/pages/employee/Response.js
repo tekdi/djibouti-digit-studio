@@ -103,16 +103,18 @@ const Response = () => {
         whichSvg={`${isResponseSuccess ? "tick" : null}`}
         applicationNumber={state?.applicationNumber}
       />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
-          <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-          {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
-        </LinkLabel>
-        <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
-          <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-          {t("CS_COMMON_DOWNLOAD_RECEIPT")}
-        </LinkLabel>
-      </div>
+      {isResponseSuccess && (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
+            <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
+            {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
+          </LinkLabel>
+          <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+            <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
+            {t("CS_COMMON_DOWNLOAD_RECEIPT")}
+          </LinkLabel>
+        </div>
+      )}
       <ActionBar>
         <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
           <SubmitBar style={{ borderRadius: "10px" }} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
