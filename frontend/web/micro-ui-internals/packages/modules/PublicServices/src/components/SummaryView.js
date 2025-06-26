@@ -154,11 +154,11 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
 
   return (
     <Card style={{ borderRadius: "1rem" }}>
-      <CardHeader style={{ marginLeft: "12px" }}>{t(`${serviceCode}_SUMMARY`)}</CardHeader>
+      <CardHeader style={{ marginLeft: "12px" }}>{t(`BPA_BPA_PCO_SUMMARY`)}</CardHeader>
       <div style={{ padding: "16px" }}>
-        {renderSection(formData.applicantDetails, `${serviceCode}_APPLICANTDETAILS`)}
-        {renderSection(formData.landandProjectDesignDetails, `${serviceCode}_LANDANDPROJECTDESIGNDETAILS`)}
-        {renderSection(formData.designOfficeDetailing, `${serviceCode}_DESIGNOFFICEDETAILING`)}
+        {renderSection(formData.applicantDetails, "BPA_BPA_PCO_APPLICANTDETAILS")}
+        {renderSection(formData.landandProjectDesignDetails, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
+        {renderSection(formData.designOfficeDetailing, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
         {renderDocuments(formData.uploadedDocs)}
       </div>
       <div className="flex justify-end mt-8">

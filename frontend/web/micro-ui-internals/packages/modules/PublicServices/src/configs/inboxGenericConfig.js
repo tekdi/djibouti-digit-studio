@@ -154,7 +154,7 @@ export const InboxConfig = (businessServices) => {
                 name: "businessService",
                 optionsKey: "name",
                 options: [],
-                defaultValue: [service?.toUpperCase()],
+                defaultValue: ["BPA_PCO"],
               },
             },
             // {
