@@ -8,8 +8,6 @@ import { getParallelWorkflow, transformResponseforModulePage } from "../../../ut
 const ModulePageComponent = () => {
   const { t } = useTranslation();
   const [individualDetails, setIndividualDetails] = useState();
-  const [servicesData, setServicesData] = useState([]);
-  const [servicesDataLoading, setServicesDataLoading] = useState(true);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -30,9 +28,9 @@ const ModulePageComponent = () => {
     },
     method: "GET",
   };
-  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
+  const { isLoading:servicesDataLoading, data:servicesData } = Digit.Hooks.useCustomAPIHook(request);
 
-  const module = data?.Services?.[0]?.module;
+  const module = servicesData?.Services?.[0]?.module
 
   //To fetch the service configurations of the services
   const mdmsRequestCriteria = {
@@ -47,13 +45,11 @@ const ModulePageComponent = () => {
 
   const { data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
 
-  const businessServices = servicesData
-    ?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
-    ?.map((ob) => ({
-      code: ob?.businessService,
-      name: ob?.businessService,
-      parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
-    }));
+  const businessServices = servicesData?.Services?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
+    code: ob?.businessService,
+    name: ob?.businessService,
+    parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
+  }));
 
   const businessServicesList = businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [];
 
@@ -71,13 +67,13 @@ const ModulePageComponent = () => {
         },
         moduleSearchCriteria: {
           businessService: businessServicesList,
-          module: data?.Services?.[0]?.module,
+          module: module,
         },
         tenantId: tenantId,
       },
     },
     config: {
-      enabled: !isCitizen && businessServicesList?.length > 0,
+      enabled: !isCitizen && businessServicesList?.length > 0
     },
   });
 
@@ -91,28 +87,6 @@ const ModulePageComponent = () => {
   });
 
   useEffect(async () => {
-    const fetchBusinessServices = async () => {
-      try {
-        const response = await axios.get("/public-service/v1/service", {
-          params: { tenantId: tenantId },
-          headers: {
-            "X-Tenant-Id": tenantId,
-            "auth-token": Digit.UserService.getUser()?.access_token,
-          },
-        });
-
-        const services = response?.data?.Services || [];
-        setServicesData(services);
-        setServicesDataLoading(false);
-      } catch (error) {
-        console.error("Error fetching business services:", error);
-        setServicesData([]);
-        setServicesDataLoading(false);
-      }
-    };
-
-    fetchBusinessServices();
-
     if (!isCitizen) return;
     try {
       const response = await axios.post(`/health-individual/v1/_search?tenantId=${tenantId}&limit=1&offset=0`, {
@@ -133,14 +107,14 @@ const ModulePageComponent = () => {
   }, []);
 
   //  util to transform raw data into UI-friendly structure
-  let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
-  const hasNoData = detailsConfig.length === 0 && !isLoading;
+  let detailsConfig = servicesData ? transformResponseforModulePage(servicesData?.Services) : [];
+  const hasNoData = detailsConfig.length === 0 && !servicesDataLoading;
 
   const userType = userDetails?.info?.type?.toLowerCase();
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
-  if (isLoading || (!isCitizen && (isInboxLoading || servicesDataLoading)) || (isCitizen && isCitizenAppsLoading)) {
+  if (servicesDataLoading || (!isCitizen && isInboxLoading) || (isCitizen && isCitizenAppsLoading)) {
     return <Loader />;
   }
 
