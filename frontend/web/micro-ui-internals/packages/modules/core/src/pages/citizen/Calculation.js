@@ -83,7 +83,7 @@ const Calculation = () => {
   }, [data]);
 
   const calReq = {
-    url: `/calculator-service/v1/${service.toUpperCase()}/estimate_calculate`,
+    url: `/calculator-service/v1/${service?.toUpperCase()}/estimate_calculate`,
     params: {},
     // body: {'Application':[payload]},
     method: "POST",

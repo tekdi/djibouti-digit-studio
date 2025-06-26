@@ -1,4 +1,4 @@
-import { Loader } from "@egovernments/digit-ui-components";
+import Loader from "../../../ui-components/src/atoms/Loader";
 import React, { useEffect, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";

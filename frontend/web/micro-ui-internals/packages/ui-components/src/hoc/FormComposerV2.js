@@ -450,7 +450,7 @@ export const FormComposer = (props) => {
                       props.onPrevious();
                     }}
                   >
-                      {t(`${module.toUpperCase()}_${service.toUpperCase() }_PREVIOUS`)}
+                      {t(`${module?.toUpperCase()}_${service?.toUpperCase() }_PREVIOUS`)}
                   </button>
                 )}
 

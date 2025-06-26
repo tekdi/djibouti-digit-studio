@@ -249,16 +249,16 @@ export const UICustomizations = {
       const { module, service } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
       // data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
-      data.body.inbox.moduleSearchCriteria.businessService = service.toUpperCase();
+      data.body.inbox.moduleSearchCriteria.businessService = service?.toUpperCase();
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
       // data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
-      data.body.inbox.processSearchCriteria.businessService = [service.toUpperCase()];
+      data.body.inbox.processSearchCriteria.businessService = [service?.toUpperCase()];
       data.body.inbox.processSearchCriteria.tenantId = tenantId;
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "GET";
       data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `${module.toUpperCase()}_RECENT` ? "created_at" : "ASC";
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `${module?.toUpperCase()}_RECENT` ? "created_at" : "ASC";
       data.params = { applicationNumber: data?.state?.searchForm?.applicationNumber, sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder };
 
       return data;

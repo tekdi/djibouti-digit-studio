@@ -9,7 +9,7 @@ import HeaderComponent from "../atoms/HeaderComponent";
 import MultiUploadWrapper from "../molecules/MultiUploadWrapper";
 import TextInput from "../atoms/TextInput";
 import { getRegex } from "../utils/uploadFileComposerUtils";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import Loader from "../atoms/Loader";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { Button, CustomSVG } from "../atoms";
 

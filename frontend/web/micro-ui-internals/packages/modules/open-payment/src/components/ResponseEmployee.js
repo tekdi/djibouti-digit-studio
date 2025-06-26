@@ -104,7 +104,7 @@ const ResponseEmployee = () => {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-          {t(`${service.toUpperCase()}_VIEW_APPLICATION`)}
+          {t(`${service?.toUpperCase()}_VIEW_APPLICATION`)}
         </LinkLabel>
         <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
           <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
@@ -126,7 +126,7 @@ const ResponseEmployee = () => {
               fontWeight: "bold",
             }}
           >
-            {t(`${businessService.toUpperCase()}_GO_TO_HOME`)}
+            {t(`${businessService?.toUpperCase()}_GO_TO_HOME`)}
           </button>
         </Link>
       </ActionBar>
