@@ -30,22 +30,35 @@ const CloseBtn = (props) => {
 
 // Payload builder for submitting workflow actions
 const updatePayload = (applicationDetails, data, action, businessService) => {
+  const assigneeUser = {
+    uuid: data?.assignee?.user?.uuid || null,
+    userName: data?.assignee?.user?.userName || null,
+    name: data?.assignee?.user?.name || null,
+    mobileNumber: data?.assignee?.user?.mobileNumber || null,
+    emailId: data?.assignee?.user?.emailId || null,
+    type: data?.assignee?.user?.type || null,
+    roles: data?.assignee?.user?.roles || null,
+    tenantId: data?.assignee?.user?.tenantId || null,
+    active: data?.assignee?.user?.active || null,
+    permanentCity: data?.assignee?.user?.permanentCity || null,
+    locale: data?.assignee?.user?.locale || null,
+  }
   const workflow = {
     comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
-          .flat()
-          .map((document) => {
-            return {
-              documentType: action?.action + " DOC",
-              fileName: document?.[1]?.file?.name,
-              fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-              documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-              tenantId: document?.[1]?.fileStoreId?.tenantId,
-            };
-          })
+        .flat()
+        .map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        })
       : [],
-    assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+    assignees: assigneeUser ? [assigneeUser] : [],
     action: action.action,
     businessService: businessService,
   };
@@ -64,7 +77,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
   const { action, tenantId, t, closeModal, submitAction, businessService, moduleCode } = props;
 
   // Enable assignee dropdown based on config
-  const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService, action);
+  // const enableAssignee = Digit?.Customizations?.["commonUiConfig"]?.enableHrmsSearch(businessService, action);
 
   const [config, setConfig] = useState(null);
   const [modalSubmit, setModalSubmit] = useState(true);
@@ -75,7 +88,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     tenantId,
     null,
     null,
-    { enabled: action?.assigneeRoles?.length > 0 && enableAssignee }
+    { enabled: action?.assigneeRoles?.length > 0 }
   );
 
   assigneeOptions = assigneeOptions?.Employees;
