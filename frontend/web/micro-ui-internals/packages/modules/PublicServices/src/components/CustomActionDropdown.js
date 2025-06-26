@@ -11,7 +11,7 @@ const CustomActionDropdown = ({
 }) => {
   const { t } = useTranslation();
 
-  const title = t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`);
+  const title = t(`${module?.toUpperCase()}_${service?.toUpperCase()}_ACTIONS`);
 
   return (
     <div style={{ position: 'relative', padding: '15px' }}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
+import { useParams } from 'react-router-dom/cjs/react-router-dom';
 
 const Calculation = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ const Calculation = () => {
   const isHOD = userDetails?.info?.roles?.some(
     (role) => role.code.includes("HOD")
   );
+  const { service } = useParams();
   let styleCondition = {};
   if (!isHOD && queryStrings?.state !== checklistStatus?.split(".")[1]) {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
@@ -81,7 +83,7 @@ const Calculation = () => {
   }, [data]);
 
   const calReq = {
-    url: "/calculator-service/v1/BPA_PCO/estimate_calculate",
+    url: `/calculator-service/v1/${service?.toUpperCase()}/estimate_calculate`,
     params: {},
     // body: {'Application':[payload]},
     method: "POST",

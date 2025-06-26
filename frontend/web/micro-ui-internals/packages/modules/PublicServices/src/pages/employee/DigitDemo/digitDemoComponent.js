@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaUtil";
 import { transformToApplicationPayload } from "../../../utils";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
 
 // Add styles for disabled inputs

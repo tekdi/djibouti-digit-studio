@@ -67,7 +67,7 @@ const Home = ({
   );
 
   const classname = Digit.Hooks.useRouteSubscription(pathname);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { path } = useRouteMatch();
   const history = useHistory();
   const handleClickOnWhatsApp = (obj) => {
@@ -219,16 +219,28 @@ const Home = ({
           </ErrorBoundary>
         </Switch>
       </div>
-      {/* <div className="citizen-home-footer" style={window.location.href.includes("citizen/obps") ? { zIndex: "-1" } : {}}>
+      {!(window.location.href.includes("login")) &&
+        <div className="employee-home-footer">
         <img
           alt="Powered by DIGIT"
-          src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
-          style={{ height: "1.2em", cursor: "pointer" }}
+          src={
+            i18n.language === "en_IN"
+              ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")
+              : "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"
+          }
+          style={{ height: "1.1em", cursor: "pointer" }}
           onClick={() => {
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
+            }
+          }}
+          tabIndex={0}
+          role="link"
         />
-      </div> */}
+        </div> }
     </div>
   );
 };

@@ -162,7 +162,6 @@ export const UICustomizations = {
 
   InboxGenericConfig: {
     preProcess: (data, additionalDetails) => {
-      console.log(data, "data");
       const { module } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -186,7 +185,7 @@ export const UICustomizations = {
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "DESC" : "ASC";
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `${module.toUpperCase()}_RECENT` ? "DESC" : "ASC";
       if (data?.state?.filterForm?.state) {
         const statusKeys = data?.state?.filterForm?.state;
         data.body.inbox.moduleSearchCriteria.status = [];
@@ -247,19 +246,19 @@ export const UICustomizations = {
 
   citizenInboxGenericConfig: {
     preProcess: (data, additionalDetails) => {
-      const { module } = useParams();
+      const { module, service } = useParams();
       const tenantId = Digit.ULBService.getCurrentTenantId();
       // data.body.inbox.moduleSearchCriteria.businessService = `${data?.state?.filterForm?.businessService?.[0]?.code}`;
-      data.body.inbox.moduleSearchCriteria.businessService = "BPA_PCO";
+      data.body.inbox.moduleSearchCriteria.businessService = service?.toUpperCase();
       data.body.inbox.moduleSearchCriteria.module = `${module}`;
       // data.body.inbox.processSearchCriteria.businessService = [`${data?.state?.filterForm?.businessService?.[0]?.code}`];
-      data.body.inbox.processSearchCriteria.businessService = ["BPA_PCO"];
+      data.body.inbox.processSearchCriteria.businessService = [service?.toUpperCase()];
       data.body.inbox.processSearchCriteria.tenantId = tenantId;
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "GET";
       data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === "BPA_RECENT" ? "created_at" : "ASC";
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `${module?.toUpperCase()}_RECENT` ? "created_at" : "ASC";
       data.params = { applicationNumber: data?.state?.searchForm?.applicationNumber, sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder };
 
       return data;
