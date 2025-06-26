@@ -232,6 +232,13 @@ const Home = ({
           onClick={() => {
             window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
+            }
+          }}
+          tabIndex={0}
+          role="link"
         />
         </div> }
     </div>
