@@ -10,11 +10,11 @@ const configModal = (
     const prefix = `${moduleCode.toUpperCase()}_${businessService.toUpperCase()}`;
     const currentModule = `${moduleCode.toLowerCase()}.${businessService.toLowerCase()}`;
     const docData = documentConfig?.find((ob) => ob?.module.toLowerCase() === currentModule)?.actions;
-  
+
     // If specific action not found, fallback to DEFAULT
-    let docConfig = docData?.find((item) => item?.action === actionString) || 
+    let docConfig = docData?.find((item) => item?.action === actionString) ||
                     docData?.find((item) => item?.action === "DEFAULT") || {};
-  
+
     // Fetch whether field is mandatory
     const fetchIsMandatory = (field) => {
       if (!docConfig || Object.keys(docConfig).length === 0) {
@@ -22,7 +22,7 @@ const configModal = (
       }
       return !!docConfig?.[field]?.isMandatory;
     };
-  
+
     // Fetch whether to show field
     const fetchIsShow = (field) => {
       if (!docConfig || Object.keys(docConfig).length === 0) {
@@ -50,7 +50,7 @@ const configModal = (
         flow: "WORKFLOW"
       }
     }));
-  
+
     // Final modal configuration return
     return {
       label: {
@@ -85,7 +85,7 @@ const configModal = (
                 name: "assignee",
                 optionsKey: "nameOfEmp",
                 options: approvers,
-                hideInForm: !fetchIsShow("assignee"),
+                hideInForm: !fetchIsShow("assignee") || actionString === "ADD_QUERY",
                 "optionsCustomStyle": {
                   "top": "2.3rem"
                 }
@@ -112,6 +112,5 @@ const configModal = (
       ]
     };
   };
-  
+
   export default configModal;
-  

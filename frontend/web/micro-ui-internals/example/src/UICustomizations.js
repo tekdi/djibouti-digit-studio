@@ -32,9 +32,8 @@ function cleanObject(obj) {
 }
 
 const businessServiceMap = {
- 
   "muster roll": "MR",
-  "estimate":"ESTIMATE"
+  "estimate": "ESTIMATE"
 };
 
 const inboxModuleNameMap = {
@@ -44,7 +43,23 @@ const inboxModuleNameMap = {
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
+
     if (businessService === businessServiceMap.estimate) {
+
+      const assigneeUser = {
+        uuid: data?.assignee?.user?.uuid || null,
+        userName: data?.assignee?.user?.userName || null,
+        name: data?.assignee?.user?.name || null,
+        mobileNumber: data?.assignee?.user?.mobileNumber || null,
+        emailId: data?.assignee?.user?.emailId || null,
+        type: data?.assignee?.user?.type || null,
+        roles: data?.assignee?.user?.roles || null,
+        tenantId: data?.assignee?.user?.tenantId || null,
+        active: data?.assignee?.user?.active || null,
+        permanentCity: data?.assignee?.user?.permanentCity || null,
+        locale: data?.assignee?.user?.locale || null,
+      }
+
       const workflow = {
         comment: data.comments,
         documents: data?.documents?.map((document) => {
@@ -56,7 +71,7 @@ export const UICustomizations = {
             tenantId: document?.[1]?.fileStoreId?.tenantId,
           };
         }),
-        assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
+        assignees: assigneeUser ? [assigneeUser] : [],
         action: action.action,
       };
       //filtering out the data
@@ -281,9 +296,8 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${
-                window.contextPath
-              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+              to={`/${window.contextPath
+                }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
             >
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
             </Link>
@@ -465,7 +479,7 @@ export const UICustomizations = {
   //     const searchParams = new URLSearchParams(location.search);
   //     const paths = {
   //       "SearchProjectConfig": {
-  //         basePath: "Projects", 
+  //         basePath: "Projects",
   //         pathConfig: {
   //           // id: "id[0]",
   //           tenantId: "tenantId",
@@ -479,7 +493,7 @@ export const UICustomizations = {
   //         textConfig :["id", "tenantId", "name", "projectNumber", "projectSubType" , "projectType"]
   //       },
   //       "SearchProductConfig": {
-  //         basePath: "Product", 
+  //         basePath: "Product",
   //         pathConfig: {
   //           id: "id[0]",
   //         },
@@ -490,7 +504,7 @@ export const UICustomizations = {
   //         textConfig :["id", "manufacturer", "name", "type"]
   //       },
   //       "SearchHouseholdConfig": {
-  //         basePath: "Household", 
+  //         basePath: "Household",
   //         pathConfig: {
   //           id: "id[0]",
   //           clientReferenceId: "clientReferenceId[0]",
@@ -502,7 +516,7 @@ export const UICustomizations = {
   //         textConfig :["boundaryCode", "clientReferenceId", "id"]
   //       },
   //       "SearchProductVariantConfig": {
-  //         basePath: "ProductVariant", 
+  //         basePath: "ProductVariant",
   //         pathConfig: {
   //           id: "id[0]",
   //         },
@@ -513,7 +527,7 @@ export const UICustomizations = {
   //         textConfig :["productId", "sku", "variation"]
   //       },
   //       "SearchProjectBeneficiaryConfig": {
-  //         basePath: "ProjectBeneficiary", 
+  //         basePath: "ProjectBeneficiary",
   //         pathConfig: {
   //           id: "id[0]",
   //           clientReferenceId: "clientReferenceId[0]",
@@ -527,7 +541,7 @@ export const UICustomizations = {
   //         textConfig :["beneficiaryId", "projectId"]
   //       },
   //       "SearchProjectStaffConfig": {
-  //         basePath: "ProjectStaff", 
+  //         basePath: "ProjectStaff",
   //         pathConfig: {
   //           id: "id[0]",
   //         },
@@ -540,7 +554,7 @@ export const UICustomizations = {
   //         textConfig :["projectId", "userId"]
   //       },
   //       "SearchProjectResourceConfig": {
-  //         basePath: "ProjectResource", 
+  //         basePath: "ProjectResource",
   //         pathConfig: {
   //           id: "id[0]"
   //         },
@@ -551,7 +565,7 @@ export const UICustomizations = {
   //         textConfig : []
   //       },
   //       "SearchProjectTaskConfig": {
-  //         basePath: "Task", 
+  //         basePath: "Task",
   //         pathConfig: {
   //           id: "id[0]",
   //           clientReferenceId: "clientReferenceId[0]",
@@ -567,7 +581,7 @@ export const UICustomizations = {
   //         textConfig :["projectId","localityCode", "projectBeneficiaryId", "status"]
   //       },
   //       "SearchFacilityConfig": {
-  //         basePath: "Facility", 
+  //         basePath: "Facility",
   //         pathConfig: {
   //           id: "id[0]"
   //         },
@@ -578,7 +592,7 @@ export const UICustomizations = {
   //         textConfig :["faciltyUsage","localityCode", "storageCapacity","id"]
   //       },
   //       "SearchProjectFacilityConfig": {
-  //         basePath: "ProjectFacility", 
+  //         basePath: "ProjectFacility",
   //         pathConfig: {
   //           id: "id[0]",
   //           projectId: "projectId[0]",
@@ -591,9 +605,9 @@ export const UICustomizations = {
   //         textConfig :[]
   //       },
   //     }
-     
+
   //     const id = searchParams.get("config")|| masterName;
-      
+
   //     if(!paths||!paths?.[id]){
   //       return data;
   //     }
@@ -628,9 +642,9 @@ export const UICustomizations = {
   //         }
   //         return acc;
   //       }, {});
-      
+
   //     if(paths[id].basePath == "Projects"){
-        
+
   //       data.body[paths[id].basePath] = [{ ...Product}];
   //     }
   //     else data.body[paths[id].basePath] = { ...Product};
@@ -642,7 +656,7 @@ export const UICustomizations = {
   //     //first we can identify which column it belongs to then we can return relevant result
   //     switch (key) {
   //       case "ID":
-          
+
   //         return (
   //           <span className="link">
   //             <Link
@@ -761,8 +775,8 @@ export const UICustomizations = {
       if (type === "date") {
         return data[keys.start] && data[keys.end]
           ? () =>
-              new Date(data[keys.start]).getTime() <=
-              new Date(data[keys.end]).getTime()
+            new Date(data[keys.start]).getTime() <=
+            new Date(data[keys.end]).getTime()
           : true;
       }
     },
@@ -780,18 +794,18 @@ export const UICustomizations = {
       console.log(row, "row");
       const url = `/${window.contextPath}/employee/microplan/view-main?tenantId=${row?.tenantId}&uniqueIdentifier=${row?.uniqueIdentifier}`;
       window.location.href = url;
-    }, 
+    },
   },
   SampleInboxConfig: {
-    getSearchRequest: ( prop) => {
+    getSearchRequest: (prop) => {
       const tenantId = Digit.ULBService.getCurrentTenantId();
       return {
         url: `/plan-service/config/_search`,
-        params: {  },
+        params: {},
         body: {
           CampaignDetails: {
             "tenantId": tenantId,
-        }
+          }
         },
         changeQueryName: `boundarySearchForPlanFacility`,
         config: {
