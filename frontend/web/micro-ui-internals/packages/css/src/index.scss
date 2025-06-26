@@ -1362,6 +1362,15 @@ button.submit-bar {
   font-size: 1rem;
   border: .094rem solid #d4d4d4;
   color: #363636;
+  border-radius: 8px;
+}
+
+.disabled {
+  background-color: #f0f0f0 !important;
+  color: #888 !important;
+  cursor: not-allowed !important;
+  border: 1px solid #ddd !important;
+  opacity: 0.7 !important;
 }
 
 .center-container {

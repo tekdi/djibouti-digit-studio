@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom/cjs/react-router-dom';
 
 const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = "" }) => {
   const [name, setName] = useState("");
@@ -28,14 +29,31 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
     }
   };
 
+  const handleBackClick = () => {
+    window.history.back();
+  };
+
   return (
+    <div>
+      <div className="digit-bread-crumb-back-icon" onClick={handleBackClick}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clipPath="url(#clip0_41_3825)">
+            <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#0B0C0C" />
+          </g>
+          <defs>
+            <clipPath id="clip0_41_3825">
+              <rect width="24" height="24" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
     <div className="center-container">
       <div className="responsive-box">
         <div className="digit-card-component">
           <form onSubmit={handleSubmit}>
             <div>
               <header className="form-title">{t("REGISTER_AS_CITIZEN_USER")}</header>
-              <h2 className="digit-card-label ">{t(`${module?.toUpperCase()}_${service?.toUpperCase()}_LEGALNAME`)}</h2>
+              <h2 className="digit-card-label ">{t(`BPA_BPA_PCO_LEGALNAME`)}</h2>
               <input
                 type="text"
                 name="name"
@@ -49,11 +67,11 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
             <div>
               <h2 className="digit-card-label ">{t("CORE_COMMON_MOBILE_NUMBER")}</h2>
               <input
-                className="input-box"
+                className="input-box disabled"
                 type="text"
                 name="mobileNumber"
                 value={mobileNumber}
-
+                disabled
               />
             </div>
             {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
@@ -78,6 +96,7 @@ const SelectName = ({ onSelect, t, isDisabled, mobileNumber: propMobileNumber = 
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 };
