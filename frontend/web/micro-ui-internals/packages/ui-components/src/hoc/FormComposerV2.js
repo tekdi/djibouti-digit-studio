@@ -16,7 +16,6 @@ import MultiChildFormWrapper from "./MultiChildFormWrapper";
 
 // import Fields from "./Fields";    //This is a field selector pickup from formcomposer
 import FieldController from "./FieldController";
-import { useParams } from "react-router-dom/cjs/react-router-dom";
 
 const wrapperStyles = {
   display: "flex",
@@ -63,7 +62,6 @@ export const FormComposer = (props) => {
     defaultValues: props.defaultValues,
   });
   const { t } = useTranslation();
-  const { module, service } = useParams();
   const formData = watch();
   const selectedFormCategory = props?.currentFormCategory;
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -450,7 +448,7 @@ export const FormComposer = (props) => {
                       props.onPrevious();
                     }}
                   >
-                      {t(`${module?.toUpperCase()}_${service?.toUpperCase() }_PREVIOUS`)}
+                      {t('BPA_BPA_PCO_PREVIOUS')}
                   </button>
                 )}
 
