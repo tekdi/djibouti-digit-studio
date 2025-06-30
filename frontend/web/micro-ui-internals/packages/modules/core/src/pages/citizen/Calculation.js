@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
+import TextInput from '../../../../../ui-components/src/atoms/TextInput';
+import Loader from '../../../../../ui-components/src/atoms/Loader';
 
 const Calculation = () => {
   const { t } = useTranslation();
@@ -59,7 +61,10 @@ const Calculation = () => {
     { name: 'CALCULATION_PLOMBERIE', percentage: 3, amount: 0, id:"CALCULATION_PLOMBERIE" },
     { name: 'CALCULATION_ASSAINISSEMENT', percentage: 5, amount: 0, id:"CALCULATION_ASSAINISSEMENT" }
   ]);
-
+  const [revisedTotalTaxWithService, setRevisedTotalTaxWithService] = useState(calculatedFees?.totalTaxWithService?.toLocaleString());
+  const [taxChangeReason, setTaxChangeReason] = useState('');
+  const [onSubmitLoading, setOnSubmitLoading] = useState(false);
+  const isTotalTaxEditable = queryStrings?.state === "AWAITING_ON_COMMISSIONER";
 
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
@@ -191,15 +196,22 @@ const Calculation = () => {
   };
 
   const calculationSubmit = async () => {
-    if (!calculationResponse) return;
-
+    setOnSubmitLoading(true)
     // Create a deep copy of calculationResponse to avoid mutating the original
-    const modifiedCalculationResponse = JSON.parse(JSON.stringify(calculationResponse));
+    const modifiedCalculationResponse = JSON.parse(JSON.stringify(isTotalTaxEditable ? response : calculationResponse));
 
     // Modify the workflow.action in the copys
     if (modifiedCalculationResponse?.workflow) {
       modifiedCalculationResponse.workflow.action = "";
     }
+
+    if(isTotalTaxEditable){
+      if(!modifiedCalculationResponse.additionalDetails.totalTaxWithServiceChargeWithoutConcession){
+        modifiedCalculationResponse.additionalDetails.totalTaxWithServiceChargeWithoutConcession = modifiedCalculationResponse.additionalDetails.costEstimation.totalTaxWithServiceCharge
+      }
+    modifiedCalculationResponse.additionalDetails.taxChangeReason = taxChangeReason;
+    modifiedCalculationResponse.additionalDetails.costEstimation.totalTaxWithServiceCharge = revisedTotalTaxWithService;
+  }
 
     await mutationPut.mutate(
       {
@@ -219,10 +231,12 @@ const Calculation = () => {
           setCalculationResponse(res?.Application)
           setResponse(res?.Application || {});
           setIsSaveBtnDisable(true)
+          setOnSubmitLoading(false)
         },
         onError: () => {
           console.log("Error occured");
           setIsSaveBtnDisable(false)
+          setOnSubmitLoading(false)
         },
       }
     )
@@ -320,16 +334,21 @@ const Calculation = () => {
       cos: (calculationResponse?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || response?.serviceDetails?.landandProjectDesignDetails?.[0].projectedCos || 0)
     })
 
+    setTaxChangeReason(response?.additionalDetails?.taxChangeReason)
+
   }, [calculationResponse, response])
+
+  useEffect(() => {
+    setRevisedTotalTaxWithService(calculatedFees?.totalTaxWithService);
+  }, [calculatedFees?.totalTaxWithService]);
 
 
   return (
-    <div className="calculation-container" style={styleCondition}
-    >
+    <div className="calculation-container">
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
-        <div className="fee-rates">
+        <div className="fee-rates" style={styleCondition}>
           <div className="fee-rate-card">
             <h3 className='fee-rate-card-title'>{t('CALCULATION_COST_RESIDENTIAL')}</h3>
             <p className='fee-rate-card-value disabled'>FDj {feeRates?.residentialCost?.toLocaleString()}</p>
@@ -356,7 +375,7 @@ const Calculation = () => {
           </div>
         </div>
 
-        <div className="floor-table">
+        <div className="floor-table" style={styleCondition}>
           <div className="table-wrapper">
             <table>
               <thead>
@@ -430,7 +449,7 @@ const Calculation = () => {
           </button>
         </div>
 
-        <div className="calculations-section">
+        <div className="calculations-section" style={styleCondition}>
           <div className="plot-info">
             <h3 className='plot-info-title'>{t('CALCULATION_COEFFICIENTS_SOL')}</h3>
             <div className="info-content">
@@ -454,10 +473,23 @@ const Calculation = () => {
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES')}</span>
                 <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTax?.toLocaleString()} FDj</span>
               </div>
-              <div className="fee-rate-card">
+              {isTotalTaxEditable ?
+                <React.Fragment>
+                  <div className="fee-rate-card">
+                    <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
+                    <input className='fee-rate-card-value editable' value={revisedTotalTaxWithService} onChange={(e)=>setRevisedTotalTaxWithService(e.target.value)}/>
+                  </div>
+                  {(revisedTotalTaxWithService != response?.additionalDetails?.costEstimation?.totalTaxWithServiceCharge || taxChangeReason !== '') && <div className="fee-rate-card">
+                    <span className='fee-rate-card-title'>{t('FEE_ADJUSTMENT_JUSTIFICATION')}<span className="star">*</span></span>
+                    <TextInput className='fee-rate-card-value editable no-padding text-left reason-input-wrapper' placeholder='ENTER_FEE_CHANGE_REASON' required onChange={(e)=>setTaxChangeReason(e.target.value)} value={taxChangeReason}/>
+                  </div>}
+                </React.Fragment>
+             :
+             <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
                 <span className='fee-rate-card-value disabled'>{calculatedFees?.totalTaxWithService?.toLocaleString()} FDj</span>
               </div>
+              }
               <div className="fee-rate-card">
                 <span className='fee-rate-card-title'>{t('CALCULATION_PROJECT_TOTAL_VALUE')}</span>
                 <span className='fee-rate-card-value disabled'>{calculatedFees?.totalProjectValue?.toLocaleString()} FDj</span>
@@ -466,7 +498,7 @@ const Calculation = () => {
           </div>
         </div>
 
-        <div className="cost-breakdown">
+        <div className="cost-breakdown" style={styleCondition}>
           <div className="table-wrapper cost-table-wrapper">
             <table>
               <thead>
@@ -493,308 +525,17 @@ const Calculation = () => {
             </table>
           </div>
 
-          <button className={`action-button ${isSaveBtnDisable ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
+        </div>
+          <button className={`action-button ${(isSaveBtnDisable && !isTotalTaxEditable) ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
             {t('CALCULATION_SAVE')}
           </button>
-        </div>
+
+        {onSubmitLoading && (
+          <div className='loader'>
+            <Loader />
+          </div>
+        )}
       </div>
-
-      <style jsx>{`
-        .calculation-container {
-          padding: 24px;
-          border-radius: 15px;
-          background-color: #fff;
-          width: 100%;
-          box-shadow: 1px 5px 7px 2px #adadad;
-        }
-
-        .calculation-wrapper {
-          max-width: 1000px;
-        }
-
-        .page-title {
-          font-size: 40px;
-          font-weight: 700;
-          margin: 0;
-        }
-
-        .fee-rates {
-          margin-bottom: 24px;
-          margin-top: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-
-        .fee-rate-card {
-          display: flex;
-          padding: 15px;
-          border-radius: 4px;
-          align-items: center;
-          padding:0
-        }
-
-        .fee-rate-card-title {
-          font-size: 16px;
-          font-weight: 400;
-          width: 50%;
-          margin:0;
-        }
-
-        .fee-rate-card-value {
-          font-size: 16px;
-          font-weight: 400;
-          background: #EEEEEE;
-          padding: 13px;
-          width: 80%;
-          border-radius: 10px;
-        }
-
-        .floor-table {
-          margin-bottom: 30px;
-          max-width: 1000px;
-        }
-
-        .table-wrapper {
-          border: 1px solid #D6D5D4;
-          border-top-left-radius: 12px;
-          border-top-right-radius: 12px;
-          overflow: hidden;
-        }
-
-        table {
-          width: 100%;
-          max-width: 1000px;
-          border-collapse: collapse;
-          border-spacing: 0;
-          table-layout: fixed;
-        }
-
-        th, td {
-          border: none;
-          border-bottom: 1px solid #ddd;
-          padding: 12px 8px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          vertical-align: middle;
-        }
-
-        .button-row td {
-          border-bottom: none;
-          padding: 15px;
-        }
-
-        th {
-          background-color: #f2f2f2;
-          color: #006769;
-          text-wrap: wrap;
-          font-weight: 600;
-          height: 60px;
-        }
-
-        .niveau-col {
-          width: 15%;
-          text-align: left;
-        }
-
-        .area-col {
-          width: 25%;
-          text-align: left;
-        }
-
-        .total-col {
-          width: 22%;
-          text-align: center;
-        }
-
-        .cost-col {
-          width: 13%;
-          text-align: center;
-        }
-
-        input {
-          border: 1px solid #D4D4D4;;
-          padding: 10px;
-          border-radius: 8px;
-          width: 100%;
-          box-sizing: border-box;
-          font-size: 16px;
-          text-align: center;
-        }
-
-        input:active,
-        input:focus,
-        input:focus-visible{
-        border: 1px solid #006769 !important;
-        outline: none !important;
-        box-shadow: none !important;
-        }
-
-        .button-container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 15px;
-          padding:0;
-        }
-
-        .action-button {
-          margin-top: 15px;
-          padding: 12px;
-          background-color: #006769;
-          color: white;
-          border-radius: 10px;
-          cursor: pointer;
-          border: none;
-          width: 100%;
-          text-align: center;
-          font-size: 16px;
-        }
-
-        .add-floor-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          background-color: rgb(255, 255, 255);
-          border: 1px solid #006769;
-          border-radius: 15px;
-          margin-left: auto;
-
-          padding: 8px 40px;
-          cursor: pointer;
-        }
-
-        .add-floor-button-title {
-          font-size: 16px;
-          font-weight: 400;
-          color: #006769;
-          margin: 0;
-        }
-
-        .add-floor-button-icon {
-          font-size: 16px;
-          font-weight: 400;
-          color: #006769;
-          border: 2px solid #006769;
-          border-radius: 100%;
-          width: 20px;
-          height: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .calculations-section {
-          margin-bottom: 30px;
-        }
-
-        .plot-info, .fees-summary {
-          border-radius: 4px;
-          padding-left:0
-        }
-
-        .plot-info-title{
-          margin:0
-          margin-bottom:24px;
-        }
-
-        .info-content {
-          margin-top: 10px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-
-        .info-row {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 10px;
-        }
-
-        .total-value {
-          font-weight: bold;
-        }
-
-        .total-row {
-          font-weight: bold;
-          background-color: #f2f2f2;
-        }
-
-        .cost-breakdown {
-          margin-top: 20px;
-        }
-
-        .input-with-unit {
-          position: relative;
-          display: inline-block;
-          width: 60%;
-        }
-
-        .input-with-unit input {
-          width: 100%;
-          font-size: 16px;
-          text-align: center;
-          color:"#363636";
-          padding-right: 40px;
-          box-sizing: border-box;
-        }
-
-        .text-input, .cost-input {
-          border: 1px solid black;
-          padding: 10px;
-          border-radius: 12px;
-          width: 100%;
-          font-size: 16px;
-          text-align: center;
-        }
-
-        .cost-input {
-          width: 80%;
-        }
-
-        .unit {
-          position: absolute;
-          right: 10px;
-          font-size: 16px;
-          font-weight: 500;
-          top: 50%;
-          transform: translateY(-50%);
-          pointer-events: none;
-          color: #B1B4B6;
-        }
-
-        .cost-table-wrapper {
-          margin-bottom: 15px;
-        }
-
-        .work-col {
-          width: 40%;
-          text-align: left;
-        }
-
-        .percentage-col {
-          width: 20%;
-          text-align: center;
-        }
-
-        .amount-col {
-          width: 40%;
-          text-align: center;
-        }
-
-        .disabled{
-         color:"#848484"
-        }
-        .disabled-btn{
-          background-color: #d4d4d4;
-          pointer-events: none;
-        }
-        .disable-floor-btn{
-          opacity: 0.5;
-          pointer-events: none;
-          }
-      `}</style>
     </div>
   );
 };
