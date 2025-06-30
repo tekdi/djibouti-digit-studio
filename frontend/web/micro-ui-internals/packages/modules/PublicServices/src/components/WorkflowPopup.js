@@ -58,10 +58,13 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
           };
         })
       : [],
-    assignees: assigneeUser ? [assigneeUser] : [],
     action: action.action,
     businessService: businessService,
   };
+
+  if (action.action != "ADD_QUERY" && !action.isTerminateState) {
+    workflow.assignees = assigneeUser ? [assigneeUser] : [];
+  }
 
   Object.keys(workflow).forEach((key) => {
     if (!workflow[key] || workflow[key]?.length === 0) delete workflow[key];
