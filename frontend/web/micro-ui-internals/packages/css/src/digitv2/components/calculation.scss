@@ -27,7 +27,6 @@
 
     .fee-rate-card {
         display: flex;
-        padding: 15px;
         border-radius: 4px;
         align-items: center;
         padding: 0
@@ -323,6 +322,21 @@
             color: #000;
         }
     }
+.edit-tax-input-wrapper {
+    display: flex;
+    padding: 0;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+
+}
+
+.digit-error-message {
+    margin: 0 !important;
+    font-weight: 400;
+}
 
     .loader {
         position: fixed;

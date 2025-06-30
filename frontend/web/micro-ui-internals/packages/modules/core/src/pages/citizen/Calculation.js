@@ -477,7 +477,21 @@ const Calculation = () => {
                 <React.Fragment>
                   <div className="fee-rate-card">
                     <span className='fee-rate-card-title'>{t('CALCULATION_TOTAL_TAXES_WITH_SERVICE')}</span>
-                    <input className='fee-rate-card-value editable' value={revisedTotalTaxWithService} onChange={(e)=>setRevisedTotalTaxWithService(e.target.value)}/>
+
+                    <div className='edit-tax-input-wrapper fee-rate-card-value'>
+                      <input className='editable' value={revisedTotalTaxWithService} onChange={(e) => {
+                        const value = e.target.value;
+                        if (Number(value) !== 0 || value === "") {
+                          setRevisedTotalTaxWithService(value);
+                        }
+                      }} />
+                      {Number(revisedTotalTaxWithService) === 0 && (
+                        <div className="digit-error-message">
+                          {t("ERROR_TOTAL_TAX_CANNOT_BE_ZERO")}
+                        </div>
+                      )}
+                    </div>
+
                   </div>
                   {(revisedTotalTaxWithService != response?.additionalDetails?.costEstimation?.totalTaxWithServiceCharge || taxChangeReason !== '') && <div className="fee-rate-card">
                     <span className='fee-rate-card-title'>{t('FEE_ADJUSTMENT_JUSTIFICATION')}<span className="star">*</span></span>
