@@ -385,7 +385,18 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 				Prefix:  applicantPrefix.String,
 				Active:  applicantActive.Bool,
 			}
-			app.Applicants = append(app.Applicants, applicant)
+
+			// Prevent duplicate applicants
+			alreadyExists := false
+			for _, existing := range app.Applicants {
+				if existing.Id == applicant.Id {
+					alreadyExists = true
+					break
+				}
+			}
+			if !alreadyExists {
+				app.Applicants = append(app.Applicants, applicant)
+			}
 		}
 	}
 
