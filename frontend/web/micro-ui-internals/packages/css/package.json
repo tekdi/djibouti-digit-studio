@@ -1,6 +1,6 @@
 {
   "name": "@tekdi/djibouti-ui-css",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "CSS library for djibouti UI",
   "license": "MIT",
   "main": "dist/index.css",
