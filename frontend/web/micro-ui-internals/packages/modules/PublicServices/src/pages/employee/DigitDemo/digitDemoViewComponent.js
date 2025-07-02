@@ -68,6 +68,22 @@ const DigitDemoViewComponent = () => {
     },
   });
 
+  let { data: timelineWorkflowDetails, isLoading: timelineWorkflowLoading } = useWorkflowDetails({
+    tenantId: tenantId,
+    id: queryStrings?.applicationNumber,
+    // moduleCode: queryStrings?.businessService || serviceConfig?.data?.workflow?.businessService,
+    //moduleCode: "NewTL",
+    config: {
+      enabled: response && serviceConfig ? true : false,
+      cacheTime: 0,
+    },
+  });
+
+  console.log(timelineWorkflowDetails,"timelineWorkflowDetails");
+
+
+
+
   // Util method to generate view config for view composer
   let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService || selectedBusinessService?.code, serviceConfig);
 
@@ -105,7 +121,7 @@ const DigitDemoViewComponent = () => {
 
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
-  if (isLoading || workflowLoading || ServiceConfigLoading) {
+  if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
     return <Loader />;
   }
 
@@ -342,8 +358,8 @@ const DigitDemoViewComponent = () => {
                 }}
               />
 
-              {[...workflowDetails?.timeline].reverse().map((instance, index) => {
-                const isCurrentState = index === workflowDetails?.timeline?.length - 1;
+              {[...timelineWorkflowDetails?.timeline].reverse().map((instance, index) => {
+                const isCurrentState = index === timelineWorkflowDetails?.timeline?.length - 1;
                 return (
                   <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
                     <div
@@ -435,6 +451,21 @@ const DigitDemoViewComponent = () => {
                           {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
                         </div>
                       )}
+                      {(instance?.businessService !== queryStrings?.businessService) &&  <div
+                          style={{
+                            marginTop: "0.5rem",
+                            border: "1px solid #e5e7eb",
+                            padding: "0.75rem",
+                            borderRadius: "0.5rem",
+                            fontSize: "0.85rem",
+                            color: "#505A5F",
+                            backgroundColor: "#f9fafb",
+                            wordBreak: "break-word",
+                            fontFamily: "Inter",
+                          }}
+                        >
+                        {instance?.businessService}
+                        </div>}
                     </div>
                   </div>
                 );
