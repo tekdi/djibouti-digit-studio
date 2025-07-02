@@ -66,7 +66,8 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     action.action != "ADD_QUERY" &&
     !action.isTerminateState &&
     action.action != "SEND_BACK_TO_ARCHITECT" &&
-    action.action != "SEND_TO_CITIZEN_PAYMENT"
+    action.action != "SEND_TO_CITIZEN_PAYMENT" &&
+    action.action != "SEND_TO_COMMISSIONER"
   ) {
     workflow.assignees = assigneeUser ? [assigneeUser] : [];
   }
