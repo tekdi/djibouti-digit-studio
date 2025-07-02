@@ -115,7 +115,7 @@ const ModulePageComponent = () => {
   const hasNoData = detailsConfig.length === 0 && !servicesDataLoading;
 
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
+  const isDirector = roles?.some((role) => role.code.includes("BPA_DIRECTOR"));
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
   if (servicesDataLoading || (!isCitizen && !isArchitect && isInboxLoading) || ((isCitizen || isArchitect) && isCitizenAppsLoading)) {
