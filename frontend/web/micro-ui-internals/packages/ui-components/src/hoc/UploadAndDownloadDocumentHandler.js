@@ -24,30 +24,30 @@ const UploadAndDownloadDocumentHandler = ({
   localePrefix,
   customClass,
   action = "APPLY",
-  flow
+  flow,
 }) => {
   const { t } = useTranslation();
   const tenantId = Digit?.ULBService?.getStateId();
   const { module, service } = useParams();
   let moduleName = `${module?.toLowerCase()}.${service?.toLowerCase()}`;
-  const { serviceCode, applicationNumber:applicationNo = "" } = Digit.Hooks.useQueryParams();
+  const { serviceCode, applicationNumber: applicationNo = "" } = Digit.Hooks.useQueryParams();
 
   const requestCriteria = {
     url: "/egov-mdms-service/v1/_search",
     body: {
       MdmsCriteria: {
-        "tenantId": tenantId,
-        "moduleDetails": [
-            {
-                "moduleName": "DigitStudio",
-                "masterDetails": [
-                    {
-                        "name": "DocumentConfig"
-                    }
-                ]
-            }
-        ]
-    },
+        tenantId: tenantId,
+        moduleDetails: [
+          {
+            moduleName: "DigitStudio",
+            masterDetails: [
+              {
+                name: "DocumentConfig",
+              },
+            ],
+          },
+        ],
+      },
     },
     changeQueryName: "documentConfig",
   };
@@ -76,22 +76,23 @@ const UploadAndDownloadDocumentHandler = ({
     }
   };
 
-  const handleTemplateDownload = async ({ item, tenantId, t }) => {
+  const handlePdfDownload = async ({ item, tenantId, t }) => {
     try {
       const state = tenantId;
+      const applicationNumber =
+        JSON.parse(localStorage.getItem("formData"))?.applicationNumber.toString() || formData?.applicationNumber || applicationNo;
+
       if (item?.templatedownloadURL) {
         window.open(item.templatedownloadURL, "_blank");
       } else if (item?.templatePDFKey) {
-        const {
-          templatePDFKey,
-        } = item;
+        const { templatePDFKey } = item;
 
         let params = {
           tenantId,
           serviceCode,
-          applicationNumber: (JSON.parse(localStorage.getItem("formData"))?.applicationNumber).toString() || formData?.applicationNumber || applicationNo,
-          pdfKey: templatePDFKey
-        }
+          applicationNumber,
+          pdfKey: templatePDFKey,
+        };
         let url = `/studio-pdf/public-service/download/pdf`;
         try {
           const response = await Digit.CustomService.getResponse({
@@ -105,21 +106,14 @@ const UploadAndDownloadDocumentHandler = ({
             },
           });
 
-          downloadPdf(
-            new Blob([response.data], { type: "application/pdf" }),
-            `${applicationNo}.pdf`
-          );
+          downloadPdf(new Blob([response.data], { type: "application/pdf" }), `application-receipt-${applicationNumber}.pdf`);
         } catch (err) {
           console.error(err);
           Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
         }
 
         const dummyPayload = { sample: "value" };
-        const response = await Digit.PaymentService.generatePdf(
-          state,
-          dummyPayload,
-          item.templatePDFKey
-        );
+        const response = await Digit.PaymentService.generatePdf(state, dummyPayload, item.templatePDFKey);
 
         const fileStore = await Digit.PaymentService.printReciept(state, {
           fileStoreIds: response.filestoreIds[0],
@@ -148,19 +142,20 @@ const UploadAndDownloadDocumentHandler = ({
           ...doc,
           templatePDFKey: "",
           templatedownloadURL: "",
-          name: `${localePrefix}_${doc?.code}_UPLOAD`
-        }
+          name: `${localePrefix}_${doc?.code}_UPLOAD`,
+        },
       ];
     }
     return {
       ...doc,
-      name: `${localePrefix}_${doc?.code}_UPLOAD`
-    };// Just the original if no keys present
+      name: `${localePrefix}_${doc?.code}_UPLOAD`,
+    }; // Just the original if no keys present
   });
   // if (!docConfig && flow !== "WORKFLOW") return null;
   // if(isLoading) return <Loader />;
-  return (
-    (isLoading && !docConfig && flow !== "WORKFLOW") ? <Loader /> :
+  return isLoading && !docConfig && flow !== "WORKFLOW" ? (
+    <Loader />
+  ) : (
     <React.Fragment>
       {/* <HeaderComponent styles={{ fontSize: "24px", marginTop: "40px" }}>
         {t("WORKS_RELEVANT_DOCUMENTS")}
@@ -173,7 +168,7 @@ const UploadAndDownloadDocumentHandler = ({
           className="digit-doc-banner"
         />
       )} */}
-      {flow === "WORKFLOW" &&
+      {flow === "WORKFLOW" && (
         <Controller
           name={`${config?.populators?.name}`}
           control={control}
@@ -206,110 +201,132 @@ const UploadAndDownloadDocumentHandler = ({
                 hintText={t(config?.populators?.hintText)}
                 maxFilesAllowed={config?.populators?.maxFilesAllowed}
                 extraStyleName={{ padding: "0.5rem" }}
-              //customClass={populators?.customClass}
+                //customClass={populators?.customClass}
               />
             );
           }}
         />
-      }
-      {flow !== "WORKFLOW" && updatedDocuments?.map((item, index) => {
-        if (!item?.active) return null;
-        return (
-          <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center", maxWidth: "70%" }} className="digit-label-field-pair-upload-page">
-            {item.code && (
-              <div style={{ display: "flex", gap: "1.5rem", width: "100%", maxWidth: "30%" }}>
-                <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%", display: "flex", gap: "2px" }}>
-                  <span>{(item?.templatePDFKey || item?.templatedownloadURL) ? t(`${localePrefix}_${item?.code}_DOWNLOAD`) : t(`${localePrefix}_${item?.code}_UPLOAD`)}{item?.isMandatory && <span style={{ color: "#B91900" }}>*</span>}</span>
-                </CardLabel>
+      )}
+      {flow !== "WORKFLOW" &&
+        updatedDocuments?.map((item, index) => {
+          if (!item?.active) return null;
+          return (
+            <LabelFieldPair
+              key={index}
+              style={{ alignItems: item?.showTextInput ? "flex-start" : "center", maxWidth: "70%" }}
+              className="digit-label-field-pair-upload-page"
+            >
+              {item.code && (
+                <div style={{ display: "flex", gap: "1.5rem", width: "100%", maxWidth: "30%" }}>
+                  <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%", display: "flex", gap: "2px" }}>
+                    <span>
+                      {item?.templatePDFKey || item?.templatedownloadURL
+                        ? t(`${localePrefix}_${item?.code}_DOWNLOAD`)
+                        : t(`${localePrefix}_${item?.code}_UPLOAD`)}
+                      {item?.isMandatory && <span style={{ color: "#B91900" }}>*</span>}
+                    </span>
+                  </CardLabel>
+                </div>
+              )}
 
-
-              </div>
-            )}
-
-            {(item?.templatePDFKey || item?.templatedownloadURL) && (
-                  <div style={{ width: "100%" }}>
+              {(item?.templatePDFKey || item?.templatedownloadURL) && (
+                <div style={{ width: "100%" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem", width: "100%" }}>
-
-                    <div className={`digit-upload-wrapper ${customClass || ""}`} style={{ flex: 1, padding: "1rem", border: "1px solid #D6D5D4", borderRadius: "8px", backgroundColor: "#FAFAFA", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <div
+                      className={`digit-upload-wrapper ${customClass || ""}`}
+                      style={{
+                        flex: 1,
+                        padding: "1rem",
+                        border: "1px solid #D6D5D4",
+                        borderRadius: "8px",
+                        backgroundColor: "#FAFAFA",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
                       {/* <div style={{ fontSize: "14px", color: "#1A1A1A" }}>{t(item?.documentType)}</div> */}
-                      <div style={{display: "flex", alignItems: "center", gap: "8px", justifyContent: "center"}}>
-                        <div><CustomSVG.PDFSvgNew/></div>
-                      <label>{t(`BPA_${(item?.templatePDFKey)?.toUpperCase().replace("-", "_")}`)}</label>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
+                        <div>
+                          <CustomSVG.PDFSvgNew />
+                        </div>
+                        <label>{t(`BPA_${item?.templatePDFKey?.toUpperCase().replace("-", "_")}`)}</label>
                       </div>
                       <Button
                         label={t("CS_COMMON_DOWNLOAD_FILE")}
                         variation="secondary"
                         icon={"FileDownload"}
                         type="button"
-                        onClick={() => handleTemplateDownload({ item, tenantId, t })}
-                        className='button-fit'
+                        onClick={() => handlePdfDownload({ item, tenantId, t })}
+                        className="button-fit"
                       />
                     </div>
                   </div>
-                  </div>
-
-                )}
-
-            <div className="digit-field" style={{flex: 1, maxWidth: '100%' }}>
-              {item?.showTextInput && (
-                <TextInput
-                  style={{ marginBottom: "16px" }}
-                  name={`${config?.name}.${item?.name}_name`}
-                  placeholder={t("ES_COMMON_ENTER_NAME")}
-                  inputRef={register({ minLength: 2 })}
-                />
+                </div>
               )}
 
-              {!(item?.templatePDFKey || item?.templatedownloadURL) && <div style={{ marginBottom: "24px" }}>
-                <Controller
-                  render={({ value = [], onChange }) => {
-                    function getFileStoreData(filesData) {
-                      let finalDocumentData = [];
-                      filesData.forEach((value) => {
-                        finalDocumentData.push({
-                          fileName: value?.[0],
-                          fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
-                          documentType: value?.[1]?.file?.type,
-                        });
-                      });
-                      onChange(finalDocumentData.length ? filesData : []);
-                    }
+              <div className="digit-field" style={{ flex: 1, maxWidth: "100%" }}>
+                {item?.showTextInput && (
+                  <TextInput
+                    style={{ marginBottom: "16px" }}
+                    name={`${config?.name}.${item?.name}_name`}
+                    placeholder={t("ES_COMMON_ENTER_NAME")}
+                    inputRef={register({ minLength: 2 })}
+                  />
+                )}
 
-                    return (
-                      <MultiUploadWrapper
-                        t={t}
-                        module="DigitStudio"
-                        getFormState={getFileStoreData}
-                        setuploadedstate={value}
-                        showHintBelow={Boolean(item?.hintText)}
-                        hintText={item?.hintText}
-                        name={item?.name}
-                        allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
-                        allowedMaxSizeInMB={item?.maxSizeInMB || 5}
-                        maxFilesAllowed={item?.maxFilesAllowed || 1}
-                        customErrorMsg={item?.customErrorMsg}
-                        customClass={customClass}
-                        tenantId={Digit.ULBService.getCurrentTenantId()}
-                      />
-                    );
-                  }}
-                  rules={{
-                    validate: (value) => !(item?.isMandatory && (!value || value.length === 0)),
-                  }}
-                  defaultValue={formData?.[item?.name]}
-                  name={`${config?.name}.${item?.name}`}
-                  control={control}
-                />
-                {/* {errors?.[`${config?.name}`]?.[`${item?.name}`] && (
+                {!(item?.templatePDFKey || item?.templatedownloadURL) && (
+                  <div style={{ marginBottom: "24px" }}>
+                    <Controller
+                      render={({ value = [], onChange }) => {
+                        function getFileStoreData(filesData) {
+                          let finalDocumentData = [];
+                          filesData.forEach((value) => {
+                            finalDocumentData.push({
+                              fileName: value?.[0],
+                              fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+                              documentType: value?.[1]?.file?.type,
+                            });
+                          });
+                          onChange(finalDocumentData.length ? filesData : []);
+                        }
+
+                        return (
+                          <MultiUploadWrapper
+                            t={t}
+                            module="DigitStudio"
+                            getFormState={getFileStoreData}
+                            setuploadedstate={value}
+                            showHintBelow={Boolean(item?.hintText)}
+                            hintText={item?.hintText}
+                            name={item?.name}
+                            allowedFileTypesRegex={getRegex(item?.allowedFileTypes)}
+                            allowedMaxSizeInMB={item?.maxSizeInMB || 5}
+                            maxFilesAllowed={item?.maxFilesAllowed || 1}
+                            customErrorMsg={item?.customErrorMsg}
+                            customClass={customClass}
+                            tenantId={Digit.ULBService.getCurrentTenantId()}
+                          />
+                        );
+                      }}
+                      rules={{
+                        validate: (value) => !(item?.isMandatory && (!value || value.length === 0)),
+                      }}
+                      defaultValue={formData?.[item?.name]}
+                      name={`${config?.name}.${item?.name}`}
+                      control={control}
+                    />
+                    {/* {errors?.[`${config?.name}`]?.[`${item?.name}`] && (
                   <CardLabelError style={{ fontSize: "12px" }}>
                     {t(config?.error)}
                   </CardLabelError>
                 )} */}
-              </div>}
-            </div>
-          </LabelFieldPair>
-        );
-      })}
+                  </div>
+                )}
+              </div>
+            </LabelFieldPair>
+          );
+        })}
     </React.Fragment>
   );
 };

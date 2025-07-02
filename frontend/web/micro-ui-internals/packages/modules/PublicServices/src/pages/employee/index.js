@@ -14,12 +14,13 @@ import CreateCheckList from "./CheckList/createCheckList";
 import ViewApplication from "./CheckList/viewApplication";
 import Calculation from "../../../../core/src/pages/citizen/Calculation";
 import CitizenInboxService from "./DigitDemo/CitizenInboxService";
+import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
-  const pathname = location.pathname.replace(/\/$/, '').split("/").pop();
+  const pathname = location.pathname.replace(/\/$/, "").split("/").pop();
 
   const crumbs = [
     {
@@ -58,6 +59,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
         <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
         <PrivateRoute path={`${path}/calculation`} component={() => <Calculation />} />
+        <PrivateRoute path={`${path}/:module/:service/Edit`} component={() => <DigitDemoEditComponent />} />
       </AppContainer>
     </Switch>
   );

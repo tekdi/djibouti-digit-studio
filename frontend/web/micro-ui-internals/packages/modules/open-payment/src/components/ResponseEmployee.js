@@ -13,6 +13,7 @@ import {
 } from "@egovernments/digit-ui-react-components";
 import Banner from "../../../../ui-components/src/atoms/Banner";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { downloadStudioPDF } from "../../../PublicServices/src/utils";
 
 const ResponseEmployee = () => {
   const { t } = useTranslation();
@@ -23,57 +24,19 @@ const ResponseEmployee = () => {
   const [isResponseSuccess, setIsResponseSuccess] = useState(state?.iSuccess || false);
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
-  const tenantId = Digit?.ULBService?.getStateId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const handleTemplateDownload = async () => {
-    try {
-      const params = {
+  const handlePdfDownload = async () => {
+    downloadStudioPDF(
+      "pdf",
+      {
         tenantId,
         serviceCode: queryStrings?.serviceCode,
         applicationNumber: state?.applicationNumber,
         pdfKey: "payment-receipt",
-      };
-
-      let url = `/studio-pdf/public-service/download/pdf`;
-      try {
-        const response = await Digit.CustomService.getResponse({
-          url,
-          params,
-          method: "POST",
-          useCache: false,
-          userDownload: true,
-          headers: {
-            Accept: "application/pdf",
-          },
-        });
-
-        const downloadPdf = (blob, fileName) => {
-          if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
-            var reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = function () {
-              var base64data = reader.result;
-              window.mSewaApp.downloadBase64File(base64data, fileName);
-            };
-          } else {
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName;
-            document.body.append(link);
-            link.click();
-            link.remove();
-            setTimeout(() => URL.revokeObjectURL(link.href), 7000);
-          }
-        };
-
-        downloadPdf(new Blob([response.data], { type: "application/pdf" }), `${state?.applicationNumber}_receipt.pdf`);
-      } catch (err) {
-        console.error(err);
-        Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
-      }
-    } catch (err) {
-      console.error("Template download error", err);
-    }
+      },
+      `payment-receipt-${state?.applicationNumber}.pdf`
+    );
   };
 
   const navigate = (page) => {
@@ -106,7 +69,7 @@ const ResponseEmployee = () => {
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t("BPA_BPA_PCO_VIEW_APPLICATION")}
         </LinkLabel>
-        <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+        <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handlePdfDownload}>
           <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t("CS_COMMON_DOWNLOAD_RECEIPT")}
         </LinkLabel>

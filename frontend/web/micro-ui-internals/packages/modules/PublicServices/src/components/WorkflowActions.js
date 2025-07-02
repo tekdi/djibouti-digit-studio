@@ -7,7 +7,7 @@ import { Toast, Button, Loader } from "@egovernments/digit-ui-components";
 import { useMutation } from "react-query";
 
 import { Request } from "./Request";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useWorkflowDetails } from "../utils";
 import CustomActionDropdown from "./CustomActionDropdown";
 
@@ -95,6 +95,7 @@ const WorkflowActions = ({
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const queryStrings = Digit.Hooks.useQueryParams();
+  const history = useHistory();
 
   const { t } = useTranslation();
   const user = Digit.UserService.getUser();
@@ -155,8 +156,13 @@ const WorkflowActions = ({
       }/${userType}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
         props?.serviceConfig?.data?.bill?.BusinessService?.code
       }&applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
+    } else if (action.action === "EDIT") {
+      history.push(
+        `/${window.contextPath}/${userType}/publicservices/${module}/${service}/Edit?serviceCode=${queryStrings?.serviceCode}&applicationNumber=${queryStrings?.applicationNumber}&action=${action?.action}`
+      );
+    } else {
+      setShowModal(true);
     }
-    action !== "MAKE_PAYMENT" && setShowModal(true);
   };
 
   // Workflow submit logic

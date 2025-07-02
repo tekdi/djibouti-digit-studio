@@ -3,18 +3,12 @@ import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { colorCodes } from "../configs/UICustomizations";
 
-const ApplicationDataView = ({serviceCode, data, status, applicationNumber, businessService }) => {
+const ApplicationDataView = ({ serviceCode, data, status, applicationNumber, businessService }) => {
   const { t } = useTranslation();
 
   if (!data) return null;
 
-  const {
-    applicants = [],
-    additionalDetails = {},
-    documents = [],
-    serviceDetails = {}
-  } = data;
-
+  const { applicants = [], additionalDetails = {}, documents = [], serviceDetails = {} } = data;
 
   const downloadFile = async (fileStoreId) => {
     try {
@@ -53,18 +47,18 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
     let displayData = data;
     if (sectionTitle === "BPA_BPA_PCO_APPLICANTDETAILS") {
       displayData = {
-        legalName: data.name,
+        name: data.name,
         address: additionalDetails?.applicants?.address || "-",
         wayToAddress: additionalDetails?.applicants?.wayToAddress || "-",
-        telephone: `+253 ${data?.mobileNumber}`,
+        mobileNumber: `+253 ${data?.mobileNumber}`,
       };
     }
 
     if (sectionTitle === "BPA_BPA_PCO_DESIGNOFFICEDETAILING") {
-        displayData = {
-          telephone: `+253 ${data?.telephone}`,
-        };
-      }
+      displayData = {
+        telephone: `+253 ${data?.telephone}`,
+      };
+    }
 
     return (
       <div className="section-container">
@@ -72,15 +66,16 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         <div className="section-content">
           {Object.entries(displayData).map(([key, value]) => {
             const renderedValue = renderValue(value);
-            const label = renderedValue === "checked" ? (
-              <div style={{ fontSize: "16px", marginLeft: "10px" }} className="field-label">
+            const label =
+              renderedValue === "checked" ? (
+                <div style={{ fontSize: "16px", marginLeft: "10px" }} className="field-label">
                   {t(serviceCode + "_" + key.toUpperCase())}
-              </div>
-            ) : (
-              <div style={{ fontSize: "16px" }} className="field-label">
-                {t(serviceCode + "_" + key.toUpperCase())}
-              </div>
-            );
+                </div>
+              ) : (
+                <div style={{ fontSize: "16px" }} className="field-label">
+                  {t(serviceCode + "_" + key.toUpperCase())}
+                </div>
+              );
 
             return (
               <div key={key}>
@@ -96,7 +91,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
                         height: "27px",
                       }}
                     >
-                      <svg width="20" height="20"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_105_1500)">
                           <path
                             d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -105,7 +100,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
                         </g>
                         <defs>
                           <clipPath id="clip0_105_1500">
-                            <rect width="20" height="20"  fill="white" />
+                            <rect width="20" height="20" fill="white" />
                           </clipPath>
                         </defs>
                       </svg>
@@ -164,21 +159,14 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
 
   const renderDeclarations = () => {
     const declarations = additionalDetails?.applicants || {};
-    const declarationKeys = [
-      "accuracyDeclaration",
-      "checkValidation",
-      "eligibilityDeclaration",
-      "taxCalculationAgreement"
-    ];
+    const declarationKeys = ["accuracyDeclaration", "checkValidation", "eligibilityDeclaration", "taxCalculationAgreement"];
 
     if (!Object.keys(declarations).length) return null;
 
     return (
       <div className="section-container">
         {/* <p className="field-label">{t(serviceCode + "_DECLARATIONS")}</p> */}
-        <div className="section-content">
-          {declarationKeys.map(key => renderCheckbox(key, declarations[key]))}
-        </div>
+        <div className="section-content">{declarationKeys.map((key) => renderCheckbox(key, declarations[key]))}</div>
       </div>
     );
   };
@@ -233,44 +221,47 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
       <CardHeader style={{ marginLeft: "12px" }}>{t("BPA_BPA_PCO_APPLICANTDETAILS")}</CardHeader>
       <div style={{ padding: "16px" }}>
         <div style={{ display: "flex", width: "100%" }}>
-    <p style={{width:'40%'}} className="field-label">{t("CURRENT_STATUS")} </p>
-    <p
-      className="field-value"
-      style={{
-        backgroundColor: colorCodes[status]?.[0] || "#F1F4CF",
-        color: colorCodes[status]?.[1] || "#4B4B4B",
-        padding: "5px 10px",
-        borderRadius: "5px",
-        fontSize: "14px",
-        fontWeight: "400",
-        width: "fit-content"
-      }}
-    >
-      {t(businessService + "_" + status)}
-    </p>
-  </div>
-  <div style={{ display: "flex", width: "100%" }}>
-
-    <p style={{width:'40%'}} className="field-label">{t("APPLICATION_NUMBER")} </p>
-        <p
-      className="field-value"
-      style={{
-        borderRadius: "5px",
-        fontSize: "18px",
-        width: "50%",
-        fontFamily: "Inter"
-      }}
-    >
-      {applicationNumber}
-    </p>
-  </div>
+          <p style={{ width: "40%" }} className="field-label">
+            {t("CURRENT_STATUS")}{" "}
+          </p>
+          <p
+            className="field-value"
+            style={{
+              backgroundColor: colorCodes[status]?.[0] || "#F1F4CF",
+              color: colorCodes[status]?.[1] || "#4B4B4B",
+              padding: "5px 10px",
+              borderRadius: "5px",
+              fontSize: "14px",
+              fontWeight: "400",
+              width: "fit-content",
+            }}
+          >
+            {t(businessService + "_" + status)}
+          </p>
+        </div>
+        <div style={{ display: "flex", width: "100%" }}>
+          <p style={{ width: "40%" }} className="field-label">
+            {t("APPLICATION_NUMBER")}{" "}
+          </p>
+          <p
+            className="field-value"
+            style={{
+              borderRadius: "5px",
+              fontSize: "18px",
+              width: "50%",
+              fontFamily: "Inter",
+            }}
+          >
+            {applicationNumber}
+          </p>
+        </div>
 
         {renderSection(applicants[0], "BPA_BPA_PCO_APPLICANTDETAILS")}
         {renderDeclarations()}
         {renderSection(serviceDetails.landInfo, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
         {renderSection(serviceDetails.designOffice, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
         {renderDocuments()}
-          <div style={{ width: "100%" }} className="fields-container">
+        <div style={{ width: "100%" }} className="fields-container">
           <span
             className="digit-custom-checkbox digit-custom-checkbox-emp"
             style={{
@@ -279,34 +270,28 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
               borderRadius: "6px",
               marginRight: "8px",
               height: "27px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => setIsAttested(!isAttested)}
           >
-
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clipPath="url(#clip0_105_1500)">
-                  <path
-                    d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
-                    fill="#808080"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_105_1500">
-                    <rect width="20" height="20" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clipPath="url(#clip0_105_1500)">
+                <path
+                  d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
+                  fill="#808080"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_105_1500">
+                  <rect width="20" height="20" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
           </span>
-          <div
-            style={{ fontSize: "16px", marginLeft: "10px", cursor: "pointer" }}
-            className="field-label"
-            onClick={() => setIsAttested(!isAttested)}
-          >
+          <div style={{ fontSize: "16px", marginLeft: "10px", cursor: "pointer" }} className="field-label" onClick={() => setIsAttested(!isAttested)}>
             {t("IS_ATTESTED_BY_CITIZEN")}
           </div>
         </div>
-
       </div>
       <style jsx>{`
         .section-container {
@@ -355,7 +340,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         .file-name {
           color: #505a5f !important;
           text-align: center;
-          width:90% !important;
+          width: 90% !important;
         }
         .file-id {
           color: #505a5f;

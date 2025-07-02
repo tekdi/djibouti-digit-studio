@@ -236,7 +236,7 @@ export const FormComposer = (props) => {
             defaultValues={props?.defaultValues}
           />
         )}
-        {section.type !== "multiChildForm" &&
+        {section?.type !== "multiChildForm" &&
           section?.body?.map((field, index) => {
             if (field?.populators?.hideInForm) return null;
             if (props.inline)
@@ -448,7 +448,7 @@ export const FormComposer = (props) => {
                       props.onPrevious();
                     }}
                   >
-                      {t('BPA_BPA_PCO_PREVIOUS')}
+                    {t("BPA_BPA_PCO_PREVIOUS")}
                   </button>
                 )}
 
@@ -496,7 +496,15 @@ export const FormComposer = (props) => {
           {props.onSkip && props.showSkip && <ActionLinks style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </Footer>
       )} */}
-      {showErrorToast && <Toast style={{zIndex: 9999}} type={"error"} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {showErrorToast && (
+        <Toast
+          style={{ zIndex: 9999 }}
+          type={"error"}
+          label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")}
+          isDleteBtn={true}
+          onClose={closeToast}
+        />
+      )}
       {customToast && <Toast type={customToast?.type} label={t(customToast?.label)} isDleteBtn={true} onClose={closeToast} />}
     </form>
   );

@@ -42,27 +42,32 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     active: data?.assignee?.user?.active || null,
     permanentCity: data?.assignee?.user?.permanentCity || null,
     locale: data?.assignee?.user?.locale || null,
-  }
+  };
   const workflow = {
     comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
-        .flat()
-        .map((document) => {
-          return {
-            documentType: action?.action + " DOC",
-            fileName: document?.[1]?.file?.name,
-            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-            tenantId: document?.[1]?.fileStoreId?.tenantId,
-          };
-        })
+          .flat()
+          .map((document) => {
+            return {
+              documentType: action?.action + " DOC",
+              fileName: document?.[1]?.file?.name,
+              fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+              documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+              tenantId: document?.[1]?.fileStoreId?.tenantId,
+            };
+          })
       : [],
     action: action.action,
     businessService: businessService,
   };
 
-  if (action.action != "ADD_QUERY" && !action.isTerminateState) {
+  if (
+    action.action != "ADD_QUERY" &&
+    !action.isTerminateState &&
+    action.action != "SEND_BACK_TO_ARCHITECT" &&
+    action.action != "SEND_TO_CITIZEN_PAYMENT"
+  ) {
     workflow.assignees = assigneeUser ? [assigneeUser] : [];
   }
 

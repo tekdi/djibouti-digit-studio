@@ -64,19 +64,18 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
     initData,
   };
 
-    useEffect(() => {
-      const userType = Digit?.UserService?.getUser()?.info?.type?.toLowerCase();
-      const pathUserType = location.pathname.split("/")[2]; // extract `employee` or `citizen`
+  useEffect(() => {
+    const userType = Digit?.UserService?.getUser()?.info?.type?.toLowerCase();
+    const pathUserType = location.pathname.split("/")[2]; // extract `employee` or `citizen`
 
-      if (userType && pathUserType && userType !== pathUserType) {
-        // Mismatch detected — logout user and redirect
-        Digit.UserService.logout();
-        setTimeout(()=>{
-          window.location.href = `/${window?.contextPath}/${pathUserType}/login`;
-        },1000)
-      }
-    }, [pathname]);
-
+    if (userType && pathUserType && userType !== pathUserType) {
+      // Mismatch detected — logout user and redirect
+      Digit.UserService.logout();
+      setTimeout(() => {
+        window.location.href = `/${window?.contextPath}/${pathUserType}/login`;
+      }, 1000);
+    }
+  }, [pathname]);
 
   return (
     <Switch>
