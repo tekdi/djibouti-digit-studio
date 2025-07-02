@@ -126,7 +126,7 @@ const ResultsDataTableWrapper = ({
           setTimeout(() => {
             refetch()
           }, 1000);
-          
+
         },
         onError: (error) => {
           setShowToast({type:"error", key: "error", label: t("DATA_MODIEFIED_FAIL")})
@@ -135,9 +135,9 @@ const ResultsDataTableWrapper = ({
     );
     setEditRow(null);
     setRowData(null);
-    
+
   }
-  
+
 
   const handleLinkColumn = (event) => {
     const linkColumnHandler = configModule?.linkColumnHandler || {};
@@ -171,7 +171,7 @@ const ResultsDataTableWrapper = ({
           typeof column?.sortFunction === "function"
             ? (rowA, rowB) => column.sortFunction(rowA, rowB)
             : (rowA, rowB) => 0,
-        selector: (row, index) => `${_.get(row, column?.jsonPath)}`, 
+        selector: (row, index) => `${_.get(row, column?.jsonPath)}`,
       };
       if (column?.svg) {
         // const icon = Digit.ComponentRegistryService.getComponent(column.svg);
@@ -374,7 +374,6 @@ const ResultsDataTableWrapper = ({
   });
 
   const formData = watch();
-  
   //call this fn whenever session gets updated
   const setDefaultValues = () => {
     reset(defaultValuesFromSession);
@@ -498,13 +497,17 @@ const ResultsDataTableWrapper = ({
     setLimitAndOffset({ ...limitAndOffset, offset: updatedOffset });
     setValue("offset", updatedOffset);
     handleSubmit(onSubmit)();
+    // Trigger refetch after state updates
+    if (refetch) {
+      refetch();
+    }
   };
 
   const handlePerRowsChange = (currentRowsPerPage, currentPage) => {
     setRowsPerPage(currentRowsPerPage);
     setCurrentPage(1);
     const newLimit = currentRowsPerPage;
-    const newOffset = (currentPage - 1) * currentRowsPerPage;
+    const newOffset = 0;
     setLimitAndOffset({
       limit: newLimit,
       offset: newOffset,
@@ -512,6 +515,9 @@ const ResultsDataTableWrapper = ({
     setValue("limit", newLimit);
     setValue("offset", newOffset);
     handleSubmit(onSubmit)();
+    if (refetch) {
+      refetch();
+    }
   };
   useEffect(() => {
     if (limitAndOffset) {
