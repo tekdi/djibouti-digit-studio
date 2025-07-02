@@ -30,6 +30,7 @@ const SearchComponent = ({
   showTabCount = false,
   tabData,
   onTabChange,
+  className
 }) => {
   //whenever activeLink changes we'll change uiConfig
   // const [activeLink,setActiveLink] = useState(uiConfig?.configNavItems?.filter(row=>row.activeByDefault)?.[0]?.name)
@@ -256,7 +257,7 @@ const SearchComponent = ({
           {renderContent()}
         </FilterCard>
       ) : (
-        <div className={"digit-search-wrapper"}>
+        <div className={`digit-search-wrapper ${className}`}>
           {header && renderHeader()}
           <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)}>
             <div>

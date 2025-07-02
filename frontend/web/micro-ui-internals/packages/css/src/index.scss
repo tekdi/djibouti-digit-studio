@@ -751,6 +751,11 @@ input[type="number"] {
 .digit-search-wrapper {
   background-color: unset !important;
 }
+.search-application-wrapper {
+  .digit-search-field-wrapper .vertical+.vertical {
+    margin-left: 24px !important;
+  }
+}
 
 .digit-search-button-wrapper-search-icon {
   width: 40px !important;
