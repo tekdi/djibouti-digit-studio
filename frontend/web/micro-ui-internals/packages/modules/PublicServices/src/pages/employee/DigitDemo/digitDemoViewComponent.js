@@ -3,7 +3,7 @@ import { Button } from "@egovernments/digit-ui-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
-import { downloadStudioPDF, generateViewConfigFromResponse } from "../../../utils";
+import { downloadStudioPDF, getPdfKeyForState, generateViewConfigFromResponse } from "../../../utils";
 import WorkflowActions from "../../../components/WorkflowActions";
 import ViewCheckListCards from "../CheckList/viewCheckListCards";
 import { useWorkflowDetails, processBusinessServices } from "../../../utils";
@@ -21,7 +21,7 @@ const DigitDemoViewComponent = () => {
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
-  const [isCalculatioDone,setIsCalculationDone] = useState(false);
+  const [isCalculatioDone, setIsCalculationDone] = useState(false);
   const history = useHistory();
 
   //to get the fetched application details
@@ -82,10 +82,10 @@ const DigitDemoViewComponent = () => {
     },
   };
 
-useEffect(() => {
-  const costEstimationExists = response?.additionalDetails?.costEstimation;
-  setIsCalculationDone(!!costEstimationExists);
-}, [data?.Application]);
+  useEffect(() => {
+    const costEstimationExists = response?.additionalDetails?.costEstimation;
+    setIsCalculationDone(!!costEstimationExists);
+  }, [data?.Application]);
   useEffect(() => {
     // Guard clause to avoid calling with missing inputs
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
@@ -104,32 +104,10 @@ useEffect(() => {
   }, [matchedBusinessServices, selectedBusinessService]);
 
   // To get the checklist codes for the application
-  let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances[0].state?.state}`] : [];
+  let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
   if (isLoading || workflowLoading || ServiceConfigLoading) {
     return <Loader />;
   }
-
-  // Generate PDF download options from config
-  const generateDownloadOptions = () => {
-    return serviceConfig?.data?.pdf
-      .filter((obj) => obj?.states?.includes(response?.workflowStatus))
-      .map((obj) => ({
-        // icon: <WhatsappIcon />, // Uncomment and customize if needed
-        label: t(`STUDIO_${obj.type.toUpperCase()}`),
-        onClick: () => {
-          setShowOptions(!showOptions);
-          HandleDownloadPdf(obj.key);
-        },
-      }));
-  };
-
-  const HandleDownloadPdf = (key) => {
-    downloadStudioPDF(
-      "pdf/generatepdf",
-      { applicationNumber: queryStrings?.applicationNumber, tenantId, serviceCode: queryStrings?.serviceCode, pdfKey: key },
-      `Application-${queryStrings?.applicationNumber}.pdf`
-    );
-  };
 
   const handleCalculationClick = () => {
     const userDetails = Digit.UserService.getUser();
@@ -139,55 +117,17 @@ useEffect(() => {
     });
   };
 
-  const handleTemplateDownload = async () => {
-    try {
-      const params = {
+  const handlePdfDownload = async () => {
+    downloadStudioPDF(
+      "pdf",
+      {
         tenantId,
         serviceCode: queryStrings?.serviceCode,
         applicationNumber: queryStrings?.applicationNumber,
-        pdfKey: "pco-permit",
-      };
-
-      let url = `/studio-pdf/public-service/download/pdf`;
-      try {
-        const response = await Digit.CustomService.getResponse({
-          url,
-          params,
-          method: "POST",
-          useCache: false,
-          userDownload: true,
-          headers: {
-            Accept: "application/pdf",
-          },
-        });
-
-        const downloadPdf = (blob, fileName) => {
-          if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
-            var reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = function () {
-              var base64data = reader.result;
-              window.mSewaApp.downloadBase64File(base64data, fileName);
-            };
-          } else {
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName;
-            document.body.append(link);
-            link.click();
-            link.remove();
-            setTimeout(() => URL.revokeObjectURL(link.href), 7000);
-          }
-        };
-
-        downloadPdf(new Blob([response.data], { type: "application/pdf" }), `${queryStrings?.applicationNumber}_receipt.pdf`);
-      } catch (err) {
-        console.error(err);
-        Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
-      }
-    } catch (err) {
-      console.error("Template download error", err);
-    }
+        pdfKey: getPdfKeyForState(serviceConfig?.data?.pdf, processInstanceState),
+      },
+      `application-receipt-${queryStrings?.applicationNumber}.pdf`
+    );
   };
 
   return (
@@ -266,7 +206,7 @@ useEffect(() => {
             {processInstanceState === "PERMIT_GRANTED" && (
               <Button
                 label={t("CS_COMMON_DOWNLOAD")}
-                onClick={() => handleTemplateDownload()}
+                onClick={() => handlePdfDownload()}
                 className="employee-download-btn-className"
                 variation="tertiary"
                 type="button"
@@ -328,20 +268,20 @@ useEffect(() => {
               backgroundColor: "white",
             }}
           >
-            {isCalculatioDone &&
-            <span
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              color: "#166534",
-              backgroundColor: "#dcfce7",
-              padding: "0.25rem 0.5rem",
-              borderRadius: "9999px",
-            }}
-            >
-              {t("REPORT_DONE")}
-            </span>
-            }
+            {isCalculatioDone && (
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 500,
+                  color: "#166534",
+                  backgroundColor: "#dcfce7",
+                  padding: "0.25rem 0.5rem",
+                  borderRadius: "9999px",
+                }}
+              >
+                {t("REPORT_DONE")}
+              </span>
+            )}
             <h2
               style={{
                 fontSize: "40px",

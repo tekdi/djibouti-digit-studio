@@ -5,6 +5,7 @@ import { InboxSearchComposer, Loader } from "@egovernments/digit-ui-components";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { getParallelWorkflow } from "../../../utils";
+import { filter } from "lodash";
 
 const InboxService = () => {
   const { t } = useTranslation();
@@ -47,6 +48,9 @@ const InboxService = () => {
       MdmsCriteria: {
         tenantId: tenantId,
         schemaCode: "Studio.ServiceConfiguration",
+        filters: {
+          module: module,
+        },
       },
     },
   };
@@ -59,6 +63,9 @@ const InboxService = () => {
       code: ob?.businessService,
       name: ob?.businessService,
       parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
+      workflowBusinessService: data?.mdms?.filter(
+        (mdms) => mdms?.uniqueIdentifier?.toLowerCase() === `${module}.${ob?.businessService}`.toLowerCase()
+      )?.[0]?.data?.workflow?.businessService,
     }));
 
   // To fetch the generic inbox config for inboxSearchComposer

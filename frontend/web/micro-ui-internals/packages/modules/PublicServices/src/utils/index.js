@@ -17,7 +17,7 @@ export const updateCustomConfigs = () => {
 };
 
 const getServiceDetails = (formData) => {
-  const excludedKeys = ["address", "applicantDetails", "uploadedDocs", "uploaded", "summary"];
+  const excludedKeys = ["address", "applicantDetails", "uploadedDocs", "uploaded", "summary", "response"];
   const validSections = Object.keys(formData).reduce((acc, key) => {
     if (!excludedKeys.includes(key) && !key.startsWith("section_")) {
       acc[key] = formData[key];
@@ -28,7 +28,7 @@ const getServiceDetails = (formData) => {
     const flat = {};
     for (const [key, val] of Object.entries(obj)) {
       if (val && typeof val === "object" && !Array.isArray(val)) {
-        flat[key] = val && typeof val === "object" && "code" in val ? val.code : val;
+        flat[key] = val && typeof val === "object" && "code" in val ? val.name : val;
       } else {
         flat[key] = val;
       }
@@ -52,7 +52,7 @@ const getServiceDetails = (formData) => {
             const itemKey = Object.keys(item)[0];
             const itemVal = item[itemKey];
             return {
-              [itemKey]: typeof itemVal === "object" && itemVal?.code ? itemVal.code : itemVal,
+              [itemKey]: typeof itemVal === "object" && itemVal?.code ? itemVal.name : itemVal,
             };
           }),
         };
@@ -89,20 +89,80 @@ const transformUploadedDocs = (uploadedDocs = {}) => {
   return documents;
 };
 
-export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, isLastStep, responseData) => {
+//function to manage workfloe action for payload incase of create, save or edit.Add commentMore actions
+const getWorkflowState = (workflowDetails, lastWorkflowAction = null, isLastStep, applicationNumber, action) => {
+  if (lastWorkflowAction === null)
+    return (
+      workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null || ob?.state === "")?.[0]?.actions?.[0]?.action || "DRAFT"
+    );
+  else {
+    if (!isLastStep && applicationNumber) {
+      return null;
+    }
+    // For EDIT application, action will be there in URL
+    if (action) {
+      return action;
+    }
+    const businessServiceData = workflowDetails?.BusinessServices || [];
+    const lastAction = lastWorkflowAction;
+    if (!businessServiceData || !businessServiceData.length) return null;
+
+    const states = businessServiceData[0].states || [];
+
+    //Find the state where lastAction exists
+    const currentState = states.find((state) => state.actions?.some((action) => action.action === lastAction));
+
+    // If application is in initiate state then action will be CREATE
+    if (!currentState) {
+      return null;
+    }
+
+    //Find that specific action object
+    const actionObj = currentState.actions.find((action) => action.action === lastAction);
+
+    if (!actionObj || !actionObj.nextState) return null;
+
+    const nextStateId = actionObj.nextState;
+
+    //Find the next state object using nextStateId
+    const nextState = states.find((state) => state.uuid === nextStateId);
+
+    if (!nextState || !nextState.actions?.length) {
+      return null;
+    } else if (nextState.state === "INITIATED") {
+      return "CREATE";
+    }
+
+    //Return the `action` of the first action in that next state
+    return nextState.actions[0].action;
+  }
+};
+
+export const transformToApplicationPayload = (
+  formData,
+  configMap,
+  service,
+  tenantId,
+  config,
+  workflowDetails,
+  isLastStep,
+  responseData,
+  applicationNumber,
+  action
+) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);
   const applicants =
     formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
-      id: responseData?.Application?.applicants?.[index]?.id || null,
+      id: responseData?.Application?.applicants?.[index]?.id || formData?.response?.applicants?.[index]?.id || null,
       type: "CITIZEN",
-      name: applicant?.legalName,
-      mobileNumber: Number(applicant?.telephone),
+      name: applicant?.name,
+      mobileNumber: Number(applicant?.mobileNumber),
       emailId: applicant?.email || `user${index + 1}@example.com`,
       prefix: "253",
       active: true,
-      userId: responseData?.Application?.applicants?.[index]?.userId || "",
+      userId: responseData?.Application?.applicants?.[index]?.userId || formData?.response?.applicants?.[index]?.userId || "",
     })) || [];
 
   const applicant = formData.applicantDetails?.filter(Boolean)?.[0];
@@ -115,6 +175,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       accuracyDeclaration: applicant?.accuracyDeclaration,
       taxCalculationAgreement: applicant?.taxCalculationAgreement,
       checkValidation: applicant?.checkValidation,
+      idType: applicant?.idType?.name,
     },
   };
 
@@ -122,13 +183,13 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
 
   const requestBody = {
     Application: {
-      id: responseData?.Application?.id || null,
-      applicationNumber: responseData?.Application?.applicationNumber || "",
-      serviceCode: responseData?.Application?.serviceCode || null,
+      id: responseData?.Application?.id || formData?.response?.id || null,
+      applicationNumber: applicationNumber || responseData?.Application?.applicationNumber || "",
+      serviceCode: responseData?.Application?.serviceCode || formData?.response?.serviceCode || null,
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
-      status: isLastStep ? "ACTIVE" : "INACTIVE",
+      status: "ACTIVE",
       channel: "counter",
       reference: null,
       workflowStatus: "applied",
@@ -137,27 +198,30 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       },
       applicants,
       address: {
-        id: responseData?.Application?.address?.id || null,
+        id: responseData?.Application?.address?.id || formData?.response?.address?.id || null,
         tenantId,
         latitude: 0,
         longitude: 0,
         addressNumber: "1",
-        addressLine1: formData.tradeAddress?.streetName || "",
+        addressLine1: formData.address?.streetName || "",
         addressLine2: "",
         landmark: "",
-        city: formData.tradeAddress?.city?.name || "",
-        pincode: formData.tradeAddress?.pincode,
+        city: formData.address?.city?.name || "",
+        pincode: formData.address?.pincode,
         hierarchyType: currentConfig?.boundary?.hierarchyType,
         boundarylevel: currentConfig?.boundary?.lowestLevel,
-        boundarycode: `dj.${formData.tradeAddress?.city?.code?.toLowerCase() || "city"}`,
+        boundarycode: `dj.${formData.address?.city?.code?.toLowerCase() || "city"}`,
       },
       documents, // <-- documents as top-level key
       additionalDetails,
       Workflow: {
-        id: responseData?.Application?.workflow?.id || null,
-        action: isLastStep
-          ? "CREATE"
-          : workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null || ob?.state === "")?.[0]?.actions?.[0]?.action,
+        action: getWorkflowState(
+          workflowDetails,
+          responseData?.Application?.workflow?.action || formData?.response?.workflow?.action,
+          isLastStep,
+          applicationNumber,
+          action
+        ),
         comment: "",
         assignees: [],
         businessService: config?.data?.workflow?.businessService,
@@ -165,7 +229,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
     },
   };
 
-  if (isLastStep) {
+  if (isLastStep || applicationNumber) {
     requestBody.RequestInfo = {
       apiId: "Rainmaker",
       authToken: Digit.UserService.getUser()?.access_token,
@@ -292,26 +356,24 @@ export const generateViewConfigFromResponse = (application, t, currentBusinessSe
     });
   }
   //documents enablement
-  const rawDocuments = application?.additionalDetails?.documents || {};
+  const rawDocuments = application?.documents || {};
   const flattenedDocuments = [];
 
-  Object.entries(rawDocuments).forEach(([docType, docEntries]) => {
-    docEntries.forEach((entry) => {
-      const [fileName, fileObj] = entry || [];
-      const fileStoreId = fileObj?.fileStoreId?.fileStoreId;
+  if (rawDocuments?.length > 0)
+    rawDocuments.forEach((docEntries) => {
+      const fileStoreId = docEntries?.fileStoreId;
 
       if (fileStoreId) {
         flattenedDocuments.push({
-          title: docType || "NA",
-          documentType: docType || "NA",
-          documentUid: fileName || "NA",
+          title: docEntries?.documentType || "NA",
+          documentType: docEntries?.documentType || "NA",
+          documentUid: docEntries?.documentUid || "NA",
           fileStoreId: fileStoreId,
         });
       }
     });
-  });
 
-  if (flattenedDocuments.length > 0) {
+  if (flattenedDocuments?.length > 0) {
     cards.push({
       navigationKey: "card-documents",
       sections: [
@@ -380,28 +442,30 @@ export const transformResponseforModulePage = (data) => {
   const moduleData = {}; // Object to store modules and their corresponding business services
 
   // Process each item
-  data.forEach((item) => {
-    const module = item.module;
-    const auditDetails = item.auditDetails;
-    // If module is already processed, add the businessService to its list
-    if (!moduleData[module]) {
-      moduleData[module] = {
-        heading: `${module.toUpperCase()}_HEADING`,
-        cardDescription: `${module.toUpperCase()}_CARDDESCRIPTION`,
-        businessServices: new Set(), // Set to store unique businessServices
-        module: module,
-        //serviceCode : item?.serviceCode
-      };
-    }
+  data
+    .filter((ob) => ob?.status === "ACTIVE")
+    .forEach((item) => {
+      const module = item.module;
+      const auditDetails = item.auditDetails;
+      // If module is already processed, add the businessService to its list
+      if (!moduleData[module]) {
+        moduleData[module] = {
+          heading: `${module.toUpperCase()}_HEADING`,
+          cardDescription: `${module.toUpperCase()}_CARDDESCRIPTION`,
+          businessServices: new Set(), // Set to store unique businessServices
+          module: module,
+          //serviceCode : item?.serviceCode
+        };
+      }
 
-    // Add the businessService to the set (to ensure uniqueness)
-    moduleData[module].businessServices.add({
-      businessService: item.businessService,
-      serviceCode: item?.serviceCode,
-      displayOrder: item?.displayOrder,
-      auditDetails: auditDetails,
+      // Add the businessService to the set (to ensure uniqueness)
+      moduleData[module].businessServices.add({
+        businessService: item.businessService,
+        serviceCode: item?.serviceCode,
+        displayOrder: item?.displayOrder,
+        auditDetails: auditDetails,
+      });
     });
-  });
 
   // Convert the moduleData object to an array of objects
   return Object.keys(moduleData).map((module) => {
@@ -457,7 +521,7 @@ export const getDetailsByIdWorks = async ({ tenantId, id, moduleCode }) => {
   if (workflow && workflow.ProcessInstances) {
     const processInstances = workflow.ProcessInstances;
     const nextStates = processInstances[0]?.nextActions.map((action) => ({ action: action?.action, nextState: processInstances[0]?.state.uuid }));
-    const nextActions = nextStates.map((id) => ({
+    const nextActions = nextStates?.map((id) => ({
       action: id.action,
       state: businessServiceResponse?.find((state) => state.uuid === id.nextState),
     }));
@@ -632,7 +696,7 @@ const makeCommentsSubsidariesOfPreviousActionsWorks = async (wf) => {
 
 export const downloadStudioPDF = async (pdfRoute, queryParams = {}, fileName = "application.pdf") => {
   const response = await Digit.CustomService.getResponse({
-    url: `/studio-pdf/download/${pdfRoute}`,
+    url: `/studio-pdf/public-service/download/${pdfRoute}`,
     params: queryParams,
     useCache: false,
     setTimeParam: false,
@@ -664,6 +728,14 @@ export const downloadPdf = (blob, fileName) => {
     // in case the Blob uses a lot of memory
     setTimeout(() => URL.revokeObjectURL(link.href), 7000);
   }
+};
+
+export const getPdfKeyForState = (pdfArray, targetState) => {
+  if (!pdfArray || !pdfArray.length) return null;
+
+  const matchingPdf = pdfArray.find((pdfObj) => pdfObj.states.includes(targetState));
+
+  return matchingPdf ? matchingPdf.key : null;
 };
 
 export const getParallelWorkflow = (module, businessService, serviceData) => {

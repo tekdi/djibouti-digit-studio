@@ -18,7 +18,7 @@ const disabledInputStyles = `
   }
 `;
 
-const DigitDemoComponent = () => {
+const DigitDemoComponent = ({ editdata }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
@@ -36,6 +36,15 @@ const DigitDemoComponent = () => {
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    //useEffect to set the prevfilled data
+    if (window.location.href.includes("Edit")) {
+      localStorage.setItem("formData", JSON.stringify(editdata));
+      setFormData(editdata);
+    }
+  }, [editdata]);
+
   // Fetch service configuration from MDMS
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -43,6 +52,9 @@ const DigitDemoComponent = () => {
       MdmsCriteria: {
         tenantId: tenantId,
         schemaCode: "Studio.ServiceConfiguration",
+        filters: {
+          module: module,
+        },
       },
     },
   };
@@ -76,10 +88,11 @@ const DigitDemoComponent = () => {
   const currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode;
   const isLastStep = currentStep === rawConfig.length;
+  const applicationNumber = queryStrings?.applicationNumber;
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook({
     url: `/public-service/v1/application/${schemaCode}`,
-    method: isLastStep ? "PUT" : "POST",
+    method: isLastStep || applicationNumber ? "PUT" : "POST",
     headers: { "x-tenant-id": tenantId },
     config: {
       enable: true,
@@ -135,9 +148,21 @@ const DigitDemoComponent = () => {
       setIsLoading(true);
       await mutation.mutate(
         {
-          body: isLastStep
-            ? transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, isLastStep, responseData)
-            : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
+          body:
+            isLastStep || applicationNumber
+              ? transformToApplicationPayload(
+                  updatedFormData,
+                  Updatedconfig,
+                  service,
+                  tenantId,
+                  config,
+                  workflowDetails,
+                  isLastStep,
+                  responseData,
+                  applicationNumber,
+                  queryStrings?.action
+                )
+              : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
         {
           onSuccess: (data) => {
@@ -153,11 +178,13 @@ const DigitDemoComponent = () => {
             } else {
               history.push({
                 pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
-                search: `?serviceCode=${schemaCode}&isSuccess=true`,
+                search: `?isSuccess=true&applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 state: {
                   message: "COMMON_APPLICATION_CREATED",
                   showID: true,
                   applicationNumber: data?.Application?.applicationNumber,
+                  config: config,
+                  workflowStatus: data?.Application?.workflowStatus,
                   redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 },
               });

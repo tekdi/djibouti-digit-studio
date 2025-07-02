@@ -11,6 +11,10 @@ const ModulePageComponent = () => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+  localStorage.removeItem("formData");
+  localStorage.removeItem("currentStep");
+  sessionStorage.removeItem("formData");
+
   const userDetails = Digit.UserService.getUser();
   const roles = userDetails?.info?.roles;
   const isCitizen = roles?.length === 1 && roles[0].code === "CITIZEN";
@@ -28,9 +32,9 @@ const ModulePageComponent = () => {
     },
     method: "GET",
   };
-  const { isLoading:servicesDataLoading, data:servicesData } = Digit.Hooks.useCustomAPIHook(request);
+  const { isLoading: servicesDataLoading, data: servicesData } = Digit.Hooks.useCustomAPIHook(request);
 
-  const module = servicesData?.Services?.[0]?.module
+  const module = servicesData?.Services?.[0]?.module;
 
   //To fetch the service configurations of the services
   const mdmsRequestCriteria = {
@@ -73,7 +77,7 @@ const ModulePageComponent = () => {
       },
     },
     config: {
-      enabled: !isCitizen && businessServicesList?.length > 0
+      enabled: !isCitizen && businessServicesList?.length > 0,
     },
   });
 
@@ -82,12 +86,12 @@ const ModulePageComponent = () => {
     method: "GET",
     headers: { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
     config: {
-      enabled: !!indId && isCitizen,
+      enabled: !!indId && (isCitizen || isArchitect),
     },
   });
 
   useEffect(async () => {
-    if (!isCitizen) return;
+    if (!isCitizen && !isArchitect) return;
     try {
       const response = await axios.post(`/health-individual/v1/_search?tenantId=${tenantId}&limit=1&offset=0`, {
         RequestInfo: {
@@ -114,7 +118,7 @@ const ModulePageComponent = () => {
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
-  if (servicesDataLoading || (!isCitizen && isInboxLoading) || (isCitizen && isCitizenAppsLoading)) {
+  if (servicesDataLoading || (!isCitizen && !isArchitect && isInboxLoading) || ((isCitizen || isArchitect) && isCitizenAppsLoading)) {
     return <Loader />;
   }
 
@@ -171,7 +175,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Inbox Card */}
-            {!isCitizen && (
+            {!isCitizen && !isArchitect && (
               <Card key={`${index}-inbox`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
@@ -233,40 +237,41 @@ const ModulePageComponent = () => {
             )}
 
             {/* My application Card */}
-            {isCitizen && (
-              <Card key={`${index}-my-application`} className="product-card module-card">
-                <div className="product-header inbox-header">
-                  <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
-                  <div className="product-icon">
-                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="56" height="56" rx="2" fill="#006769" />
-                      <g clip-path="url(#clip0_101_37716)">
-                        <path
-                          d="M41.3334 11.3333H14.6667C12.8334 11.3333 11.35 12.8333 11.35 14.6667L11.3334 44.6667L18 38H41.3334C43.1667 38 44.6667 36.5 44.6667 34.6667V14.6667C44.6667 12.8333 43.1667 11.3333 41.3334 11.3333ZM29.6667 26.3333H26.3334V16.3333H29.6667V26.3333ZM29.6667 33H26.3334V29.6667H29.6667V33Z"
-                          fill="white"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_101_37716">
-                          <rect width="40" height="40" fill="white" transform="translate(8 8)" />
-                        </clipPath>
-                      </defs>
+            {isCitizen ||
+              (isArchitect && (
+                <Card key={`${index}-my-application`} className="product-card module-card">
+                  <div className="product-header inbox-header">
+                    <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
+                    <div className="product-icon">
+                      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="56" height="56" rx="2" fill="#006769" />
+                        <g clip-path="url(#clip0_101_37716)">
+                          <path
+                            d="M41.3334 11.3333H14.6667C12.8334 11.3333 11.35 12.8333 11.35 14.6667L11.3334 44.6667L18 38H41.3334C43.1667 38 44.6667 36.5 44.6667 34.6667V14.6667C44.6667 12.8333 43.1667 11.3333 41.3334 11.3333ZM29.6667 26.3333H26.3334V16.3333H29.6667V26.3333ZM29.6667 33H26.3334V29.6667H29.6667V33Z"
+                            fill="white"
+                          />
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_101_37716">
+                            <rect width="40" height="40" fill="white" transform="translate(8 8)" />
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="inbox-count-container">
+                    <CardText className="product-description inbox-count-number">{count}</CardText>
+                    <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
+                  </div>
+                  <div className="product-button-container">
+                    <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/CitizenInbox`}>
+                      {t("VIEW_ALL")}
+                    </Link>
+                    <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
                     </svg>
                   </div>
-                </div>
-                <div className="inbox-count-container">
-                  <CardText className="product-description inbox-count-number">{count}</CardText>
-                  <CardText className="product-description">{t("TOTAL_INBOX_COUNT")}</CardText>
-                </div>
-                <div className="product-button-container">
-                  <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/CitizenInbox`}>
-                    {t("VIEW_ALL")}
-                  </Link>
-                  <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
-                  </svg>
-                </div>
-                {/* <Link className="link" to={{
+                  {/* <Link className="link" to={{
                 pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
                 state: {
                   moduleData:data
@@ -274,8 +279,8 @@ const ModulePageComponent = () => {
               }}>
                 Search
               </Link> */}
-              </Card>
-            )}
+                </Card>
+              ))}
 
             <style jsx>{`
               .list-disc {
