@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -114,24 +115,34 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	}
 	defer resp.Body.Close()
 
+	// Step 3: Read the response body fully
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read workflow response body: %w", err)
+	}
+	log.Println("Workflow transition raw response:\n", string(bodyBytes))
+
 	if resp.StatusCode != http.StatusOK {
 		var errResp map[string]interface{}
-		_ = json.NewDecoder(resp.Body).Decode(&errResp)
+		if err := json.Unmarshal(bodyBytes, &errResp); err != nil {
+			return fmt.Errorf("workflow service returned status %d, and failed to parse error body: %w", resp.StatusCode, err)
+		}
 		return fmt.Errorf("workflow service returned status %d: %v", resp.StatusCode, errResp)
 	}
 
-	respJSON, _ := json.MarshalIndent(resp, "", "  ")
-	log.Println("Workflow transition response:\n", string(respJSON))
-
 	var wfResponse model.ProcessInstanceResponse
-	if err := json.NewDecoder(resp.Body).Decode(&wfResponse); err != nil {
-		return fmt.Errorf("error decoding workflow response: %w", err)
+	if err := json.Unmarshal(bodyBytes, &wfResponse); err != nil {
+		return fmt.Errorf("failed to decode workflow response: %w", err)
 	}
 
 	if len(wfResponse.ProcessInstances) == 0 {
 		return errors.New("no process instance returned from workflow")
 	}
+
 	req.Application.ProcessInstance = &wfResponse.ProcessInstances
+
+	log.Printf("Successfully decoded workflow response: %+v\n", wfResponse)
+
 	return nil
 }
 
