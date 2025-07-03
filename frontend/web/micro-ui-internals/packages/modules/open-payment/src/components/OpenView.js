@@ -536,11 +536,11 @@ const OpenView = () => {
                   module="works"
                   tenantId={Digit.ULBService.getCurrentTenantId()}
                   getFormState={handleFileStoreId}
-                  allowedFileTypesRegex={/pdf/}
+                  allowedFileTypesRegex={/pdf|jpg|jpeg|png|heic/}
                   allowedMaxSizeInMB={10}
                   maxFilesAllowed={1}
                   containerStyles={{width:"100%"}}
-                  acceptFiles = ".pdf"
+                  acceptFiles = ".pdf, .jpg, .jpeg, .png, .heic"
                   required={true}
                 />
                 
