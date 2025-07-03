@@ -115,7 +115,8 @@ const ModulePageComponent = () => {
   const hasNoData = detailsConfig.length === 0 && !servicesDataLoading;
 
   const userType = userDetails?.info?.type?.toLowerCase();
-  const isDirector = roles?.some((role) => role.code.includes("BPA_DIRECTOR"));
+  const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
+  const isSubDirector = roles?.some((role) => role.code === "BPA_SRA_SUB_DIRECTOR");
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
   if (servicesDataLoading || (!isCitizen && !isArchitect && isInboxLoading) || ((isCitizen || isArchitect) && isCitizenAppsLoading)) {
@@ -175,7 +176,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Inbox Card */}
-            {!isCitizen && !isArchitect && (
+            {!isCitizen && !isArchitect && !isSubDirector && (
               <Card key={`${index}-inbox`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
