@@ -6,6 +6,7 @@ import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaU
 import { transformToApplicationPayload } from "../../../utils";
 import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
+import { assigneeMapping } from "../../../utils/templateConfig";
 
 // Add styles for disabled inputs
 const disabledInputStyles = `
@@ -36,6 +37,17 @@ const DigitDemoComponent = ({ editdata }) => {
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const permit = assigneeMapping?.find((item) => item.permit === service);
+  const role = permit?.role || null;
+
+  let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
+    { roles: role, isActive: true },
+    tenantId,
+    null,
+    null,
+    { enabled: role != null }
+  );
 
   useEffect(() => {
     //useEffect to set the prevfilled data
@@ -160,7 +172,8 @@ const DigitDemoComponent = ({ editdata }) => {
                   isLastStep,
                   responseData,
                   applicationNumber,
-                  queryStrings?.action
+                  queryStrings?.action,
+                  assigneeOptions?.Employees
                 )
               : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
@@ -296,7 +309,7 @@ const DigitDemoComponent = ({ editdata }) => {
 
   const closeToast = () => setShowToast(false);
 
-  if (moduleListLoading || workflowDetailsLoading) return <Loader />;
+  if (moduleListLoading || workflowDetailsLoading || isLoadingHrmsSearch) return <Loader />;
 
   if (isLoading) return <Loader />;
 

@@ -266,3 +266,18 @@ export const documentFields = [
     ],
   },
 ];
+
+export const assigneeMapping = [
+  {
+    permit: "BPA_PCO",
+    role: "BPA_HOD",
+  },
+  {
+    permit: "BPA_PCO_SIMPLE",
+    role: "BPA_HOD",
+  },
+  {
+    permit: "BPA_PR",
+    role: "TOPOGRAPHY_HOD",
+  },
+];

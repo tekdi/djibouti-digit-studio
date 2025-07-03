@@ -148,7 +148,8 @@ export const transformToApplicationPayload = (
   isLastStep,
   responseData,
   applicationNumber,
-  action
+  action,
+  assignees
 ) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
@@ -223,7 +224,7 @@ export const transformToApplicationPayload = (
           action
         ),
         comment: "",
-        assignees: [],
+        assignees: isLastStep ? assignees.map((emp) => emp?.user).filter(Boolean) : [],
         businessService: config?.data?.workflow?.businessService,
       },
     },
