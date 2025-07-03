@@ -117,6 +117,7 @@ const ModulePageComponent = () => {
   const userType = userDetails?.info?.type?.toLowerCase();
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
   const isSubDirector = roles?.some((role) => role.code === "BPA_SRA_SUB_DIRECTOR");
+  const isCounterEmployee = roles?.some((role) => role.code === "COUNTER_EMPLOYEE");
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
   if (servicesDataLoading || (!isCitizen && !isArchitect && isInboxLoading) || ((isCitizen || isArchitect) && isCitizenAppsLoading)) {
@@ -176,7 +177,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Inbox Card */}
-            {!isCitizen && !isArchitect && !isSubDirector && (
+            {!isCitizen && !isArchitect && !isSubDirector && !isCounterEmployee && (
               <Card key={`${index}-inbox`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
@@ -221,7 +222,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Search application */}
-            {isDirector && (
+            {(isDirector || isCounterEmployee) && (
               <Card key={`${index}-search`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("SEARCH_HEADER")}</HeaderComponent>
