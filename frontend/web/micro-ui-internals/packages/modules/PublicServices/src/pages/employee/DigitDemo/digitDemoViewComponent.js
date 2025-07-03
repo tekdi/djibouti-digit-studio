@@ -40,7 +40,6 @@ const DigitDemoViewComponent = () => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
-
   //To fetch the service config for the module and service
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -78,10 +77,6 @@ const DigitDemoViewComponent = () => {
       cacheTime: 0,
     },
   });
-
-  console.log(timelineWorkflowDetails,"timelineWorkflowDetails");
-
-
 
 
   // Util method to generate view config for view composer
@@ -358,7 +353,7 @@ const DigitDemoViewComponent = () => {
                 }}
               />
 
-              {[...timelineWorkflowDetails?.timeline].reverse().map((instance, index) => {
+              {Array.isArray(timelineWorkflowDetails?.timeline) && [...timelineWorkflowDetails.timeline].reverse().map((instance, index) => {
                 const isCurrentState = index === timelineWorkflowDetails?.timeline?.length - 1;
                 return (
                   <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
