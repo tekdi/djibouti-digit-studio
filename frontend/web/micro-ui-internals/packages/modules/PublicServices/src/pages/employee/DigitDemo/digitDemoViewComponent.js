@@ -446,7 +446,7 @@ const DigitDemoViewComponent = () => {
                           {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
                         </div>
                       )}
-                      {instance?.businessService !== queryStrings?.businessService && (
+                      {instance?.businessService !== service && (
                         <div
                           style={{
                             marginTop: "0.5rem",
