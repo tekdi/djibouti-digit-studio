@@ -185,7 +185,20 @@ export const UICustomizations = {
       data.body.inbox.tenantId = tenantId;
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "POST";
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `BPA_RECENT` ? "DESC" : "ASC";
+
+      const assigneeCode = data?.state?.filterForm?.assignee?.code;
+
+      switch (assigneeCode) {
+        case "BPA_RECENT":
+          data.body.inbox.moduleSearchCriteria.sortOrder = "DESC";
+          break;
+        case "BPA_OLDEST":
+          data.body.inbox.moduleSearchCriteria.sortOrder = "ASC";
+          break;
+        default:
+          data.body.inbox.moduleSearchCriteria.sortOrder = "DESC";
+      }
+
       if (data?.state?.filterForm?.state) {
         const statusKeys = data?.state?.filterForm?.state;
         data.body.inbox.moduleSearchCriteria.status = [];

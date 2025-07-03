@@ -260,6 +260,7 @@ const InboxSearchComposer = ({ configs, additionalConfig, onFormValueChange = ()
                 showTabCount={configs?.sections?.search?.uiConfig?.showTabCount}
                 tabData={tabData}
                 onTabChange={onTabChange}
+                className={"search-application-wrapper"}
               />
             </div>
           )}
