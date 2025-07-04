@@ -446,7 +446,8 @@ const DigitDemoViewComponent = () => {
                           {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
                         </div>
                       )}
-                      {(instance?.businessService !== queryStrings?.businessService) &&  <div
+                      {(queryStrings?.businessService ? queryStrings?.businessService : service) !== instance?.businessService && (
+                        <div
                           style={{
                             marginTop: "0.5rem",
                             border: "1px solid #e5e7eb",
@@ -459,8 +460,9 @@ const DigitDemoViewComponent = () => {
                             fontFamily: "Inter",
                           }}
                         >
-                        {instance?.businessService}
-                        </div>}
+                          {t(`${instance?.businessService}`)}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
