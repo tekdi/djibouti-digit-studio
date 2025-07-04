@@ -23,6 +23,7 @@ const DigitDemoViewComponent = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [isCalculatioDone, setIsCalculationDone] = useState(false);
   const history = useHistory();
+  const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
 
   //to get the fetched application details
   const request = {
@@ -77,7 +78,6 @@ const DigitDemoViewComponent = () => {
       cacheTime: 0,
     },
   });
-
 
   // Util method to generate view config for view composer
   let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService || selectedBusinessService?.code, serviceConfig);
@@ -187,21 +187,23 @@ const DigitDemoViewComponent = () => {
           </div>
         </div>
         <div style={{ width: "35%", marginRight: "10px" }}>
-          <div
-            style={{
-              boxShadow: "1px 5px 7px 2pxrgb(207, 205, 205)",
-              borderRadius: "1rem",
-              marginBottom: "15px",
-              marginTop: "10px",
-              backgroundColor: "rgba(255, 255, 255, var(--bg-opacity))",
-            }}
-          >
-            <ViewCheckListCards
-              applicationId={data?.Application?.[0]?.id}
-              state={data?.Application?.[0]?.processInstance?.[0]?.state?.state}
-              checkListCodes={checkListCodes}
-            />
-          </div>
+          {!isCitizen && (
+            <div
+              style={{
+                boxShadow: "1px 5px 7px 2px rgb(207, 205, 205)",
+                borderRadius: "1rem",
+                marginBottom: "15px",
+                marginTop: "10px",
+                backgroundColor: "rgba(255, 255, 255, var(--bg-opacity))",
+              }}
+            >
+              <ViewCheckListCards
+                applicationId={data?.Application?.[0]?.id}
+                state={data?.Application?.[0]?.processInstance?.[0]?.state?.state}
+                checkListCodes={checkListCodes}
+              />
+            </div>
+          )}
           <div
             style={{
               borderRadius: "1rem",
@@ -270,40 +272,41 @@ const DigitDemoViewComponent = () => {
               })}
             />
           </div>
-          <div
-            style={{
-              borderRadius: "1rem",
-              boxShadow:
-                "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px",
-              padding: "1.5rem",
-              backgroundColor: "white",
-            }}
-          >
-            {isCalculatioDone && (
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 500,
-                  color: "#166534",
-                  backgroundColor: "#dcfce7",
-                  padding: "0.25rem 0.5rem",
-                  borderRadius: "9999px",
-                }}
-              >
-                {t("REPORT_DONE")}
-              </span>
-            )}
-            <h2
+          {!isCitizen && (
+            <div
               style={{
-                fontSize: "40px",
-                fontWeight: 700,
-                marginTop: "1rem",
-                wordBreak: "break-word",
+                borderRadius: "1rem",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px",
+                padding: "1.5rem",
+                backgroundColor: "white",
               }}
             >
-              {t("CALCULATION_OF_RIGHTS")}
-            </h2>
-            {/* <p
+              {isCalculatioDone && (
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    color: "#166534",
+                    backgroundColor: "#dcfce7",
+                    padding: "0.25rem 0.5rem",
+                    borderRadius: "9999px",
+                  }}
+                >
+                  {t("REPORT_DONE")}
+                </span>
+              )}
+              <h2
+                style={{
+                  fontSize: "40px",
+                  fontWeight: 700,
+                  marginTop: "1rem",
+                  wordBreak: "break-word",
+                }}
+              >
+                {t("CALCULATION_OF_RIGHTS")}
+              </h2>
+              {/* <p
               style={{
                 color: '#4b5563',
                 marginTop: '0.25rem',
@@ -311,24 +314,25 @@ const DigitDemoViewComponent = () => {
             >
               {t("CREATE_THE_PAYMENT_RECEIPT_FOR_THE_CITIZEN")}
             </p> */}
-            <button
-              onClick={handleCalculationClick}
-              style={{
-                marginTop: "1.5rem",
-                width: "100%",
-                border: "1px solid #006769",
-                color: "#006769",
-                fontWeight: 500,
-                fontSize: "16px",
-                padding: "0.5rem 0",
-                borderRadius: "0.5rem",
-                backgroundColor: "white",
-                cursor: "pointer",
-              }}
-            >
-              {t("EDIT")}
-            </button>
-          </div>
+              <button
+                onClick={handleCalculationClick}
+                style={{
+                  marginTop: "1.5rem",
+                  width: "100%",
+                  border: "1px solid #006769",
+                  color: "#006769",
+                  fontWeight: 500,
+                  fontSize: "16px",
+                  padding: "0.5rem 0",
+                  borderRadius: "0.5rem",
+                  backgroundColor: "white",
+                  cursor: "pointer",
+                }}
+              >
+                {t("EDIT")}
+              </button>
+            </div>
+          )}
           <div
             style={{
               marginTop: "1rem",
@@ -353,120 +357,121 @@ const DigitDemoViewComponent = () => {
                 }}
               />
 
-              {Array.isArray(timelineWorkflowDetails?.timeline) && [...timelineWorkflowDetails.timeline].reverse().map((instance, index) => {
-                const isCurrentState = index === timelineWorkflowDetails?.timeline?.length - 1;
-                return (
-                  <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
-                    <div
-                      style={{
-                        height: "1.5rem",
-                        width: "1.5rem",
-                        borderRadius: "9999px",
-                        border: `2px solid ${isCurrentState ? "#C84C0E" : "#d1d5db"}`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "0.75rem",
-                        fontWeight: 500,
-                        backgroundColor: isCurrentState ? "#C84C0E" : "white",
-                        color: isCurrentState ? "white" : "inherit",
-                        marginRight: "0.75rem",
-                        flexShrink: 0,
-                        zIndex: "999",
-                      }}
-                    >
-                      {index + 1}
-                    </div>
-                    <div
-                      style={{
-                        width: "100%",
-                        minWidth: 0,
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      <p
+              {Array.isArray(timelineWorkflowDetails?.timeline) &&
+                [...timelineWorkflowDetails.timeline].reverse().map((instance, index) => {
+                  const isCurrentState = index === timelineWorkflowDetails?.timeline?.length - 1;
+                  return (
+                    <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
+                      <div
                         style={{
-                          fontSize: "16px",
-                          color: isCurrentState ? "#C84C0E" : "#505A5F",
-                          fontWeight: "400",
-                          marginTop: "5px",
-                          overflowWrap: "break-word",
-                          whiteSpace: "normal",
-                          fontFamily: "Inter",
+                          height: "1.5rem",
+                          width: "1.5rem",
+                          borderRadius: "9999px",
+                          border: `2px solid ${isCurrentState ? "#C84C0E" : "#d1d5db"}`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.75rem",
+                          fontWeight: 500,
+                          backgroundColor: isCurrentState ? "#C84C0E" : "white",
+                          color: isCurrentState ? "white" : "inherit",
+                          marginRight: "0.75rem",
+                          flexShrink: 0,
+                          zIndex: "999",
                         }}
                       >
-                        {t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`)}
-                        <span
+                        {index + 1}
+                      </div>
+                      <div
+                        style={{
+                          width: "100%",
+                          minWidth: 0,
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        <p
                           style={{
-                            color: isCurrentState ? "#C84C0E" : "#6b7280",
-                            display: "inline-block",
+                            fontSize: "16px",
+                            color: isCurrentState ? "#C84C0E" : "#505A5F",
+                            fontWeight: "400",
+                            marginTop: "5px",
+                            overflowWrap: "break-word",
+                            whiteSpace: "normal",
                             fontFamily: "Inter",
                           }}
                         >
-                          {" "}
-                          ({instance?.auditDetails?.created})
-                        </span>
-                      </p>
-                      {instance?.comment && (
-                        <div
-                          style={{
-                            marginTop: "0.5rem",
-                            border: "1px solid #e5e7eb",
-                            padding: "0.75rem",
-                            borderRadius: "0.5rem",
-                            fontSize: "0.85rem",
-                            color: "#505A5F",
-                            backgroundColor: "#f9fafb",
-                            wordBreak: "break-word",
-                            fontFamily: "Inter",
-                          }}
-                        >
-                          <p
+                          {t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`)}
+                          <span
                             style={{
-                              marginTop: "5px",
-                              color: "black",
+                              color: isCurrentState ? "#C84C0E" : "#6b7280",
+                              display: "inline-block",
                               fontFamily: "Inter",
                             }}
                           >
-                            {t("COMMENT")}
-                          </p>
-                          "{instance?.comment}"
-                        </div>
-                      )}
-                      {instance?.assignes?.length > 0 && (
-                        <div
-                          style={{
-                            marginTop: "0.5rem",
-                            fontSize: "0.85rem",
-                            color: isCurrentState ? "#C84C0E" : "#6b7280",
-                            wordBreak: "break-word",
-                            fontFamily: "Inter",
-                          }}
-                        >
-                          {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
-                        </div>
-                      )}
-                      {(queryStrings?.businessService ? queryStrings?.businessService : service) !== instance?.businessService && (
-                        <div
-                          style={{
-                            marginTop: "0.5rem",
-                            border: "1px solid #e5e7eb",
-                            padding: "0.75rem",
-                            borderRadius: "0.5rem",
-                            fontSize: "0.85rem",
-                            color: "#505A5F",
-                            backgroundColor: "#f9fafb",
-                            wordBreak: "break-word",
-                            fontFamily: "Inter",
-                          }}
-                        >
-                          {t(`${instance?.businessService}`)}
-                        </div>
-                      )}
+                            {" "}
+                            ({instance?.auditDetails?.created})
+                          </span>
+                        </p>
+                        {instance?.comment && (
+                          <div
+                            style={{
+                              marginTop: "0.5rem",
+                              border: "1px solid #e5e7eb",
+                              padding: "0.75rem",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.85rem",
+                              color: "#505A5F",
+                              backgroundColor: "#f9fafb",
+                              wordBreak: "break-word",
+                              fontFamily: "Inter",
+                            }}
+                          >
+                            <p
+                              style={{
+                                marginTop: "5px",
+                                color: "black",
+                                fontFamily: "Inter",
+                              }}
+                            >
+                              {t("COMMENT")}
+                            </p>
+                            "{instance?.comment}"
+                          </div>
+                        )}
+                        {instance?.assignes?.length > 0 && (
+                          <div
+                            style={{
+                              marginTop: "0.5rem",
+                              fontSize: "0.85rem",
+                              color: isCurrentState ? "#C84C0E" : "#6b7280",
+                              wordBreak: "break-word",
+                              fontFamily: "Inter",
+                            }}
+                          >
+                            {t("ASSIGNED_TO")}: {instance?.assignes?.map((assignee) => assignee?.name).join(", ")}
+                          </div>
+                        )}
+                        {(queryStrings?.businessService ? queryStrings?.businessService : service) !== instance?.businessService && (
+                          <div
+                            style={{
+                              marginTop: "0.5rem",
+                              border: "1px solid #e5e7eb",
+                              padding: "0.75rem",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.85rem",
+                              color: "#505A5F",
+                              backgroundColor: "#f9fafb",
+                              wordBreak: "break-word",
+                              fontFamily: "Inter",
+                            }}
+                          >
+                            {t(`${instance?.businessService}`)}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>
