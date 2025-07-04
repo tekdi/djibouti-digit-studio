@@ -16,7 +16,7 @@ const OpenView = () => {
     receiptDate: "",
     chequeNo: "",
     chequeDate: "",
-    fileStoreId:""
+    fileStoreId: "",
   });
   const queryParams = Digit.Hooks.useQueryParams();
   const mutation = CustomisedHooks?.Hooks?.openpayment?.useCreatePayment();
@@ -83,34 +83,27 @@ const OpenView = () => {
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
     if (userType === "employee") {
-
       const mandatoryFields = [
-        {value: formData.receiptNo, name: "receiptNo"},
-        {value: formData.receiptDate, name: "receiptDate"},
-        {value: formData.fileStoreId, name: "fileStoreId"}  // Must not be empty string
+        { value: formData.receiptNo, name: "receiptNo" },
+        { value: formData.receiptDate, name: "receiptDate" },
+        { value: formData.fileStoreId, name: "fileStoreId" }, // Must not be empty string
       ];
-      
+
       if (paymentMode === "CHEQUE") {
-        mandatoryFields.push(
-          {value: formData.chequeNo, name: "chequeNo"},
-          {value: formData.chequeDate, name: "chequeDate"}
-        );
+        mandatoryFields.push({ value: formData.chequeNo, name: "chequeNo" }, { value: formData.chequeDate, name: "chequeDate" });
       }
 
       // Check for empty fields
-      const emptyFields = mandatoryFields.filter(field => 
-        field.value === "" || field.value === null || field.value === undefined
-      );
+      const emptyFields = mandatoryFields.filter((field) => field.value === "" || field.value === null || field.value === undefined);
 
       if (emptyFields.length > 0) {
         setShowToast({
           key: true,
-          label: t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")
+          label: t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"),
         });
-        
+
         return;
       }
-
 
       const body = {
         Payment: {
@@ -136,8 +129,8 @@ const OpenView = () => {
               billId: bill?.id,
               totalDue: bill?.totalAmount,
               totalAmountPaid: bill?.totalAmount,
-              manualReceiptNumber:formData?.receiptNo, 
-              manualReceiptDate:formData?.receiptDate ? new Date(formData?.receiptDate).getTime() : null
+              manualReceiptNumber: formData?.receiptNo,
+              manualReceiptDate: formData?.receiptDate ? new Date(formData?.receiptDate).getTime() : null,
             },
           ],
           tenantId: queryParams.tenantId,
@@ -146,8 +139,7 @@ const OpenView = () => {
           paymentMode: paymentMode,
           payerName: bill?.payerName,
           paidBy: "OWNER",
-          fileStoreId:formData?.fileStoreId
-
+          fileStoreId: formData?.fileStoreId,
         },
       };
 
@@ -246,137 +238,6 @@ const OpenView = () => {
             },
           }
         );
-        //dummy response
-        //   const data = {
-        //     "ResponseInfo": {
-        //         "apiId": "Rainmaker",
-        //         "ver": null,
-        //         "ts": null,
-        //         "resMsgId": "uief87324",
-        //         "msgId": "1718644477119|en_IN",
-        //         "status": "SUCCESSFUL"
-        //     },
-        //     "Transaction": {
-        //         "tenantId": "pb.abianakhurd",
-        //         "txnAmount": "160",
-        //         "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3",
-        //         "module": "WS",
-        //         "consumerCode": "WS/7141/2024-25/0316",
-        //         "taxAndPayments": [
-        //             {
-        //                 "taxAmount": null,
-        //                 "amountPaid": 160,
-        //                 "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
-        //             }
-        //         ],
-        //         "productInfo": "Common Payment",
-        //         "gateway": "PAYGOV",
-        //         "callbackUrl": "http://localhost:3000/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81",
-        //         "txnId": "PB_PG_2024_06_17_0367_81",
-        //         "user": {
-        //             "uuid": "e18c2f5b-6035-4360-885b-dfd28b1159f0",
-        //             "name": "hj",
-        //             "userName": "9379239289",
-        //             "mobileNumber": "9379239289",
-        //             "emailId": null,
-        //             "tenantId": "pb"
-        //         },
-        //         "redirectUrl": "https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest?additionalField3=pb.abianakhurd&orderId=PB_PG_2024_06_17_0367_81&additionalField4=WS/7141/2024-25/0316&requestDateTime=17-06-202417:14:078&additionalField5=WSabianakhurd&successUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&failUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&txURL=https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest&messageType=0100&merchantId=UATPWSSG0000001429&transactionAmount=160&customerId=e18c2f5b-6035-4360-885b-dfd28b1159f0&checksum=3463857141&additionalField1=9379239289&additionalField2=111111&serviceId=WSabianakhurd&currencyCode=INR",
-        //         "txnStatus": "PENDING",
-        //         "txnStatusMsg": "Transaction initiated",
-        //         "gatewayTxnId": null,
-        //         "gatewayPaymentMode": null,
-        //         "gatewayStatusCode": null,
-        //         "gatewayStatusMsg": null,
-        //         "receipt": null,
-        //         "auditDetails": {
-        //             "createdBy": "d158721b-5c25-421b-8c26-c63cf5d38825",
-        //             "createdTime": 1718644478078,
-        //             "lastModifiedBy": null,
-        //             "lastModifiedTime": null
-        //         },
-        //         "additionalDetails": {
-        //             "isWhatsapp": false,
-        //             "taxAndPayments": [
-        //                 {
-        //                     "taxAmount": null,
-        //                     "amountPaid": 160,
-        //                     "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
-        //                 }
-        //             ]
-        //         },
-        //         "bankTransactionNo": null
-        //     }
-        // }
-        // const redirectUrl = data?.Transaction?.redirectUrl;
-        //   // paygov
-        //   try {
-        //     const gatewayParam = redirectUrl
-        //       ?.split("?")
-        //       ?.slice(1)
-        //       ?.join("?")
-        //       ?.split("&")
-        //       ?.reduce((curr, acc) => {
-        //         var d = acc.split("=");
-        //         curr[d[0]] = d[1];
-        //         return curr;
-        //       }, {});
-        //     var newForm = $("<form>", {
-        //       action: gatewayParam.txURL,
-        //       method: "POST",
-        //       target: "_top",
-        //     });
-        //     const orderForNDSLPaymentSite = [
-        //       "checksum",
-        //       "messageType",
-        //       "merchantId",
-        //       "serviceId",
-        //       "orderId",
-        //       "customerId",
-        //       "transactionAmount",
-        //       "currencyCode",
-        //       "requestDateTime",
-        //       "successUrl",
-        //       "failUrl",
-        //       "additionalField1",
-        //       "additionalField2",
-        //       "additionalField3",
-        //       "additionalField4",
-        //       "additionalField5",
-        //     ];
-
-        //     // override default date for UPYOG Custom pay
-        //     gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-
-        //     gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-        //     gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-        //     // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
-        //     // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-
-        //     // var formdata = new FormData();
-
-        //     for (var key of orderForNDSLPaymentSite) {
-
-        //       // formdata.append(key,gatewayParam[key]);
-
-        //       newForm.append(
-        //         $("<input>", {
-        //           name: key,
-        //           value: gatewayParam[key],
-        //           // type: "hidden",
-        //         })
-        //       );
-        //     }
-        //     $(document.body).append(newForm);
-        //     newForm.submit();
-        //     makePayment(gatewayParam.txURL,newForm);
-
-        //   } catch (e) {
-        //     console.log("Error in payment redirect ", e);
-        //     //window.location = redirectionUrl;
-        //   }
-
-        // window.location = redirectUrl;
       } catch (error) {
         let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
         if (error.response?.data?.Errors?.[0]) {
@@ -397,9 +258,9 @@ const OpenView = () => {
     if (files.length > 0) {
       // Extract just the fileStoreId string from the object
       const fileStoreId = files[0][1]?.fileStoreId?.fileStoreId || "";
-      setFormData(prev => ({ ...prev, fileStoreId }));
+      setFormData((prev) => ({ ...prev, fileStoreId }));
     } else {
-      setFormData(prev => ({ ...prev, fileStoreId: "" }));
+      setFormData((prev) => ({ ...prev, fileStoreId: "" }));
     }
   };
 
@@ -427,143 +288,159 @@ const OpenView = () => {
         <div className="payment-mode-card">
           <Header className="header">{t("MODE_OF_PAYMENT")}</Header>
           <div className="payment-mode-wrapper">
-           {userType === "employee" && <div className="form">
-              <div className="radio-wrapper">
-                <label className="input-label">{t('SELECT_PAYMENT_METHOD')}</label>
-                <div className="radio-label-wrapper">
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="paymentMode"
-                      value="CASH"
-                      checked={paymentMode === "CASH"}
-                      onChange={() => setPaymentMode("CASH")}
-                      className="custom-radio"
-                    />
-                    {t("PAYMENT_CASH")}
+            {userType === "employee" && (
+              <div className="form">
+                <div className="radio-wrapper">
+                  <label className="input-label">{t("SELECT_PAYMENT_METHOD")}</label>
+                  <div className="radio-label-wrapper">
+                    <label className="radio-label">
+                      <input
+                        type="radio"
+                        name="paymentMode"
+                        value="CASH"
+                        checked={paymentMode === "CASH"}
+                        onChange={() => setPaymentMode("CASH")}
+                        className="custom-radio"
+                      />
+                      {t("PAYMENT_CASH")}
+                    </label>
+                    <label className="radio-label">
+                      <input
+                        type="radio"
+                        name="paymentMode"
+                        value="CHEQUE"
+                        checked={paymentMode === "CHEQUE"}
+                        onChange={() => setPaymentMode("CHEQUE")}
+                        className="custom-radio"
+                      />
+                      {t("PAYMENT_CHEQUE")}
+                    </label>
+                  </div>
+                </div>
+
+                <div className="input-wrapper">
+                  <label className="input-label">
+                    {t("RECEIPT_NO")}
+                    <span className="star">*</span>
                   </label>
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="paymentMode"
-                      value="CHEQUE"
-                      checked={paymentMode === "CHEQUE"}
-                      onChange={() => setPaymentMode("CHEQUE")}
-                      className="custom-radio"
-                    />
-                    {t("PAYMENT_CHEQUE")}
+                  <TextInput
+                    t={t}
+                    style={{ width: "100%" }}
+                    type={"text"}
+                    required={true}
+                    optionKey="i18nKey"
+                    name="receiptNo"
+                    value={formData.receiptNo}
+                    onChange={handleChange}
+                    placeholder={"ENTER_RECEIPT_NUMBER"}
+                  />
+                </div>
+
+                <div className="input-wrapper">
+                  <label className="input-label">
+                    {t("RECEIPT_DATE")}
+                    <span className="star">*</span>
                   </label>
+                  <TextInput
+                    t={t}
+                    style={{ width: "100%" }}
+                    type={"date"}
+                    required={true}
+                    optionKey="i18nKey"
+                    name="receiptDate"
+                    value={formData.receiptDate}
+                    onChange={handleChange}
+                    placeholder={"ENTER_RECEIPT_DATE"}
+                  />
+                </div>
+
+                {paymentMode === "CHEQUE" && (
+                  <>
+                    <div className="input-wrapper">
+                      <label className="input-label">
+                        {t("CHEQUE_NO")}
+                        <span className="star">*</span>
+                      </label>
+
+                      <TextInput
+                        t={t}
+                        style={{ width: "100%" }}
+                        type={"text"}
+                        required={paymentMode === "CHEQUE"}
+                        optionKey="i18nKey"
+                        name="chequeNo"
+                        value={formData.chequeNo}
+                        onChange={handleChange}
+                        placeholder={"ENTER_CHEQUE_NUMBER"}
+                        populators={{
+                          minLength: 6,
+                          maxLength: 6,
+                        }}
+                      />
+                    </div>
+
+                    <div className="input-wrapper">
+                      <label className="input-label">
+                        {t("CHEQUE_DATE")}
+                        <span className="star">*</span>
+                      </label>
+
+                      <TextInput
+                        t={t}
+                        style={{ width: "100%" }}
+                        type={"date"}
+                        required={paymentMode === "CHEQUE"}
+                        optionKey="i18nKey"
+                        name="chequeDate"
+                        value={formData.chequeDate}
+                        onChange={handleChange}
+                        placeholder={"ENTER_CHEQUE_DATE"}
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div className="input-wrapper">
+                  <label className="input-label">
+                    {t("UPLOAD_PAYMENT_RECEIPT")}
+                    <span className="star">*</span>
+                  </label>
+
+                  <MultiUploadWrapper
+                    t={t}
+                    module="works"
+                    tenantId={Digit.ULBService.getCurrentTenantId()}
+                    getFormState={handleFileStoreId}
+                    allowedFileTypesRegex={/pdf|jpg|jpeg|png|heic/}
+                    allowedMaxSizeInMB={10}
+                    maxFilesAllowed={5}
+                    containerStyles={{ width: "100%" }}
+                    acceptFiles=".pdf, .jpg, .jpeg, .png, .heic"
+                    required={true}
+                  />
                 </div>
               </div>
-
-              <div className="input-wrapper">
-                <label className="input-label">{t("RECEIPT_NO")}<span className="star">*</span></label>
-                <TextInput
-                  t={t}
-                  style={{ width: "100%" }}
-                  type={"text"}
-                  required={true}
-                  optionKey="i18nKey"
-                  name="receiptNo"
-                  value={formData.receiptNo}
-                  onChange={handleChange}
-                  placeholder={"ENTER_RECEIPT_NUMBER"}
-                />
-              </div>
-
-              <div className="input-wrapper">
-                <label className="input-label">{t("RECEIPT_DATE")}<span className="star">*</span></label>
-                <TextInput
-                  t={t}
-                  style={{ width: "100%" }}
-                  type={"date"}
-                  required={true}
-                  optionKey="i18nKey"
-                  name="receiptDate"
-                  value={formData.receiptDate}
-                  onChange={handleChange}
-                  placeholder={"ENTER_RECEIPT_DATE"}
-                />
-              </div>
-
-              {paymentMode === "CHEQUE" && (
-                <>
-                  <div className="input-wrapper">
-                    <label className="input-label">{t("CHEQUE_NO")}<span className="star">*</span></label>
-
-                    <TextInput
-                      t={t}
-                      style={{ width: "100%" }}
-                      type={"text"}
-                      required={paymentMode === "CHEQUE"}
-                      optionKey="i18nKey"
-                      name="chequeNo"
-                      value={formData.chequeNo}
-                      onChange={handleChange}
-                      placeholder={"ENTER_CHEQUE_NUMBER"}
-                      populators={{ 
-                        minLength: 6,
-                        maxLength: 6
-                      }}
-                    />
+            )}
+            {userType === "citizen" && (
+              <div className="form">
+                <div className="radio-wrapper radio-wrapper-citizen">
+                  <label className="input-label">{t("SELECT_PAYMENT_GATEWAY")}</label>
+                  <div className="radio-label-wrapper">
+                    <label className="radio-label">
+                      <input
+                        type="radio"
+                        name="paymentGateway"
+                        value="D-MONEY"
+                        checked={true}
+                        className="custom-radio"
+                        onChange={() => setPaymentGateway("D-MONEY")}
+                      />
+                      {t("PAYMENT_DMONEY")}
+                    </label>
                   </div>
-
-                  <div className="input-wrapper">
-                    <label className="input-label">{t("CHEQUE_DATE")}<span className="star">*</span></label>
-
-                    <TextInput
-                      t={t}
-                      style={{ width: "100%" }}
-                      type={"date"}
-                      required={paymentMode === "CHEQUE"}
-                      optionKey="i18nKey"
-                      name="chequeDate"
-                      value={formData.chequeDate}
-                      onChange={handleChange}
-                      placeholder={"ENTER_CHEQUE_DATE"}
-                    />
-                  </div>
-                </>
-              )}
-
-              <div className="input-wrapper">
-                <label className="input-label">
-                  {t('UPLOAD_PAYMENT_RECEIPT')}<span className="star">*</span>
-                </label>
-
-                <MultiUploadWrapper
-                  t={t}
-                  module="works"
-                  tenantId={Digit.ULBService.getCurrentTenantId()}
-                  getFormState={handleFileStoreId}
-                  allowedFileTypesRegex={/pdf|jpg|jpeg|png|heic/}
-                  allowedMaxSizeInMB={10}
-                  maxFilesAllowed={1}
-                  containerStyles={{width:"100%"}}
-                  acceptFiles = ".pdf, .jpg, .jpeg, .png, .heic"
-                  required={true}
-                />
-                
-              </div>
-            </div>}
-            {userType === "citizen" && <div className="form">
-              <div className="radio-wrapper radio-wrapper-citizen">
-                <label className="input-label">{t('SELECT_PAYMENT_GATEWAY')}</label>
-                <div className="radio-label-wrapper">
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="paymentGateway"
-                      value="D-MONEY"
-                      checked={true}
-                      className="custom-radio"
-                      onChange={()=>setPaymentGateway("D-MONEY")}
-                    />
-                    {t("PAYMENT_DMONEY")}
-                  </label>
                 </div>
               </div>
-            </div>}
+            )}
           </div>
         </div>
       </div>
