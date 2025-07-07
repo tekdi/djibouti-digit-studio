@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import TextInput from '../../../../../ui-components/src/atoms/TextInput';
 import Loader from '../../../../../ui-components/src/atoms/Loader';
+import { Toast } from '@egovernments/digit-ui-react-components';
 
 const Calculation = () => {
   const { t } = useTranslation();
@@ -195,12 +196,14 @@ const Calculation = () => {
 
   };
 
+  const [showToast, setShowToast] = useState(null);
+
   const calculationSubmit = async () => {
     setOnSubmitLoading(true)
     // Create a deep copy of calculationResponse to avoid mutating the original
     const modifiedCalculationResponse = JSON.parse(JSON.stringify(isTotalTaxEditable ? response : calculationResponse));
 
-    // Modify the workflow.action in the copys
+    // Modify the workflow.action in the copy
     if (modifiedCalculationResponse?.workflow) {
       modifiedCalculationResponse.workflow.action = "";
     }
@@ -209,9 +212,9 @@ const Calculation = () => {
       if(!modifiedCalculationResponse.additionalDetails.totalTaxWithServiceChargeWithoutConcession){
         modifiedCalculationResponse.additionalDetails.totalTaxWithServiceChargeWithoutConcession = modifiedCalculationResponse.additionalDetails.costEstimation.totalTaxWithServiceCharge
       }
-    modifiedCalculationResponse.additionalDetails.taxChangeReason = taxChangeReason;
-    modifiedCalculationResponse.additionalDetails.costEstimation.totalTaxWithServiceCharge = revisedTotalTaxWithService;
-  }
+      modifiedCalculationResponse.additionalDetails.taxChangeReason = taxChangeReason;
+      modifiedCalculationResponse.additionalDetails.costEstimation.totalTaxWithServiceCharge = revisedTotalTaxWithService;
+    }
 
     await mutationPut.mutate(
       {
@@ -232,11 +235,21 @@ const Calculation = () => {
           setResponse(res?.Application || {});
           setIsSaveBtnDisable(true)
           setOnSubmitLoading(false)
+          setShowToast({ label: t("CALCULATION_SAVE_SUCCESS"), type: "success" });
+          setTimeout(() => {
+            setShowToast(null);
+            window.history.back();
+          }, 3000);
         },
-        onError: () => {
-          console.log("Error occured");
+        onError: (err) => {
+          console.log("Error occurred");
           setIsSaveBtnDisable(false)
           setOnSubmitLoading(false)
+          setShowToast({ label: t("CALCULATION_SAVE_ERROR"), type: "error" });
+          setTimeout(() => {
+            setShowToast(null);
+            window.history.back();
+          }, 3000);
         },
       }
     )
@@ -345,6 +358,13 @@ const Calculation = () => {
 
   return (
     <div className="calculation-container">
+      {showToast && (
+        <Toast
+          error={showToast.type === "error"}
+          label={showToast.label}
+          onClose={() => setShowToast(null)}
+        />
+      )}
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
