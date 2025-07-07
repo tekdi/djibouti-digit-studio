@@ -116,7 +116,6 @@ const ModulePageComponent = () => {
 
   const userType = userDetails?.info?.type?.toLowerCase();
   const isDirector = roles?.some((role) => role.code.includes("DIRECTOR"));
-  const isSubDirector = roles?.some((role) => role.code === "BPA_SRA_SUB_DIRECTOR");
   const isCounterEmployee = roles?.some((role) => role.code === "COUNTER_EMPLOYEE");
   const count = citizenApplications?.Application?.length || inboxData?.totalCount || 0;
 
@@ -177,7 +176,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Inbox Card */}
-            {!isCitizen && !isArchitect && !isSubDirector && !isCounterEmployee && (
+            {!isCitizen && !isArchitect && !isCounterEmployee && (
               <Card key={`${index}-inbox`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
