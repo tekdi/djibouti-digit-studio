@@ -62,6 +62,10 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     businessService: businessService,
   };
 
+  if (action.action == "ADD_QUERY") {
+    workflow.assignees = [Digit.UserService.getUser()?.info];
+  }
+
   if (
     action.action != "ADD_QUERY" &&
     !action.isTerminateState &&
@@ -90,10 +94,16 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
 
   const [config, setConfig] = useState(null);
   const [modalSubmit, setModalSubmit] = useState(true);
+  const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
+  const assigneeRoles = action?.assigneeRoles
+    ?.toString()
+    ?.split(",")
+    ?.filter((role) => !roleCodes?.includes(role))
+    ?.join(",");
 
   // Get HRMS employee list
   let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
-    { roles: action?.assigneeRoles?.toString(), isActive: true },
+    { roles: assigneeRoles, isActive: true },
     tenantId,
     null,
     null,
