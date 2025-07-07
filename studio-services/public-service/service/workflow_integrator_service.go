@@ -16,17 +16,18 @@ import (
 )
 
 const (
-	TENANT_ID_KEY        = "tenantId"
-	BUSINESS_SERVICE_KEY = "businessService"
-	ACTION_KEY           = "action"
-	COMMENT_KEY          = "comment"
-	MODULE_NAME_KEY      = "moduleName"
-	BUSINESS_ID_KEY      = "businessId"
-	DOCUMENTS_KEY        = "documents"
-	ASSIGNEE_KEY         = "assignes"
-	UUID_KEY             = "uuid"
-	WORKFLOW_REQUEST_KEY = "ProcessInstances"
-	REQUEST_INFO_KEY     = "RequestInfo"
+	TENANT_ID_KEY                            = "tenantId"
+	BUSINESS_SERVICE_KEY                     = "businessService"
+	ACTION_KEY                               = "action"
+	COMMENT_KEY                              = "comment"
+	MODULE_NAME_KEY                          = "moduleName"
+	BUSINESS_ID_KEY                          = "businessId"
+	DOCUMENTS_KEY                            = "documents"
+	ASSIGNEE_KEY                             = "assignes"
+	UUID_KEY                                 = "uuid"
+	WORKFLOW_REQUEST_KEY                     = "ProcessInstances"
+	REQUEST_INFO_KEY                         = "RequestInfo"
+	TRIGGER_SELECTIVE_PARALLEL_WORKFLOWS_KEY = "triggerSelectiveParallelWorkflows"
 )
 
 // WorkflowIntegrator handles interaction with the workflow service.
@@ -91,6 +92,11 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	}
 
 	processInstance[DOCUMENTS_KEY] = app.Workflow.Documents
+
+	// Add selective parallel workflows if provided
+	if len(app.Workflow.TriggerSelectiveParallelWorkflows) > 0 {
+		processInstance[TRIGGER_SELECTIVE_PARALLEL_WORKFLOWS_KEY] = app.Workflow.TriggerSelectiveParallelWorkflows
+	}
 
 	requestPayload[REQUEST_INFO_KEY] = req.RequestInfo
 	requestPayload[WORKFLOW_REQUEST_KEY] = []map[string]interface{}{processInstance}
