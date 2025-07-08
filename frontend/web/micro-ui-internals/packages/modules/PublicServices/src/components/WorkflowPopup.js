@@ -71,7 +71,6 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     // Add selectedParallelWorkflows to the payload
     workflow.triggerSelectiveParallelWorkflows = selectedCommissioners;
 
-    console.log("Selected parallel workflows:", selectedCommissioners);
   } else if (action.action == "ADD_QUERY") {
     workflow.assignees = [Digit.UserService.getUser()?.info];
   } else if (
@@ -109,25 +108,6 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     ?.filter((role) => !roleCodes?.includes(role))
     ?.join(",");
 
-  // // Get HRMS employee list
-  // let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
-  //   { roles: assigneeRoles, isActive: true },
-  //   tenantId,
-  //   null,
-  //   null,
-  //   { enabled: action?.assigneeRoles?.length > 0 }
-  // );
-
-  // assigneeOptions = assigneeOptions?.Employees;
-  // console.log(assigneeOptions, "assigneeOptions");
-  // // Add fallback name
-  // assigneeOptions?.map((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
-
-  // if (action?.action === "SEND_TO_COMMISSIONER") {
-  //   assigneeOptions = action.triggerParallelWorkflows.map((tg) => ({
-  //     commissionerCode: tg,
-  //   }));
-  // }
 
   // Get HRMS employee list
   let { isLoading: isLoadingHrmsSearch, data: hrmsData } = Digit.Hooks.hrms.useHRMSSearch(
@@ -154,8 +134,6 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     employees.forEach((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
     return employees;
   }, [action?.action, action?.triggerParallelWorkflows, hrmsData?.Employees, t]);
-
-  console.log(assigneeOptions, "assigneeOptions");
 
   // Request criteria for Document config
   const requestCriteria = {
@@ -199,8 +177,6 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
 
   // Form submit handler
   const _submit = (data) => {
-    console.log("Form data:", data);
-    console.log("Selected commissioners:", data.commissioner);
 
     const customPayload = updatePayload(applicationDetails, data, action, businessService);
     submitAction(customPayload, action);
