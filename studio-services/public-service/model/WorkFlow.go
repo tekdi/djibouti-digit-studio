@@ -9,5 +9,5 @@ type WorkFlow struct {
 	Comment                           string     `json:"comment"`
 	Assignees                         []User     `json:"assignees"`
 	Documents                         []Document `json:"documents"`
-	TriggerSelectiveParallelWorkflows []string   `json:"triggerSelectiveParallelWorkflows,omitempty"`
+	TriggerSelectiveParallelWorkflows string     `json:"triggerSelectiveParallelWorkflows"`
 }

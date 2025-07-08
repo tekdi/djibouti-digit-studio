@@ -94,7 +94,7 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	processInstance[DOCUMENTS_KEY] = app.Workflow.Documents
 
 	// Add selective parallel workflows if provided
-	if len(app.Workflow.TriggerSelectiveParallelWorkflows) > 0 {
+	if app.Workflow.TriggerSelectiveParallelWorkflows != "" {
 		processInstance[TRIGGER_SELECTIVE_PARALLEL_WORKFLOWS_KEY] = app.Workflow.TriggerSelectiveParallelWorkflows
 	}
 
