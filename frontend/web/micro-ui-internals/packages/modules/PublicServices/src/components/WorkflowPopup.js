@@ -48,16 +48,16 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
-        .flat()
-        .map((document) => {
-          return {
-            documentType: action?.action + " DOC",
-            fileName: document?.[1]?.file?.name,
-            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-            tenantId: document?.[1]?.fileStoreId?.tenantId,
-          };
-        })
+          .flat()
+          .map((document) => {
+            return {
+              documentType: action?.action + " DOC",
+              fileName: document?.[1]?.file?.name,
+              fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+              documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+              tenantId: document?.[1]?.fileStoreId?.tenantId,
+            };
+          })
       : [],
     action: action.action,
     businessService: businessService,
@@ -66,11 +66,10 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
   // Handle SEND_TO_COMMISSIONER action
   if (action.action === "SEND_TO_COMMISSIONER") {
     // Extract selected commissioner codes
-    const selectedCommissioners = data.commissioner?.map(comm => comm.commissionerCode || comm.code) || [];
+    const selectedCommissioners = data.commissioner?.map((comm) => comm.commissionerCode || comm.code)?.join(",") || "";
 
     // Add selectedParallelWorkflows to the payload
     workflow.triggerSelectiveParallelWorkflows = selectedCommissioners;
-
   } else if (action.action == "ADD_QUERY") {
     workflow.assignees = [Digit.UserService.getUser()?.info];
   } else if (
@@ -108,7 +107,6 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     ?.filter((role) => !roleCodes?.includes(role))
     ?.join(",");
 
-
   // Get HRMS employee list
   let { isLoading: isLoadingHrmsSearch, data: hrmsData } = Digit.Hooks.hrms.useHRMSSearch(
     { roles: assigneeRoles, isActive: true },
@@ -121,10 +119,12 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
   // Memoize assigneeOptions to prevent unnecessary re-renders
   const assigneeOptions = useMemo(() => {
     if (action?.action === "SEND_TO_COMMISSIONER") {
-      return action.triggerParallelWorkflows?.map((tg) => ({
-        commissionerCode: tg,
-        code: tg,
-      })) || [];
+      return (
+        action.triggerParallelWorkflows?.map((tg) => ({
+          commissionerCode: tg,
+          code: tg,
+        })) || []
+      );
     }
 
     const employees = hrmsData?.Employees;
@@ -177,7 +177,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
 
   // Form submit handler
   const _submit = (data) => {
-
+    debugger;
     const customPayload = updatePayload(applicationDetails, data, action, businessService);
     submitAction(customPayload, action);
   };
