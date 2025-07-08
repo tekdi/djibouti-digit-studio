@@ -227,6 +227,17 @@ export const transformToApplicationPayload = (
         assignees: isLastStep ? assignees.map((emp) => emp?.user).filter(Boolean) : [],
         businessService: config?.data?.workflow?.businessService,
       },
+      auditDetails: {
+        createdTime:
+          responseData?.Application?.auditDetails?.createdTime && responseData.Application.auditDetails.createdTime !== 0
+            ? responseData.Application.auditDetails.createdTime
+            : null,
+        createdBy:
+          responseData?.Application?.auditDetails?.createdBy && responseData.Application.auditDetails.createdBy !== "00000000-0000-0000-0000-000000000000"
+            ? responseData.Application.auditDetails.createdBy
+            : null,
+      },
+
     },
   };
 
