@@ -16,7 +16,8 @@
   "scripts": {
     "start": "cross-env SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
-    "start:dev": "run-p dev:example dev:publicServices dev:core dev:openPayment dev:components",
+    "start:dev": "run-p dev:**",
+    "start:dev-no-css": "run-p dev:example dev:publicServices dev:core dev:openPayment dev:components",
     "start:script": "./scripts/create.sh",
     "dev:css": "cd packages/css && yarn start",
     "publish:css": "cd packages/css && yarn && npm publish --tag workbench-1.0",
