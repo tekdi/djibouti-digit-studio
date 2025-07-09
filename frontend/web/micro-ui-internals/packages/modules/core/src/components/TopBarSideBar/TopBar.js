@@ -9,6 +9,57 @@ const TextToImg = (props) => (
     {props?.name?.[0]?.toUpperCase()}
   </span>
 );
+
+
+const UserInfoBlock = ({ profilePic, userDetails, roleLabel, t, userOptions, handleUserDropdownSelection, mobileView, roleColor = "#006769" }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div>
+        {profilePic == null ? (
+          <TextToImg
+            name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
+          />
+        ) : (
+          <img
+            src={profilePic}
+            alt="Profile"
+            style={{
+              height: "48px",
+              width: "48px",
+              borderRadius: "50%",
+              objectFit: "cover"
+            }}
+          />
+        )}
+      </div>
+      <div>
+        <h5 style={{ margin: 0 }}>
+          {userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
+        </h5>
+        <small style={{ color: roleColor, fontSize: "12px" }}>
+          {t(roleLabel)}
+        </small>
+      </div>
+    </div>
+    <div className="no-border left">
+      <Dropdown
+        option={userOptions}
+        optionKey="name"
+        select={handleUserDropdownSelection}
+        showArrow={true}
+        freeze={true}
+        style={mobileView ? { right: 0 } : {}}
+        optionCardStyles={{
+          overflow: "visible",
+          display: "table",
+          position: "absolute",
+          marginRight: "30px"
+        }}
+        topbarOptionsClassName="topbarOptionsClassName"
+      />
+    </div>
+  </div>
+);
 const TopBar = ({
   t,
   stateInfo,
@@ -133,61 +184,16 @@ const TopBar = ({
 
             <div className="">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
             {userDetails?.access_token && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div>
-                    {profilePic == null ? (
-                      <TextToImg
-                        name={
-                          userDetails?.info?.name ||
-                          userDetails?.info?.userInfo?.name ||
-                          "Employee"
-                        }
-                      />
-                    ) : (
-                      <img
-                        src={profilePic}
-                        alt="Profile"
-                        style={{
-                          height: "48px",
-                          width: "48px",
-                          borderRadius: "50%",
-                          objectFit: "cover"
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  <div>
-                    <h5 style={{ margin: 0 }}>
-                      {userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
-                    </h5>
-                    <small style={{ color: "#006769", fontSize: "12px" }}>
-                      {t(roleLabel)}
-                    </small>
-                  </div>
-                </div>
-
-
-                <div className="no-border left">
-                  <Dropdown
-                    option={userOptions}
-                    optionKey="name"
-                    select={handleUserDropdownSelection}
-                    showArrow={true}
-                    freeze={true}
-                    style={mobileView ? { right: 0 } : {}}
-                    optionCardStyles={{
-                      overflow: "visible",
-                      display: "table",
-                      position: "absolute",
-                      marginRight: "30px"
-                    }}
-                    topbarOptionsClassName="topbarOptionsClassName"
-                  />
-                </div>
-              </div>
+              <UserInfoBlock
+                profilePic={profilePic}
+                userDetails={userDetails}
+                roleLabel={roleLabel}
+                t={t}
+                userOptions={userOptions}
+                handleUserDropdownSelection={handleUserDropdownSelection}
+                mobileView={mobileView}
+                roleColor="#006769"
+              />
             )}
 
             {/* <img className="state" src={logoUrl} /> */}
@@ -208,57 +214,16 @@ const TopBar = ({
 
             <div>{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
             {userDetails?.access_token && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', marginTop: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div>
-                    {profilePic == null ? (
-                      <TextToImg
-                        name={
-                          userDetails?.info?.name ||
-                          userDetails?.info?.userInfo?.name ||
-                          "Employee"
-                        }
-                      />
-                    ) : (
-                      <img
-                        src={profilePic}
-                        alt="Profile"
-                        style={{
-                          height: "48px",
-                          width: "48px",
-                          borderRadius: "50%",
-                          objectFit: "cover"
-                        }}
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <h5 style={{ margin: 0 }}>
-                      {userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
-                    </h5>
-                    <small style={{ color: "#fff", fontSize: "12px" }}>
-                      {t(roleLabel)}
-                    </small>
-                  </div>
-                </div>
-                <div className="no-border left">
-                  <Dropdown
-                    option={userOptions}
-                    optionKey="name"
-                    select={handleUserDropdownSelection}
-                    showArrow={true}
-                    freeze={true}
-                    style={{ right: 0 }}
-                    optionCardStyles={{
-                      overflow: "visible",
-                      display: "table",
-                      position: "absolute",
-                      marginRight: "30px"
-                    }}
-                    topbarOptionsClassName="topbarOptionsClassName"
-                  />
-                </div>
-              </div>
+              <UserInfoBlock
+                profilePic={profilePic}
+                userDetails={userDetails}
+                roleLabel={roleLabel}
+                t={t}
+                userOptions={userOptions}
+                handleUserDropdownSelection={handleUserDropdownSelection}
+                mobileView={true}
+                roleColor="#fff"
+              />
             )}
           </div>
         )}
