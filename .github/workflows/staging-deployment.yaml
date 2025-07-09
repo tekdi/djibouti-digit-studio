@@ -48,7 +48,7 @@ jobs:
             # Update only the top-level image tag, not the initContainers
             sed -i '/^image:$/,/^[^ ]/s/^  tag: .*/  tag: "${{ env.TAG }}"/' values.yaml
 
-            cd ../../../../helm/chart/environments
+            cd ../../environments/
 
-            helm upgrade -i public-service ../charts/studio-services/public-service/ \
+            helm upgrade -i public-service ../studio-services/public-service/ \
               -n egov -f env.yaml -f env-secrets.yaml
