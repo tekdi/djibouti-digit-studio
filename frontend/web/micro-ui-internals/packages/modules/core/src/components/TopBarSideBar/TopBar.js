@@ -23,8 +23,24 @@ const TopBar = ({
   handleUserDropdownSelection,
   logoUrl,
   showLanguageChange = true,
+  configs
 }) => {
+  console.log(userDetails?.access_token, ' is login');
+
   const [profilePic, setProfilePic] = React.useState(null);
+  const [showMobileMenu, setShowMobileMenu] = React.useState(false);
+  const userObject = Digit.SessionStorage.get("User");
+  const priorityRoles = [
+    "BPA_ARCHITECT",
+    "BPA_HOD",
+    "BPA_AGENTS",
+    "BPA_SDECC_HOD",
+    "BPA_SDECC_AGENTS",
+    "BPA_SDECC_COMM"
+  ];
+
+  const roles = userObject?.info?.roles;
+  const roleLabel = roles?.find((role) => priorityRoles.includes(role?.code))?.code || roles?.[0]?.code;
 
   React.useEffect(async () => {
     const tenant = Digit.ULBService.getCurrentTenantId();
@@ -99,64 +115,151 @@ const TopBar = ({
   }
   const loggedin = userDetails?.access_token ? true : false;
   return (
-    <div className="topbar">
-      {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" style={{width: "40px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/LOGO+DATUH.jpg" alt="DATUH" />
+    <div className="topbar" style={{ position: 'relative' }}>
+      {mobileView ? (
+        <Hamburger handleClick={() => setShowMobileMenu((prev) => !prev)} color="#9E9E9E" />
+      ) : null}
+      <img className="city" style={{ width: "40px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/LOGO+DATUH.jpg" alt="DATUH" />
 
-      <img className="city" style={{width: "56px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
+      <img className="city" style={{ width: "56px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
 
-      <span style={{width: "35px" }}>
-        {
-          // (cityDetails?.city?.ulbGrade ? (
-          //   // TODO: title name is hardcoded, need to change it with i18Key
-          //   <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block", fontFamily: "Inter" } : {}}>
-          //     Ministère de la Ville, de l'Aménagement du Territoire et du Logement
-          //     {/* {t(cityDetails?.i18nKey).toUpperCase()}{" "} */}
-          //     {/* {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()} */}
-          //   </p>
-          // ) : (
-          //   <img className="state" src={logoUrl} />
+      <span>
 
-          // ))
-          }
-        {/* {!loggedin && (
-          <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-            {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
-          </p>
-        )} */}
         {!mobileView && (
           <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={{
             minWidth: "fit-content",
-            ...( !loggedin ? { width: "30%" } : {} )
+            ...(!loggedin ? { width: "30%" } : {})
           }}>
-            {/* <div className="left">
-              {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/language-selection") && (
-                <ChangeCity dropdown={true} t={t} />
-              )}
-            </div> */}
+
             <div className="">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
             {userDetails?.access_token && (
-              <div className="left">
-                <Dropdown
-                  option={userOptions}
-                  optionKey={"name"}
-                  select={handleUserDropdownSelection}
-                  showArrow={true}
-                  freeze={true}
-                  style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert",display:"table", position: "absolute", marginRight: "30px" }}
-                  topbarOptionsClassName={"topbarOptionsClassName"}
-                  customSelector={
-                    profilePic == null ? (
-                      <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div>
+                    {profilePic == null ? (
+                      <TextToImg
+                        name={
+                          userDetails?.info?.name ||
+                          userDetails?.info?.userInfo?.name ||
+                          "Employee"
+                        }
+                      />
                     ) : (
-                      <img src={profilePic} style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
-                    )
-                  }
-                />
+                      <img
+                        src={profilePic}
+                        alt="Profile"
+                        style={{
+                          height: "48px",
+                          width: "48px",
+                          borderRadius: "50%",
+                          objectFit: "cover"
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  <div>
+                    <h5 style={{ margin: 0 }}>
+                      {userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
+                    </h5>
+                    <small style={{ color: "#006769", fontSize: "12px" }}>
+                      {t(roleLabel)}
+                    </small>
+                  </div>
+                </div>
+
+
+                <div className="no-border left">
+                  <Dropdown
+                    option={userOptions}
+                    optionKey="name"
+                    select={handleUserDropdownSelection}
+                    showArrow={true}
+                    freeze={true}
+                    style={mobileView ? { right: 0 } : {}}
+                    optionCardStyles={{
+                      overflow: "visible",
+                      display: "table",
+                      position: "absolute",
+                      marginRight: "30px"
+                    }}
+                    topbarOptionsClassName="topbarOptionsClassName"
+                  />
+                </div>
               </div>
             )}
+
             {/* <img className="state" src={logoUrl} /> */}
+          </div>
+        )}
+        {/* Mobile menu panel */}
+        {mobileView && showMobileMenu && (
+          <div className="mobile-menu-panel" style={{
+            position: "absolute",
+            top: "78px",
+            right: 0,
+            left: 0,
+            background: 'rgba(34, 57, 77, var(--bg-opacity) !important',
+            zIndex: 1000,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            padding: "16px"
+          }}>
+
+            <div>{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
+            {userDetails?.access_token && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', marginTop: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div>
+                    {profilePic == null ? (
+                      <TextToImg
+                        name={
+                          userDetails?.info?.name ||
+                          userDetails?.info?.userInfo?.name ||
+                          "Employee"
+                        }
+                      />
+                    ) : (
+                      <img
+                        src={profilePic}
+                        alt="Profile"
+                        style={{
+                          height: "48px",
+                          width: "48px",
+                          borderRadius: "50%",
+                          objectFit: "cover"
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <h5 style={{ margin: 0 }}>
+                      {userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
+                    </h5>
+                    <small style={{ color: "#fff", fontSize: "12px" }}>
+                      {t(roleLabel)}
+                    </small>
+                  </div>
+                </div>
+                <div className="no-border left">
+                  <Dropdown
+                    option={userOptions}
+                    optionKey="name"
+                    select={handleUserDropdownSelection}
+                    showArrow={true}
+                    freeze={true}
+                    style={{ right: 0 }}
+                    optionCardStyles={{
+                      overflow: "visible",
+                      display: "table",
+                      position: "absolute",
+                      marginRight: "30px"
+                    }}
+                    topbarOptionsClassName="topbarOptionsClassName"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </span>

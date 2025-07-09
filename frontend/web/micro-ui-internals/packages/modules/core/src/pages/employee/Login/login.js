@@ -202,8 +202,8 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
       setShowSuccessModal(true);
       setTimeout(() => {
-   setUser({ info, ...tokens });
-   Digit.UserService.setUser(user);
+        setUser({ info, ...tokens });
+        Digit.UserService.setUser(user);
         setShowSuccessModal(false);
       }, 2000);
     } catch (err) {
@@ -259,7 +259,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return (
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="employee-login-wrapper">
       <Switch>
-        <AppContainer style={{ marginTop: "80px" }}>
+        <AppContainer style={{ paddingTop: "80px" }}>
           {showSuccessModal && (
             <Modal popupModuleMianStyles={{}} hideSubmit={true} showClose={false} headerBarMain={null} headerBarEnd={null}>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
