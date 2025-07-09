@@ -87,12 +87,12 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
         businessServiceResponse.BusinessServices.forEach((businessService) => {
           if (businessService.states) {
             businessService.states.forEach((state) => {
-              if ((state.state === "" || state.state == null) && state.actions) {
+              if ((state.state === "" || state.state == null || state.state == 'INITIATED') && state.actions) {
                 state.actions.forEach((action) => {
                   if (action.roles) {
                     action.roles.forEach((role) => {
                       // Add role if it's not STUDIO_ADMIN and not already in the array
-                      if (!businessServiceRoles.includes(role)) {
+                      if (role !== "STUDIO_ADMIN" && !businessServiceRoles.includes(role)) {
                         businessServiceRoles.push(role);
                       }
                     });
