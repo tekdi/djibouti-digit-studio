@@ -1,8 +1,14 @@
 import '@testing-library/jest-dom';
 
 // Add fetch polyfill for Node.js environment
-global.fetch = require('node-fetch');
-global.FormData = require('form-data');
+const FormData = require('form-data');
+global.FormData = FormData;
+
+// Mock fetch if not in node environment
+if (typeof fetch !== 'function') {
+    global.fetch = require('node-fetch');
+}
+
 global.Blob = class {
     constructor(content, options) {
         this.content = content;
@@ -73,4 +79,4 @@ global.sessionStorage = sessionStorageMock;
 global.URL.createObjectURL = jest.fn();
 
 // Setup test timeout
-jest.setTimeout(30000); 
+jest.setTimeout(30000);
