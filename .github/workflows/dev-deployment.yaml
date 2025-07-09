@@ -44,7 +44,11 @@ jobs:
           script: |
             set -e
             cd /home/ubuntu/phase2/DIGIT-DevOps/deploy-as-code/helm/charts/studio-services/public-service
-            sed -i "/repository:.*ttpldevops\\/public-service/{n;s/tag:.*/tag: \\\"${{ env.TAG }}\\\"/;}" values.yaml
+
+            # Update only the top-level image tag, not the initContainers
+            sed -i '/^image:$/,/^[^ ]/s/^  tag: .*/  tag: "${{ env.TAG }}"/' values.yaml
 
             cd ../../../../helm/environments
-            helm upgrade -i public-service ../charts/studio-services/public-service/ -n egov -f env.yaml -f env-secrets.yaml
+
+            helm upgrade -i public-service ../charts/studio-services/public-service/ \
+              -n egov -f env.yaml -f env-secrets.yaml
