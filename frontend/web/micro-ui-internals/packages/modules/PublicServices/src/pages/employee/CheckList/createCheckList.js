@@ -1,13 +1,8 @@
-import React from "react";
-import { useState, useEffect, useReducer } from "react";
-import { useTranslation } from "react-i18next";
 import { FormComposerV2, Loader, Toast } from "@egovernments/digit-ui-components";
-import CreateCheckListConfig from "../../../configs/createCheckListConfig.js";
-import { updateCheckListConfig } from "../../../configs/createCheckListConfig.js";
-import { useParams } from "react-router-dom";
-import transformViewCheckList from "../../../utils/createUtils.js";
-import { transformCreateCheckList } from "../../../utils/createUtils.js";
-import { transformViewApplication } from "../../../utils/createUtils.js";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import CreateCheckListConfig, { updateCheckListConfig } from "../../../configs/createCheckListConfig.js";
+import transformViewCheckList, { transformCreateCheckList, transformViewApplication } from "../../../utils/createUtils.js";
 
 const CreateCheckList = () => {
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -29,11 +24,17 @@ const CreateCheckList = () => {
 
   const userDetails = Digit.UserService.getUser();
 
-  const isHOD = userDetails?.info?.roles?.some(
-    (role) => role.code.includes("HOD")
+  const isHODorAGENT = userDetails?.info?.roles?.some(
+    (role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS"
+  );
+  const isSdeccHODorAGENT = userDetails?.info?.roles?.some(
+    (role) => role.code === "BPA_SDECC_HOD" || role.code === "BPA_SDECC_AGENT"
   );
   let styleCondition = {};
-  if (!isHOD && state !== code.split(".")[1]) {
+  if (!isHODorAGENT && state !== code.split(".")[1] && code.split(".")[1] !== "PENDING_ACTION_BY_SDECC_AGENT") {
+    styleCondition = { pointerEvents: "none", opacity: 0.7 };
+  }
+  if (!isSdeccHODorAGENT && code.split(".")[1] === "PENDING_ACTION_BY_SDECC_AGENT") {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
   }
 
