@@ -251,4 +251,30 @@ const TopBar = ({
   );
 };
 
+TopBar.propTypes = {
+  t: PropTypes.func.isRequired,
+  stateInfo: PropTypes.object,
+  toggleSidebar: PropTypes.func,
+  isSidebarOpen: PropTypes.bool,
+  handleLogout: PropTypes.func,
+  userDetails: PropTypes.shape({
+    access_token: PropTypes.string,
+    info: PropTypes.shape({
+      uuid: PropTypes.string,
+      name: PropTypes.string,
+      userInfo: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+    }),
+  }),
+  CITIZEN: PropTypes.bool,
+  cityDetails: PropTypes.object,
+  mobileView: PropTypes.bool,
+  userOptions: PropTypes.array,
+  handleUserDropdownSelection: PropTypes.func,
+  logoUrl: PropTypes.string,
+  showLanguageChange: PropTypes.bool,
+  configs: PropTypes.object,
+};
+
 export default TopBar;
