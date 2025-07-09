@@ -3,6 +3,7 @@ import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
 import ChangeLanguage from "../ChangeLanguage";
+import PropTypes from "prop-types";
 
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
@@ -60,6 +61,25 @@ const UserInfoBlock = ({ profilePic, userDetails, roleLabel, t, userOptions, han
     </div>
   </div>
 );
+UserInfoBlock.propTypes = {
+  profilePic: PropTypes.string,
+  userDetails: PropTypes.shape({
+    info: PropTypes.shape({
+      name: PropTypes.string,
+      userInfo: PropTypes.shape({
+        name: PropTypes.string,
+      }),
+      access_token: PropTypes.string,
+    }),
+  }),
+  roleLabel: PropTypes.string,
+  t: PropTypes.func.isRequired,
+  userOptions: PropTypes.array,
+  handleUserDropdownSelection: PropTypes.func,
+  mobileView: PropTypes.bool,
+  roleColor: PropTypes.string,
+};
+
 const TopBar = ({
   t,
   stateInfo,
@@ -76,7 +96,6 @@ const TopBar = ({
   showLanguageChange = true,
   configs
 }) => {
-  console.log(userDetails?.access_token, ' is login');
 
   const [profilePic, setProfilePic] = React.useState(null);
   const [showMobileMenu, setShowMobileMenu] = React.useState(false);
