@@ -92,7 +92,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
                   if (action.roles) {
                     action.roles.forEach((role) => {
                       // Add role if it's not STUDIO_ADMIN and not already in the array
-                      if (role !== "STUDIO_ADMIN" && !businessServiceRoles.includes(role)) {
+                      if (!businessServiceRoles.includes(role)) {
                         businessServiceRoles.push(role);
                       }
                     });
