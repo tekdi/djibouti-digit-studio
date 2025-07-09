@@ -22,6 +22,19 @@ const ModulePageComponent = () => {
   const indId = individualDetails?.Individual?.[0]?.individualId;
   const uuid = userDetails?.info?.uuid;
 
+  //To fetch the service configurations of the services
+  const mdmsRequestCriteria = {
+    url: "/egov-mdms-service/v2/_search",
+    body: {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        schemaCode: "Studio.ServiceConfiguration",
+      },
+    },
+  };
+
+  const { data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
+
   //To fetch the service details configured for the tenant
   const request = {
     url: "/public-service/v1/service",
@@ -36,26 +49,20 @@ const ModulePageComponent = () => {
 
   const module = servicesData?.Services?.[0]?.module;
 
-  //To fetch the service configurations of the services
-  const mdmsRequestCriteria = {
-    url: "/egov-mdms-service/v2/_search",
-    body: {
-      MdmsCriteria: {
-        tenantId: tenantId,
-        schemaCode: "Studio.ServiceConfiguration",
-      },
-    },
-  };
-
-  const { data: mdmsData } = Digit.Hooks.useCustomAPIHook(mdmsRequestCriteria);
-
   const businessServices = servicesData?.Services?.filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())?.map((ob) => ({
     code: ob?.businessService,
     name: ob?.businessService,
     parallelWorkflow: getParallelWorkflow(module, ob?.businessService, mdmsData?.mdms),
   }));
 
-  const businessServicesList = businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [];
+  const businessServicesList = Array.from(
+    new Set(
+      businessServices?.flatMap((bs) => {
+        const allCodes = [bs.code, ...(bs.parallelWorkflow || [])];
+        return allCodes;
+      }) || []
+    )
+  );
 
   const { data: inboxData, isLoading: isInboxLoading } = Digit.Hooks.useCustomAPIHook({
     url: "/inbox/v2/_search",

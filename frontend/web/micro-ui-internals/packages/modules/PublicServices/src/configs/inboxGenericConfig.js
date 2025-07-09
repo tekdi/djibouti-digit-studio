@@ -14,11 +14,25 @@ export const InboxConfig = (businessServices) => {
       requestBody: {
         inbox: {
           processSearchCriteria: {
-            businessService: businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [],
+            businessService: Array.from(
+              new Set(
+                businessServices?.flatMap((bs) => {
+                  const allCodes = [bs.code, ...(bs.parallelWorkflow || [])];
+                  return allCodes;
+                }) || []
+              )
+            ),
             moduleName: "public-services",
           },
           moduleSearchCriteria: {
-            businessService: businessServices?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) || [],
+            businessService: Array.from(
+              new Set(
+                businessServices?.flatMap((bs) => {
+                  const allCodes = [bs.code, ...(bs.parallelWorkflow || [])];
+                  return allCodes;
+                }) || []
+              )
+            ),
             sortOrder: "ASC",
             module: "public-services",
           },
