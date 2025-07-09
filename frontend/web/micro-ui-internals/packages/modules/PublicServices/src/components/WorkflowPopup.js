@@ -81,7 +81,6 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
 
       // Extract roles from states where state is "INITIATED"
       const businessServiceRoles = [];
-      console.log(businessServiceResponse, "businessServiceResponse");
 
       if (businessServiceResponse?.BusinessServices) {
         businessServiceResponse.BusinessServices.forEach((businessService) => {
@@ -104,8 +103,6 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
         });
       }
 
-      console.log(businessServiceRoles, "businessServiceRoles");
-
       // Make direct API call to get HRMS employee list
       if (businessServiceRoles.length > 0) {
         const rolesParam = businessServiceRoles.join(",");
@@ -116,7 +113,6 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
         });
 
         workflow.assignees = hrmsResponse?.Employees?.map(employee => ({
-          id: employee?.user?.id || null,
           uuid: employee?.user?.uuid || null,
           userName: employee?.user?.userName || null,
           name: employee?.user?.name || null,
@@ -124,11 +120,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
           emailId: employee?.user?.emailId || null,
           locale: employee?.user?.locale || null,
           type: employee?.user?.type || null,
-          roles: employee?.user?.roles?.map(role => ({
-            name: role.name,
-            code: role.code,
-            tenantId: role.tenantId
-          })) || null,
+          roles: employee?.user?.roles || null,
           active: employee?.user?.active || null,
           tenantId: employee?.user?.tenantId || null,
           permanentCity: employee?.user?.permanentCity || null,
@@ -247,7 +239,6 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
 
   // Form submit handler
   const _submit = async (data) => {
-    debugger;
     try {
       const customPayload = await updatePayload(applicationDetails, data, action, businessService, tenantId, config);
       submitAction(customPayload, action);
