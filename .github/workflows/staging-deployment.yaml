@@ -46,5 +46,5 @@ jobs:
             cd /home/ubuntu/phase3/DIGIT-DevOps/deploy-as-code/helm/charts/studio-services/digit-studio
             sed -i "/repository:.*ttpldevops\\/digit-studio/{n;s/tag:.*/tag: \\\"${{ env.TAG }}\\\"/;}" values.yaml
 
-            cd ../../../../helm/environments
-            helm upgrade -i digit-studio ../charts/studio-services/digit-studio/ -n egov -f env.yaml -f env-secrets.yaml
+            cd ../../../../helm/charts/environments
+            helm upgrade -i digit-studio ../studio-services/digit-studio/ -n egov -f env.yaml -f env-secrets.yaml
