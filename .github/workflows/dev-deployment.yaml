@@ -1,0 +1,50 @@
+name: Build and Deploy Digit Studio
+
+on:
+  push:
+    branches:
+      - djibouti-frontend
+
+env:
+  DOCKER_REPO: ttpldevops/digit-studio
+  REMOTE_DEPLOY_SCRIPT: /home/ubuntu/deploy-digit.sh
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set Docker image tag
+        id: vars
+        run: echo "TAG=latest-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t $DOCKER_REPO:$TAG ./frontend
+
+      - name: Push Docker image
+        run: |
+          docker push $DOCKER_REPO:$TAG
+
+      - name: SSH to Bastion and Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd /home/ubuntu/phase2/DIGIT-DevOps/deploy-as-code/helm/charts/studio-services/digit-studio
+            sed -i "/repository:.*ttpldevops\\/digit-studio/{n;s/tag:.*/tag: \\\"${{ env.TAG }}\\\"/;}" values.yaml
+
+            cd ../../../../helm/environments
+            helm upgrade -i digit-studio ../charts/studio-services/digit-studio/ -n egov -f env.yaml -f env-secrets.yaml

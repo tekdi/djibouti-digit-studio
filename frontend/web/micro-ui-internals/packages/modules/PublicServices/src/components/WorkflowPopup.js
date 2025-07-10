@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 // Importing configuration for modal
 import configModal from "./modalConfig";
@@ -29,7 +29,7 @@ const CloseBtn = (props) => {
 };
 
 // Payload builder for submitting workflow actions
-const updatePayload = (applicationDetails, data, action, businessService) => {
+const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config) => {
   const assigneeUser = {
     uuid: data?.assignee?.user?.uuid || null,
     userName: data?.assignee?.user?.userName || null,
@@ -43,30 +43,98 @@ const updatePayload = (applicationDetails, data, action, businessService) => {
     permanentCity: data?.assignee?.user?.permanentCity || null,
     locale: data?.assignee?.user?.locale || null,
   };
+
   const workflow = {
     comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
-          .flat()
-          .map((document) => {
-            return {
-              documentType: action?.action + " DOC",
-              fileName: document?.[1]?.file?.name,
-              fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-              documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-              tenantId: document?.[1]?.fileStoreId?.tenantId,
-            };
-          })
+        .flat()
+        .map((document) => {
+          return {
+            documentType: action?.action + " DOC",
+            fileName: document?.[1]?.file?.name,
+            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+            tenantId: document?.[1]?.fileStoreId?.tenantId,
+          };
+        })
       : [],
     action: action.action,
     businessService: businessService,
   };
 
-  if (action.action == "ADD_QUERY") {
-    workflow.assignees = [Digit.UserService.getUser()?.info];
-  }
+  // Handle SEND_TO_COMMISSIONER action
+  if (action.action === "SEND_TO_COMMISSIONER") {
+    // Extract selected commissioner codes
+    const selectedCommissioners = data.commissioner?.map((comm) => comm.commissionerCode || comm.code)?.join(",") || "";
 
-  if (
+    try {
+      // Get commissioner codes and build URL with comma-separated businessServices
+      const commissionerCodes = data.commissioner?.map((comm) => comm.commissionerCode || comm.code) || [];
+      const businessServicesParam = commissionerCodes.join(",");
+      const url = `/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=${tenantId}&businessServices=${businessServicesParam}`;
+
+      // Make direct API call to get workflow details
+      const businessServiceResponse = await Digit.CustomService.getResponse({
+        url: url,
+      });
+
+      // Extract roles from states where state is "INITIATED"
+      const businessServiceRoles = [];
+
+      if (businessServiceResponse?.BusinessServices) {
+        businessServiceResponse.BusinessServices.forEach((businessService) => {
+          if (businessService.states) {
+            businessService.states.forEach((state) => {
+              if ((state.state === "" || state.state == null || state.state == 'INITIATED') && state.actions) {
+                state.actions.forEach((action) => {
+                  if (action.roles) {
+                    action.roles.forEach((role) => {
+                      // Add role if it's not STUDIO_ADMIN and not already in the array
+                      if (!businessServiceRoles.includes(role)) {
+                        businessServiceRoles.push(role);
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+
+      // Make direct API call to get HRMS employee list
+      if (businessServiceRoles.length > 0) {
+        const rolesParam = businessServiceRoles.join(",");
+        const hrmsUrl = `/egov-hrms/employees/_search?tenantId=${tenantId}&roles=${rolesParam}&isActive=true`;
+
+        const hrmsResponse = await Digit.CustomService.getResponse({
+          url: hrmsUrl,
+        });
+
+        workflow.assignees = hrmsResponse?.Employees?.map(employee => ({
+          uuid: employee?.user?.uuid || null,
+          userName: employee?.user?.userName || null,
+          name: employee?.user?.name || null,
+          mobileNumber: employee?.user?.mobileNumber || null,
+          emailId: employee?.user?.emailId || null,
+          locale: employee?.user?.locale || null,
+          type: employee?.user?.type || null,
+          roles: employee?.user?.roles || null,
+          active: employee?.user?.active || null,
+          tenantId: employee?.user?.tenantId || null,
+          permanentCity: employee?.user?.permanentCity || null,
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching workflow or HRMS data:", error);
+    }
+
+    // Add selectedParallelWorkflows to the payload
+    workflow.triggerSelectiveParallelWorkflows = selectedCommissioners;
+  } else if (action.action == "ADD_QUERY") {
+    workflow.assignees = [Digit.UserService.getUser()?.info];
+  } else if (
     action.action != "ADD_QUERY" &&
     !action.isTerminateState &&
     action.action != "SEND_BACK_TO_ARCHITECT" &&
@@ -102,7 +170,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     ?.join(",");
 
   // Get HRMS employee list
-  let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
+  let { isLoading: isLoadingHrmsSearch, data: hrmsData } = Digit.Hooks.hrms.useHRMSSearch(
     { roles: assigneeRoles, isActive: true },
     tenantId,
     null,
@@ -110,9 +178,24 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     { enabled: action?.assigneeRoles?.length > 0 }
   );
 
-  assigneeOptions = assigneeOptions?.Employees;
-  // Add fallback name
-  assigneeOptions?.map((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
+  // Memoize assigneeOptions to prevent unnecessary re-renders
+  const assigneeOptions = useMemo(() => {
+    if (action?.action === "SEND_TO_COMMISSIONER") {
+      return (
+        action.triggerParallelWorkflows?.map((tg) => ({
+          commissionerCode: tg,
+          code: tg,
+        })) || []
+      );
+    }
+
+    const employees = hrmsData?.Employees;
+    if (!employees) return undefined;
+
+    // Add fallback name
+    employees.forEach((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
+    return employees;
+  }, [action?.action, action?.triggerParallelWorkflows, hrmsData?.Employees, t]);
 
   // Request criteria for Document config
   const requestCriteria = {
@@ -155,9 +238,13 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
   }, [assigneeOptions, data]);
 
   // Form submit handler
-  const _submit = (data) => {
-    const customPayload = updatePayload(applicationDetails, data, action, businessService);
-    submitAction(customPayload, action);
+  const _submit = async (data) => {
+    try {
+      const customPayload = await updatePayload(applicationDetails, data, action, businessService, tenantId, config);
+      submitAction(customPayload, action);
+    } catch (error) {
+      console.error("Error submitting workflow action:", error);
+    }
   };
 
   // Optional: to enable or disable modal submit dynamically

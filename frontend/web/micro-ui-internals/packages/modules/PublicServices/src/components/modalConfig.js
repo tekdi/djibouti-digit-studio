@@ -68,6 +68,22 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
             },
           },
           {
+            label: t("WF_MODAL_COMMISSIONER"),
+            type: "multiselectdropdown",
+            isMandatory: true,
+            disable: false,
+            key: "commissioners",
+            populators: {
+              name: "commissioner",
+              optionsKey: "commissionerCode",
+              options: approvers,
+              hideInForm: actionString !== "SEND_TO_COMMISSIONER",
+              optionsCustomStyle: {
+                top: "2.3rem",
+              },
+            },
+          },
+          {
             label: t("WF_MODAL_APPROVER"),
             type: "dropdown",
             isMandatory: fetchIsMandatory("assignee"),

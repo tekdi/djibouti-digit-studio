@@ -439,6 +439,13 @@ const OpenView = () => {
                     </label>
                   </div>
                 </div>
+                <div style={{ margin: "20px 0", padding: "16px", background: "#FAFAFA", borderRadius: "4px", border: "1px solid #D6D5D4" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ color: "#505A5F", fontSize: "16px" }}>
+                      {t("PAYMENT_OFFLINE_NOTE")}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
