@@ -49,6 +49,7 @@
 
   .left {
     float: left;
+    margin-left: 2rem;
   }
 
   .w-80 {
@@ -116,14 +117,9 @@
   }
 
   @media screen and (max-width: 40rem) {
-
     .ulb {
       font-size: 0.875rem;
       display: inline-block;
-    }
-
-    .flex-right {
-      display: none;
     }
 
     .digit-employee-select-wrap {
@@ -144,6 +140,7 @@
       display: none;
     }
   }
+
   .language-button {
     display: flex;
     align-items: center;
@@ -213,7 +210,7 @@ video::-webkit-media-controls-panel {
     margin-top: 0.625rem;
   }
 
-  .digit-dropdown-select-wrap ,
+  .digit-dropdown-select-wrap,
   .digit-dropdown-employee-select-wrap {
     margin-bottom: 0rem;
 
@@ -307,6 +304,7 @@ video::-webkit-media-controls-panel {
         /* Media query for desktop */
         font-size: theme(digitv2.fontSize.heading-s.desktop);
       }
+
       @apply whitespace-no-wrap overflow-hidden;
       color: theme(digitv2.lightTheme.text-primary);
       text-overflow: ellipsis;
@@ -327,8 +325,8 @@ video::-webkit-media-controls-panel {
         color: theme(digitv2.lightTheme.paper-primary);
 
         .digit-dropdown-employee-select-wrap,
-        .digit-dropdown-select-wrap{
-          background:none;
+        .digit-dropdown-select-wrap {
+          background: none;
         }
       }
     }
@@ -425,6 +423,7 @@ video::-webkit-media-controls-panel {
         /* Media query for desktop */
         font-size: theme(digitv2.fontSize.body-s.desktop);
       }
+
       text-overflow: ellipsis;
       color: theme(digitv2.lightTheme.text-primary);
 
