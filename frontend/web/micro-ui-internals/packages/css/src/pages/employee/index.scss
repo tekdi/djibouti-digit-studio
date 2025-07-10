@@ -76,10 +76,11 @@
     padding-top: 88px;
     padding-left: 40px;
     padding-right: 40px;
-      margin-bottom: 0 !important;
-      background: linear-gradient(90deg, #eff6ff, #fff) !important;
-      min-height: 100vh !important;
-    }
+    margin-bottom: 0 !important;
+    background: linear-gradient(90deg, #eff6ff, #fff) !important;
+    min-height: 100vh !important;
+  }
+
   .loginContainer {
     padding-top: 88px;
   }
@@ -128,7 +129,6 @@
 
 .citizen {
   .main {
-    padding-top: 82px;
     min-height: 100vh !important;
     margin-bottom: 0 !important;
     background: linear-gradient(90deg, #eff6ff, #fff) !important;
@@ -477,7 +477,7 @@
     .main {
       display: flex;
       flex-direction: column;
-      padding-top: 88px;
+      padding-top: 20px;
       width: 100%;
       padding-left: 40px;
       padding-right: 40px;
@@ -496,7 +496,7 @@
   .citizen {
     .main {
       width: 100%;
-      padding-top: 58px;
+      padding-top: 0px;
       height: 100%;
       display: flex;
       justify-content: center;
@@ -705,17 +705,19 @@
 }
 
 .explore-button {
-    margin-top: auto;
-    border: 1px solid #d9534f;
-    color: #d9534f;
-    font-weight: bold;
-    width: 100%;
-  }
+  margin-top: auto;
+  border: 1px solid #d9534f;
+  color: #d9534f;
+  font-weight: bold;
+  width: 100%;
+}
+
 .digit-input-mirror-selector-button {
   width: 100% !important;
   padding: 0 !important;
 }
-.digit-selector-button-border{
+
+.digit-selector-button-border {
   height: revert;
 }
 
@@ -723,10 +725,10 @@
   height: revert;
 }
 
-.digit-header-wrap{
+.digit-header-wrap {
   justify-content: space-between;
 }
 
-.selector-button-primary{
+.selector-button-primary {
   background-color: #006769 !important;
 }
