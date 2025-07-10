@@ -56,7 +56,7 @@
     "@egovernments/digit-ui-components": "0.2.0-studio.1",
     "@egovernments/digit-ui-module-open-payment": "0.0.5",
     "@egovernments/digit-ui-react-components": "1.8.19",
-    "@tekdi/djibouti-ui-css": "0.0.21",
+    "@tekdi/djibouti-ui-css": "0.0.22",
     "ajv": "8.12.0",
     "lodash": "4.17.21",
     "microbundle-crl": "^0.13.11",
