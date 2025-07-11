@@ -137,7 +137,7 @@ const DigitDemoViewComponent = () => {
         applicationNumber: queryStrings?.applicationNumber,
         pdfKey: getPdfKeyForState(serviceConfig?.data?.pdf, processInstanceState),
       },
-      `application-receipt-${queryStrings?.applicationNumber}.pdf`
+      `permit-${queryStrings?.applicationNumber}.pdf`
     );
   };
 
