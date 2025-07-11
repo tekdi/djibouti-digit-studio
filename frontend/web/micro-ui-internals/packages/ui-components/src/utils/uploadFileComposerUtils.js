@@ -39,9 +39,9 @@ export const getRegex = (allowedFormats) => {
       exceptedFileTypes.push(documentFileTypeMappings[allowedFormat]);
     });
     exceptedFileTypes = exceptedFileTypes.join("|");
-    return new RegExp(`(.*?)(${exceptedFileTypes})$`);
+    return new RegExp(`(${exceptedFileTypes})$`, "i");
   }
-  return /(.*?)(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet|dwg|dxf|skp|pla|pln|rvt|rfa|zip|rar)$/;
+  return /(pdf|docx|jpeg|jpg|png|msword|openxmlformats-officedocument|wordprocessingml|document|spreadsheetml|sheet|dwg|dxf|skp|pla|pln|rvt|rfa|zip|rar)$/i;
 };
 
 // export { documentFileTypeMappings, getRegex };
