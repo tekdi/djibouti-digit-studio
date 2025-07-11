@@ -140,7 +140,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     action.action != "SEND_BACK_TO_ARCHITECT" &&
     action.action != "SEND_TO_CITIZEN_PAYMENT" &&
     action.action != "SEND_TO_COMMISSIONER" &&
-    action.action != "SEND_BACk_TO_SOURCE"
+    action.action != "SEND_BACK_TO_SOURCE"
   ) {
     workflow.assignees = assigneeUser ? [assigneeUser] : [];
   }
