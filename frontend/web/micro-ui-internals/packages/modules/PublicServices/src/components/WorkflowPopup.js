@@ -48,16 +48,16 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     comment: data.comments,
     documents: data?.document
       ? Object.values(data?.document)
-        .flat()
-        .map((document) => {
-          return {
-            documentType: action?.action + " DOC",
-            fileName: document?.[1]?.file?.name,
-            fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
-            documentUid: document?.[1]?.fileStoreId?.fileStoreId,
-            tenantId: document?.[1]?.fileStoreId?.tenantId,
-          };
-        })
+          .flat()
+          .map((document) => {
+            return {
+              documentType: action?.action + " DOC",
+              fileName: document?.[1]?.file?.name,
+              fileStoreId: document?.[1]?.fileStoreId?.fileStoreId,
+              documentUid: document?.[1]?.fileStoreId?.fileStoreId,
+              tenantId: document?.[1]?.fileStoreId?.tenantId,
+            };
+          })
       : [],
     action: action.action,
     businessService: businessService,
@@ -86,7 +86,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
         businessServiceResponse.BusinessServices.forEach((businessService) => {
           if (businessService.states) {
             businessService.states.forEach((state) => {
-              if ((state.state === "" || state.state == null || state.state == 'INITIATED') && state.actions) {
+              if ((state.state === "" || state.state == null || state.state == "INITIATED") && state.actions) {
                 state.actions.forEach((action) => {
                   if (action.roles) {
                     action.roles.forEach((role) => {
@@ -112,7 +112,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
           url: hrmsUrl,
         });
 
-        workflow.assignees = hrmsResponse?.Employees?.map(employee => ({
+        workflow.assignees = hrmsResponse?.Employees?.map((employee) => ({
           uuid: employee?.user?.uuid || null,
           userName: employee?.user?.userName || null,
           name: employee?.user?.name || null,
@@ -139,7 +139,8 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     !action.isTerminateState &&
     action.action != "SEND_BACK_TO_ARCHITECT" &&
     action.action != "SEND_TO_CITIZEN_PAYMENT" &&
-    action.action != "SEND_TO_COMMISSIONER"
+    action.action != "SEND_TO_COMMISSIONER" &&
+    action.action != "SEND_BACk_TO_SOURCE"
   ) {
     workflow.assignees = assigneeUser ? [assigneeUser] : [];
   }

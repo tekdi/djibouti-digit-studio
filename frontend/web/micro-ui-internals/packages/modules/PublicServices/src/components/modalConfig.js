@@ -99,7 +99,8 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
                 action.isTerminateState ||
                 actionString === "SEND_BACK_TO_ARCHITECT" ||
                 actionString === "SEND_TO_CITIZEN_PAYMENT" ||
-                actionString === "SEND_TO_COMMISSIONER",
+                actionString === "SEND_TO_COMMISSIONER" ||
+                actionString === "SEND_BACK_TO_SOURCE",
               optionsCustomStyle: {
                 top: "2.3rem",
               },
