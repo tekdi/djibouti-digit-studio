@@ -288,7 +288,7 @@ const DigitDemoViewComponent = () => {
             {/* <ViewComposer data={config} isLoading={false} /> */}
             <ApplicationDataView
               serviceCode={serviceCode}
-              status={config?.apiResponse?.processInstance[0]?.state.state}
+              status={config?.apiResponse?.processInstance?.[0]?.state.state}
               businessService={response?.businessService?.toUpperCase()}
               applicationNumber={config?.apiResponse?.applicationNumber}
               data={applicationData}
@@ -341,7 +341,7 @@ const DigitDemoViewComponent = () => {
             )}
             <WorkflowActions
               forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
-              businessService={queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices[0]?.code}
+              businessService={queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices?.[0]?.code}
               applicationNo={response?.applicationNumber}
               tenantId={tenantId}
               applicationDetails={response}

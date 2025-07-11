@@ -106,7 +106,7 @@ const UploadAndDownloadDocumentHandler = ({
             },
           });
 
-          downloadPdf(new Blob([response.data], { type: "application/pdf" }), `application-receipt-${applicationNumber}.pdf`);
+          downloadPdf(new Blob([response.data], { type: "application/pdf" }), `application-form-${applicationNumber}.pdf`);
         } catch (err) {
           console.error(err);
           Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));

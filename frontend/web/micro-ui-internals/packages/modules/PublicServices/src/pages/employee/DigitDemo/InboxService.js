@@ -57,16 +57,20 @@ const InboxService = () => {
 
   const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-  const businessServices = servicesData
-    .filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
-    .map((ob) => ({
-      code: ob?.businessService,
-      name: ob?.businessService,
-      parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
-      workflowBusinessService: data?.mdms?.filter(
-        (mdms) => mdms?.uniqueIdentifier?.toLowerCase() === `${module}.${ob?.businessService}`.toLowerCase()
-      )?.[0]?.data?.workflow?.businessService,
-    }));
+  const businessServices = useMemo(() => {
+    if (!data?.mdms || !servicesData?.length) return [];
+
+    return servicesData
+      .filter((ob) => ob?.module?.toLowerCase() === module?.toLowerCase())
+      .map((ob) => ({
+        code: ob?.businessService,
+        name: ob?.businessService,
+        parallelWorkflow: getParallelWorkflow(module, ob?.businessService, data?.mdms),
+        workflowBusinessService: data?.mdms?.filter(
+          (mdms) => mdms?.uniqueIdentifier?.toLowerCase() === `${module}.${ob?.businessService}`.toLowerCase()
+        )?.[0]?.data?.workflow?.businessService,
+      }));
+  }, [servicesData, data?.mdms, module]);
 
   // To fetch the generic inbox config for inboxSearchComposer
   const configs = InboxConfig(businessServices);

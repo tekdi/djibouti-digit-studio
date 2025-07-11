@@ -10,12 +10,12 @@ const Calculation = () => {
   const queryStrings = Digit.Hooks.useQueryParams();
   const userDetails = Digit.UserService.getUser();
   const checklistStatus = localStorage.getItem('checklistStatus');
-  const isHOD = userDetails?.info?.roles?.some(
-    (role) => role.code.includes("HOD")
+  const isHODorAGENT = userDetails?.info?.roles?.some(
+    (role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS"
   );
 
   let styleCondition = {};
-  if (!isHOD && queryStrings?.state !== checklistStatus?.split(".")[1]) {
+  if (!isHODorAGENT && queryStrings?.state !== checklistStatus?.split(".")[1]) {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
   }
 
