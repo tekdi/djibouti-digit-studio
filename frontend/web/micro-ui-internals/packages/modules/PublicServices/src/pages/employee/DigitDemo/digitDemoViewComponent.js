@@ -24,6 +24,7 @@ const DigitDemoViewComponent = () => {
   const [isCalculatioDone, setIsCalculationDone] = useState(false);
   const history = useHistory();
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
+  const userDetails = Digit.UserService.getUser();
 
   //to get the fetched application details
   const request = {
@@ -113,6 +114,22 @@ const DigitDemoViewComponent = () => {
       setSelectedBusinessService(matchedBusinessServices[0]);
     }
   }, [matchedBusinessServices, selectedBusinessService]);
+
+  useEffect(() => {
+    if (!workflowDetails) return;
+
+    const loggedUser = userDetails?.info?.uuid;
+    const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
+    const assigneeUuids = latestProcessInstance?.assignes?.map(assignee => assignee.uuid) || [];
+    const userType = userDetails?.info?.type?.toLowerCase();
+
+    // Redirecting to the inbox page if the logged in user has no actions available for the particular application
+    if (!assigneeUuids?.includes(loggedUser)) {
+      history.push({
+        pathname: `/${window.contextPath}/${userType}/publicservices/${module}/Inbox`,
+      });
+    }
+  }, [userDetails, workflowDetails])
 
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
