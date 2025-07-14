@@ -116,7 +116,14 @@ const DigitDemoViewComponent = () => {
 
   useEffect(() => {
     const userType = userInfo?.info?.type?.toLowerCase();
-    if (!workflowDetails || userType === "citizen") return;
+    if (
+      !workflowDetails ||
+      userType === "citizen" ||
+      userRoles.includes("COUNTER_EMPLOYEE") ||
+      userRoles.includes("BPA_DIRECTOR") ||
+      userRoles.includes("BPA_SRA_SUB_DIRECTOR")
+    )
+      return;
 
     const loggedUser = userInfo?.info?.uuid;
     const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
