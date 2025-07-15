@@ -28,21 +28,37 @@ const CloseBtn = (props) => {
   );
 };
 
-// Payload builder for submitting workflow actions
-const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config) => {
-  const assigneeUser = {
-    uuid: data?.assignee?.user?.uuid || null,
-    userName: data?.assignee?.user?.userName || null,
-    name: data?.assignee?.user?.name || null,
-    mobileNumber: data?.assignee?.user?.mobileNumber || null,
-    emailId: data?.assignee?.user?.emailId || null,
-    type: data?.assignee?.user?.type || null,
-    roles: data?.assignee?.user?.roles || null,
-    tenantId: data?.assignee?.user?.tenantId || null,
-    active: data?.assignee?.user?.active || null,
-    permanentCity: data?.assignee?.user?.permanentCity || null,
-    locale: data?.assignee?.user?.locale || null,
+const formatAssigneeUser = (user) => {
+  return {
+    uuid: user?.uuid || null,
+    userName: user?.userName || null,
+    name: user?.name || null,
+    mobileNumber: user?.mobileNumber || null,
+    emailId: user?.emailId || null,
+    type: user?.type || null,
+    roles: user?.roles || null,
+    tenantId: user?.tenantId || null,
+    active: user?.active || null,
+    permanentCity: user?.permanentCity || null,
+    locale: user?.locale || null,
   };
+};
+
+// Payload builder for submitting workflow actions
+const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config, employees) => {
+  const assigneeUsers = [];
+  const assigneeUser = formatAssigneeUser(data?.assignee?.user);
+
+  assigneeUsers.push(assigneeUser);
+
+  const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
+  if (employees) {
+    const filterEmployees = employees?.filter((emp) => {
+      return emp?.user?.roles?.some((role) => roleCodes.includes(role.code));
+    });
+    const users = filterEmployees?.map((emp) => formatAssigneeUser(emp?.user));
+    assigneeUsers.push(...users);
+  }
 
   const workflow = {
     comment: data.comments,
@@ -112,19 +128,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
           url: hrmsUrl,
         });
 
-        workflow.assignees = hrmsResponse?.Employees?.map((employee) => ({
-          uuid: employee?.user?.uuid || null,
-          userName: employee?.user?.userName || null,
-          name: employee?.user?.name || null,
-          mobileNumber: employee?.user?.mobileNumber || null,
-          emailId: employee?.user?.emailId || null,
-          locale: employee?.user?.locale || null,
-          type: employee?.user?.type || null,
-          roles: employee?.user?.roles || null,
-          active: employee?.user?.active || null,
-          tenantId: employee?.user?.tenantId || null,
-          permanentCity: employee?.user?.permanentCity || null,
-        }));
+        workflow.assignees = hrmsResponse?.Employees?.map((employee) => formatAssigneeUser(employee?.user));
       }
     } catch (error) {
       console.error("Error fetching workflow or HRMS data:", error);
@@ -133,7 +137,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     // Add selectedParallelWorkflows to the payload
     workflow.triggerSelectiveParallelWorkflows = selectedCommissioners;
   } else if (action.action == "ADD_QUERY") {
-    workflow.assignees = [Digit.UserService.getUser()?.info];
+    workflow.assignees = applicationDetails?.workflow?.assignees;
   } else if (
     action.action != "ADD_QUERY" &&
     !action.isTerminateState &&
@@ -142,7 +146,7 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     action.action != "SEND_TO_COMMISSIONER" &&
     action.action != "SEND_BACK_TO_SOURCE"
   ) {
-    workflow.assignees = assigneeUser ? [assigneeUser] : [];
+    workflow.assignees = assigneeUsers ? assigneeUsers : [];
   }
 
   Object.keys(workflow).forEach((key) => {
@@ -163,12 +167,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
 
   const [config, setConfig] = useState(null);
   const [modalSubmit, setModalSubmit] = useState(true);
-  const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
-  const assigneeRoles = action?.assigneeRoles
-    ?.toString()
-    ?.split(",")
-    ?.filter((role) => !roleCodes?.includes(role))
-    ?.join(",");
+  const assigneeRoles = action?.assigneeRoles?.toString();
 
   // Get HRMS employee list
   let { isLoading: isLoadingHrmsSearch, data: hrmsData } = Digit.Hooks.hrms.useHRMSSearch(
@@ -193,9 +192,14 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
     const employees = hrmsData?.Employees;
     if (!employees) return undefined;
 
+    const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
+    const filterEmployees = employees.filter((emp) => {
+      return emp?.user?.roles?.some((role) => !roleCodes.includes(role.code));
+    });
+
     // Add fallback name
-    employees.forEach((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
-    return employees;
+    filterEmployees.forEach((emp) => (emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA")));
+    return filterEmployees;
   }, [action?.action, action?.triggerParallelWorkflows, hrmsData?.Employees, t]);
 
   // Request criteria for Document config
@@ -241,7 +245,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
   // Form submit handler
   const _submit = async (data) => {
     try {
-      const customPayload = await updatePayload(applicationDetails, data, action, businessService, tenantId, config);
+      const customPayload = await updatePayload(applicationDetails, data, action, businessService, tenantId, config, hrmsData?.Employees);
       submitAction(customPayload, action);
     } catch (error) {
       console.error("Error submitting workflow action:", error);
