@@ -78,6 +78,18 @@ const Calculation = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
+  const getValue = (primary, fallback, defaultValue) => {
+    if (primary !== undefined && primary !== null) {
+      return primary;
+    }
+
+    if (fallback !== undefined && fallback !== null) {
+      return fallback;
+    }
+
+    return defaultValue;
+  };
+
   useEffect(() => {
     if (data) {
       setResponse(data?.Application?.[0] || {});
@@ -145,7 +157,7 @@ const Calculation = () => {
       eqResistancePer: feeRates.seismicFeePercentage,
       eqResistanceCost: 0,
       royaltyFee: 0,
-      registryServiceFee: 5000,
+      registryServiceFee: feeRates.registryServiceFee,
       totalBuildingCost: 0,
       totalTax: 0,
       totalTaxWithServiceCharge: 0,
@@ -252,6 +264,14 @@ const Calculation = () => {
     const estimation = calculationResponse?.additionalDetails?.costEstimation;
     const fallbackEstimation = response?.additionalDetails?.costEstimation;
 
+    setFeeRates({
+      residentialCost: getValue(estimation?.costPerSqmLivingSpace, fallbackEstimation?.costPerSqmLivingSpace, 50000),
+      commercialCost: getValue(estimation?.costPerSqmCommercialSpace, fallbackEstimation?.costPerSqmCommercialSpace, 30000),
+      royaltyFeePercentage: getValue(estimation?.royaltyPer, fallbackEstimation?.royaltyPer, 1.5),
+      seismicFeePercentage: getValue(estimation?.eqResistancePer, fallbackEstimation?.eqResistancePer, 1),
+      registryServiceFee: getValue(estimation?.registryServiceFee, fallbackEstimation?.registryServiceFee, 5000),
+    });
+
     setCostBreakdown((prev) =>
       prev.map((item) => {
         // First try to find in current estimation
@@ -356,27 +376,71 @@ const Calculation = () => {
         <div className="fee-rates" style={styleCondition}>
           <div className="fee-rate-card">
             <h3 className="fee-rate-card-title">{t("CALCULATION_COST_RESIDENTIAL")}</h3>
-            <p className="fee-rate-card-value disabled">FDj {feeRates?.residentialCost?.toLocaleString()}</p>
+            <div className="input-with-unit">
+              <input
+                type="number"
+                value={feeRates?.residentialCost}
+                onChange={(e) => setFeeRates(prev => ({ ...prev, residentialCost: Number(e.target.value) }))}
+                placeholder="50000"
+                onWheel={(e) => e.target.blur()}
+              />
+              <span className="unit">FDJ</span>
+            </div>
           </div>
 
           <div className="fee-rate-card">
             <h3 className="fee-rate-card-title">{t("CALCULATION_COST_COMMERCIAL")}</h3>
-            <p className="fee-rate-card-value disabled">FDj {feeRates?.commercialCost?.toLocaleString()}</p>
+            <div className="input-with-unit">
+              <input
+                type="number"
+                value={feeRates?.commercialCost}
+                onChange={(e) => setFeeRates(prev => ({ ...prev, commercialCost: Number(e.target.value) }))}
+                placeholder="30000"
+                onWheel={(e) => e.target.blur()}
+              />
+              <span className="unit">FDJ</span>
+            </div>
           </div>
 
           <div className="fee-rate-card">
             <h3 className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES")}</h3>
-            <p className="fee-rate-card-value disabled">{`${feeRates?.royaltyFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+            <div className="input-with-unit">
+              <input
+                type="number"
+                value={feeRates?.royaltyFeePercentage}
+                onChange={(e) => setFeeRates(prev => ({ ...prev, royaltyFeePercentage: Number(e.target.value) }))}
+                placeholder="1.5"
+                onWheel={(e) => e.target.blur()}
+              />
+              <span className="unit">% {t("OF_ESTIMATED_QUOTE")}</span>
+            </div>
           </div>
 
           <div className="fee-rate-card">
             <h3 className="fee-rate-card-title">{t("CALCULATION_SEISMIC_FEES")}</h3>
-            <p className="fee-rate-card-value disabled">{`${feeRates?.seismicFeePercentage} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
+            <div className="input-with-unit">
+              <input
+                value={feeRates?.seismicFeePercentage}
+                onChange={(e) => setFeeRates(prev => ({ ...prev, seismicFeePercentage: Number(e.target.value) }))}
+                placeholder="1"
+                onWheel={(e) => e.target.blur()}
+              />
+              <span className="unit">% {t("OF_ESTIMATED_QUOTE")}</span>
+            </div>
           </div>
 
           <div className="fee-rate-card">
             <h3 className="fee-rate-card-title">{t("CALCULATION_REGISTRY_SERVICE_FEE")}</h3>
-            <p className="fee-rate-card-value disabled">FDj {feeRates?.registryServiceFee?.toLocaleString()}</p>
+            <div className="input-with-unit">
+              <input
+                type="number"
+                value={feeRates?.registryServiceFee}
+                onChange={(e) => setFeeRates(prev => ({ ...prev, registryServiceFee: Number(e.target.value) }))}
+                placeholder="5000"
+                onWheel={(e) => e.target.blur()}
+              />
+              <span className="unit">FDJ</span>
+            </div>
           </div>
         </div>
 
@@ -408,6 +472,7 @@ const Calculation = () => {
                             setFloorData(updatedFloors);
                           }}
                           placeholder=""
+                          onWheel={(e) => e.target.blur()}
                         />
                         <span className="unit">m²</span>
                       </div>
@@ -424,6 +489,7 @@ const Calculation = () => {
                             setFloorData(updatedFloors);
                           }}
                           placeholder=""
+                          onWheel={(e) => e.target.blur()}
                         />
                         <span className="unit">m²</span>
                       </div>
