@@ -79,11 +79,15 @@ const Calculation = () => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
   const getValue = (primary, fallback, defaultValue) => {
-    return primary !== undefined && primary !== null
-      ? primary
-      : fallback !== undefined && fallback !== null
-        ? fallback
-        : defaultValue;
+    if (primary !== undefined && primary !== null) {
+      return primary;
+    }
+
+    if (fallback !== undefined && fallback !== null) {
+      return fallback;
+    }
+
+    return defaultValue;
   };
 
   useEffect(() => {
