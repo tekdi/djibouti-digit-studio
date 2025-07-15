@@ -78,6 +78,14 @@ const Calculation = () => {
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
+  const getValue = (primary, fallback, defaultValue) => {
+    return primary !== undefined && primary !== null
+      ? primary
+      : fallback !== undefined && fallback !== null
+        ? fallback
+        : defaultValue;
+  };
+
   useEffect(() => {
     if (data) {
       setResponse(data?.Application?.[0] || {});
@@ -253,36 +261,11 @@ const Calculation = () => {
     const fallbackEstimation = response?.additionalDetails?.costEstimation;
 
     setFeeRates({
-      residentialCost:
-        estimation?.costPerSqmLivingSpace != null
-          ? estimation.costPerSqmLivingSpace
-          : fallbackEstimation?.costPerSqmLivingSpace != null
-            ? fallbackEstimation.costPerSqmLivingSpace
-            : 50000,
-      commercialCost:
-        estimation?.costPerSqmCommercialSpace != null
-          ? estimation.costPerSqmCommercialSpace
-          : fallbackEstimation?.costPerSqmCommercialSpace != null
-            ? fallbackEstimation.costPerSqmCommercialSpace
-            : 30000,
-      royaltyFeePercentage:
-        estimation?.royaltyPer != null
-          ? estimation.royaltyPer
-          : fallbackEstimation?.royaltyPer != null
-            ? fallbackEstimation.royaltyPer
-            : 1.5,
-      seismicFeePercentage:
-        estimation?.eqResistancePer != null
-          ? estimation.eqResistancePer
-          : fallbackEstimation?.eqResistancePer != null
-            ? fallbackEstimation.eqResistancePer
-            : 1,
-      registryServiceFee:
-        estimation?.registryServiceFee != null
-          ? estimation.registryServiceFee
-          : fallbackEstimation?.registryServiceFee != null
-            ? fallbackEstimation.registryServiceFee
-            : 5000,
+      residentialCost: getValue(estimation?.costPerSqmLivingSpace, fallbackEstimation?.costPerSqmLivingSpace, 50000),
+      commercialCost: getValue(estimation?.costPerSqmCommercialSpace, fallbackEstimation?.costPerSqmCommercialSpace, 30000),
+      royaltyFeePercentage: getValue(estimation?.royaltyPer, fallbackEstimation?.royaltyPer, 1.5),
+      seismicFeePercentage: getValue(estimation?.eqResistancePer, fallbackEstimation?.eqResistancePer, 1),
+      registryServiceFee: getValue(estimation?.registryServiceFee, fallbackEstimation?.registryServiceFee, 5000),
     });
 
     setCostBreakdown((prev) =>
