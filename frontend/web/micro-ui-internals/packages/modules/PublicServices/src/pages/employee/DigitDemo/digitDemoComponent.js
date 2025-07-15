@@ -123,7 +123,7 @@ const DigitDemoComponent = ({ editdata }) => {
       };
     }
     // Even if the condition is false, return a cleanup function (no-op)
-    return () => {};
+    return () => { };
   }, [currentFormConfig]);
 
   //this to maintain the current state of the application entered by user
@@ -163,18 +163,18 @@ const DigitDemoComponent = ({ editdata }) => {
           body:
             isLastStep || applicationNumber
               ? transformToApplicationPayload(
-                  updatedFormData,
-                  Updatedconfig,
-                  service,
-                  tenantId,
-                  config,
-                  workflowDetails,
-                  isLastStep,
-                  responseData,
-                  applicationNumber,
-                  queryStrings?.action,
-                  assigneeOptions?.Employees
-                )
+                updatedFormData,
+                Updatedconfig,
+                service,
+                tenantId,
+                config,
+                workflowDetails,
+                isLastStep,
+                responseData,
+                applicationNumber,
+                queryStrings?.action,
+                assigneeOptions?.Employees
+              )
               : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
         {
@@ -197,7 +197,7 @@ const DigitDemoComponent = ({ editdata }) => {
                   showID: true,
                   applicationNumber: data?.Application?.applicationNumber,
                   config: config,
-                  workflowStatus: data?.Application?.workflowStatus,
+                  workflowStatus: data?.Application?.processInstance[0]?.state?.state,
                   redirectionUrl: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
                 },
               });
