@@ -287,7 +287,9 @@ export const UICustomizations = {
             <Link
               to={`/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${row?.module}/${
                 row?.businessService
-              }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+              }/ViewScreen?applicationNumber=${row?.applicationNumber}&serviceCode=${row?.serviceCode}&businessService=${
+                row?.processInstance?.[0].businessService
+              }`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
