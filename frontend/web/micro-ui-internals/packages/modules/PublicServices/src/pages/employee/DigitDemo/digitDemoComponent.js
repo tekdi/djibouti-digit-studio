@@ -8,7 +8,7 @@ import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
 import { assigneeMapping } from "../../../utils/templateConfig";
 
-// Add styles for disabled inputs
+
 const disabledInputStyles = `
   input:disabled, textarea:disabled, select:disabled {
     background-color: #f0f0f0 !important;
