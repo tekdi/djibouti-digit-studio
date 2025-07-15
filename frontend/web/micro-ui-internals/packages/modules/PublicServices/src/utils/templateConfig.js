@@ -280,4 +280,8 @@ export const assigneeMapping = [
     permit: "BPA_PR",
     role: "TOPOGRAPHY_HOD",
   },
+  {
+    permit: "BPA_PL",
+    role: "BPA_HOD",
+  },
 ];
