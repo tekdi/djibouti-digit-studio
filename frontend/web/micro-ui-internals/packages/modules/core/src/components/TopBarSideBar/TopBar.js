@@ -13,7 +13,7 @@ const TextToImg = (props) => (
 
 
 const UserInfoBlock = ({ profilePic, userDetails, roleLabel, t, userOptions, handleUserDropdownSelection, mobileView, roleColor = "#006769" }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', maxWidth: '340px' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       <div>
         {profilePic == null ? (
@@ -186,22 +186,21 @@ const TopBar = ({
   const loggedin = userDetails?.access_token ? true : false;
   return (
     <div className="topbar" style={{ position: 'relative' }}>
-      {mobileView ? (
-        <Hamburger handleClick={() => setShowMobileMenu((prev) => !prev)} color="#9E9E9E" />
-      ) : null}
-      <img className="city" style={{ width: "40px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/LOGO+DATUH.jpg" alt="DATUH" />
+      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+        {mobileView && (
+          <Hamburger handleClick={() => setShowMobileMenu((prev) => !prev)} color="#9E9E9E" />
+        )}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+          <img className="city" style={{ width: "40px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/LOGO+DATUH.jpg" alt="DATUH" />
+        </div>
 
-      <img className="city" style={{ width: "56px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
-
-      <span>
+        <div className="city-logo">
+          <img className="city" style={{ width: "56px", height: "56px", margin: 0, objectFit: "contain" }} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
+        </div>
 
         {!mobileView && (
-          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={{
-            minWidth: "fit-content",
-            ...(!loggedin ? { width: "30%" } : {})
-          }}>
-
-            <div className="">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
+          <div className="flex-right right w-80 column-gap-15" style={{ flex: 1, minWidth: "fit-content", justifyContent: 'flex-end', display: 'flex', alignItems: 'center', ...(!loggedin ? { width: "30%" } : {}) }}>
+            {showLanguageChange && <ChangeLanguage dropdown={true} />}
             {userDetails?.access_token && (
               <UserInfoBlock
                 profilePic={profilePic}
@@ -214,24 +213,24 @@ const TopBar = ({
                 roleColor="#006769"
               />
             )}
-
-            {/* <img className="state" src={logoUrl} /> */}
           </div>
         )}
-        {/* Mobile menu panel */}
-        {mobileView && showMobileMenu && (
-          <div className="mobile-menu-panel" style={{
-            position: "absolute",
-            top: "78px",
-            right: 0,
-            left: 0,
-            background: 'rgba(34, 57, 77, var(--bg-opacity) !important',
-            zIndex: 1000,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            padding: "16px"
-          }}>
+      </div>
+      {/* Mobile menu panel (separate from main bar) */}
+      {mobileView && showMobileMenu && (
+        <div className="mobile-menu-panel" style={{
+          position: "absolute",
+          top: "70px",
+          right: 0,
+          left: 0,
+          zIndex: 1000,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          padding: "16px"
+        }}>
+          <div className="mobile-view-topbar" >
+            {/* Center-aligned logo (mobile menu only) */}
 
-            <div>{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
+            {showLanguageChange && <ChangeLanguage dropdown={true} />}
             {userDetails?.access_token && (
               <UserInfoBlock
                 profilePic={profilePic}
@@ -245,8 +244,8 @@ const TopBar = ({
               />
             )}
           </div>
-        )}
-      </span>
+        </div>
+      )}
     </div>
   );
 };
