@@ -47,9 +47,11 @@ const formatAssigneeUser = (user) => {
 // Payload builder for submitting workflow actions
 const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config, employees) => {
   const assigneeUsers = [];
-  const assigneeUser = formatAssigneeUser(data?.assignee?.user);
 
-  assigneeUsers.push(assigneeUser);
+  if (data?.assignee?.user) {
+    const assigneeUser = formatAssigneeUser(data?.assignee?.user);
+    assigneeUsers.push(assigneeUser);
+  }
 
   const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
   if (employees) {
@@ -78,6 +80,17 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     action: action.action,
     businessService: businessService,
   };
+
+  // Handle SEND_TO_CITIZEN_PAYMENT action
+  if (action?.action === "SEND_TO_CITIZEN_PAYMENT") {
+    if (employees) {
+      const filterEmployees = employees?.filter((emp) => {
+        return emp?.user?.roles?.some((role) => role.code === "COUNTER_EMPLOYEE");
+      });
+      const users = filterEmployees?.map((emp) => formatAssigneeUser(emp?.user));
+      assigneeUsers.push(...users);
+    }
+  }
 
   // Handle SEND_TO_COMMISSIONER action
   if (action.action === "SEND_TO_COMMISSIONER") {
@@ -142,7 +155,6 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
     action.action != "ADD_QUERY" &&
     !action.isTerminateState &&
     action.action != "SEND_BACK_TO_ARCHITECT" &&
-    action.action != "SEND_TO_CITIZEN_PAYMENT" &&
     action.action != "SEND_TO_COMMISSIONER" &&
     action.action != "SEND_BACK_TO_SOURCE"
   ) {
