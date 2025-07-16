@@ -114,6 +114,29 @@ const DigitDemoViewComponent = () => {
     }
   }, [matchedBusinessServices, selectedBusinessService]);
 
+  useEffect(() => {
+    const userType = userInfo?.info?.type?.toLowerCase();
+    if (
+      !workflowDetails ||
+      userType === "citizen" ||
+      userRoles.includes("COUNTER_EMPLOYEE") ||
+      userRoles.includes("BPA_DIRECTOR") ||
+      userRoles.includes("BPA_SRA_SUB_DIRECTOR")
+    )
+      return;
+
+    const loggedUser = userInfo?.info?.uuid;
+    const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
+    const assigneeUuids = latestProcessInstance?.assignes?.map((assignee) => assignee.uuid) || [];
+
+    // Redirecting to the inbox page if the logged in user has no actions available for the particular application
+    if (!assigneeUuids?.includes(loggedUser)) {
+      history.push({
+        pathname: `/${window.contextPath}/${userType}/publicservices/${module}/Inbox`,
+      });
+    }
+  }, [userInfo, workflowDetails]);
+
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
   if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
@@ -137,7 +160,7 @@ const DigitDemoViewComponent = () => {
         applicationNumber: queryStrings?.applicationNumber,
         pdfKey: getPdfKeyForState(serviceConfig?.data?.pdf, processInstanceState),
       },
-      `application-receipt-${queryStrings?.applicationNumber}.pdf`
+      `permit-${queryStrings?.applicationNumber}.pdf`
     );
   };
 

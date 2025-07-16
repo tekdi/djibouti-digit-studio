@@ -1433,3 +1433,37 @@ button.submit-bar {
 .employee-select-wrap .select-active {
   border: none !important
 }
+
+
+.digit-header-content.label .label-styles {
+  overflow: initial !important;
+  white-space: initial !important;
+  text-overflow: unset !important;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  .topbar {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .city-logo {
+    justify-content: end !important;
+  }
+}
+
+.mobile-view-topbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.city-logo {
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

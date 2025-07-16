@@ -183,7 +183,7 @@ const ModulePageComponent = () => {
             )}
 
             {/* Inbox Card */}
-            {!isCitizen && !isArchitect && !isCounterEmployee && (
+            {!isCitizen && !isArchitect && (
               <Card key={`${index}-inbox`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
