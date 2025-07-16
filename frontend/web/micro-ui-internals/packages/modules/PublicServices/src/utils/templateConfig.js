@@ -269,19 +269,53 @@ export const documentFields = [
 
 export const assigneeMapping = [
   {
+    // P1
     permit: "BPA_PCO",
     role: "BPA_HOD",
   },
   {
+    // P2
     permit: "BPA_PCO_SIMPLE",
     role: "BPA_HOD",
   },
   {
+    // P3
     permit: "BPA_PR",
     role: "TOPOGRAPHY_HOD",
   },
   {
+    // P4
     permit: "BPA_PL",
     role: "BPA_HOD",
+  },
+  {
+    // P10
+    permit: "BPA_CCR",
+    role: "TOPOGRAPHY_HOD",
+  },
+  {
+    // P11
+    permit: "BPA_CCE",
+    role: "BPA_SRA_SUB_DIRECTOR",
+  },
+  {
+    // P12
+    permit: "BPA_CCP",
+    role: "BPA_SDECC_HOD",
+  },
+  {
+    // P13
+    permit: "BPA_CCG",
+    role: "BPA_HOD",
+  },
+  {
+    // P14
+    permit: "BPA_PV",
+    role: "BPA_SDECC_HOD",
+  },
+  {
+    // P15
+    permit: "BPA_APE",
+    role: "BPA_SDECC_HOD",
   },
 ];
