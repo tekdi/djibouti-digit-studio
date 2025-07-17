@@ -319,3 +319,22 @@ export const assigneeMapping = [
     role: "BPA_SDECC_HOD",
   },
 ];
+
+export const checklistByService = [
+  {
+    service: "BPA_PCO",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT"]
+  },
+  {
+    service: "BPA_PCO_SIMPLE",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT"]
+  },
+  {
+    service: "BPA_PL",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"]
+  },
+  {
+    service: "BPA_PCS",
+    checklist: []
+  },
+]

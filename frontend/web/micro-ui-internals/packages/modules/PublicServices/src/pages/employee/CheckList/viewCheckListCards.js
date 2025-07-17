@@ -5,10 +5,12 @@ import { useHistory } from "react-router-dom";
 import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
+import { checklistByService } from "../../../utils/templateConfig.js";
 
 const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
   const { t } = useTranslation();
-
+  const { service } = useParams();
   const code = checkListCodes;
   //businessService.workflowstate
   //applicationid
@@ -39,7 +41,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
       },
       {
         onSuccess: (res) => {
-          setCardItems(res?.ServiceDefinitions);
+          let items = res?.ServiceDefinitions || [];
+
+          // Find checklistConfig for current service
+          const checklistConfig = checklistByService.find(list => list.service === service);
+
+          // If there's a checklistConfig, filter the items accordingly
+          if (checklistConfig) {
+            const allowedCodes = checklistConfig.checklist;
+            items = items.filter(item => allowedCodes.includes(item.code));
+          }
+
+          setCardItems(items);
           localStorage.setItem("checklistStatus", res?.ServiceDefinitions?.[0]?.code);
         },
         onError: () => {
