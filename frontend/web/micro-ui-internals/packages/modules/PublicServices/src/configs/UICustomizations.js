@@ -174,6 +174,7 @@ export const UICustomizations = {
           data?.state?.filterForm?.businessService?.flatMap((bs) => (bs.parallelWorkflow?.length ? [bs.code, ...bs.parallelWorkflow] : [bs.code])) ||
           [];
       }
+      data.changeQueryName = JSON.stringify(data?.state?.tableForm);
 
       if (data?.state?.searchForm?.businessService?.parallelWorkflow?.length > 0) {
         data.body.inbox.processSearchCriteria.businessService = [
@@ -205,7 +206,6 @@ export const UICustomizations = {
         data.body.inbox.moduleSearchCriteria.status = Object.keys(statusKeys).filter((key) => statusKeys[key]);
         data.state.filterForm.state = "";
       }
-
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
