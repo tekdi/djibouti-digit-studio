@@ -92,46 +92,6 @@ export const ApplicantFields = [
     items: {
       type: "object",
       properties: [
-        // {
-        //   "name": "OwnerName",
-        //   "label": "Owner Name ",
-        //   "disable" : false,
-        //   "type": "string",
-        //   "format": "text",
-        //   "maxLength": 256,
-        //   "minLength": 0,
-        //   "validation": {
-        //     "regex": "^[1-9][0-9]{5}$",
-        //     "message": "Only 6 numbers allowed"
-        //   },
-        //   "required": false,
-        //   "orderNumber": 1
-        // },
-        // {
-        //   "name": "mobileNumber",
-        //   "label": "Mobile Number ",
-        //   "disable" : false,
-        //   "type": "mobileNumber",
-        //   "format": "mobileNumber",
-        //   "maxLength": 256,
-        //   "minLength": 0,
-        //   "validation": {
-        //     "regex": "^[6-9]\d{9}$",
-        //     "message": "Only 9 numbers allowed"
-        //   },
-        //   "required": false,
-        //   "orderNumber": 1
-        // },
-        // {
-        //   "name": "gender",
-        //   "label": "Gender ",
-        //   "disable" : false,
-        //   "type": "string",
-        //   "format": "radioordropdown",
-        //   "reference": "mdms",
-        //   "required": false,
-        //   "schema": "common-masters.GenderType"
-        // },
         {
           name: "wayToAddress",
           type: "string",
@@ -231,6 +191,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PCS"],
         },
         {
           name: "checkValidation",
@@ -286,6 +247,11 @@ export const assigneeMapping = [
   {
     // P4
     permit: "BPA_PL",
+    role: "BPA_HOD",
+  },
+  {
+    // P5
+    permit: "BPA_PCS",
     role: "BPA_HOD",
   },
   {

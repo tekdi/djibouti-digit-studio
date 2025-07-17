@@ -166,7 +166,9 @@ const ApplicationDataView = ({ serviceCode, data, status, applicationNumber, bus
     return (
       <div className="section-container">
         {/* <p className="field-label">{t(serviceCode + "_DECLARATIONS")}</p> */}
-        <div className="section-content">{declarationKeys.map((key) => renderCheckbox(key, declarations[key]))}</div>
+        <div className="section-content">
+          {declarationKeys.filter((key) => declarations[key]).map((key) => renderCheckbox(key, declarations[key]))}
+        </div>
       </div>
     );
   };

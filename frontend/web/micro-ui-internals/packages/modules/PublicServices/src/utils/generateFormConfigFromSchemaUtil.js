@@ -81,7 +81,9 @@ export const generateFormConfig = (config, module, service) => {
     return {
       head: `${module}_${service}_${objectField.name.toUpperCase()}`,
       name: objectField.name,
-      body: sortByOrderNumber(objectField.properties).map((subField) => createField(subField)),
+      body: sortByOrderNumber(objectField.properties)
+        .filter((field) => !field?.excludeServices?.includes(service))
+        .map((subField) => createField(subField)),
       type: "childform",
       step: dynamicStep++,
     };
@@ -94,7 +96,9 @@ export const generateFormConfig = (config, module, service) => {
       name: arrayField.name,
       type: "multiChildForm",
       prefix: `${module}_${service}`,
-      body: sortByOrderNumber(arrayField.items.properties).map((subField) => createField(subField)),
+      body: sortByOrderNumber(arrayField.items.properties)
+        .filter((field) => !field?.excludeServices?.includes(service))
+        .map((subField) => createField(subField)),
       step: dynamicStep++,
     };
   };
