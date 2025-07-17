@@ -244,13 +244,12 @@ const DigitDemoComponent = ({ editdata }) => {
   };
 
   const updateFormBody = (formConfig, formData, dataKey, workTypePath = 'workType') => {
-    if (!formConfig || !formConfig.body || formConfig.name !== dataKey) return;
+    if (formConfig?.name !== dataKey || !formConfig?.body) return;
 
     const landDetails = formData?.[dataKey]?.[0];
     if (!landDetails) return;
 
     const definitiveLandTitleCode = landDetails?.definitiveLandTitle?.code?.toUpperCase();
-    const registrationCertificate = landDetails?.registrationCertificate?.code?.toUpperCase() || "";
     const workType = landDetails?.[workTypePath]?.code?.toUpperCase();
 
     formConfig.body = formConfig.body.map((field) => {
