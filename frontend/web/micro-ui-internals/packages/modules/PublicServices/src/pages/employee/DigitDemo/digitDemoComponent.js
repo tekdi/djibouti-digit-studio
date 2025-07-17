@@ -243,55 +243,62 @@ const DigitDemoComponent = ({ editdata }) => {
     }
   };
 
-  if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
-    // Safely access nested properties
-    const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
+  const updateFormBody = (formConfig, formData, dataKey, workTypePath = 'workType') => {
+    if (!formConfig || !formConfig.body || formConfig.name !== dataKey) return;
 
-    if (landDetails && landDetails.definitiveLandTitle && landDetails.definitiveLandTitle.code) {
-      // Safely convert to uppercase
-      const definitiveLandTitleCode = landDetails.definitiveLandTitle.code.toUpperCase();
-      const registrationCertificate =
-        landDetails.registrationCertificate && landDetails.registrationCertificate.code ? landDetails.registrationCertificate.code.toUpperCase() : "";
-      const workType = landDetails.workType?.code?.toUpperCase();
+    const landDetails = formData?.[dataKey]?.[0];
+    if (!landDetails) return;
 
-      // Only proceed if currentFormConfig and its body exist
-      if (currentFormConfig && currentFormConfig.body) {
-        // Create a new copy of the body array
-        currentFormConfig.body = currentFormConfig.body.map((field) => {
-          if (field && field.populators && field.populators.name === "tfNo") {
-            return {
-              ...field,
-              populators: {
-                ...field.populators,
-                disable: definitiveLandTitleCode === "NO",
-                required: definitiveLandTitleCode !== "NO",
-              },
-            };
-          } else if (field && field.populators && field.populators.name === "noOfUnits") {
-            return {
-              ...field,
-              populators: {
-                ...field.populators,
-                disable: workType === "OTHERS" || workType !== "HOUSING",
-                required:
-                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "OTHERS" ? true : workType === "HOUSING" ? true : false,
-              },
-            };
-          } else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
-            return {
-              ...field,
-              populators: {
-                ...field.populators,
-                disable: workType === "HOUSING" || workType !== "OTHERS",
-                required:
-                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "HOUSING" ? true : workType === "OTHERS" ? true : false,
-              },
-            };
-          }
-          return field;
-        });
+    const definitiveLandTitleCode = landDetails?.definitiveLandTitle?.code?.toUpperCase();
+    const registrationCertificate = landDetails?.registrationCertificate?.code?.toUpperCase() || "";
+    const workType = landDetails?.[workTypePath]?.code?.toUpperCase();
+
+    formConfig.body = formConfig.body.map((field) => {
+      if (!field?.populators?.name) return field;
+
+      const { name } = field.populators;
+
+      if (name === "tfNo") {
+        return {
+          ...field,
+          populators: {
+            ...field.populators,
+            disable: definitiveLandTitleCode === "NO",
+            required: definitiveLandTitleCode !== "NO",
+          },
+        };
       }
-    }
+
+      if (name === "noOfUnits") {
+        return {
+          ...field,
+          populators: {
+            ...field.populators,
+            disable: workType === "OTHERS" || workType !== "HOUSING",
+            required: ["HOUSING", "OTHERS"].includes(workType),
+          },
+        };
+      }
+
+      if (name === "detailsOnOtherType") {
+        return {
+          ...field,
+          populators: {
+            ...field.populators,
+            disable: workType === "HOUSING" || workType !== "OTHERS",
+            required: ["HOUSING", "OTHERS"].includes(workType),
+          },
+        };
+      }
+
+      return field;
+    });
+  };
+
+  if (currentFormConfig?.name === "landandProjectDesignDetails") {
+    updateFormBody(currentFormConfig, formData, "landandProjectDesignDetails");
+  } else if (currentFormConfig?.name === "landAndBuildingDetailing") {
+    updateFormBody(currentFormConfig, formData, "landAndBuildingDetailing", "typeOfWork");
   }
 
   const onFormValueChange = (_, updatedData) => {
