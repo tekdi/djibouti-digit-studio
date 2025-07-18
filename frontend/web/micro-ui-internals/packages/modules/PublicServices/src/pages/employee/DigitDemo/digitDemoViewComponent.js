@@ -125,6 +125,7 @@ const DigitDemoViewComponent = () => {
     )
       return;
 
+
     const loggedUser = userInfo?.info?.uuid;
     const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
     const assigneeUuids = latestProcessInstance?.assignes?.map((assignee) => assignee.uuid) || [];
@@ -311,7 +312,7 @@ const DigitDemoViewComponent = () => {
             {/* <ViewComposer data={config} isLoading={false} /> */}
             <ApplicationDataView
               serviceCode={serviceCode}
-              status={config?.apiResponse?.processInstance?.[0]?.state.state}
+              status={workflowDetails?.processInstances?.[0]?.state?.state}
               businessService={response?.businessService?.toUpperCase()}
               applicationNumber={config?.apiResponse?.applicationNumber}
               data={applicationData}
