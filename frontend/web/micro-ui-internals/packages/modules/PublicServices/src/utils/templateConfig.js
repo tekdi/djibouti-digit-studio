@@ -299,6 +299,7 @@ export const assigneeMapping = [
 ];
 
 export const checklistByService = [
+  // Services WITH checklists (your 7 services + other team's services that need checklists)
   {
     service: "BPA_PCO",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
@@ -319,4 +320,32 @@ export const checklistByService = [
     service: "BPA_PD",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
   },
+  {
+    service: "BPA_PR",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCR",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCE",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCP",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCG",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_PV",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_APE",
+    checklist: ["customAgentChecklist"],
+  }
 ];
