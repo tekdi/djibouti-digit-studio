@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
+// import CustomCheckListCard from "../../../components/CustomCheckListCard.js";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -50,6 +51,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (checklistConfig) {
             const allowedCodes = checklistConfig.checklist;
             items = items.filter(item => allowedCodes.includes(item.code));
+            
+            // Add custom checklist if configured
+            if (allowedCodes.includes("customAgentChecklist")) {
+              items.push({
+                id: "custom-agent-checklist",
+                code: "customAgentChecklist",
+                clientId: "AGENT_FIELD_REPORT",
+                auditDetails: {
+                  createdTime: Date.now()
+                }
+              });
+            }
           }
 
           setCardItems(items);
@@ -70,9 +83,31 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
     <React.Fragment>
       {cardItems
         .sort((a, b) => a.auditDetails.createdTime - b.auditDetails.createdTime)
-        .map((item, index) => (
-          <CheckListCard item={item} t={t} accid={accountID} state={state} />
-        ))}
+        .map((item, index) => {
+          // Check if this is a custom checklist
+          // if (item.code === "customAgentChecklist") {
+          //   return (
+          //     <CustomCheckListCard 
+          //       key={index}
+          //       applicationId={accountID} 
+          //       service={service} 
+          //       state={state} 
+          //       t={t} 
+          //     />
+          //   );
+          // }
+          
+          // Regular checklist
+          return (
+            <CheckListCard 
+              key={index}
+              item={item} 
+              t={t} 
+              accid={accountID} 
+              state={state} 
+            />
+          );
+        })}
     </React.Fragment>
   );
 };

@@ -36,7 +36,8 @@
   },
   "resolutions": {
     "**/@babel/runtime": "7.20.1",
-    "**/styled-components": "5.0.0",
+    "**/styled-components": "5.3.11",
+    "**/react-is": "17.0.2",
     "**/@babel/traverse": "7.25.9",
     "**/babel-preset-react-app": "10.0.0",
     "**/@jridgewell/gen-mapping": "0.3.5"
