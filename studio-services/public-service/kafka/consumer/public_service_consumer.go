@@ -11,6 +11,7 @@ import (
 	"public-service/model"
 	"public-service/model/payment"
 	"public-service/service"
+
 	"github.com/segmentio/kafka-go"
 )
 
@@ -107,12 +108,32 @@ func ConsumePayments(workflowIntegrator *service.WorkflowIntegrator, application
 		if nextActionAfterPayment != "" {
 			application.Workflow.Action = nextActionAfterPayment
 
+			// Removing the counter employees from assginees
+			filteredAssignees := make([]model.User, 0)
+
+			for _, user := range application.Workflow.Assignees {
+				hasCounterEmployeeRole := false
+				for _, role := range user.Roles {
+					if role.Code == "COUNTER_EMPLOYEE" {
+						hasCounterEmployeeRole = true
+						break
+					}
+				}
+				if !hasCounterEmployeeRole {
+					filteredAssignees = append(filteredAssignees, user)
+				}
+			}
+
+			application.Workflow.Assignees = filteredAssignees
+
 			appReq := model.ApplicationRequest{
 				RequestInfo: paymentReq.RequestInfo,
 				Application: application,
 			}
 
 			log.Printf("📩 Payment received for application [%s] on topic [%s]", application.ApplicationNumber, m.Topic)
+
+			log.Printf("Application request after payment: %v", appReq)
 
 			if err := workflowIntegrator.CallWorkflow(&appReq); err != nil {
 				log.Printf("❌ Failed to update workflow after payment: %v", err)
