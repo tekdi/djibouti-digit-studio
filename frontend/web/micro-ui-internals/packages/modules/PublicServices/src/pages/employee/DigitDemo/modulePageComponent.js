@@ -162,7 +162,12 @@ const ModulePageComponent = () => {
                   {product?.businessServices
                     ?.filter((bs) => {
                       if (isCitizen) {
-                        return bs.businessService === "BPA_PCO_SIMPLE" || bs.businessService === "BPA_PCS" || bs.businessService === "BPA_PL";
+                        return (
+                          bs.businessService === "BPA_PCO_SIMPLE" ||
+                          bs.businessService === "BPA_PCS" ||
+                          bs.businessService === "BPA_PL" ||
+                          bs.businessService === "BPA_PD"
+                        );
                       }
                       return true; // show all for non-citizens
                     })

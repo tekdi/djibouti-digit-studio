@@ -182,6 +182,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PD"],
         },
         {
           name: "taxCalculationAgreement",
@@ -191,7 +192,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
-          excludeServices: ["BPA_PCS"],
+          excludeServices: ["BPA_PCS", "BPA_PD"],
         },
         {
           name: "checkValidation",
@@ -200,6 +201,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PD"],
         },
       ],
     },
@@ -255,6 +257,11 @@ export const assigneeMapping = [
     role: "BPA_HOD",
   },
   {
+    // P6
+    permit: "BPA_PD",
+    role: "BPA_HOD",
+  },
+  {
     // P10
     permit: "BPA_CCR",
     role: "TOPOGRAPHY_HOD",
@@ -289,18 +296,22 @@ export const assigneeMapping = [
 export const checklistByService = [
   {
     service: "BPA_PCO",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT"]
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
   },
   {
     service: "BPA_PCO_SIMPLE",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT"]
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
   },
   {
     service: "BPA_PL",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"]
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
   },
   {
     service: "BPA_PCS",
-    checklist: []
+    checklist: ["calculationFees"],
   },
-]
+  {
+    service: "BPA_PD",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
+  },
+];

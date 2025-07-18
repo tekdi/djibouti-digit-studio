@@ -123,7 +123,7 @@ const DigitDemoComponent = ({ editdata }) => {
       };
     }
     // Even if the condition is false, return a cleanup function (no-op)
-    return () => { };
+    return () => {};
   }, [currentFormConfig]);
 
   //this to maintain the current state of the application entered by user
@@ -163,18 +163,18 @@ const DigitDemoComponent = ({ editdata }) => {
           body:
             isLastStep || applicationNumber
               ? transformToApplicationPayload(
-                updatedFormData,
-                Updatedconfig,
-                service,
-                tenantId,
-                config,
-                workflowDetails,
-                isLastStep,
-                responseData,
-                applicationNumber,
-                queryStrings?.action,
-                assigneeOptions?.Employees
-              )
+                  updatedFormData,
+                  Updatedconfig,
+                  service,
+                  tenantId,
+                  config,
+                  workflowDetails,
+                  isLastStep,
+                  responseData,
+                  applicationNumber,
+                  queryStrings?.action,
+                  assigneeOptions?.Employees
+                )
               : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
         {
@@ -243,22 +243,42 @@ const DigitDemoComponent = ({ editdata }) => {
     }
   };
 
+  if (currentFormConfig && currentFormConfig?.name === "legalEntityDetails") {
+    const entityDetails = formData.legalEntityDetails && formData.legalEntityDetails[0];
+    const companyType = entityDetails?.companyType?.code?.toUpperCase();
+
+    if (currentFormConfig && currentFormConfig.body) {
+      currentFormConfig.body = currentFormConfig.body.map((field) => {
+        if (field?.populators?.name === "otherCompanyType") {
+          return {
+            ...field,
+            populators: {
+              ...field.populators,
+              disable: companyType !== "OTHER",
+              required: companyType === "OTHER",
+            },
+          };
+        }
+        return field;
+      });
+    }
+  }
+
   if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
     // Safely access nested properties
     const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
 
-    if (landDetails && landDetails.definitiveLandTitle && landDetails.definitiveLandTitle.code) {
+    if (landDetails) {
       // Safely convert to uppercase
-      const definitiveLandTitleCode = landDetails.definitiveLandTitle.code.toUpperCase();
-      const registrationCertificate =
-        landDetails.registrationCertificate && landDetails.registrationCertificate.code ? landDetails.registrationCertificate.code.toUpperCase() : "";
+      const definitiveLandTitleCode = landDetails?.definitiveLandTitle?.code?.toUpperCase();
       const workType = landDetails.workType?.code?.toUpperCase();
+      const demolitionType = landDetails?.demolitionType?.code?.toUpperCase();
 
       // Only proceed if currentFormConfig and its body exist
       if (currentFormConfig && currentFormConfig.body) {
         // Create a new copy of the body array
         currentFormConfig.body = currentFormConfig.body.map((field) => {
-          if (field && field.populators && field.populators.name === "tfNo") {
+          if (field?.populators?.name === "tfNo") {
             return {
               ...field,
               populators: {
@@ -267,7 +287,16 @@ const DigitDemoComponent = ({ editdata }) => {
                 required: definitiveLandTitleCode !== "NO",
               },
             };
-          } else if (field && field.populators && field.populators.name === "noOfUnits") {
+          } else if (field?.populators?.name === "otherOnDemolitionType") {
+            return {
+              ...field,
+              populators: {
+                ...field.populators,
+                disable: demolitionType !== "OTHER",
+                required: demolitionType === "OTHER",
+              },
+            };
+          } else if (field?.populators?.name === "noOfUnits") {
             return {
               ...field,
               populators: {
@@ -277,7 +306,7 @@ const DigitDemoComponent = ({ editdata }) => {
                   workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "OTHERS" ? true : workType === "HOUSING" ? true : false,
               },
             };
-          } else if (field && field.populators && field.populators.name === "detailsOnOtherType") {
+          } else if (field?.populators?.name === "detailsOnOtherType") {
             return {
               ...field,
               populators: {

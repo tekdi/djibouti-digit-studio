@@ -9,6 +9,7 @@ import ViewCheckListCards from "../CheckList/viewCheckListCards";
 import { useWorkflowDetails, processBusinessServices } from "../../../utils";
 
 import ApplicationDataView from "../../../components/ApplicationDataView";
+import { checklistByService } from "../../../utils/templateConfig.js";
 
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
@@ -24,6 +25,8 @@ const DigitDemoViewComponent = () => {
   const [isCalculatioDone, setIsCalculationDone] = useState(false);
   const history = useHistory();
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
+  const checklistConfig = checklistByService.find((list) => list.service === service);
+  const isCalculationFees = checklistConfig?.checklist?.includes("calculationFees");
 
   //to get the fetched application details
   const request = {
@@ -405,7 +408,7 @@ const DigitDemoViewComponent = () => {
               })}
             />
           </div>
-          {!isCitizen && (
+          {!isCitizen && isCalculationFees && (
             <div
               style={{
                 borderRadius: "1rem",
