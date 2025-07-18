@@ -593,6 +593,7 @@
     }
   }
   .digit-dropdown-options-card {
+    z-index: 999 !important;
     width: 100% !important;
     box-shadow: theme(digitv2.spacers.spacer0) 0.063rem 0.275rem theme(digitv2.spacers.spacer0) #00000026;
     @apply  absolute z-20 bg-white overflow-y-auto overflow-x-hidden;
