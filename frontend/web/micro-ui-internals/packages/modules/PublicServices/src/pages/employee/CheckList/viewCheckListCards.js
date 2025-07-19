@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
-import CustomCheckListCard from "../../../components/CustomCheckListCard.js";
+import { AgentReportCard } from "../../../components/AgentReport";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -87,9 +87,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           // Check if this is a custom checklist
           if (item.code === "customAgentChecklist") {
             return (
-              <CustomCheckListCard 
+              <AgentReportCard 
                 key={index}
-                applicationId={accountID} 
                 service={service} 
                 state={state} 
                 t={t} 
