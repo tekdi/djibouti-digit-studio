@@ -152,6 +152,21 @@ const AgentReportCard = ({ service, state, t }) => {
                 </div>
               </div>
 
+              {/* Created By */}
+              <div style={{
+                padding: "16px",
+                backgroundColor: "#f8fafc",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0"
+              }}>
+                <div style={{ fontSize: "12px", fontWeight: "600", color: "#64748b", marginBottom: "4px" }}>
+                  CREATED BY
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: "500", color: "#1f2937" }}>
+                  {checklistData.submittedByName || "Unknown User"}
+                </div>
+              </div>
+
               {/* Files Count */}
               <div style={{
                 padding: "16px",
@@ -165,6 +180,29 @@ const AgentReportCard = ({ service, state, t }) => {
                 <div style={{ fontSize: "14px", fontWeight: "500", color: "#1f2937" }}>
                   {((checklistData.report && checklistData.report.length) || 0) + 
                    ((checklistData.photos && checklistData.photos.length) || 0)} files
+                </div>
+              </div>
+
+              {/* Last Edited */}
+              <div style={{
+                padding: "16px",
+                backgroundColor: "#f8fafc",
+                borderRadius: "8px",
+                border: "1px solid #e2e8f0"
+              }}>
+                <div style={{ fontSize: "12px", fontWeight: "600", color: "#64748b", marginBottom: "4px" }}>
+                  LAST EDITED
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: "500", color: "#1f2937" }}>
+                  {checklistData.lastEditedByName || "Unknown User"}
+                </div>
+                <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
+                  {checklistData.lastEditedAt && new Date(checklistData.lastEditedAt).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
                 </div>
               </div>
             </div>

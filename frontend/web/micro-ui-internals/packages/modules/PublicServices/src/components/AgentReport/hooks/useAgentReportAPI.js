@@ -3,20 +3,46 @@ import { useState, useCallback } from "react";
 export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitChecklist = useCallback(async (formData, service, state) => {
+  const submitChecklist = useCallback(async (formData, service, state, isEdit = false, existingData = null) => {
     setIsLoading(true);
     
     try {
+      // Get current user info
+      const currentUser = Digit.UserService.getUser();
+      const currentTimestamp = new Date().toISOString();
+
       // Prepare the checklist data
-      const checklistData = {
-        report: formData.report,
-        notes: formData.notes,
-        photos: formData.photos,
-        submittedAt: new Date().toISOString(),
-        submittedBy: Digit.UserService.getUser()?.info?.uuid,
-        service: service,
-        state: state
-      };
+      let checklistData;
+      
+      if (isEdit && existingData) {
+        // Update existing report - preserve original submission info
+        checklistData = {
+          ...existingData,
+          report: formData.report,
+          notes: formData.notes,
+          photos: formData.photos,
+          lastEditedAt: currentTimestamp,
+          lastEditedBy: currentUser?.info?.uuid,
+          lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || 'Unknown User',
+          service: service,
+          state: state
+        };
+      } else {
+        // Create new report
+        checklistData = {
+          report: formData.report,
+          notes: formData.notes,
+          photos: formData.photos,
+          submittedAt: currentTimestamp,
+          submittedBy: currentUser?.info?.uuid,
+          submittedByName: currentUser?.info?.name || currentUser?.info?.userName || 'Unknown User',
+          lastEditedAt: currentTimestamp,
+          lastEditedBy: currentUser?.info?.uuid,
+          lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || 'Unknown User',
+          service: service,
+          state: state
+        };
+      }
 
       // First, get the current application data
       const getApplicationRequest = {

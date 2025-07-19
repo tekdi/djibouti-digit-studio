@@ -96,11 +96,20 @@ const AgentReportModal = ({
     if (!validateForm()) return;
     
     try {
-      await submitChecklist(formData, service, state);
+      // Check if this is an edit (existing data present) or new submission
+      const isEdit = Boolean(existingChecklistData);
+      
+      await submitChecklist(
+        formData, 
+        service, 
+        state, 
+        isEdit, 
+        existingChecklistData
+      );
       
       // Show success message
       if (Digit.Toast) {
-        Digit.Toast.success("Checklist submitted successfully");
+        Digit.Toast.success(isEdit ? "Checklist updated successfully" : "Checklist submitted successfully");
       }
       
       // Close modal and notify parent
