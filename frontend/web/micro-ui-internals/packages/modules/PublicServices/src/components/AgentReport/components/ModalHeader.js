@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 export const ModalHeader = ({ isViewMode, isEditMode, setIsEditMode, onSubmitChecklist, isLoading }) => {
   return (
@@ -156,4 +157,12 @@ export const ModalHeader = ({ isViewMode, isEditMode, setIsEditMode, onSubmitChe
       </div>
     </div>
   );
+};
+
+ModalHeader.propTypes = {
+  isViewMode: PropTypes.bool.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  setIsEditMode: PropTypes.func.isRequired,
+  onSubmitChecklist: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired
 }; 

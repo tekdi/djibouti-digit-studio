@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Button, TextArea } from "@egovernments/digit-ui-components";
 import { FileUploadSection } from "./components/FileUploadSection";
 import { ModalHeader } from "./components/ModalHeader";
@@ -61,8 +62,8 @@ const AgentReportModal = ({
 
       if (application?.additionalDetails?.agentChecklist) {
         setFormData(application.additionalDetails.agentChecklist);
-      } else {
       }
+      // No existing checklist found - this is expected for new submissions
     } catch (error) {
       console.error("Error checking existing checklist:", error);
       if (Digit.Toast) {
@@ -402,6 +403,18 @@ const AgentReportModal = ({
       </div>
     </React.Fragment>
   );
+};
+
+AgentReportModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  applicationNumber: PropTypes.string.isRequired,
+  service: PropTypes.string.isRequired,
+  serviceCode: PropTypes.string.isRequired,
+  state: PropTypes.string.isRequired,
+  onSuccess: PropTypes.func,
+  isViewMode: PropTypes.bool,
+  existingChecklistData: PropTypes.object
 };
 
 export default AgentReportModal;

@@ -121,17 +121,17 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
         },
       });
 
-      if (response && response[file.fileStoreId]) {
+      if (response?.[file.fileStoreId]) {
         const fileUrl = response[file.fileStoreId];
         
         if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
           // For mobile app - fetch the file and convert to base64
           const fileResponse = await fetch(fileUrl);
           const blob = await fileResponse.blob();
-          var reader = new FileReader();
+          const reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = function () {
-            var base64data = reader.result;
+            const base64data = reader.result;
             window.mSewaApp.downloadBase64File(base64data, file.fileName);
           };
         } else {
@@ -172,7 +172,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
         },
       });
 
-      if (response && response[file.fileStoreId]) {
+      if (response?.[file.fileStoreId]) {
         const urlString = response[file.fileStoreId];
         
         // If the response contains multiple URLs separated by commas, take the first one

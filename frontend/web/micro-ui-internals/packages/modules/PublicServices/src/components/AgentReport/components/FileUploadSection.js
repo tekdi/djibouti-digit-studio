@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 export const FileUploadSection = ({ 
   title, 
@@ -423,4 +424,22 @@ export const FileUploadSection = ({
       )}
     </div>
   );
+};
+
+FileUploadSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  fieldName: PropTypes.string.isRequired,
+  accept: PropTypes.string.isRequired,
+  maxFiles: PropTypes.number.isRequired,
+  maxSizeMB: PropTypes.number.isRequired,
+  required: PropTypes.bool,
+  formData: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+  uploadingFiles: PropTypes.bool.isRequired,
+  isViewMode: PropTypes.bool.isRequired,
+  isEditMode: PropTypes.bool.isRequired,
+  handleFileUpload: PropTypes.func.isRequired,
+  removeFile: PropTypes.func.isRequired,
+  downloadFile: PropTypes.func.isRequired,
+  getFileUrl: PropTypes.func.isRequired
 }; 

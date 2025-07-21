@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Card, Button } from "@egovernments/digit-ui-components";
 import AgentReportModal from "./AgentReportModal";
 import { useAgentReportData } from "./hooks/useAgentReportData";
@@ -475,6 +476,12 @@ const AgentReportCard = ({ service, state, t }) => {
       />
     </React.Fragment>
   );
+};
+
+AgentReportCard.propTypes = {
+  service: PropTypes.string.isRequired,
+  state: PropTypes.string.isRequired,
+  t: PropTypes.func.isRequired
 };
 
 export default AgentReportCard; 
