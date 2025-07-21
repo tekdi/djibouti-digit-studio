@@ -271,8 +271,11 @@ export const UICustomizations = {
       delete data.body.inbox.moduleSearchCriteria.assignee;
       data.method = "GET";
       data.headers = { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token };
-      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `BPA_RECENT` ? "created_at" : "ASC";
-      data.params = { applicationNumber: data?.state?.searchForm?.applicationNumber, sortby: data?.body?.inbox?.moduleSearchCriteria?.sortOrder };
+      data.body.inbox.moduleSearchCriteria.sortOrder = data?.state?.filterForm?.assignee?.code === `BPA_OLDEST` ? "ASC" : "DESC";
+      data.params = {
+        applicationNumber: data?.state?.searchForm?.applicationNumber,
+        sortBy: data?.body?.inbox?.moduleSearchCriteria?.sortBy + " " + data.body.inbox.moduleSearchCriteria.sortOrder,
+      };
 
       return data;
     },
@@ -280,7 +283,6 @@ export const UICustomizations = {
       const statusKey = row?.processInstance?.[0]?.state?.state || "";
       const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD", "#4B4B4B"];
 
-      console.log(row, key, column, value, t, searchResult);
       if (key === "APPLICATION_NUMBER") {
         return (
           <span className="link">
