@@ -63,7 +63,12 @@ const AgentReportModal = ({
         setFormData(application.additionalDetails.agentChecklist);
       } else {
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error checking existing checklist:", error);
+      if (Digit.Toast) {
+        Digit.Toast.error("Failed to load existing checklist data");
+      }
+    }
   };
 
   const onSubmitChecklist = async () => {
@@ -86,7 +91,7 @@ const AgentReportModal = ({
         onSuccess();
       }
     } catch (error) {
-      
+      console.error("Error submitting checklist:", error);
       if (Digit.Toast) {
         Digit.Toast.error("Failed to submit checklist");
       }

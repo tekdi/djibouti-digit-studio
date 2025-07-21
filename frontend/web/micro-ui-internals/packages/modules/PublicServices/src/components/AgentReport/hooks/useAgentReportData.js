@@ -33,6 +33,10 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
         setIsSubmitted(true);
       }
     } catch (error) {
+      console.error("Error checking existing checklist:", error);
+      if (Digit.Toast) {
+        Digit.Toast.error("Failed to load checklist data");
+      }
     }
   }, [applicationNumber, serviceCode]);
 
