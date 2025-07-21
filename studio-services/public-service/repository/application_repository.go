@@ -684,6 +684,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 
 	var applications []model.Application
 	appMap := make(map[uuid.UUID]*model.Application)
+	var orderedAppIDs []uuid.UUID
 
 	for rows.Next() {
 		var (
@@ -746,6 +747,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 			_ = json.Unmarshal(workflowJSON, &app.Workflow)
 
 			appMap[appId] = app
+			orderedAppIDs = append(orderedAppIDs, appId)
 		}
 
 		if refId.Valid {
@@ -793,8 +795,8 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		}
 	}
 
-	for _, app := range appMap {
-		applications = append(applications, *app)
+	for _, id := range orderedAppIDs {
+		applications = append(applications, *appMap[id])
 	}
 
 	return model.SearchResponse{
