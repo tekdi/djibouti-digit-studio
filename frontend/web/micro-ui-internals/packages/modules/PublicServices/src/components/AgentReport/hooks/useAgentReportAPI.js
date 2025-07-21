@@ -64,6 +64,12 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
         throw new Error("Application not found");
       }
 
+      console.log("=== DEBUG: Current Application ===");
+      console.log("Application Status:", currentApplication.status);
+      console.log("Application Workflow:", currentApplication.workflow);
+      console.log("Application Business Service:", currentApplication.businessService);
+      console.log("Application Module:", currentApplication.module);
+
       // Update application with checklist data
       const updateRequest = {
         url: `/public-service/v1/application/${serviceCode}`,
@@ -84,7 +90,10 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
             authToken: Digit.UserService.getUser()?.access_token,
           },
           Application: {
-            ...currentApplication,
+            ...(() => {
+              const { workflow, ...applicationWithoutWorkflow } = currentApplication;
+              return applicationWithoutWorkflow;
+            })(),
             additionalDetails: {
               ...currentApplication.additionalDetails,
               agentChecklist: checklistData

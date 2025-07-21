@@ -12,7 +12,6 @@ const AgentReportModal = ({
   service, 
   serviceCode, 
   state, 
-  t, 
   onSuccess, 
   isViewMode = false, 
   existingChecklistData = null 

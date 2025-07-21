@@ -278,7 +278,6 @@ const AgentReportCard = ({ service, state, t }) => {
           service={service}
           serviceCode={serviceCode}
           state={state}
-          t={t}
           onSuccess={handleSuccess}
           isViewMode={isSubmitted}
           existingChecklistData={checklistData}
@@ -470,7 +469,6 @@ const AgentReportCard = ({ service, state, t }) => {
         service={service}
         serviceCode={serviceCode}
         state={state}
-        t={t}
         onSuccess={handleSuccess}
         isViewMode={isSubmitted}
         existingChecklistData={checklistData}
