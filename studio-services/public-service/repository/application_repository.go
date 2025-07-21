@@ -264,6 +264,11 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 		queryBuilder.WriteString(strings.Join(conditions, " AND "))
 	}
 
+	// Apply sorting if provided
+	if criteria.SortBy != "" {
+		queryBuilder.WriteString(fmt.Sprintf(" ORDER BY %s", criteria.SortBy))
+	}
+
 	log.Println("query in search:", queryBuilder.String())
 	rows, err := r.db.QueryContext(ctx, queryBuilder.String(), args...)
 	if err != nil {
@@ -670,7 +675,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		}
 	}
 
-	log.Println("query in search:", queryBuilder.String())
+	log.Println("query in search : ", queryBuilder.String())
 	rows, err := r.db.QueryContext(ctx, queryBuilder.String(), args...)
 	if err != nil {
 		return model.SearchResponse{}, err
