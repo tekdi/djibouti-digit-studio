@@ -38,7 +38,7 @@ export const FileUploadSection = ({
           setImagePreview(imageUrl);
         }
       } catch (error) {
-        console.error("Error getting image URL:", error);
+          console.error("Error getting image URL:", error);
       }
     }
   };

@@ -29,14 +29,10 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
       const application = response?.Application?.[0];
       
       if (application?.additionalDetails?.agentChecklist) {
-        console.log("Found checklist data in card:", application.additionalDetails.agentChecklist);
         setChecklistData(application.additionalDetails.agentChecklist);
         setIsSubmitted(true);
-      } else {
-        console.log("No checklist data found in application");
       }
     } catch (error) {
-      console.error("Error checking existing checklist:", error);
     }
   }, [applicationNumber, serviceCode]);
 
