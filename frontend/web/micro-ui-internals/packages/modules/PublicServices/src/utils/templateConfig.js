@@ -92,46 +92,6 @@ export const ApplicantFields = [
     items: {
       type: "object",
       properties: [
-        // {
-        //   "name": "OwnerName",
-        //   "label": "Owner Name ",
-        //   "disable" : false,
-        //   "type": "string",
-        //   "format": "text",
-        //   "maxLength": 256,
-        //   "minLength": 0,
-        //   "validation": {
-        //     "regex": "^[1-9][0-9]{5}$",
-        //     "message": "Only 6 numbers allowed"
-        //   },
-        //   "required": false,
-        //   "orderNumber": 1
-        // },
-        // {
-        //   "name": "mobileNumber",
-        //   "label": "Mobile Number ",
-        //   "disable" : false,
-        //   "type": "mobileNumber",
-        //   "format": "mobileNumber",
-        //   "maxLength": 256,
-        //   "minLength": 0,
-        //   "validation": {
-        //     "regex": "^[6-9]\d{9}$",
-        //     "message": "Only 9 numbers allowed"
-        //   },
-        //   "required": false,
-        //   "orderNumber": 1
-        // },
-        // {
-        //   "name": "gender",
-        //   "label": "Gender ",
-        //   "disable" : false,
-        //   "type": "string",
-        //   "format": "radioordropdown",
-        //   "reference": "mdms",
-        //   "required": false,
-        //   "schema": "common-masters.GenderType"
-        // },
         {
           name: "wayToAddress",
           type: "string",
@@ -222,6 +182,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PD"],
         },
         {
           name: "taxCalculationAgreement",
@@ -231,6 +192,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PCS", "BPA_PD"],
         },
         {
           name: "checkValidation",
@@ -239,6 +201,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
+          excludeServices: ["BPA_PD"],
         },
       ],
     },
@@ -289,6 +252,21 @@ export const assigneeMapping = [
     role: "BPA_HOD",
   },
   {
+    // P5
+    permit: "BPA_PCS",
+    role: "BPA_HOD",
+  },
+  {
+    // P6
+    permit: "BPA_PD",
+    role: "BPA_HOD",
+  },
+  {
+    // P7
+    permit: "BPA_PF",
+    role: "BPA_HOD",
+  },
+  {
     // P10
     permit: "BPA_CCR",
     role: "TOPOGRAPHY_HOD",
@@ -317,5 +295,28 @@ export const assigneeMapping = [
     // P15
     permit: "BPA_APE",
     role: "BPA_SDECC_HOD",
+  },
+];
+
+export const checklistByService = [
+  {
+    service: "BPA_PCO",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+  },
+  {
+    service: "BPA_PCO_SIMPLE",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+  },
+  {
+    service: "BPA_PL",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
+  },
+  {
+    service: "BPA_PCS",
+    checklist: ["calculationFees"],
+  },
+  {
+    service: "BPA_PD",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
   },
 ];

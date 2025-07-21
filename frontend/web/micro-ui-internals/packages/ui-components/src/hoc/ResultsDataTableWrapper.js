@@ -11,16 +11,16 @@ import TextInput from "../atoms/TextInput";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { InboxContext } from "./InboxSearchComposerContext";
-import { Card,Loader } from "../atoms";
+import { Card, Loader } from "../atoms";
 import { CustomSVG } from "../atoms";
 import CheckBox from "../atoms/CheckBox";
 import NoResultsFound from "../atoms/NoResultsFound";
 import Button from "../atoms/Button";
 import CardLabel from "../atoms/CardLabel";
 import ResultsDataTable from "../molecules/ResultsDataTable";
-import { useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { SVG } from "../atoms";
-import {Toast} from "../atoms";
+import { Toast } from "../atoms";
 import FieldV1 from "./FieldV1";
 import EditablePopup from "./EditablePopup";
 
@@ -75,15 +75,15 @@ const ResultsDataTableWrapper = ({
     offset: (currentPage - 1) * rowsPerPage,
   });
 
-    const [showToast, setShowToast] = useState(null);
-    // Use the custom mutation hook
-      const mutation = Digit.Hooks.useCustomAPIMutationHook({
-        url:apiDetails?.mutationUrl
-      });
-      const [editRow,setEditRow] = useState(null);
-      const [editablePopup,setShowEditablePopup] = useState(null);
-      //edited data should always hold updated payload
-      const [rowData,setRowData] = useState(null);
+  const [showToast, setShowToast] = useState(null);
+  // Use the custom mutation hook
+  const mutation = Digit.Hooks.useCustomAPIMutationHook({
+    url: apiDetails?.mutationUrl
+  });
+  const [editRow, setEditRow] = useState(null);
+  const [editablePopup, setShowEditablePopup] = useState(null);
+  //edited data should always hold updated payload
+  const [rowData, setRowData] = useState(null);
 
   //here I am just checking state.searchForm has all empty keys or not(when clicked on clear search)
   useEffect(() => {
@@ -106,12 +106,12 @@ const ResultsDataTableWrapper = ({
   const handleActionClicked = (row, index, column, id) => {
     //current row should now be editable, maintain a state called editMode
     setEditRow(row);
-    setRowData({row,index,column,id});
+    setRowData({ row, index, column, id });
   }
   const handleActionClickedPopupEdit = (row, index, column, id) => {
     setEditRow(row);
     setShowEditablePopup(true)
-    setRowData({row,index,column,id});
+    setRowData({ row, index, column, id });
   }
   const handleRowSubmit = (rowFormData) => {
     setEditRow(null);
@@ -119,17 +119,17 @@ const ResultsDataTableWrapper = ({
     // make an api call here
     // generate payload from a customizer
     mutation.mutate(
-      configModule.getMutationPayload(rowFormData,rowData),
+      configModule.getMutationPayload(rowFormData, rowData),
       {
         onSuccess: (data) => {
-          setShowToast({ key: "success", label: t("DATA_MODIEFIED_SUCCESS")})
+          setShowToast({ key: "success", label: t("DATA_MODIEFIED_SUCCESS") })
           setTimeout(() => {
             refetch()
           }, 1000);
 
         },
         onError: (error) => {
-          setShowToast({type:"error", key: "error", label: t("DATA_MODIEFIED_FAIL")})
+          setShowToast({ type: "error", key: "error", label: t("DATA_MODIEFIED_FAIL") })
         }
       }
     );
@@ -232,10 +232,10 @@ const ResultsDataTableWrapper = ({
                 onClick={
                   column?.buttonProps?.linkTo
                     ? () => {
-                        history.push(
-                          `/${window?.contextPath}/employee/${column?.linkTo}`
-                        );
-                      }
+                      history.push(
+                        `/${window?.contextPath}/employee/${column?.linkTo}`
+                      );
+                    }
                     : () => handleLinkColumn(row)
                 }
               />
@@ -243,117 +243,119 @@ const ResultsDataTableWrapper = ({
           },
         };
       }
-      return {...commonProps,cell: (row, index) =>  {
-        // TODO: Here integrate with FieldV1 controller to support all field types
-        // if(column.editable && editRow?.id === row?.id){
-        //   return <TextInput
-        //     // style={{ marginBottom: "0px" }}
-        //     name={column.label}
-        //     onChange={(e)=> handleEdits(e.target.value,column.jsonPath)}
-        //     value={_.get(rowData,column.jsonPath)}
-        //   />
-        // }
-        if(column.editable && editRow?.id === row?.id){
-          const config = column.editableFieldConfig;
-          return (
-            <Controller
-              defaultValue={column?.editableFieldConfig?.type === "text" || column?.editableFieldConfig?.type === "toggle" ? `${_.get(rowData?.row,column.jsonPath)}`:{[column.editableFieldConfig.populators.optionsKey]:`${_.get(rowData?.row,column.jsonPath)}`}}
-              render={({ onChange, ref, value, onBlur }) => (
-                <FieldV1
-                  // error= {error}
-                  label={config.label}
-                  nonEditable = {config.nonEditable}
-                  placeholder={config.placeholder}
-                  // inline={props.inline}
-                  description={config.description}
-                  charCount = {config.charCount}
-                  infoMessage={config.infoMessage}
-                  withoutLabel = {config.withoutLabel}
-                  variant={config.variant}
-                  type={config.type}
-                  populators={config.populators}
-                  required={config.isMandatory}
-                  disabled={config.disable}
-                  component={config.component}
-                  config={config}
-                  // sectionFormCategory={sectionFormCategory}
-                  formData={formData}
-                  // selectedFormCategory={selectedFormCategory}
-                  onChange={onChange}
-                  ref={ref}
-                  value={value}
-                  props={{}}
-                  errors={errors}
-                  onBlur={onBlur}
-                  controllerProps={{
-                    register,
-                    handleSubmit,
-                    setValue,
-                    getValues,
-                    reset,
-                    watch,
-                    trigger,
-                    control,
-                    formState,
-                    errors,
-                    setError,
-                    clearErrors,
-                    unregister,
-                  }}
-                />
-              )}
-              name={config.populators?.name}
-              // rules={!disableFormValidation ? { required: isMandatory, ...populators?.validation, ...customRules } : {}}
-              control={control}
-            />
-          )
-        }
+      return {
+        ...commonProps, cell: (row, index) => {
+          // TODO: Here integrate with FieldV1 controller to support all field types
+          // if(column.editable && editRow?.id === row?.id){
+          //   return <TextInput
+          //     // style={{ marginBottom: "0px" }}
+          //     name={column.label}
+          //     onChange={(e)=> handleEdits(e.target.value,column.jsonPath)}
+          //     value={_.get(rowData,column.jsonPath)}
+          //   />
+          // }
+          if (column.editable && editRow?.id === row?.id) {
+            const config = column.editableFieldConfig;
+            return (
+              <Controller
+                defaultValue={column?.editableFieldConfig?.type === "text" || column?.editableFieldConfig?.type === "toggle" ? `${_.get(rowData?.row, column.jsonPath)}` : { [column.editableFieldConfig.populators.optionsKey]: `${_.get(rowData?.row, column.jsonPath)}` }}
+                render={({ onChange, ref, value, onBlur }) => (
+                  <FieldV1
+                    // error= {error}
+                    label={config.label}
+                    nonEditable={config.nonEditable}
+                    placeholder={config.placeholder}
+                    // inline={props.inline}
+                    description={config.description}
+                    charCount={config.charCount}
+                    infoMessage={config.infoMessage}
+                    withoutLabel={config.withoutLabel}
+                    variant={config.variant}
+                    type={config.type}
+                    populators={config.populators}
+                    required={config.isMandatory}
+                    disabled={config.disable}
+                    component={config.component}
+                    config={config}
+                    // sectionFormCategory={sectionFormCategory}
+                    formData={formData}
+                    // selectedFormCategory={selectedFormCategory}
+                    onChange={onChange}
+                    ref={ref}
+                    value={value}
+                    props={{}}
+                    errors={errors}
+                    onBlur={onBlur}
+                    controllerProps={{
+                      register,
+                      handleSubmit,
+                      setValue,
+                      getValues,
+                      reset,
+                      watch,
+                      trigger,
+                      control,
+                      formState,
+                      errors,
+                      setError,
+                      clearErrors,
+                      unregister,
+                    }}
+                  />
+                )}
+                name={config.populators?.name}
+                // rules={!disableFormValidation ? { required: isMandatory, ...populators?.validation, ...customRules } : {}}
+                control={control}
+              />
+            )
+          }
 
-        return `${_.get(row, column?.jsonPath)}`
-      },};
+          return `${_.get(row, column?.jsonPath)}`
+        },
+      };
     });
 
-    if(config?.editableRows || config?.editablePopup){
-          mappedColumns.push({
-            id: crypto.randomUUID(),
-            name: "Action",
-            // format: column?.format,
-            // grow: column?.grow,
-            // width: column?.width,
-            // minWidth: column?.minWidth,
-            // maxWidth: column?.maxWidth,
-            // right: column?.right,
-            // center: column?.center,
-            // ignoreRowClick: column?.ignoreRowClick,
-            // wrap: column?.wrap,
-            // sortable: !column?.disableSortBy,
-            // sortFunction: (rowA, rowB) => column?.sortFunction(rowA, rowB),
-            // cell: (row, index) =>  _.get(row, column?.jsonPath),
-            // headerAlign: column?.headerAlign,
-            // style: column?.style,
-            // conditionalCellStyles: column?.conditionalCellStyles,
-            cell: ( row, index, column, id ) => {
-                return (<Button
-                variation="primary"
-                label={row?.id === editRow?.id ? "Save" : "Edit Row"}
-                type="button"
-                icon="Edit"
-                // onClick={()=>{editRow ? handleSaveRow(rowData) : handleActionClicked(row, index, column, id)}}
-                onClick={()=>{config?.editableRows ? editRow ? handleSubmit(handleRowSubmit)() : handleActionClicked(row, index, column, id) : config?.editablePopup ? handleActionClickedPopupEdit(row, index, column, id) : null}}
-                isDisabled={ configModule?.allowEdits(row) ? editRow && row?.id !== editRow?.id  ? true : false : true}
-              />)
-            }
-          })
-      }
+    if (config?.editableRows || config?.editablePopup) {
+      mappedColumns.push({
+        id: crypto.randomUUID(),
+        name: "Action",
+        // format: column?.format,
+        // grow: column?.grow,
+        // width: column?.width,
+        // minWidth: column?.minWidth,
+        // maxWidth: column?.maxWidth,
+        // right: column?.right,
+        // center: column?.center,
+        // ignoreRowClick: column?.ignoreRowClick,
+        // wrap: column?.wrap,
+        // sortable: !column?.disableSortBy,
+        // sortFunction: (rowA, rowB) => column?.sortFunction(rowA, rowB),
+        // cell: (row, index) =>  _.get(row, column?.jsonPath),
+        // headerAlign: column?.headerAlign,
+        // style: column?.style,
+        // conditionalCellStyles: column?.conditionalCellStyles,
+        cell: (row, index, column, id) => {
+          return (<Button
+            variation="primary"
+            label={row?.id === editRow?.id ? "Save" : "Edit Row"}
+            type="button"
+            icon="Edit"
+            // onClick={()=>{editRow ? handleSaveRow(rowData) : handleActionClicked(row, index, column, id)}}
+            onClick={() => { config?.editableRows ? editRow ? handleSubmit(handleRowSubmit)() : handleActionClicked(row, index, column, id) : config?.editablePopup ? handleActionClickedPopupEdit(row, index, column, id) : null }}
+            isDisabled={configModule?.allowEdits(row) ? editRow && row?.id !== editRow?.id ? true : false : true}
+          />)
+        }
+      })
+    }
 
-      return mappedColumns;
-  }, [config, searchResult,editRow,rowData]);
+    return mappedColumns;
+  }, [config, searchResult, editRow, rowData]);
 
   const defaultValuesFromSession = config?.customDefaultPagination
     ? config?.customDefaultPagination
     : session?.tableForm
-    ? { ...session?.tableForm }
-    : { limit: 10, offset: 0 };
+      ? { ...session?.tableForm }
+      : { limit: 10, offset: 0 };
 
   const {
     register,
@@ -432,16 +434,16 @@ const ResultsDataTableWrapper = ({
     register(
       "offset",
       session?.tableForm?.offset ||
-        state.tableForm.offset ||
-        config?.customDefaultPagination?.offset ||
-        0
+      state.tableForm.offset ||
+      config?.customDefaultPagination?.offset ||
+      0
     );
     register(
       "limit",
       session?.tableForm?.limit ||
-        state.tableForm.limit ||
-        config?.customDefaultPagination?.limit ||
-        10
+      state.tableForm.limit ||
+      config?.customDefaultPagination?.limit ||
+      10
     );
   });
 
@@ -526,62 +528,82 @@ const ResultsDataTableWrapper = ({
     }
   }, [limitAndOffset]);
 
-  if (isLoading || isFetching) return <div className="digit-table-loader"><Loader/></div>;
+  // Clamp currentPage if total records drop or rowsPerPage changes
+  useEffect(() => {
+    const totalRecords = TotalCount || data?.count || data?.TotalCount || data?.totalCount || searchResult?.length;
+    const maxPage = Math.max(1, Math.ceil(totalRecords / rowsPerPage));
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+      setLimitAndOffset(prev => ({
+        ...prev,
+        offset: (maxPage - 1) * rowsPerPage,
+      }));
+    }
+  }, [TotalCount, data, rowsPerPage, currentPage, searchResult.length]);
+
+  const isCitizenInbox = fullConfig?.apiDetails?.moduleName === "citizenInboxGenericConfig";
+
+  const paginatedResult = isCitizenInbox
+    ? filteredData.slice(limitAndOffset.offset, limitAndOffset.offset + limitAndOffset.limit)
+    : filteredData;
+
+  if (isLoading || isFetching) return <div className="digit-table-loader"><Loader /></div>;
   if (!data) return <></>;
   if (!showResultsTable) return <></>;
   if (searchResult?.length === 0) return <NoResultsFound />;
   return (
     <>
-    <ResultsDataTable
-      data={filteredData || []}
-      columns={tableColumns}
-      responsive={true}
-      showCheckBox={config?.selectionProps?.showCheckBox}
-      selectableRowsNoSelectAll={config?.selectProps?.selectableRowsNoSelectAll}
-      showSelectedState={config?.selectionProps?.showSelectedState}
-      showSelectedStatePosition={config?.selectProps?.showSelectedStatePosition}
-      selectableRowsHighlight={true}
-      selectableRowsComponent={CheckBox}
-      selectProps={selectProps}
-      onSelectedRowsChange={handleRowSelect}
-      onRowClicked={additionalConfig?.resultsTable?.onRowClicked}
-      expandableRows={config?.expandableProps?.expandableRows}
-      expandableRowsComponent={config?.expandableProps?.expandableRowsComponent}
-      onRowExpandToggled={(expanded, row) =>
-        config?.handleRowExpand?.(expanded, row)
-      }
-      progressPending={config?.progressPending}
-      conditionalRowStyles={conditionalRowStyles}
-      tableClassName={config?.tableProps?.tableClassName ? config?.tableProps?.tableClassName : ""}
-      defaultSortAsc={config?.defaultSortAsc}
-      pagination={config.isPaginationRequired}
-      paginationTotalRows={
-        TotalCount ||
-        data?.count ||
-        data?.TotalCount ||
-        data?.totalCount ||
-        searchResult?.length
-      }
-      onChangeRowsPerPage={handlePerRowsChange}
-      paginationDefaultPage={currentPage}
-      paginationPerPage={rowsPerPage}
-      onChangePage={handlePageChange}
-      paginationRowsPerPageOptions={config?.paginationRowsPerPageOptions}
-      showTableDescription={config?.tableProps?.showTableDescription}
-      showTableTitle={config?.tableProps?.showTableTitle}
-      enableGlobalSearch={config?.enableGlobalSearch}
-      selectedRows={selectedRows}
-      actions={config?.actionProps?.actions}
-      searchHeader={config.searchHeader}
-      configModule={configModule}
-      onSearch={onSearch}
-      handleActionSelect={handleActionSelect}
-      rowsPerPageText={config?.paginationComponentOptions?.rowsPerPage}
-      paginationComponentOptions={config?.paginationComponentOptions}
-    ></ResultsDataTable>
+      <ResultsDataTable
+        key={currentPage + '-' + rowsPerPage}
+        data={paginatedResult || []}
+        columns={tableColumns}
+        responsive={true}
+        showCheckBox={config?.selectionProps?.showCheckBox}
+        selectableRowsNoSelectAll={config?.selectProps?.selectableRowsNoSelectAll}
+        showSelectedState={config?.selectionProps?.showSelectedState}
+        showSelectedStatePosition={config?.selectProps?.showSelectedStatePosition}
+        selectableRowsHighlight={true}
+        selectableRowsComponent={CheckBox}
+        selectProps={selectProps}
+        onSelectedRowsChange={handleRowSelect}
+        onRowClicked={additionalConfig?.resultsTable?.onRowClicked}
+        expandableRows={config?.expandableProps?.expandableRows}
+        expandableRowsComponent={config?.expandableProps?.expandableRowsComponent}
+        onRowExpandToggled={(expanded, row) =>
+          config?.handleRowExpand?.(expanded, row)
+        }
+        progressPending={config?.progressPending}
+        conditionalRowStyles={conditionalRowStyles}
+        tableClassName={config?.tableProps?.tableClassName ? config?.tableProps?.tableClassName : ""}
+        defaultSortAsc={config?.defaultSortAsc}
+        pagination={config.isPaginationRequired}
+        paginationTotalRows={
+          TotalCount ||
+          data?.count ||
+          data?.TotalCount ||
+          data?.totalCount ||
+          searchResult?.length
+        }
+        onChangeRowsPerPage={handlePerRowsChange}
+        paginationDefaultPage={currentPage}
+        paginationPerPage={rowsPerPage}
+        onChangePage={handlePageChange}
+        paginationRowsPerPageOptions={config?.paginationRowsPerPageOptions}
+        showTableDescription={config?.tableProps?.showTableDescription}
+        showTableTitle={config?.tableProps?.showTableTitle}
+        enableGlobalSearch={config?.enableGlobalSearch}
+        selectedRows={selectedRows}
+        actions={config?.actionProps?.actions}
+        searchHeader={config.searchHeader}
+        configModule={configModule}
+        onSearch={onSearch}
+        handleActionSelect={handleActionSelect}
+        rowsPerPageText={config?.paginationComponentOptions?.rowsPerPage}
+        paginationComponentOptions={config?.paginationComponentOptions}
+      ></ResultsDataTable>
 
-    {showToast && <Toast type={showToast?.type} label={t(showToast.label)} onClose={()=> setShowToast(null)} />}
-          {editablePopup && <EditablePopup setShowEditablePopup={setShowEditablePopup} config={config} editRow={editRow} setEditRow={setEditRow} setRowData={setRowData} rowData={rowData} handleRowSubmit={handleRowSubmit}/>}
+      {showToast && <Toast type={showToast?.type} label={t(showToast.label)} onClose={() => setShowToast(null)} />}
+      {editablePopup && <EditablePopup setShowEditablePopup={setShowEditablePopup} config={config} editRow={editRow} setEditRow={setEditRow} setRowData={setRowData} rowData={rowData} handleRowSubmit={handleRowSubmit} />}
     </>
   );
 };
