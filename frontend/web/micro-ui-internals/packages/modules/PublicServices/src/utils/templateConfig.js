@@ -319,4 +319,32 @@ export const checklistByService = [
     service: "BPA_PD",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
   },
+  {
+    service: "BPA_PR",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCR",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCE",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCP",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_CCG",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_PV",
+    checklist: ["customAgentChecklist"],
+  },
+  {
+    service: "BPA_APE",
+    checklist: ["customAgentChecklist"],
+  }
 ];

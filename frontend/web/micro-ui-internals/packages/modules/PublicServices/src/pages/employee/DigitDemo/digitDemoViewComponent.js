@@ -27,6 +27,7 @@ const DigitDemoViewComponent = () => {
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
   const checklistConfig = checklistByService.find((list) => list.service === service);
   const isCalculationFees = checklistConfig?.checklist?.includes("calculationFees");
+  const shouldShowChecklist = checklistConfig && checklistConfig.checklist && checklistConfig.checklist.length > 0;
 
   //to get the fetched application details
   const request = {
@@ -323,7 +324,7 @@ const DigitDemoViewComponent = () => {
           </div>
         </div>
         <div style={{ width: "35%", marginRight: "10px" }}>
-          {!isCitizen && (
+          {!isCitizen && shouldShowChecklist && (
             <div
               style={{
                 boxShadow: "1px 5px 7px 2px rgb(207, 205, 205)",
