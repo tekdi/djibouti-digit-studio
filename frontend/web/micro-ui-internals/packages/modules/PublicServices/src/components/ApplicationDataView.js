@@ -55,6 +55,31 @@ const ApplicationDataView = ({ serviceCode, data, status, applicationNumber, bus
     }
 
     if (sectionTitle === "BPA_BPA_PCO_DESIGNOFFICEDETAILING") {
+      if (Array.isArray(data)) {
+        return (
+          <div className="section-container">
+            <p className="field-label" style={{ fontWeight: "700" }}>{t(sectionTitle)}</p>
+            {data.map((office, index) => (
+              <div key={index} className="section-content">
+                {Object.entries(office).map(([key, value]) => {
+                  const renderedValue = renderValue(value);
+                  const label = (
+                    <div style={{ fontSize: "16px" }} className="field-label">
+                      {t(serviceCode + "_" + key.toUpperCase())}
+                    </div>
+                  );
+                  return (
+                    <div key={key} style={{ width: "65%" }} className="fields-container">
+                      {label}
+                      <div className="field-value">{t(key === "telephone" ? `+253 ${renderedValue}` : renderedValue)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        );
+      }
       displayData = {
         telephone: `+253 ${data?.telephone}`,
       };
