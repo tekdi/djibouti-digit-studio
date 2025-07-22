@@ -322,7 +322,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_PD",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist"],
   },
   {
     service: "BPA_PS",
