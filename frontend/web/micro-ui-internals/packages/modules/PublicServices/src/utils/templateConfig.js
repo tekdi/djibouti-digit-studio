@@ -267,6 +267,11 @@ export const assigneeMapping = [
     role: "BPA_HOD",
   },
   {
+    // P8
+    permit: "BPA_PS",
+    role: "BPA_HOD",
+  },
+  {
     // P10
     permit: "BPA_CCR",
     role: "TOPOGRAPHY_HOD",
@@ -320,6 +325,10 @@ export const checklistByService = [
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT"],
   },
   {
+    service: "BPA_PS",
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+  },
+  {
     service: "BPA_PR",
     checklist: ["customAgentChecklist"],
   },
@@ -346,5 +355,5 @@ export const checklistByService = [
   {
     service: "BPA_APE",
     checklist: ["customAgentChecklist"],
-  }
+  },
 ];
