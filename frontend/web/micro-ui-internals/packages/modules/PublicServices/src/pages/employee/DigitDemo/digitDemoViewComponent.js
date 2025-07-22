@@ -41,6 +41,9 @@ const DigitDemoViewComponent = () => {
       applicationNumber: queryStrings?.applicationNumber,
       tenantId: tenantId,
     },
+    config: {
+      cacheTime: 0,
+    },
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
@@ -93,7 +96,7 @@ const DigitDemoViewComponent = () => {
     documents: response?.documents || [],
     serviceDetails: {
       landInfo: response?.serviceDetails?.landandProjectDesignDetails?.[0] || {},
-      designOffice: response?.serviceDetails?.designOfficeDetailing?.[0] || {},
+      designOffice: response?.serviceDetails?.designOfficeDetailing || []
     },
   };
 
