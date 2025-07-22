@@ -192,7 +192,7 @@ export const ApplicantFields = [
           format: "checkbox",
           withoutLabel: true,
           required: true,
-          excludeServices: ["BPA_PCS", "BPA_PD"],
+          excludeServices: ["BPA_PCS", "BPA_PD", "BPA_ATARR"],
         },
         {
           name: "checkValidation",
@@ -272,6 +272,11 @@ export const assigneeMapping = [
     role: "BPA_HOD",
   },
   {
+    // P9
+    permit: "BPA_ATARR",
+    role: "BPA_HOD",
+  },
+  {
     // P10
     permit: "BPA_CCR",
     role: "TOPOGRAPHY_HOD",
@@ -327,6 +332,10 @@ export const checklistByService = [
   {
     service: "BPA_PS",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+  },
+  {
+    service: "BPA_ATARR",
+    checklist: ["calculationFees"],
   },
   {
     service: "BPA_PR",
