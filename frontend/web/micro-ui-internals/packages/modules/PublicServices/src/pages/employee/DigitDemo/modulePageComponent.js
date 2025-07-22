@@ -8,6 +8,7 @@ import { getParallelWorkflow, transformResponseforModulePage } from "../../../ut
 const ModulePageComponent = () => {
   const { t } = useTranslation();
   const [individualDetails, setIndividualDetails] = useState();
+  const [expandedBpaCardIndex, setExpandedBpaCardIndex] = useState(null);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -152,39 +153,91 @@ const ModulePageComponent = () => {
       <div className="products-list">
         {detailsConfig?.map((product, index) => (
           <React.Fragment key={index}>
-            {/* BPA_PCO Card */}
+            {/* Service list Card */}
             {queryStrings?.selectedPath === "Apply" && (isArchitect || isCitizen) && (
               <Card key={`${index}-bpa`} className="product-card module-card">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t(product.heading)}</HeaderComponent>
                 </div>
                 <ul className="list-disc space-y-2 pt-2">
-                  {product?.businessServices
-                    ?.filter((bs) => {
-                      if (isCitizen) {
-                        return (
-                          bs.businessService === "BPA_PCO_SIMPLE" ||
+                  {(expandedBpaCardIndex === index
+                    ? product?.businessServices
+                      ?.filter((bs) => {
+                        if (isCitizen) {
+                          return (bs.businessService === "BPA_PCO_SIMPLE" ||
+                            bs.businessService === "BPA_PCS" ||
+                            bs.businessService === "BPA_PL" ||
+                            bs.businessService === "BPA_PD" ||
+                            bs.businessService === "BPA_ATARR")
+                        }
+                        return true; // show all for non-citizens
+                      })
+                      ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                    : product?.businessServices
+                      ?.filter((bs) => {
+                        if (isCitizen) {
+                          return (bs.businessService === "BPA_PCO_SIMPLE" ||
                           bs.businessService === "BPA_PCS" ||
                           bs.businessService === "BPA_PL" ||
                           bs.businessService === "BPA_PD" ||
-                          bs.businessService === "BPA_ATARR"
-                        );
-                      }
-                      return true; // show all for non-citizens
-                    })
-                    ?.sort((a, b) => a.displayOrder - b.displayOrder)
-                    .map((bs) => (
-                      <li style={{ marginBottom: "15px" }} key={bs?.businessService}>
-                        <Link
-                          key={bs?.businessService}
-                          className="link request-button"
-                          to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
-                        >
-                          {t(bs?.businessService)}
-                        </Link>
-                      </li>
-                    ))}
+                          bs.businessService === "BPA_ATARR")
+                        }
+                        return true; // show all for non-citizens
+                      })
+                      ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                      .slice(0, 3)
+                  )?.map((bs) => (
+                    <li style={{ marginBottom: "15px" }} key={bs?.businessService}>
+                      <Link
+                        key={bs?.businessService}
+                        className="link request-button"
+                        to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs?.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
+                      >
+                        {t(bs?.businessService)}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
+                {product?.businessServices?.filter((bs) => {
+                  if (isCitizen) {
+                    return bs.businessService === "BPA_PCO_SIMPLE" || bs.businessService === "BPA_PL";
+                  }
+                  return true;
+                })?.length > 3 && (
+                    <div className="show-button-container">
+                      {expandedBpaCardIndex === index ? (
+                        <button
+                          className="toggle-btn"
+                          onClick={() => setExpandedBpaCardIndex(null)}
+                        >
+                          {t('SHOW_LESS')}
+                          <svg
+                            className="arrow-icon"
+                            viewBox="0 0 14 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M0 7.5L1.41 8.91L6 4.33V20.5H8V4.33L12.59 8.92L14 7.5L7 0.5L0 7.5Z" fill="#006769" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          className="toggle-btn"
+                          onClick={() => setExpandedBpaCardIndex(index)}
+                        >
+                          {t('SHOW_MORE')}
+                          <svg
+                            className="arrow-icon"
+                            viewBox="0 0 14 21"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M14 13.5L12.59 12.09L8 16.67V0.5H6V16.67L1.41 12.08L0 13.5L7 20.5L14 13.5Z" fill="#006769" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  )}
               </Card>
             )}
 
@@ -252,7 +305,7 @@ const ModulePageComponent = () => {
 
             {/* My application Card */}
             {(isCitizen || isArchitect) && (
-              <Card key={`${index}-my-application`} className="product-card module-card">
+              <Card key={`${index}-my-application`} className="product-card module-card my-application">
                 <div className="product-header inbox-header">
                   <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
                   <div className="product-icon">
@@ -294,53 +347,6 @@ const ModulePageComponent = () => {
               </Link> */}
               </Card>
             )}
-
-            <style jsx>{`
-              .list-disc {
-                list-style: disc;
-                margin: 0;
-                padding-left: 20px;
-              }
-              .module-card {
-                width: 100%;
-                min-width: 400px;
-                min-height: 220px;
-                padding: 15px 30px 15px 30px;
-              }
-              .inbox-header {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-                border-bottom: 1px solid #ccc;
-                margin-bottom: 10px;
-              }
-              .inbox-count-number {
-                font-size: 18px;
-                font-weight: 600;
-              }
-              .product-icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 56px;
-                height: 56px;
-              }
-              .product-button-container {
-                display: flex;
-                align-items: center;
-                border-top: 1px solid #ccc;
-                padding-top: 10px;
-                width: 100%;
-              }
-              .request-button {
-                cursor: pointer;
-                color: #006769;
-                border-radius: 10px;
-                padding: 10px 0px;
-                text-decoration: none;
-                margin-right: 10px;
-              }
-            `}</style>
           </React.Fragment>
         ))}
       </div>
