@@ -166,7 +166,8 @@ const ModulePageComponent = () => {
                           bs.businessService === "BPA_PCO_SIMPLE" ||
                           bs.businessService === "BPA_PCS" ||
                           bs.businessService === "BPA_PL" ||
-                          bs.businessService === "BPA_PD"
+                          bs.businessService === "BPA_PD" ||
+                          bs.businessService === "BPA_ATARR"
                         );
                       }
                       return true; // show all for non-citizens

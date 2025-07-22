@@ -1,3 +1,4 @@
+import { sortBy } from "lodash";
 import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
@@ -18,6 +19,7 @@ export const citizenInboxGenericConfig = (tenantId, individualId, uuid) => {
           },
           moduleSearchCriteria: {
             module: "public-services",
+            sortBy: "a.created_at",
           },
         },
       },
