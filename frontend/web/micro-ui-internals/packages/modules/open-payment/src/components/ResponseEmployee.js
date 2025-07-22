@@ -64,11 +64,7 @@ const ResponseEmployee = () => {
         whichSvg={`${isResponseSuccess ? "tick" : null}`}
         applicationNumber={state?.applicationNumber}
       />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
-          <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
-          {t("BPA_BPA_PCO_VIEW_APPLICATION")}
-        </LinkLabel>
+      <div style={{ display: "flex", justifyContent: "right" }}>
         <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handlePdfDownload}>
           <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t("CS_COMMON_DOWNLOAD_RECEIPT")}
