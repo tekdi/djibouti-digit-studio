@@ -59,8 +59,8 @@ const ApplicationDataView = ({ serviceCode, data, status, applicationNumber, bus
         return (
           <div className="section-container">
             <p className="field-label" style={{ fontWeight: "700" }}>{t(sectionTitle)}</p>
-            {data.map((office, index) => (
-              <div key={index} className="section-content">
+            {data.map((office) => (
+              <div key={office.id} className="section-content">
                 {Object.entries(office).map(([key, value]) => {
                   const renderedValue = renderValue(value);
                   const label = (
