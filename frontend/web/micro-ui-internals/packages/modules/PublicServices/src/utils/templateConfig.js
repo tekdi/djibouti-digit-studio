@@ -244,7 +244,7 @@ export const assigneeMapping = [
   {
     // P3
     permit: "BPA_PR",
-    role: "TOPOGRAPHY_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P4
@@ -279,7 +279,7 @@ export const assigneeMapping = [
   {
     // P10
     permit: "BPA_CCR",
-    role: "TOPOGRAPHY_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P11
@@ -294,7 +294,7 @@ export const assigneeMapping = [
   {
     // P13
     permit: "BPA_CCG",
-    role: "BPA_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P14
