@@ -417,7 +417,9 @@ export const FormComposer = (props) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
+    <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}
+      onInvalid={() => setShowErrorToast(true)}
+      >
       {props?.showMultipleCardsWithoutNavs ? (
         props?.config?.map((section, index, array) => {
           return (
