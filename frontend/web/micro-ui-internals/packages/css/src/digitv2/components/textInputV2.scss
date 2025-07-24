@@ -249,6 +249,10 @@
 .digit-employeeCard-input:disabled {
   @apply border-grey-dark text-grey-dark !important;
   pointer-events: none !important;
+  background-color: #f0f0f0 !important;
+  cursor: not-allowed !important;
+  border: 1px solid #ddd !important;
+  opacity: 0.7 !important;
 }
 
 .digit-employeeCard-input--front {
