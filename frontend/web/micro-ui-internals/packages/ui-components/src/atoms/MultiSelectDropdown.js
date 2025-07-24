@@ -262,7 +262,6 @@ const MultiSelectDropdown = ({
 
   const handleClearAll = () => {
     dispatch({ type: "REPLACE_COMPLETE_STATE", payload: [] });
-    // Removed direct onSelect call here
     if (onClose) {
       onClose([], getCategorySelectAllState(), props);
     }
@@ -294,7 +293,6 @@ const MultiSelectDropdown = ({
         });
         setSelectAllChecked(true);
       }
-      // Removed direct onSelect call here
     } else {
       onSelect();
     }
@@ -325,7 +323,6 @@ const MultiSelectDropdown = ({
         ...prev,
         [parentOption.code]: !categorySelected[parentOption.code],
       }));
-      // Removed direct onSelect call here
     } else {
       onSelect();
     }
