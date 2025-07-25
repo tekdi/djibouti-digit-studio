@@ -31,7 +31,7 @@ import BoundaryFilter from "./BoundaryFilter";
 const FieldV1 = ({
   type = "",
   value = "",
-  onChange = () => {},
+  onChange = () => { },
   error = "",
   label = "",
   disabled = false,
@@ -71,7 +71,7 @@ const FieldV1 = ({
   const customValidation = config?.populators?.validation?.customValidation;
   const customRules = customValidation ? { validate: customValidation } : {};
   const customProps = config?.customProps;
-  const fieldId=Digit?.Utils.getFieldIdName?.(label)||"NA";
+  const fieldId = Digit?.Utils.getFieldIdName?.(label) || "NA";
 
   const [currentCharCount, setCurrentCharCount] = useState(0);
 
@@ -215,8 +215,8 @@ const FieldV1 = ({
               variant
                 ? variant
                 : errors?.[populators?.name]
-                ? "digit-field-error"
-                : ""
+                  ? "digit-field-error"
+                  : ""
             }
             mdmsv2={populators?.mdmsv2}
           />
@@ -339,12 +339,12 @@ const FieldV1 = ({
               variant
                 ? variant
                 : errors?.[populators?.name]
-                ? "digit-field-error"
-                : ""
+                  ? "digit-field-error"
+                  : ""
             }
           />
         );
-        case "documentUploadAndDownload":
+      case "documentUploadAndDownload":
         return (
           <UploadAndDownloadDocumentHandler
             mdmsModuleName={config?.mdmsModuleName}
@@ -365,23 +365,23 @@ const FieldV1 = ({
               variant
                 ? variant
                 : errors?.[populators?.name]
-                ? "digit-field-error"
-                : ""
+                  ? "digit-field-error"
+                  : ""
             }
           />
         );
-        case "boundary":
-          return (
-            <BoundaryFilter
-              levelConfig={populators.levelConfig}
-              hierarchyType={populators.hierarchyType}
-              module={populators.module}
-              layoutConfig={{ isDropdownLayoutHorizontal: false, isLabelFieldLayoutHorizontal: false }}
-              preSelected={populators.preSelected}
-              frozenData={populators.frozenData}
-              onChange={onChange}
-            />
-          );
+      case "boundary":
+        return (
+          <BoundaryFilter
+            levelConfig={populators.levelConfig}
+            hierarchyType={populators.hierarchyType}
+            module={populators.module}
+            layoutConfig={{ isDropdownLayoutHorizontal: false, isLabelFieldLayoutHorizontal: false }}
+            preSelected={populators.preSelected}
+            frozenData={populators.frozenData}
+            onChange={onChange}
+          />
+        );
       case "custom":
         return populators.component;
       case "amount":
@@ -408,182 +408,182 @@ const FieldV1 = ({
               variant
                 ? variant
                 : errors?.[populators?.name]
-                ? "digit-field-error"
-                : ""
+                  ? "digit-field-error"
+                  : ""
             }
           />
         );
-        case "locationdropdown":
-          return (
-            <Controller
-              name={`${populators?.name}`}
-              control={controllerProps?.control}
-              defaultValue={formData?.[populators?.name]}
-              rules={{ required: populators?.isMandatory, ...populators.validation }}
-              render={(props) => {
-                return (
-                  <div style={{ display: "grid", gridAutoFlow: "row" ,width:"100%"}}>
-                    <LocationDropdownWrapper
-                      props={props}
-                      populators={populators}
-                      formData={formData}
-                      inputRef={props.ref}
-                      errors={errors}
-                      disabled={disabled}
-                      setValue={controllerProps?.setValue}
-                    />
-                  </div>
-                );
-              }}
-            />
-          );
-        case "apidropdown":
-          return (
-            <Controller
-              name={`${populators?.name}`}
-              control={controllerProps?.control}
-              defaultValue={formData?.[populators?.name]}
-              rules={{ required: populators?.isMandatory, ...populators.validation }}
-              render={(props) => {
-                return (
-                  <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
-                    <ApiDropdown props={props} populators={populators} formData={formData} inputRef={props.ref} errors={errors} disabled={disabled} />
-                  </div>
-                );
-              }}
-            />
-          );
-        // case "workflowstatesfilter":
-        //   return (
-        //     <Controller
-        //       name={`${populators?.name}`}
-        //       control={controllerProps?.control}
-        //       defaultValue={formData?.[populators?.name]}
-        //       rules={{ required: populators?.isMandatory }}
-        //       render={(props) => {
-        //         return (
-        //           <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
-        //             <WorkflowStatusFilter inboxResponse={data} props={props} populators={populators} t={t} formData={formData} />
-        //           </div>
-        //         );
-        //       }}
-        //     />
-        //   );
-        case "dateRange":
-          return (
-            <Controller
-              render={(props) => (
-                <DateRangeNew
-                  t={t}
-                  values={formData?.[populators?.name]?.range}
-                  name={populators?.name}
-                  onFilterChange={props.onChange}
-                  inputRef={props.ref}
-                  errorStyle={errors?.[populators?.name]}
-                />
-              )}
-              rules={{ required: required, ...populators.validation }}
-              defaultValue={formData?.[populators?.name]}
-              name={populators?.name}
-              control={controllerProps?.control}
-            />
-          );
-          // case "childForm":
-          //   const childConfig = populators?.childform || [];
-          //   return (
-          //     <div className="border rounded-xl p-4 mb-4 shadow-sm bg-gray-50">
-          //       <Controller
-          //         render={(props) => {
-          //           return <FormComposer
-          //           config={childConfig}
-          //           //fieldPath={`tradeUnits`}
-          //           //defaultValues={controllerProps?.getValues(populators?.name)}
-          //           onFormValueChange={(setValue, childformData, formState) => {
-          //            if(childformData && !isEqual(formData?.[populators?.name],childformData)){
-          //            controllerProps.setValue(populators?.name, {...childformData});
-          //            }
-          //           }}
-          //           //onChange={props.onChange}
-          //           parentName={populators?.name}
-          //           inline={true}
-          //           hideHeader={true}
-          //         />
-          //         }}
-          //         rules={{ required: required, ...populators.validation }}
-          //         defaultValue={formData?.[populators?.name]}
-          //         name={populators?.name}
-          //         control={controllerProps?.control}
-          //     />
-          //     </div>
-          //   );
+      case "locationdropdown":
+        return (
+          <Controller
+            name={`${populators?.name}`}
+            control={controllerProps?.control}
+            defaultValue={formData?.[populators?.name]}
+            rules={{ required: populators?.isMandatory, ...populators.validation }}
+            render={(props) => {
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row", width: "100%" }}>
+                  <LocationDropdownWrapper
+                    props={props}
+                    populators={populators}
+                    formData={formData}
+                    inputRef={props.ref}
+                    errors={errors}
+                    disabled={disabled}
+                    setValue={controllerProps?.setValue}
+                  />
+                </div>
+              );
+            }}
+          />
+        );
+      case "apidropdown":
+        return (
+          <Controller
+            name={`${populators?.name}`}
+            control={controllerProps?.control}
+            defaultValue={formData?.[populators?.name]}
+            rules={{ required: populators?.isMandatory, ...populators.validation }}
+            render={(props) => {
+              return (
+                <div style={{ display: "grid", gridAutoFlow: "row", width: "100%" }}>
+                  <ApiDropdown props={props} populators={populators} formData={formData} inputRef={props.ref} errors={errors} disabled={disabled} />
+                </div>
+              );
+            }}
+          />
+        );
+      // case "workflowstatesfilter":
+      //   return (
+      //     <Controller
+      //       name={`${populators?.name}`}
+      //       control={controllerProps?.control}
+      //       defaultValue={formData?.[populators?.name]}
+      //       rules={{ required: populators?.isMandatory }}
+      //       render={(props) => {
+      //         return (
+      //           <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
+      //             <WorkflowStatusFilter inboxResponse={data} props={props} populators={populators} t={t} formData={formData} />
+      //           </div>
+      //         );
+      //       }}
+      //     />
+      //   );
+      case "dateRange":
+        return (
+          <Controller
+            render={(props) => (
+              <DateRangeNew
+                t={t}
+                values={formData?.[populators?.name]?.range}
+                name={populators?.name}
+                onFilterChange={props.onChange}
+                inputRef={props.ref}
+                errorStyle={errors?.[populators?.name]}
+              />
+            )}
+            rules={{ required: required, ...populators.validation }}
+            defaultValue={formData?.[populators?.name]}
+            name={populators?.name}
+            control={controllerProps?.control}
+          />
+        );
+      // case "childForm":
+      //   const childConfig = populators?.childform || [];
+      //   return (
+      //     <div className="border rounded-xl p-4 mb-4 shadow-sm bg-gray-50">
+      //       <Controller
+      //         render={(props) => {
+      //           return <FormComposer
+      //           config={childConfig}
+      //           //fieldPath={`tradeUnits`}
+      //           //defaultValues={controllerProps?.getValues(populators?.name)}
+      //           onFormValueChange={(setValue, childformData, formState) => {
+      //            if(childformData && !isEqual(formData?.[populators?.name],childformData)){
+      //            controllerProps.setValue(populators?.name, {...childformData});
+      //            }
+      //           }}
+      //           //onChange={props.onChange}
+      //           parentName={populators?.name}
+      //           inline={true}
+      //           hideHeader={true}
+      //         />
+      //         }}
+      //         rules={{ required: required, ...populators.validation }}
+      //         defaultValue={formData?.[populators?.name]}
+      //         name={populators?.name}
+      //         control={controllerProps?.control}
+      //     />
+      //     </div>
+      //   );
 
-            case "multiChildForm":
-            const multichildConfig = populators?.childform || [];
-            const entries = formData?.[populators?.name] || [];
+      case "multiChildForm":
+        const multichildConfig = populators?.childform || [];
+        const entries = formData?.[populators?.name] || [];
 
-            return (
-              <div className="border rounded-xl p-4 mb-4 shadow-sm bg-gray-50">
-                {entries.filter((ob) => ob != undefined).map((item, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 border p-4 rounded bg-white relative shadow-sm"
-                  >
-                     {/* Cross Button to Remove */}
-                     <button
-                      type="button"
-                      style={{marginLeft:"98%", marginTop:"1rem"}}
-                      className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
-                      onClick={() => {
+        return (
+          <div className="border rounded-xl p-4 mb-4 shadow-sm bg-gray-50">
+            {entries.filter((ob) => ob != undefined).map((item, index) => (
+              <div
+                key={index}
+                className="mb-4 border p-4 rounded bg-white relative shadow-sm"
+              >
+                {/* Cross Button to Remove */}
+                <button
+                  type="button"
+                  style={{ marginLeft: "98%", marginTop: "1rem" }}
+                  className="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl"
+                  onClick={() => {
+                    const updated = [...(formData?.[populators?.name] || [])];
+                    updated.splice(index, 1);
+                    controllerProps.setValue(`${populators?.name}[${index}]`, undefined);
+                  }}
+                >
+                  &times;
+                </button>
+
+                <Controller
+                  render={(props) => {
+                    //const childformValues = props?.field?.value || [];
+                    return (<FormComposer
+                      config={multichildConfig}
+                      onFormValueChange={(setValue, childformData) => {
                         const updated = [...(formData?.[populators?.name] || [])];
-                        updated.splice(index, 1);
-                        controllerProps.setValue(`${populators?.name}[${index}]`, undefined);
+                        updated[index] = childformData;
+
+                        if (!isEqual(updated[index], formData?.[populators?.name][index])) {
+                          controllerProps.setValue(`${populators?.name}[${index}]`, { ...updated[index] });
+                        }
                       }}
-                    >
-                      &times;
-                    </button>
-
-                    <Controller
-                      render={(props) => {
-                        //const childformValues = props?.field?.value || [];
-                        return(<FormComposer
-                          config={multichildConfig}
-                          onFormValueChange={(setValue, childformData) => {
-                            const updated = [...(formData?.[populators?.name] || [])];
-                            updated[index] = childformData;
-
-                            if (!isEqual(updated[index], formData?.[populators?.name][index])) {
-                              controllerProps.setValue(`${populators?.name}[${index}]`, {...updated[index]});
-                            }
-                          }}
-                          defaultValues={defaultValues}
-                          parentName={`${populators?.name}[${index}]`}
-                          inline={true}
-                          hideHeader={true}
-                        />);
-                      }}
-                      name={`${populators?.name}[${index}]`}
-                      control={controllerProps?.control}
-                      defaultValue={item}
-                    />
+                      defaultValues={defaultValues}
+                      parentName={`${populators?.name}[${index}]`}
+                      inline={true}
+                      hideHeader={true}
+                    />);
+                  }}
+                  name={`${populators?.name}[${index}]`}
+                  control={controllerProps?.control}
+                  defaultValue={item}
+                />
 
 
-                  </div>
-                ))}
+              </div>
+            ))}
 
-      {/* Add Another Button */}
-      <Button
-        type="button"
-        label="Add"
-        style={{ marginTop: "1rem" }}
-        //className="mt-2 text-blue-600 underline"
-        onClick={() => {
-          const updated = [...(formData?.[populators?.name] || []), {}];
-          controllerProps.setValue(populators?.name, updated);
-        }}
-      >
-      </Button>
-    </div>
-  );
+            {/* Add Another Button */}
+            <Button
+              type="button"
+              label="Add"
+              style={{ marginTop: "1rem" }}
+              //className="mt-2 text-blue-600 underline"
+              onClick={() => {
+                const updated = [...(formData?.[populators?.name] || []), {}];
+                controllerProps.setValue(populators?.name, updated);
+              }}
+            >
+            </Button>
+          </div>
+        );
 
       default:
         return null;
@@ -596,20 +596,17 @@ const FieldV1 = ({
     <LabelFieldPair removeMargin={true} vertical={populators?.alignFieldPairVerically} className={`digit-formcomposer-fieldpair ${populators?.fieldPairClassName}`}>
       {!withoutLabel && (
         <HeaderComponent
-          className={`label ${disabled ? "disabled" : ""} ${
-            nonEditable ? "noneditable" : ""
-          } ${populators?.wrapLabel ? "wraplabel" : ""}`}
+          className={`label ${disabled ? "disabled" : ""} ${nonEditable ? "noneditable" : ""
+            } ${populators?.wrapLabel ? "wraplabel" : ""}`}
         >
           <div
-            className={`label-container ${
-              populators?.wrapLabel ? "wraplabel" : ""
-            }`}
+            className={`label-container ${populators?.wrapLabel ? "wraplabel" : ""
+              }`}
           >
             <label
               for={fieldId}
-              className={`label-styles ${
-                populators?.wrapLabel ? "wraplabel" : ""
-              }`}
+              className={`label-styles ${populators?.wrapLabel ? "wraplabel" : ""
+                }`}
             >
               {StringManipulator(
                 "TOSENTENCECASE",
@@ -617,8 +614,8 @@ const FieldV1 = ({
                   maxLength: 64,
                 })
               )}
+              <span style={{ color: "#B91900" }}>{required ? " * " : null}</span>
             </label>
-            <div style={{ color: "#B91900" }}>{required ? " * " : null}</div>
             {infoMessage ? (
               <div className="info-icon">
                 <SVG.InfoOutline
@@ -635,18 +632,17 @@ const FieldV1 = ({
       <div
         style={
           withoutLabel
-            ? { width: "100%", ...props?.fieldStyle}
-            : { ...props?.fieldStyle}
+            ? { width: "100%", ...props?.fieldStyle }
+            : { ...props?.fieldStyle }
         }
         className="digit-field"
       >
         {renderField()}
         <div
-          className={`${
-            charCount && !error && !description
-              ? "digit-charcount"
-              : "digit-description"
-          }`}
+          className={`${charCount && !error && !description
+            ? "digit-charcount"
+            : "digit-description"
+            }`}
         >
           {renderDescriptionOrError()}
           {renderCharCount()}
