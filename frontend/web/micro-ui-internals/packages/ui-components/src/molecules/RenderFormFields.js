@@ -1,4 +1,4 @@
-import React,{Fragment} from "react";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 import LabelFieldPair from "../atoms/LabelFieldPair";
@@ -25,10 +25,10 @@ const RenderFormFields = ({ data, ...props }) => {
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     let customValidations = config?.additionalValidation
       ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.additionalValidations(
-          config?.additionalValidation?.type,
-          formData,
-          config?.additionalValidation?.keys
-        )
+        config?.additionalValidation?.type,
+        formData,
+        config?.additionalValidation?.keys
+      )
       : null;
     const customRules = customValidations ? { validate: customValidations } : {};
     const customProps = config?.customProps;
@@ -122,11 +122,11 @@ const RenderFormFields = ({ data, ...props }) => {
             control={control}
           />
         );
-        case "radio":
-        case "dropdown":
-        case "select":
-        case "radioordropdown":
-        case "toggle":
+      case "radio":
+      case "dropdown":
+      case "select":
+      case "radioordropdown":
+      case "toggle":
         return (
           <Controller
             render={(props) => (
@@ -145,8 +145,8 @@ const RenderFormFields = ({ data, ...props }) => {
                   populators?.variant
                     ? populators?.variant
                     : errors?.[populators?.name]
-                    ? "digit-field-error"
-                    : ""
+                      ? "digit-field-error"
+                      : ""
                 }
               />
             )}
@@ -209,7 +209,7 @@ const RenderFormFields = ({ data, ...props }) => {
             rules={{ required: populators?.isMandatory, ...populators.validation }}
             render={(props) => {
               return (
-                <div style={{ display: "grid", gridAutoFlow: "row" ,width:"100%"}}>
+                <div style={{ display: "grid", gridAutoFlow: "row", width: "100%" }}>
                   <LocationDropdownWrapper
                     props={props}
                     populators={populators}
@@ -233,7 +233,7 @@ const RenderFormFields = ({ data, ...props }) => {
             rules={{ required: populators?.isMandatory, ...populators.validation }}
             render={(props) => {
               return (
-                <div style={{ display: "grid", gridAutoFlow: "row",width:"100%" }}>
+                <div style={{ display: "grid", gridAutoFlow: "row", width: "100%" }}>
                   <ApiDropdown props={props} populators={populators} formData={formData} inputRef={props.ref} errors={errors} disabled={disable} />
                 </div>
               );
@@ -250,7 +250,7 @@ const RenderFormFields = ({ data, ...props }) => {
             rules={{ required: populators?.isMandatory }}
             render={(props) => {
               return (
-                <div style={{ display: "grid", gridAutoFlow: "row",width:"100%", gap:"8px" }}>
+                <div style={{ display: "grid", gridAutoFlow: "row", width: "100%", gap: "8px" }}>
                   <WorkflowStatusFilter inboxResponse={data} props={props} populators={populators} t={t} formData={formData} />
                 </div>
               );
@@ -329,10 +329,11 @@ const RenderFormFields = ({ data, ...props }) => {
                           maxLength: 64,
                         })
                       )}
+                      <span style={{ color: "#B91900" }}>
+                        {item?.isMandatory ? " * " : null}
+                      </span>
                     </label>
-                    <div style={{ color: "#B91900" }}>
-                      {item?.isMandatory ? " * " : null}
-                    </div>
+
                     {item?.infoMessage ? (
                       <div className="info-icon">
                         <SVG.InfoOutline
@@ -355,9 +356,9 @@ const RenderFormFields = ({ data, ...props }) => {
                 item
               )}
               {item?.populators?.name &&
-              errors &&
-              errors[item?.populators?.name] &&
-              Object.keys(errors[item?.populators?.name]).length ? (
+                errors &&
+                errors[item?.populators?.name] &&
+                Object.keys(errors[item?.populators?.name]).length ? (
                 <ErrorMessage
                   message={t(item?.populators?.error)}
                   truncateMessage={true}
