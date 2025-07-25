@@ -230,15 +230,18 @@ const MultiSelectDropdown = ({
               payload: arguments,
             });
       }
-      onSelect(
-        alreadyQueuedSelectedState?.map((e) => e.propsData),
-        getCategorySelectAllState(),
-        props
-      );
     } else {
       onSelect();
     }
   }
+
+  useEffect(() => {
+    onSelect(
+      alreadyQueuedSelectedState?.map((e) => e.propsData),
+      getCategorySelectAllState(),
+      props
+    );
+  }, [alreadyQueuedSelectedState]);
 
   const primaryColor = Colors.lightTheme.paper.primary;
   const inputBorderColor = Colors.lightTheme.generic.inputBorder;
@@ -259,7 +262,6 @@ const MultiSelectDropdown = ({
 
   const handleClearAll = () => {
     dispatch({ type: "REPLACE_COMPLETE_STATE", payload: [] });
-    onSelect([], getCategorySelectAllState(), props);
     if (onClose) {
       onClose([], getCategorySelectAllState(), props);
     }
@@ -291,11 +293,6 @@ const MultiSelectDropdown = ({
         });
         setSelectAllChecked(true);
       }
-      onSelect(
-        alreadyQueuedSelectedState?.map((e) => e.propsData),
-        getCategorySelectAllState(),
-        props
-      );
     } else {
       onSelect();
     }
@@ -326,11 +323,6 @@ const MultiSelectDropdown = ({
         ...prev,
         [parentOption.code]: !categorySelected[parentOption.code],
       }));
-      onSelect(
-        alreadyQueuedSelectedState?.map((e) => e.propsData),
-        getCategorySelectAllState(),
-        props
-      );
     } else {
       onSelect();
     }
