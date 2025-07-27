@@ -7,6 +7,9 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
   // If specific action not found, fallback to DEFAULT
   let docConfig = docData?.find((item) => item?.action === actionString) || docData?.find((item) => item?.action === "DEFAULT") || {};
 
+  // Filter out STUDIO_ADMIN role from approvers
+  const filteredApprovers = approvers?.filter(approver => !approver.user?.roles?.some(role => role.code === 'STUDIO_ADMIN')) || [];
+
   // Fetch whether field is mandatory
   const fetchIsMandatory = (field) => {
     if (!docConfig || Object.keys(docConfig).length === 0) {
@@ -76,7 +79,7 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
             populators: {
               name: "commissioner",
               optionsKey: "commissionerCode",
-              options: approvers,
+              options: filteredApprovers,
               hideInForm: actionString !== "SEND_TO_COMMISSIONER",
               optionsCustomStyle: {
                 top: "2.3rem",
@@ -92,7 +95,7 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
             populators: {
               name: "assignee",
               optionsKey: "nameOfEmp",
-              options: approvers,
+              options: filteredApprovers,
               hideInForm:
                 !fetchIsShow("assignee") ||
                 actionString === "ADD_QUERY" ||
