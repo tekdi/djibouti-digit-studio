@@ -6,9 +6,34 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
 
   // If specific action not found, fallback to DEFAULT
   let docConfig = docData?.find((item) => item?.action === actionString) || docData?.find((item) => item?.action === "DEFAULT") || {};
+  
+  
+  // Get roles from all actions except ADD_QUERY
+  const assignableRoles = action.actions
+    ?.filter(actionItem => actionItem.action !== "ADD_QUERY")
+    ?.flatMap(actionItem => actionItem.roles || []) || [];
+  
+  // Filter out approvers who only have roles that are in ADD_QUERY action but not in other actions
+  // AND filter out STUDIO_ADMIN users
+  const filteredApprovers = approvers?.filter(approver => {
+    const userRoles = approver.user?.roles?.map(role => role.code) || [];
+    
+    // Filter out STUDIO_ADMIN users
+    if (userRoles.includes('STUDIO_ADMIN')) {
+      return false;
+    }
+    
+    // Check if user has any role that's in the assignable roles (non-ADD_QUERY actions)
+    const hasAssignableRole = userRoles.some(role => assignableRoles.includes(role));
+    
+    // Check if user only has roles from ADD_QUERY action
+    const addQueryRoles = action.actions?.find(actionItem => actionItem.action === "ADD_QUERY")?.roles || [];
+    const onlyHasAddQueryRoles = userRoles.length > 0 && userRoles.every(role => addQueryRoles.includes(role));
+    
+    // Keep approver if they have assignable roles OR if they don't only have ADD_QUERY roles
+    return hasAssignableRole || !onlyHasAddQueryRoles;
+  }) || [];
 
-  // Filter out STUDIO_ADMIN role from approvers
-  const filteredApprovers = approvers?.filter(approver => !approver.user?.roles?.some(role => role.code === 'STUDIO_ADMIN')) || [];
 
   // Fetch whether field is mandatory
   const fetchIsMandatory = (field) => {
