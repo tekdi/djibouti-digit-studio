@@ -146,7 +146,6 @@ export const transformToApplicationPayload = (
   config,
   workflowDetails,
   isLastStep,
-  responseData,
   applicationNumber,
   action,
   assignees
@@ -156,14 +155,14 @@ export const transformToApplicationPayload = (
   const serviceDetails = getServiceDetails(formData);
   const applicants =
     formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
-      id: responseData?.Application?.applicants?.[index]?.id || formData?.response?.applicants?.[index]?.id || null,
+      id: formData?.responseData?.Application?.applicants?.[index]?.id || formData?.response?.applicants?.[index]?.id || null,
       type: "CITIZEN",
       name: applicant?.name,
       mobileNumber: Number(applicant?.mobileNumber),
       emailId: applicant?.email || `user${index + 1}@example.com`,
       prefix: "253",
       active: true,
-      userId: responseData?.Application?.applicants?.[index]?.userId || formData?.response?.applicants?.[index]?.userId || "",
+      userId: formData?.responseData?.Application?.applicants?.[index]?.userId || formData?.response?.applicants?.[index]?.userId || "",
     })) || [];
 
   const applicant = formData.applicantDetails?.filter(Boolean)?.[0];
@@ -184,9 +183,9 @@ export const transformToApplicationPayload = (
 
   const requestBody = {
     Application: {
-      id: responseData?.Application?.id || formData?.response?.id || null,
-      applicationNumber: applicationNumber || responseData?.Application?.applicationNumber || formData?.response?.applicationNumber,
-      serviceCode: responseData?.Application?.serviceCode || formData?.response?.serviceCode || null,
+      id: formData?.responseData?.Application?.id || formData?.response?.id || null,
+      applicationNumber: applicationNumber || formData?.responseData?.Application?.applicationNumber || formData?.response?.applicationNumber,
+      serviceCode: formData?.responseData?.Application?.serviceCode || formData?.response?.serviceCode || null,
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
@@ -199,7 +198,7 @@ export const transformToApplicationPayload = (
       },
       applicants,
       address: {
-        id: responseData?.Application?.address?.id || formData?.response?.address?.id || null,
+        id: formData?.responseData?.Application?.address?.id || formData?.response?.address?.id || null,
         tenantId,
         latitude: 0,
         longitude: 0,
@@ -218,7 +217,7 @@ export const transformToApplicationPayload = (
       Workflow: {
         action: getWorkflowState(
           workflowDetails,
-          responseData?.Application?.workflow?.action || formData?.response?.workflow?.action,
+          formData?.responseData?.Application?.workflow?.action || formData?.response?.workflow?.action,
           isLastStep,
           applicationNumber,
           action
@@ -228,8 +227,8 @@ export const transformToApplicationPayload = (
         businessService: config?.data?.workflow?.businessService,
       },
       auditDetails: {
-        createdTime: responseData?.Application?.auditDetails?.createdTime || formData?.response?.auditDetails?.createdTime || null,
-        createdBy: responseData?.Application?.auditDetails?.createdBy || formData?.response?.auditDetails?.createdBy || null,
+        createdTime: formData?.responseData?.Application?.auditDetails?.createdTime || formData?.response?.auditDetails?.createdTime || null,
+        createdBy: formData?.responseData?.Application?.auditDetails?.createdBy || formData?.response?.auditDetails?.createdBy || null,
       },
     },
   };

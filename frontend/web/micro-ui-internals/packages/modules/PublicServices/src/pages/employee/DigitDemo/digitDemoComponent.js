@@ -170,7 +170,6 @@ const DigitDemoComponent = ({ editdata }) => {
                   config,
                   workflowDetails,
                   isLastStep,
-                  responseData,
                   applicationNumber,
                   queryStrings?.action,
                   assigneeOptions?.Employees
@@ -181,7 +180,7 @@ const DigitDemoComponent = ({ editdata }) => {
           onSuccess: (data) => {
             setIsLoading(false);
             setResponseData(data);
-            setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
+            setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber, responseData: data });
             localStorage.removeItem("formData");
             localStorage.removeItem("currentStep");
             sessionStorage.removeItem("formData");
