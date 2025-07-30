@@ -29,6 +29,9 @@ const DigitDemoViewComponent = () => {
   const isCalculationFees = checklistConfig?.checklist?.includes("calculationFees");
   const shouldShowChecklist = checklistConfig && checklistConfig.checklist && checklistConfig.checklist.length > 0;
 
+  const isDownloadButtonEnable = userInfo?.info?.roles?.some((role) => role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "BPA_ARCHITECT");
+
+
   //to get the fetched application details
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
@@ -356,7 +359,7 @@ const DigitDemoViewComponent = () => {
               height: "70px",
             }}
           >
-            {processInstanceState === "PERMIT_GRANTED" && (
+            {processInstanceState === "PERMIT_GRANTED" && isDownloadButtonEnable && (
               <Button
                 label={t("CS_COMMON_DOWNLOAD")}
                 onClick={() => handlePdfDownload()}
