@@ -185,7 +185,7 @@ export const transformToApplicationPayload = (
   const requestBody = {
     Application: {
       id: responseData?.Application?.id || formData?.response?.id || null,
-      applicationNumber: applicationNumber || responseData?.Application?.applicationNumber || "",
+      applicationNumber: applicationNumber || responseData?.Application?.applicationNumber || formData?.response?.applicationNumber,
       serviceCode: responseData?.Application?.serviceCode || formData?.response?.serviceCode || null,
       tenantId,
       module: currentConfig?.module,

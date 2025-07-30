@@ -271,7 +271,7 @@ const DigitDemoComponent = ({ editdata }) => {
     if (landDetails) {
       // Safely convert to uppercase
       const definitiveLandTitleCode = landDetails?.definitiveLandTitle?.code?.toUpperCase();
-      const workType = landDetails.workType?.code?.toUpperCase();
+      const intededUse = landDetails.intededUse?.code?.toUpperCase();
       const demolitionType = landDetails?.demolitionType?.code?.toUpperCase();
 
       // Only proceed if currentFormConfig and its body exist
@@ -283,8 +283,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: definitiveLandTitleCode === "NO",
-                required: definitiveLandTitleCode !== "NO",
+                disable: !definitiveLandTitleCode || definitiveLandTitleCode === "NO",
+                required: definitiveLandTitleCode && definitiveLandTitleCode !== "NO",
               },
             };
           } else if (field?.populators?.name === "otherOnDemolitionType") {
@@ -292,8 +292,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: demolitionType !== "OTHER",
-                required: demolitionType === "OTHER",
+                disable: !demolitionType || demolitionType !== "OTHER",
+                required: demolitionType && demolitionType === "OTHER",
               },
             };
           } else if (field?.populators?.name === "noOfUnits") {
@@ -301,9 +301,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: workType === "OTHERS" || workType !== "HOUSING",
-                required:
-                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "OTHERS" ? true : workType === "HOUSING" ? true : false,
+                disable: !intededUse || intededUse !== "HOUSING",
+                required: intededUse && intededUse === "HOUSING",
               },
             };
           } else if (field?.populators?.name === "detailsOnOtherType") {
@@ -311,9 +310,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: workType === "HOUSING" || workType !== "OTHERS",
-                required:
-                  workType !== "HOUSING" && workType !== "OTHERS" ? false : workType !== "HOUSING" ? true : workType === "OTHERS" ? true : false,
+                disable: !intededUse || intededUse !== "OTHERS",
+                required: intededUse && intededUse === "OTHERS",
               },
             };
           }
