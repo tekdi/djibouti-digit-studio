@@ -46,12 +46,7 @@ const formatAssigneeUser = (user) => {
 
 // Payload builder for submitting workflow actions
 const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config, employees) => {
-  const assigneeUsers = [];
-
-  if (data?.assignee?.user) {
-    const assigneeUser = formatAssigneeUser(data?.assignee?.user);
-    assigneeUsers.push(assigneeUser);
-  }
+  const assigneeUsers = [formatAssigneeUser(data?.assignee?.user)];
 
   const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
   if (employees) {
@@ -248,7 +243,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
           assigneeOptions?.length >= 0 ? assigneeOptions : undefined,
           businessService,
           moduleCode,
-          data?.MdmsRes?.DigitStudio?.DocumentConfig2
+          data?.MdmsRes?.DigitStudio?.DocumentConfig
         )
       );
     }
