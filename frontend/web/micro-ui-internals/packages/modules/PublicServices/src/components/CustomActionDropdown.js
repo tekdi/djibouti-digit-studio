@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const CustomActionDropdown = ({
@@ -7,23 +7,41 @@ const CustomActionDropdown = ({
   onActionSelect,
   module,
   service,
-  menuStyles
+  menuStyles,
+  resetTrigger
 }) => {
   const { t } = useTranslation();
+  const [selectedValue, setSelectedValue] = useState("");
 
   const title = t(`${module?.toUpperCase()}_${service?.toUpperCase()}_ACTIONS`);
+
+
+  // Reset dropdown when resetTrigger changes
+  useEffect(() => {
+    if (resetTrigger) {
+      setSelectedValue("");
+    }
+  }, [resetTrigger]);
+
+  const handleSelectChange = (e) => {
+    const value = e.target.value;
+    setSelectedValue(value);
+
+    if (value) {
+      const selectedAction = actions.find(action => action.action === value);
+      if (selectedAction) {
+        onActionSelect(selectedAction);
+      }
+    }
+  };
 
   return (
     <div style={{ position: 'relative', padding: '15px' }}>
       <select
         className="custom-action-dropdown"
         disabled={isDisabled}
-        onClick={(e) => {
-          const selectedAction = actions.find(action => action.action === e.target.value);
-          if (selectedAction) {
-            onActionSelect(selectedAction);
-          }
-        }}
+        value={selectedValue}
+        onChange={handleSelectChange}
         style={{
           padding: "10px 35px",
           borderRadius: "4px",
