@@ -94,6 +94,7 @@ const WorkflowActions = ({
   const [selectedAction, setSelectedAction] = useState(null);
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const [showToast, setShowToast] = useState(null);
+  const [resetDropdownTrigger, setResetDropdownTrigger] = useState(0);
   const queryStrings = Digit.Hooks.useQueryParams();
   const history = useHistory();
 
@@ -140,6 +141,7 @@ const WorkflowActions = ({
   const closeModal = () => {
     setSelectedAction(null);
     setShowModal(false);
+    setResetDropdownTrigger(prev => prev + 1); // Trigger dropdown reset
     setShowToast({ type: "warning", label: `WF_ACTION_CANCELLED` });
     closeToast();
   };
@@ -151,11 +153,9 @@ const WorkflowActions = ({
     if (action.action.includes("MAKE_PAYMENT")) {
       const redirectionUrl = `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`;
 
-      window.location = `/${
-        window.contextPath
-      }/${userType}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
-        props?.serviceConfig?.data?.bill?.BusinessService?.code
-      }&applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
+      window.location = `/${window.contextPath
+        }/${userType}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code
+        }&applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     } else if (action.action === "EDIT") {
       history.push(
         `/${window.contextPath}/${userType}/publicservices/${module}/${service}/Edit?serviceCode=${queryStrings?.serviceCode}&applicationNumber=${queryStrings?.applicationNumber}&action=${action?.action}`
@@ -215,31 +215,32 @@ const WorkflowActions = ({
           actionFields={
             props?.actionFields?.length > 0
               ? [
-                  ...props?.actionFields,
-                  <Button
-                    t={t}
-                    type="actionButton"
-                    options={actions}
-                    label={t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`)}
-                    variation={"primary"}
-                    optionsKey={"displayname"}
-                    isSearchable={false}
-                    isDisabled={isDisabled}
-                    onOptionSelect={onActionSelect}
-                    menuStyles={MenuStyle}
-                  ></Button>,
-                ]
+                ...props?.actionFields,
+                <Button
+                  t={t}
+                  type="actionButton"
+                  options={actions}
+                  label={t(`${module.toUpperCase()}_${service.toUpperCase()}_ACTIONS`)}
+                  variation={"primary"}
+                  optionsKey={"displayname"}
+                  isSearchable={false}
+                  isDisabled={isDisabled}
+                  onOptionSelect={onActionSelect}
+                  menuStyles={MenuStyle}
+                ></Button>,
+              ]
               : [
-                  <CustomActionDropdown
-                    workflowDetails={workflowDetails}
-                    actions={actions}
-                    isDisabled={isDisabled}
-                    onActionSelect={onActionSelect}
-                    module={module}
-                    service={service}
-                    menuStyles={MenuStyle}
-                  />,
-                ]
+                <CustomActionDropdown
+                  workflowDetails={workflowDetails}
+                  actions={actions}
+                  isDisabled={isDisabled}
+                  onActionSelect={onActionSelect}
+                  module={module}
+                  service={service}
+                  menuStyles={MenuStyle}
+                  resetTrigger={resetDropdownTrigger}
+                />,
+              ]
           }
           setactionFieldsToRight={true}
         />
