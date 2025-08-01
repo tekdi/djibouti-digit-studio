@@ -15,6 +15,7 @@ import ViewApplication from "./CheckList/viewApplication";
 import Calculation from "../../../../core/src/pages/citizen/Calculation";
 import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
+import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -60,6 +61,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
         <PrivateRoute path={`${path}/calculation`} component={() => <Calculation />} />
         <PrivateRoute path={`${path}/:module/:service/Edit`} component={() => <DigitDemoEditComponent />} />
+        <PrivateRoute path={`${path}/:module/:service/Create`} component={() => <DigitDemoCreateComponent />} />
       </AppContainer>
     </Switch>
   );
