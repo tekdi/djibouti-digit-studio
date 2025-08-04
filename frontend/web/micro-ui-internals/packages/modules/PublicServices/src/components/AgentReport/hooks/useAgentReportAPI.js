@@ -96,6 +96,8 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
         }
       };
 
+      console.log("Request", updateRequest);
+
       await Digit.CustomService.getResponse(updateRequest);
     } finally {
       setIsLoading(false);
