@@ -90,6 +90,7 @@ const AgentReportModal = ({
       onClose();
       if (onSuccess) {
         onSuccess();
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error submitting checklist:", error);
@@ -414,7 +415,7 @@ AgentReportModal.propTypes = {
   state: PropTypes.string.isRequired,
   onSuccess: PropTypes.func,
   isViewMode: PropTypes.bool,
-  existingChecklistData: PropTypes.object
+  existingChecklistData: PropTypes.object,
 };
 
 export default AgentReportModal;
