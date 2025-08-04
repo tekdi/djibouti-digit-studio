@@ -46,7 +46,10 @@ const formatAssigneeUser = (user) => {
 
 // Payload builder for submitting workflow actions
 const updatePayload = async (applicationDetails, data, action, businessService, tenantId, config, employees) => {
-  const assigneeUsers = [formatAssigneeUser(data?.assignee?.user)];
+  const assigneeUsers = [];
+  if (action?.action != "SEND_TO_CITIZEN_PAYMENT") {
+    assigneeUsers.push(formatAssigneeUser(data?.assignee?.user));
+  }
 
   const roleCodes = Digit.UserService.getUser()?.info?.roles?.map((role) => role.code);
   if (employees) {
@@ -137,6 +140,8 @@ const updatePayload = async (applicationDetails, data, action, businessService, 
         });
 
         workflow.assignees = hrmsResponse?.Employees?.map((employee) => formatAssigneeUser(employee?.user));
+      } else {
+        workflow.assignees = [formatAssigneeUser(null)];
       }
     } catch (error) {
       console.error("Error fetching workflow or HRMS data:", error);
