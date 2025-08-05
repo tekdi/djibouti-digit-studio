@@ -25,7 +25,9 @@ const FormStep = ({
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
   textInputStyle,
-  onButtonClick2=()=>{},
+  onButtonClick2 = () => {},
+  mobilePrefix,
+  prefixStyle,
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
@@ -35,7 +37,7 @@ const FormStep = ({
     onSelect(data);
   };
 
-  const isDisable = isDisabled ? true : (config.canDisable && Object.keys(errors).filter((i) => errors[i]).length);
+  const isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
   const inputs = config.inputs?.map((input, index) => {
     if (input.type === "text") {
@@ -57,9 +59,11 @@ const FormStep = ({
               disable={input.disable ? input.disable : false}
               textInputStyle={textInputStyle}
               placeholder={componentInFront ? componentInFront : null}
+              populators={{ prefix: mobilePrefix?.prefix }}
+              prefixStyle={prefixStyle}
             />
           </div>
-            {errors && errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          {errors && errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
         </React.Fragment>
       );
     }

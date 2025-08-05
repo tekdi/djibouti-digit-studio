@@ -2,14 +2,13 @@ import React, { forwardRef, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { SVG } from "./SVG";
 import StringManipulator from "./StringManipulator";
-import { Colors} from "../constants/colors/colorconstants";
+import { Colors } from "../constants/colors/colorconstants";
 import { getUserType } from "../utils/digitUtils";
 import { useTranslation } from "react-i18next";
 
-
 const TextInput = (props) => {
   const user_type = getUserType();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [date, setDate] = useState(props?.type === "date" && props?.value);
   const [visibility, setVisibility] = useState(false);
   const [inputType, setInputType] = useState(props?.type || "text");
@@ -40,19 +39,14 @@ const TextInput = (props) => {
     const prefixValue = props?.populators?.prefix || "";
     if (props?.type === "numeric") {
       return (
-        <button
-          type="button"
-          onClick={() => decrementCount()}
-          className="digit-numeric-button-prefix"
-          readOnly={props.nonEditable}
-        >
+        <button type="button" onClick={() => decrementCount()} className="digit-numeric-button-prefix" readOnly={props.nonEditable}>
           -
         </button>
       );
     }
     if (prefixValue) {
       return (
-        <button className="digit-prefix" readOnly={props.nonEditable}>
+        <button className="digit-prefix" style={props.prefixStyle || {}} readOnly={props.nonEditable}>
           {prefixValue}
         </button>
       );
@@ -64,21 +58,12 @@ const TextInput = (props) => {
     const suffixValue = props?.populators?.suffix || "";
     if (props?.type === "numeric") {
       return (
-        <button
-          type="button"
-          onClick={() => incrementCount()}
-          className="digit-numeric-button-suffix"
-          readOnly={props.nonEditable}
-        >
+        <button type="button" onClick={() => incrementCount()} className="digit-numeric-button-suffix" readOnly={props.nonEditable}>
           +
         </button>
       );
     }
-    if (
-      props?.type === "text" &&
-      !props?.populators?.customIcon &&
-      suffixValue
-    ) {
+    if (props?.type === "text" && !props?.populators?.customIcon && suffixValue) {
       return (
         <button className="digit-suffix" readOnly={props.nonEditable}>
           {suffixValue}
@@ -116,24 +101,14 @@ const TextInput = (props) => {
 
   const renderIcon = () => {
     const reqIcon = props?.type;
-    const iconFill = props?.iconFill ? props?.iconFill : props?.disabled
-      ? disabledColor
-      : props?.nonEditable
-      ? "#b1b4b6"
-      : iconColor;
+    const iconFill = props?.iconFill ? props?.iconFill : props?.disabled ? disabledColor : props?.nonEditable ? "#b1b4b6" : iconColor;
     if (reqIcon) {
       if (reqIcon === "geolocation") {
         return (
           <SVG.MyLocation
             fill={iconFill}
-            onClick={
-              props?.onIconSelection
-                ? props?.onIconSelection
-                : handleLocationClick
-            }
-            className={` digit-text-input-customIcon ${
-              props.disabled ? "disabled" : ""
-            } ${props.nonEditable ? "nonEditable" : ""}`}
+            onClick={props?.onIconSelection ? props?.onIconSelection : handleLocationClick}
+            className={` digit-text-input-customIcon ${props.disabled ? "disabled" : ""} ${props.nonEditable ? "nonEditable" : ""}`}
           />
         );
       } else if (reqIcon === "password" && inputType === "text" && visibility) {
@@ -141,9 +116,7 @@ const TextInput = (props) => {
           <SVG.VisibilityOff
             fill={iconFill}
             onClick={handleVisibility}
-            className={` digit-text-input-customIcon ${
-              props.disabled ? "disabled" : ""
-            } ${props.nonEditable ? "nonEditable" : ""}`}
+            className={` digit-text-input-customIcon ${props.disabled ? "disabled" : ""} ${props.nonEditable ? "nonEditable" : ""}`}
           />
         );
       } else if (reqIcon === "password") {
@@ -151,9 +124,7 @@ const TextInput = (props) => {
           <SVG.Visibility
             fill={iconFill}
             onClick={handleVisibility}
-            className={` digit-text-input-customIcon ${
-              props.disabled ? "disabled" : ""
-            } ${props.nonEditable ? "nonEditable" : ""}`}
+            className={` digit-text-input-customIcon ${props.disabled ? "disabled" : ""} ${props.nonEditable ? "nonEditable" : ""}`}
           />
         );
       } else if (reqIcon === "search") {
@@ -161,25 +132,19 @@ const TextInput = (props) => {
           <SVG.Search
             fill={iconFill}
             onClick={props?.onIconSelection}
-            className={` digit-text-input-customIcon ${
-              props.disabled ? "disabled" : ""
-            } ${props.nonEditable ? "nonEditable" : ""}`}
+            className={` digit-text-input-customIcon ${props.disabled ? "disabled" : ""} ${props.nonEditable ? "nonEditable" : ""}`}
           />
         );
       } else {
         try {
           const components = require("@egovernments/digit-ui-svg-components");
-          const DynamicIcon =
-            props?.type === "text" &&
-            components?.[props?.populators?.customIcon];
+          const DynamicIcon = props?.type === "text" && components?.[props?.populators?.customIcon];
           if (DynamicIcon) {
             const svgElement = DynamicIcon({
               width: "1.5rem",
               height: "1.5rem",
               fill: iconFill,
-              className: `digit-text-input-customIcon ${
-                props.disabled ? "disabled" : ""
-              } ${props.nonEditable ? "nonEditable" : ""}`,
+              className: `digit-text-input-customIcon ${props.disabled ? "disabled" : ""} ${props.nonEditable ? "nonEditable" : ""}`,
             });
             return svgElement;
           } else {
@@ -197,76 +162,49 @@ const TextInput = (props) => {
 
   const icon = renderIcon();
 
-  const inputClassNameForMandatory = `${
-    user_type ? "digit-employeeCard-inputError" : "digit-card-inputError"
-  } ${props.disabled ? "disabled" : ""} ${props.customClass || ""} ${
-    props.nonEditable ? "noneditable" : ""
-  }  ${props.type === "numeric" ? "numeric" : ""}`;
+  const inputClassNameForMandatory = `${user_type ? "digit-employeeCard-inputError" : "digit-card-inputError"} ${props.disabled ? "disabled" : ""} ${
+    props.customClass || ""
+  } ${props.nonEditable ? "noneditable" : ""}  ${props.type === "numeric" ? "numeric" : ""}`;
 
-  const inputClassName = `${
-    user_type
-  ? `digit-employeeCard-input ${
-      props?.populators?.prefix
-        ? 'half-rounded'
-        : ''
-    }`
-  : 'digit-citizenCard-input'
-  } ${props.disabled ? "disabled" : ""} focus-visible ${
-    props.errorStyle ? "digit-employeeCard-inputError" : ""
-  } ${props.nonEditable ? "noneditable" : ""} ${
+  const inputClassName = `${user_type ? `digit-employeeCard-input ${props?.populators?.prefix ? "half-rounded" : ""}` : "digit-citizenCard-input"} ${
+    props.disabled ? "disabled" : ""
+  } focus-visible ${props.errorStyle ? "digit-employeeCard-inputError" : ""} ${props.nonEditable ? "noneditable" : ""} ${
     props.type === "numeric" ? "numeric" : ""
   } ${props.customClass || ""}`;
 
-  const defaultType =
-    props.type === "password" && inputType === "text"
-      ? "passwordToText"
-      : props.type;
+  const defaultType = props.type === "password" && inputType === "text" ? "passwordToText" : props.type;
 
-  const inputContainerClass = `input-container ${
-    defaultType ? defaultType : ""
-  } ${props.populators?.customIcon ? "withIcon" : ""}`;
+  const inputContainerClass = `input-container ${defaultType ? defaultType : ""} ${props.populators?.customIcon ? "withIcon" : ""}`;
 
   return (
     <React.Fragment>
       <div
-        className={`digit-text-input-field ${
-          user_type === "employee" ? "" : "digit-text-input-field-width"
-        } ${props?.className ? props?.className : ""} ${
-          props.disabled ? "disabled" : ""
-        }  ${props.nonEditable ? "noneditable" : ""} ${
-          props.error ? "error" : ""
-        } ${defaultType ? defaultType : ""} ${props?.populators?.disableTextField ? "numeric-buttons-only" : ""} ${
-          props?.populators?.prefix ? "prefix" : ""
-        } ${props?.populators?.suffix ? "suffix" : ""} `}
+        className={`digit-text-input-field ${user_type === "employee" ? "" : "digit-text-input-field-width"} ${
+          props?.className ? props?.className : ""
+        } ${props.disabled ? "disabled" : ""}  ${props.nonEditable ? "noneditable" : ""} ${props.error ? "error" : ""} ${
+          defaultType ? defaultType : ""
+        } ${props?.populators?.disableTextField ? "numeric-buttons-only" : ""} ${props?.populators?.prefix ? "prefix" : ""} ${
+          props?.populators?.suffix ? "suffix" : ""
+        } `}
         style={props?.textInputStyle ? { ...props.textInputStyle } : {}}
       >
         {props.required ? (
           <div className={inputContainerClass}>
             {renderPrefix()}
             <input
-              type={
-                props?.validation && props.ValidationRequired
-                  ? props?.type
-                  : defaultType || "text"
-              }
+              type={props?.validation && props.ValidationRequired ? props?.type : defaultType || "text"}
               name={props.name}
               id={props?.id}
               className={inputClassNameForMandatory}
-              placeholder={StringManipulator(
-                "TOSENTENCECASE",
-                t(props.placeholder || props.populators?.placeholder)
-              )}
+              placeholder={StringManipulator("TOSENTENCECASE", t(props.placeholder || props.populators?.placeholder))}
               onChange={(event) => {
-                    if (props?.type === "number" && props?.populators?.maxLength) {
+                if (props?.type === "number" && props?.populators?.maxLength) {
                   if (event.target.value.length > props?.populators?.maxLength) {
                     event.target.value = event.target.value.slice(0, -1);
                   }
                 }
                 if (props?.type === "numeric") {
-                  event.target.value = event.target.value.replace(
-                    /[^0-9]/g,
-                    ""
-                  );
+                  event.target.value = event.target.value.replace(/[^0-9]/g, "");
                 }
                 if (props?.onChange) {
                   props?.onChange(event);
@@ -285,11 +223,7 @@ const TextInput = (props) => {
               min={props.populators?.min}
               pattern={props?.validation?.regex}
               readOnly={props.nonEditable}
-              title={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation?.title
-                  : props.title
-              }
+              title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
               step={props.step}
               autoFocus={props.autoFocus}
               onBlur={props.onBlur}
@@ -300,7 +234,7 @@ const TextInput = (props) => {
               config={props.config}
               populators={props.populators}
               onClick={(event) => {
-                if (props.type === "date" || (props.type === "time")) {
+                if (props.type === "date" || props.type === "time") {
                   try {
                     event.target.showPicker();
                   } catch (error) {
@@ -317,10 +251,7 @@ const TextInput = (props) => {
             {renderSuffix()}
             {props.signature && props.signatureImg}
             {icon && (
-              <span
-                className="digit-cursor-pointer"
-                onClick={props?.onIconSelection}
-              >
+              <span className="digit-cursor-pointer" onClick={props?.onIconSelection}>
                 {icon}
               </span>
             )}
@@ -329,21 +260,14 @@ const TextInput = (props) => {
           <div className={inputContainerClass}>
             {renderPrefix()}
             <input
-            onInvalid={(e) => {
-              e.preventDefault();
-            }}
-              type={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation?.type
-                  : defaultType || "text"
-              }
+              onInvalid={(e) => {
+                e.preventDefault();
+              }}
+              type={props?.validation && props.ValidationRequired ? props?.validation?.type : defaultType || "text"}
               name={props.name}
               id={props.id}
               className={inputClassName}
-              placeholder={StringManipulator(
-                "TOSENTENCECASE",
-                t(props.placeholder || props.populators?.placeholder)
-              )}
+              placeholder={StringManipulator("TOSENTENCECASE", t(props.placeholder || props.populators?.placeholder))}
               onChange={(event) => {
                 if (props?.type === "number" && props?.maxLength) {
                   if (event.target.value.length > props?.maxLength) {
@@ -351,10 +275,7 @@ const TextInput = (props) => {
                   }
                 }
                 if (props?.type === "numeric") {
-                  event.target.value = event.target.value.replace(
-                    /[^0-9]/g,
-                    ""
-                  );
+                  event.target.value = event.target.value.replace(/[^0-9]/g, "");
                 }
                 if (props?.onChange) {
                   props?.onChange(event);
@@ -380,11 +301,7 @@ const TextInput = (props) => {
               // }
               pattern={props?.validation?.regex}
               readOnly={props.nonEditable}
-              title={
-                props?.validation && props.ValidationRequired
-                  ? props?.validation?.title
-                  : props.title
-              }
+              title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
               step={props.step}
               autoFocus={props.autoFocus}
               onBlur={props.onBlur}
@@ -396,7 +313,7 @@ const TextInput = (props) => {
               config={props.config}
               populators={props.populators}
               onClick={(event) => {
-                if (props.type === "date" || (props.type === "time")) {
+                if (props.type === "date" || props.type === "time") {
                   try {
                     event.target.showPicker();
                   } catch (error) {
@@ -409,10 +326,7 @@ const TextInput = (props) => {
             {renderSuffix()}
             {props.signature && props.signatureImg}
             {icon && (
-              <span
-                className="digit-cursor-pointer"
-                onClick={props?.onIconSelection}
-              >
+              <span className="digit-cursor-pointer" onClick={props?.onIconSelection}>
                 {icon}
               </span>
             )}
@@ -428,10 +342,7 @@ TextInput.propTypes = {
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
-  inputRef: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-  ]),
+  inputRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.instanceOf(Element) })]),
   value: PropTypes.any,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -442,7 +353,7 @@ TextInput.propTypes = {
   min: PropTypes.number,
   disabled: PropTypes.bool,
   nonEditable: PropTypes.bool,
-  allowNegativeValues:PropTypes.bool,
+  allowNegativeValues: PropTypes.bool,
   errorStyle: PropTypes.bool,
   title: PropTypes.string,
   step: PropTypes.string,

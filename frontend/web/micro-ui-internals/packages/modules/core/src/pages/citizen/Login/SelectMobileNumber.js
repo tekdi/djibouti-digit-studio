@@ -22,22 +22,25 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 
   return (
     <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      <h1 style={{ fontSize: "40px", fontWeight: "bold", color: "#363636", fontFamily: "Inter", marginTop: "50px" }}>{t('BPA_CONSTRUCTION_PERMIT_TITLE')}</h1>
+      <h1 style={{ fontSize: "40px", fontWeight: "bold", color: "#363636", fontFamily: "Inter", marginTop: "50px" }}>
+        {t("BPA_CONSTRUCTION_PERMIT_TITLE")}
+      </h1>
 
-    <FormStep
-      isDisabled={(!(mobileNumber.length === 8) || error) && canSubmit}
-      onSelect={onSelect}
-      config={config}
-      t={t}
-      componentInFront="+253"
-      onChange={onMobileChange}
-      value={mobileNumber}
-      cardStyle={{ width: "fit-content", minWidth: "476px" }}
-      onButtonClick2={handleButtonClick2}
-      forcedError={error ? t(error) + " ": null}
-      >
-      </FormStep>
-      </div>
+      <FormStep
+        isDisabled={(!(mobileNumber.length === 8) || error) && canSubmit}
+        onSelect={onSelect}
+        config={config}
+        t={t}
+        componentInFront={t("ENTER_MOBILE_NUMBER")}
+        onChange={onMobileChange}
+        value={mobileNumber}
+        cardStyle={{ width: "fit-content", minWidth: "476px" }}
+        onButtonClick2={handleButtonClick2}
+        forcedError={error ? t(error) + " " : null}
+        mobilePrefix={{ prefix: "+253" }}
+        prefixStyle={{ fontSize: "1rem" }}
+      ></FormStep>
+    </div>
   );
 };
 
