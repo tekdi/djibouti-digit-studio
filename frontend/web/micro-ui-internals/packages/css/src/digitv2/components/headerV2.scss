@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 0.625rem 1.5rem;
+  padding: 16px 24px;
   background: white;
   box-shadow: rgba(0, 0, 0, 0.24) 0 0.063rem 0.25rem;
   z-index: 9999999;
@@ -156,8 +156,7 @@
 
 .citizen {
   .right {
-    margin-top: 0.313rem;
-    margin-bottom: 0.313rem;
+    margin-top: 12px;
   }
 
   .topbar-select-wrap {
