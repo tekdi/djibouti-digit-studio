@@ -162,30 +162,36 @@ const ModulePageComponent = () => {
                 <ul className="list-disc space-y-2 pt-2">
                   {(expandedBpaCardIndex === index
                     ? product?.businessServices
-                      ?.filter((bs) => {
-                        if (isCitizen) {
-                          return (bs.businessService === "BPA_PCO_SIMPLE" ||
-                            bs.businessService === "BPA_PCS" ||
-                            bs.businessService === "BPA_PL" ||
-                            bs.businessService === "BPA_PD" ||
-                            bs.businessService === "BPA_ATARR")
-                        }
-                        return true; // show all for non-citizens
-                      })
-                      ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                        ?.filter((bs) => {
+                          if (isCitizen) {
+                            return (
+                              bs.businessService === "BPA_PCO_SIMPLE" ||
+                              bs.businessService === "BPA_PCS" ||
+                              bs.businessService === "BPA_PL" ||
+                              bs.businessService === "BPA_PD" ||
+                              bs.businessService === "BPA_PF" ||
+                              bs.businessService === "BPA_ATARR"
+                            );
+                          }
+                          return true; // show all for non-citizens
+                        })
+                        ?.sort((a, b) => a.displayOrder - b.displayOrder)
                     : product?.businessServices
-                      ?.filter((bs) => {
-                        if (isCitizen) {
-                          return (bs.businessService === "BPA_PCO_SIMPLE" ||
-                          bs.businessService === "BPA_PCS" ||
-                          bs.businessService === "BPA_PL" ||
-                          bs.businessService === "BPA_PD" ||
-                          bs.businessService === "BPA_ATARR")
-                        }
-                        return true; // show all for non-citizens
-                      })
-                      ?.sort((a, b) => a.displayOrder - b.displayOrder)
-                      .slice(0, 3)
+                        ?.filter((bs) => {
+                          if (isCitizen) {
+                            return (
+                              bs.businessService === "BPA_PCO_SIMPLE" ||
+                              bs.businessService === "BPA_PCS" ||
+                              bs.businessService === "BPA_PL" ||
+                              bs.businessService === "BPA_PD" ||
+                              bs.businessService === "BPA_PF" ||
+                              bs.businessService === "BPA_ATARR"
+                            );
+                          }
+                          return true; // show all for non-citizens
+                        })
+                        ?.sort((a, b) => a.displayOrder - b.displayOrder)
+                        .slice(0, 3)
                   )?.map((bs) => (
                     <li style={{ marginBottom: "15px" }} key={bs?.businessService}>
                       <Link
@@ -200,44 +206,35 @@ const ModulePageComponent = () => {
                 </ul>
                 {product?.businessServices?.filter((bs) => {
                   if (isCitizen) {
-                    return bs.businessService === "BPA_PCO_SIMPLE" || bs.businessService === "BPA_PL";
+                    return (
+                      bs.businessService === "BPA_PCO_SIMPLE" ||
+                      bs.businessService === "BPA_PCS" ||
+                      bs.businessService === "BPA_PL" ||
+                      bs.businessService === "BPA_PD" ||
+                      bs.businessService === "BPA_PF" ||
+                      bs.businessService === "BPA_ATARR"
+                    );
                   }
                   return true;
                 })?.length > 3 && (
-                    <div className="show-button-container">
-                      {expandedBpaCardIndex === index ? (
-                        <button
-                          className="toggle-btn"
-                          onClick={() => setExpandedBpaCardIndex(null)}
-                        >
-                          {t('SHOW_LESS')}
-                          <svg
-                            className="arrow-icon"
-                            viewBox="0 0 14 21"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M0 7.5L1.41 8.91L6 4.33V20.5H8V4.33L12.59 8.92L14 7.5L7 0.5L0 7.5Z" fill="#006769" />
-                          </svg>
-                        </button>
-                      ) : (
-                        <button
-                          className="toggle-btn"
-                          onClick={() => setExpandedBpaCardIndex(index)}
-                        >
-                          {t('SHOW_MORE')}
-                          <svg
-                            className="arrow-icon"
-                            viewBox="0 0 14 21"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M14 13.5L12.59 12.09L8 16.67V0.5H6V16.67L1.41 12.08L0 13.5L7 20.5L14 13.5Z" fill="#006769" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  )}
+                  <div className="show-button-container">
+                    {expandedBpaCardIndex === index ? (
+                      <button className="toggle-btn" onClick={() => setExpandedBpaCardIndex(null)}>
+                        {t("SHOW_LESS")}
+                        <svg className="arrow-icon" viewBox="0 0 14 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M0 7.5L1.41 8.91L6 4.33V20.5H8V4.33L12.59 8.92L14 7.5L7 0.5L0 7.5Z" fill="#006769" />
+                        </svg>
+                      </button>
+                    ) : (
+                      <button className="toggle-btn" onClick={() => setExpandedBpaCardIndex(index)}>
+                        {t("SHOW_MORE")}
+                        <svg className="arrow-icon" viewBox="0 0 14 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M14 13.5L12.59 12.09L8 16.67V0.5H6V16.67L1.41 12.08L0 13.5L7 20.5L14 13.5Z" fill="#006769" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                )}
               </Card>
             )}
 
