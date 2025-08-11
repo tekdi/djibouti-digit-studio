@@ -7,6 +7,68 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet" type="text/css" />
+      <!-- Tailwind CSS CDN -->
+      <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet">
+      
+      <!-- Djibouti Design System -->
+      <style>
+        :root {
+          --color-djibouti-primary: #006769;
+          --color-djibouti-primary-light: #4ca6a8;
+          --color-djibouti-primary-dark: #004a4b;
+          --color-djibouti-secondary: #cdd23e;
+          --color-djibouti-sage: #748269;
+        }
+        
+        /* Djibouti Brand Colors */
+        .bg-djibouti-primary { background-color: #006769 !important; }
+        .bg-djibouti-primary-light { background-color: #4ca6a8 !important; }
+        .bg-djibouti-primary-dark { background-color: #004a4b !important; }
+        .bg-djibouti-secondary { background-color: #cdd23e !important; }
+        .bg-djibouti-sage { background-color: #748269 !important; }
+        
+        .text-djibouti-primary { color: #006769 !important; }
+        .text-djibouti-primary-light { color: #4ca6a8 !important; }
+        .text-djibouti-primary-dark { color: #004a4b !important; }
+        .text-djibouti-secondary { color: #cdd23e !important; }
+        .text-djibouti-sage { color: #748269 !important; }
+        
+        .border-djibouti-primary { border-color: #006769 !important; }
+        .border-djibouti-secondary { border-color: #cdd23e !important; }
+        .border-djibouti-sage { border-color: #748269 !important; }
+        
+        /* Hover states */
+        .hover\:bg-djibouti-primary:hover { background-color: #006769 !important; }
+        .hover\:bg-djibouti-primary-dark:hover { background-color: #004a4b !important; }
+        .hover\:bg-djibouti-secondary:hover { background-color: #cdd23e !important; }
+        .hover\:bg-djibouti-sage:hover { background-color: #748269 !important; }
+        
+        /* Focus states */
+        .focus\:border-djibouti-primary:focus { border-color: #006769 !important; }
+        .focus\:ring-djibouti-primary:focus { 
+          --tw-ring-color: #006769 !important; 
+          box-shadow: 0 0 0 3px rgba(0, 103, 105, 0.1) !important;
+        }
+        
+        /* Gradient backgrounds */
+        .bg-gradient-djibouti { 
+          background: linear-gradient(90deg, #006769 0%, #748269 100%) !important; 
+        }
+        .bg-gradient-djibouti-light { 
+          background: linear-gradient(90deg, #4ca6a8 0%, #cdd23e 100%) !important; 
+        }
+        
+        /* Custom utilities */
+        .shadow-djibouti {
+          box-shadow: 0 4px 15px rgba(0, 103, 105, 0.2) !important;
+        }
+        .card-djibouti {
+          background: white !important;
+          border-radius: 12px !important;
+          box-shadow: 0 4px 15px rgba(0, 103, 105, 0.1) !important;
+          border: 1px solid rgba(0, 103, 105, 0.1) !important;
+        }
+      </style>
       <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.8.2-beta.48/dist/index.css" />
       <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-components-css@0.2.0-beta.4/dist/index.css" />
       <link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.28/dist/index.css" />
