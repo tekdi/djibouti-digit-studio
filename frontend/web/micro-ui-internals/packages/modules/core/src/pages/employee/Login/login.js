@@ -296,58 +296,54 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           )}
 
           <Route path={`${path}`} exact>
-            <div className="application-header">
-              <SelectEmail
-                t={t}
-                onSelect={onOtpLogin}
-                email={params.username || ""}
-                onEmailChange={handleEmailChange}
-                config={loginConfig[0]}
-                canSubmit={canSubmitEmail}
-                onForgotPassword={onForgotPassword}
-                isDisabled={isDisabled}
-                disable={disable}
-              />
-            </div>
+            <SelectEmail
+              t={t}
+              onSelect={onOtpLogin}
+              email={params.username || ""}
+              onEmailChange={handleEmailChange}
+              config={loginConfig[0]}
+              canSubmit={canSubmitEmail}
+              onForgotPassword={onForgotPassword}
+              isDisabled={isDisabled}
+              disable={disable}
+            />
             {formError && <Toast error={true} label={formError} onClose={() => setFormError("")} />}
           </Route>
 
           <Route path={`${path}/otp`}>
-            <div className="application-header">
-              <SelectOtp
-                config={{
-                  ...loginConfig[0],
-                  email: params.username || location.state?.email || "",
-                  inputs: [
-                    {
-                      label: "CORE_LOGIN_OTP",
-                      // type: "text",
-                      name: "otp",
-                      validation: {
-                        required: true,
-                        minlength: 0,
-                        maxlength: 6,
-                        pattern: /^[0-9]*$/,
-                        title: "Please enter a valid OTP",
-                      },
-                      error: "CORE_COMMON_INVALID_OTP",
+            <SelectOtp
+              config={{
+                ...loginConfig[0],
+                email: params.username || location.state?.email || "",
+                inputs: [
+                  {
+                    label: "CORE_LOGIN_OTP",
+                    // type: "text",
+                    name: "otp",
+                    validation: {
+                      required: true,
+                      minlength: 0,
+                      maxlength: 6,
+                      pattern: /^[0-9]*$/,
+                      title: "Please enter a valid OTP",
                     },
-                  ],
-                  texts: {
-                    header: "CS_LOGIN_OTP",
-                    cardText: `${params.username || location.state?.email || ""}`,
-                    submitBarLabel: "CS_COMMONS_VERIFY",
+                    error: "CORE_COMMON_INVALID_OTP",
                   },
-                }}
-                onOtpChange={handleOtpChange}
-                onResend={resendOtp}
-                onSelect={selectOtp}
-                otp={params.otp || ""}
-                error={isOtpValid}
-                canSubmit={true}
-                t={t}
-              />
-            </div>
+                ],
+                texts: {
+                  header: "CS_LOGIN_OTP",
+                  cardText: `${params.username || location.state?.email || ""}`,
+                  submitBarLabel: "CS_COMMONS_VERIFY",
+                },
+              }}
+              onOtpChange={handleOtpChange}
+              onResend={resendOtp}
+              onSelect={selectOtp}
+              otp={params.otp || ""}
+              error={isOtpValid}
+              canSubmit={true}
+              t={t}
+            />
           </Route>
 
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
