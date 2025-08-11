@@ -36,6 +36,7 @@ const features = [
 const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onForgotPassword, isDisabled, disable }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isValidEmail = (email) => {
     if (!email) return false;
@@ -51,24 +52,17 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
     return () => clearInterval(timer);
   }, []);
 
-  const handleButtonClick2 = () => {
+  const handleCitizenLogin = () => {
     window.location.href = `/${window?.contextPath}/citizen/login`;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email || !isValidEmail(email)) {
-      setError("Veuillez entrer une adresse email valide");
-      return;
-    }
-    setError("");
-    onSelect({ email });
+  const handleSubmit = (data) => {
+    onSelect(data);
   };
 
   const handleEmailChange = (e) => {
-    const value = e.target.value;
-    onEmailChange(value);
-    if (error && value) {
+    onEmailChange(e);
+    if (error && e.target.value) {
       setError("");
     }
   };
@@ -77,7 +71,7 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
     <div className="min-h-screen bg-gradient-to-tr from-slate-50 to-gray-50 flex overflow-hidden">
       {/* Left side - Image and Info (Desktop only) */}
       <div className="hidden lg:block lg:w-1/2 relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-djibouti-primary/95 to-djibouti-secondary/95 mix-blend-multiply z-10"></div>
+        <div className="absolute inset-0 bg-gradient-djibouti-light mix-blend-multiply z-10"></div>
         <img
           src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
           alt="Modern architecture"
@@ -179,13 +173,22 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
                 Entrez votre adresse email pour continuer
               </p>
               
-              <form onSubmit={handleSubmit} className="w-full space-y-6">
-                {error && (
-                  <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md flex items-start">
-                    <LuInfo className="text-red-500 mt-0.5 mr-2 flex-shrink-0" />
-                    <p className="text-sm text-red-700">{error}</p>
-                  </div>
-                )}
+                             <form onSubmit={(e) => {
+                 e.preventDefault();
+                 if (!email || !isValidEmail(email)) {
+                   setError("Veuillez entrer une adresse email valide");
+                   return;
+                 }
+                 setError("");
+                 setIsSubmitting(true);
+                 onSelect({ username: email });
+               }} className="w-full space-y-6">
+                 {error && (
+                   <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md flex items-start">
+                     <LuInfo className="text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                     <p className="text-sm text-red-700">{error}</p>
+                   </div>
+                 )}
                 
                 <div>
                   <label
@@ -229,16 +232,10 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
               
               <div className="text-center space-y-4 mt-8">
                 <button
-                  onClick={onForgotPassword}
+                  onClick={handleCitizenLogin}
                   className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
                 >
-                  Mot de passe oublié ?
-                </button>
-                <button
-                  onClick={handleButtonClick2}
-                  className="text-sm text-gray-400 hover:text-djibouti-primary block w-full"
-                >
-                  Connexion citoyenne
+                  Espace citoyen
                 </button>
               </div>
             </div>
@@ -261,13 +258,21 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
               Entrez votre adresse email pour continuer
             </p>
             
-            <form onSubmit={handleSubmit} className="w-full space-y-6">
-              {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-start">
-                  <LuInfo className="text-red-500 mt-0.5 mr-2 flex-shrink-0" />
-                  <p className="text-sm text-red-700">{error}</p>
-                </div>
-              )}
+                         <form onSubmit={(e) => {
+               e.preventDefault();
+               if (!email || !isValidEmail(email)) {
+                 setError("Veuillez entrer une adresse email valide");
+                 return;
+               }
+               setError("");
+               onSelect({ username: email });
+             }} className="w-full space-y-6">
+               {error && (
+                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-start">
+                   <LuInfo className="text-red-500 mt-0.5 mr-2 flex-shrink-0" />
+                   <p className="text-sm text-red-700">{error}</p>
+                 </div>
+               )}
               
               <div>
                 <label
@@ -311,16 +316,10 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
             
             <div className="text-center space-y-4 mt-8">
               <button
-                onClick={onForgotPassword}
+                onClick={handleCitizenLogin}
                 className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
               >
-                Mot de passe oublié ?
-              </button>
-              <button
-                onClick={handleButtonClick2}
-                className="text-sm text-gray-400 hover:text-djibouti-primary block w-full"
-              >
-                Connexion citoyenne
+                  Espace citoyen
               </button>
             </div>
           </div>

@@ -26,6 +26,8 @@ const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/employee`;
 const Login = ({ config: propsConfig, t, isDisabled }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
+  
+
   const { stateInfo } = storeData || {};
   const { path, url } = useRouteMatch();
   const location = useLocation();
