@@ -67,7 +67,7 @@ const EmployeeApp = ({
     <div className="employee">
       <Switch>
         <Route path={`${path}/user`}>
-          {!location?.pathname?.includes('/user/login') && (
+          {!location?.pathname?.includes('/login') && (
             <TopBarSideBar
               t={t}
               stateInfo={stateInfo}
