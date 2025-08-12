@@ -195,7 +195,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                   ))}
                 </div>
 
-                {error && (
+                {error === false && (
                   <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md mb-4">
                     <p className="text-sm text-red-700">Code OTP invalide</p>
                   </div>
@@ -298,7 +298,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                 ))}
               </div>
 
-              {error && (
+              {error === false && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md mb-4">
                   <p className="text-sm text-red-700">Code OTP invalide</p>
                 </div>

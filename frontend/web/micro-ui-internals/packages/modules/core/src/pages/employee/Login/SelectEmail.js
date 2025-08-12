@@ -124,7 +124,7 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === currentSlide
                         ? "bg-white scale-125"
-                        : "bg-white/30"
+                        : "bg-gray-400"
                     }`}
                   />
                 ))}

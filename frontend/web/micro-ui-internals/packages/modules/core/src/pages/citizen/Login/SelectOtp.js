@@ -38,7 +38,7 @@ const features = [
   },
 ];
 
-const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
+const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, mobileNumber }) => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [otpValue, setOtpValue] = useState(otp || "");
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -101,11 +101,9 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     );
   }
 
-  const handleEmployeeLogin = () => {
-    window.location.href = `/${window?.contextPath}/employee/user/login`;
-  };
 
-  const mobileNumber = config?.cardText?.split(" ").pop() || "";
+
+  // Use the mobile number passed directly as prop
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-slate-50 to-gray-50 flex overflow-hidden">
@@ -151,7 +149,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       index === currentSlide
                         ? "bg-white scale-125"
-                        : "bg-white/30"
+                        : "bg-gray-400"
                     }`}
                   />
                 ))}
@@ -236,7 +234,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
                   ))}
                 </div>
 
-                {!error && (
+                {error === false && (
                   <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md mb-4">
                     <p className="text-sm text-red-700">Code OTP invalide</p>
                   </div>
@@ -332,7 +330,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
                 ))}
               </div>
 
-              {!error && (
+              {error === false && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-md mb-4">
                   <p className="text-sm text-red-700">Code OTP invalide</p>
                 </div>

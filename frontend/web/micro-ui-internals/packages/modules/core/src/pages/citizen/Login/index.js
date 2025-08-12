@@ -322,6 +322,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
+              mobileNumber={params.mobileNumber || ""}
               t={t}
             />
           </Route>
