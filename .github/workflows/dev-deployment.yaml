@@ -3,7 +3,7 @@ name: Build and Deploy Digit Studio
 on:
   push:
     branches:
-      - djibouti-frontend
+      - djibouti-new-ui
 
 env:
   DOCKER_REPO: ttpldevops/digit-studio
