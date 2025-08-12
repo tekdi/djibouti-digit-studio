@@ -4,6 +4,8 @@ import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
 import ChangeLanguage from "../ChangeLanguage";
 import PropTypes from "prop-types";
+import CitizenTopBar from "./citizen/CitizenTopBar";
+import EmployeeTopBar from "./employee/EmployeeTopBar";
 
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
@@ -106,7 +108,21 @@ const TopBar = ({
     "BPA_AGENTS",
     "BPA_SDECC_HOD",
     "BPA_SDECC_AGENTS",
-    "BPA_SDECC_COMM"
+    "BPA_SDECC_COMM",
+    "BPA_INSPD_COMM",
+    "BPA_EDD_COMM",
+    "BPA_DNPC_COMM",
+    "BPA_ONEAD_COMM",
+    "TOPOGRAPHY_HOD",
+    "TOPOGRAPHY_AGENT",
+    "BPA_SRA_SUB_DIRECTOR",
+    "BPA_CAD_DGDCF_SUB_DIRECTOR",
+    "BPA_SUB_DIRECTOR",
+    "BPA_CAD_DGDCF_HOD",
+    "BPA_CAD_DGDCF_AGENT",
+    "BPA_CAD_DGDCF_COMM",
+    "BPA_CAD_DGDCF_SUB_DIRECTOR",
+    "BPA_CAD_DGDCF_SUB_DIRECTOR",
   ];
 
   const roles = userObject?.info?.roles;
@@ -183,6 +199,35 @@ const TopBar = ({
       </div>
     );
   }
+  
+  // Check if user is citizen or architect - show modern header
+  const isCitizen = roles?.length === 1 && roles[0].code === "CITIZEN";
+  const isArchitect = roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const isEmployee = roles?.some((role) => priorityRoles.includes(role.code));
+  
+  if (isCitizen || isArchitect) {
+    return (
+      <CitizenTopBar
+        t={t}
+        userDetails={userDetails}
+        userOptions={userOptions}
+        mobileView={mobileView}
+      />
+    );
+  }
+  
+  // Show modern employee header for BPA employees
+  if (isEmployee) {
+    return (
+      <EmployeeTopBar
+        t={t}
+        userDetails={userDetails}
+        userOptions={userOptions}
+        mobileView={mobileView}
+      />
+    );
+  }
+  
   const loggedin = userDetails?.access_token ? true : false;
   return (
     <div className="topbar" style={{ position: 'relative' }}>
