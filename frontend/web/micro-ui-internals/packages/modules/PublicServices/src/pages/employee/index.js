@@ -17,6 +17,8 @@ import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
 import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
 import Apply from "../citizen/Apply";
+import CitizenDashboard from "../citizen/Dashboard";
+import CitizenHelp from "../citizen/Help";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -55,9 +57,13 @@ const App = ({ path, stateCode, userType, tenants }) => {
         {/* <React.Fragment>
           <SampleBreadCrumbs location={location} />
         </React.Fragment> */}
-        {/* New citizen apply page */}
-        <div style={{ background: "#1a9a8d0f" }}>
-          <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
+                  <div style={{ background: "#1a9a8d0f" }}>
+            {/* citizen */}
+            <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
+            <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
+            <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
+
+          {/* employee */}
           <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
           <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
           <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />

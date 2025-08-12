@@ -193,7 +193,7 @@ const Home = ({
 
           <Route path={`${path}/login`}>
             {userDetails?.access_token ? (
-              <Redirect to={`/${window?.contextPath}/citizen/publicservices/modules?selectedPath=Apply`} />
+              <Redirect to={`/${window?.contextPath}/citizen/publicservices/dashboard`} />
             ) : (
               <Login stateCode={stateCode} />
             )}
@@ -201,7 +201,7 @@ const Home = ({
 
           <Route path={`${path}/register`}>
             {userDetails?.access_token ? (
-              <Redirect to={`/${window?.contextPath}/citizen/publicservices/modules?selectedPath=Apply`} />
+              <Redirect to={`/${window?.contextPath}/citizen/publicservices/dashboard`} />
             ) : (
               <Login stateCode={stateCode} isUserRegistered={false} />
             )}
