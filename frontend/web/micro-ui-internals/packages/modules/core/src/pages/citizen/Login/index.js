@@ -102,7 +102,15 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   const handleMobileChange = (event) => {
-    const { value } = event.target;
+    // Handle both event objects and direct values safely
+    let value;
+    if (typeof event === 'string' || typeof event === 'number') {
+      value = event.toString();
+    } else if (event && event.target && event.target.value !== undefined) {
+      value = event.target.value;
+    } else {
+      value = '';
+    }
     setParmas({ ...params, mobileNumber: value });
   };
 
@@ -257,7 +265,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   return (
-    <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="citizen-form-wrapper">
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <Switch>
         <AppContainer>
           {showSuccessModal && (

@@ -137,6 +137,7 @@ const Home = ({
 
   return (
     <div className={classname}>
+      {!location?.pathname?.includes('login') && (
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}
@@ -147,9 +148,10 @@ const Home = ({
         handleUserDropdownSelection={handleUserDropdownSelection}
         logoUrl={logoUrl}
         showSidebar={true}
-        linkData={linkData}
-        islinkDataLoading={islinkDataLoading}
-      />
+          linkData={linkData}
+          islinkDataLoading={islinkDataLoading}
+        />
+      )}
 
       <div className={`main center-container citizen-home-container mb-25`}>
         {/* {hideSidebar ? null : (

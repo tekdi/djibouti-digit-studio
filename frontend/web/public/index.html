@@ -9,7 +9,19 @@
       rel="stylesheet" type="text/css" />
       <!-- Tailwind CSS CDN -->
       <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet">
-      
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+      <!-- Tailwind v4 Theme Configuration -->
+      <style type="text/tailwindcss">
+        @theme {
+          --color-djibouti-primary: #006769;
+          --color-djibouti-primary-light: #4ca6a8;
+          --color-djibouti-primary-dark: #004a4b;
+          --color-djibouti-secondary: #cdd23e;
+          --color-djibouti-sage: #748269;
+        }
+      </style>
+
       <!-- Djibouti Design System -->
       <style>
         :root {
@@ -78,7 +90,7 @@
           background: linear-gradient(90deg, #006769 0%, #cdd23e 100%) !important; 
         }
         .bg-gradient-djibouti-light { 
-          background: linear-gradient(90deg, #4ca6a8bf 0%, #cdd23eb3   100%) !important; 
+          background: linear-gradient(90deg, #006769 0%, #cdd23e   100%) !important; 
         }
         
         /* Custom utilities */
@@ -91,6 +103,7 @@
           box-shadow: 0 4px 15px rgba(0, 103, 105, 0.1) !important;
           border: 1px solid rgba(0, 103, 105, 0.1) !important;
         }
+ 
       </style>
       <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.8.2-beta.48/dist/index.css" />
       <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-components-css@0.2.0-beta.4/dist/index.css" />
