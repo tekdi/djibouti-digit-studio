@@ -67,20 +67,22 @@ const EmployeeApp = ({
     <div className="employee">
       <Switch>
         <Route path={`${path}/user`}>
-          <TopBarSideBar
-            t={t}
-            stateInfo={stateInfo}
-            userDetails={userDetails}
-            CITIZEN={CITIZEN}
-            cityDetails={cityDetails}
-            mobileView={mobileView}
-            handleUserDropdownSelection={handleUserDropdownSelection}
-            logoUrl={logoUrl}
-            showSidebar={isUserProfile ? true : false}
-            showLanguageChange={!showLanguageChange}
-            linkData={linkData}
-            islinkDataLoading={islinkDataLoading}
-          />
+          {!location?.pathname?.includes('login') && (
+            <TopBarSideBar
+              t={t}
+              stateInfo={stateInfo}
+              userDetails={userDetails}
+              CITIZEN={CITIZEN}
+              cityDetails={cityDetails}
+              mobileView={mobileView}
+              handleUserDropdownSelection={handleUserDropdownSelection}
+              logoUrl={logoUrl}
+              showSidebar={isUserProfile ? true : false}
+              showLanguageChange={!showLanguageChange}
+              linkData={linkData}
+              islinkDataLoading={islinkDataLoading}
+            />
+          )}
           <div
             className={isUserProfile ? "grounded-container" : "loginContainer"}
             style={
