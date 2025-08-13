@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { LuFile, LuCreditCard, LuBell } from "react-icons/lu";
 
 const WelcomeSection = ({ userName = "Ahmed" }) => {
+  // Extract first name only from full name
+  const getFirstName = (fullName) => {
+    if (!fullName) return "Utilisateur";
+    const nameParts = fullName.trim().split(' ');
+    return nameParts[0];
+  };
+
+  const firstName = getFirstName(userName);
+
   return (
     <div className="relative rounded-xl shadow-xl p-8 border overflow-hidden" style={{
       background: "linear-gradient(135deg, #006769 0%, #004a4b 50%, #006769 100%)",
@@ -16,7 +25,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
       
       <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-8">
         <div className="text-white">
-          <h1 className="text-3xl font-bold tracking-tight">Bienvenue, {userName}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Bienvenue, {firstName}</h1>
           <p className="text-white mt-2 text-lg" style={{ opacity: 0.9 }}>
             Voici le résumé de vos activités et demandes
           </p>

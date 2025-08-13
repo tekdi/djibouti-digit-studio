@@ -119,7 +119,7 @@ const CitizenDashboard = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto pt-10">
+    <div className="max-w-7xl mx-auto pt-5">
       <div className="space-y-6">
         <WelcomeSection userName={userName} />
         
