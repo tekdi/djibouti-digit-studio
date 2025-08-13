@@ -38,13 +38,13 @@ jobs:
       - name: SSH to Bastion and Deploy
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_ST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_ST }}
           script: |
             set -e
-            cd /home/ubuntu/phase2/DIGIT-DevOps/deploy-as-code/helm/charts/studio-services/digit-studio
+            cd /home/ubuntu/phase3/DIGIT-DevOps/deploy-as-code/helm/charts/studio-services/digit-studio
             sed -i "/repository:.*ttpldevops\\/digit-studio/{n;s/tag:.*/tag: \\\"${{ env.TAG }}\\\"/;}" values.yaml
 
-            cd ../../../../helm/environments
-            helm upgrade -i digit-studio ../charts/studio-services/digit-studio/ -n egov -f env.yaml -f env-secrets.yaml
+            cd ../../../../helm/charts/environments
+            helm upgrade -i digit-studio ../studio-services/digit-studio/ -n egov -f env.yaml -f env-secrets.yaml
