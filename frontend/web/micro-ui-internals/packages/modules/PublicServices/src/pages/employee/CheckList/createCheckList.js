@@ -24,12 +24,8 @@ const CreateCheckList = () => {
 
   const userDetails = Digit.UserService.getUser();
 
-  const isHODorAGENT = userDetails?.info?.roles?.some(
-    (role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS"
-  );
-  const isSdeccHODorAGENT = userDetails?.info?.roles?.some(
-    (role) => role.code === "BPA_SDECC_HOD" || role.code === "BPA_SDECC_AGENT"
-  );
+  const isHODorAGENT = userDetails?.info?.roles?.some((role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS");
+  const isSdeccHODorAGENT = userDetails?.info?.roles?.some((role) => role.code === "BPA_SDECC_HOD" || role.code === "BPA_SDECC_AGENT");
   let styleCondition = {};
   if (!isHODorAGENT && state !== code.split(".")[1] && code.split(".")[1] !== "PENDING_ACTION_BY_SDECC_AGENT") {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
@@ -228,21 +224,21 @@ const CreateCheckList = () => {
           console.log(res, "application_response");
           if (action == "SAVE_AS_DRAFT") {
             setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_CREATE_SUCCESS_CHECKLIST`) });
-           setTimeout(() => {
-             window.history.back();
-             setTimeout(() => {
-               window.location.reload();
-             }, 1000);
-           }, 3000);
+            setTimeout(() => {
+              window.history.back();
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }, 3000);
           }
           if (action == "SUBMIT") {
             setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_SUBMIT_SUCCESS_CHECKLIST`) });
-           setTimeout(() => {
-             window.history.back();
-             setTimeout(() => {
-               window.location.reload();
-             }, 1000);
-           }, 3000);
+            setTimeout(() => {
+              window.history.back();
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }, 3000);
           }
         },
         onError: () => {
@@ -313,7 +309,7 @@ const CreateCheckList = () => {
         <Toast
           type={showToast?.type}
           label={t(showToast?.label)}
-          style={{zIndex:'999'}}
+          style={{ zIndex: "999" }}
           onClose={() => {
             setShowToast(null);
           }}

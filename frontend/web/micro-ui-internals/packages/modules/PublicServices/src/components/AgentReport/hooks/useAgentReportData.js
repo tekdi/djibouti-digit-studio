@@ -7,10 +7,10 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
 
   const checkExistingChecklist = useCallback(async () => {
     if (!applicationNumber || !serviceCode) return;
-    
+
     try {
       const tenantId = Digit?.ULBService?.getCurrentTenantId();
-      
+
       if (!tenantId) {
         console.warn("Tenant ID not available");
         return;
@@ -24,10 +24,10 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
           tenantId: tenantId,
         },
       };
-      
+
       const response = await Digit.CustomService.getResponse(request);
       const application = response?.Application?.[0];
-      
+
       if (application?.additionalDetails?.agentChecklist) {
         setChecklistData(application.additionalDetails.agentChecklist);
         setIsSubmitted(true);
@@ -47,6 +47,6 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
     checkExistingChecklist,
     setChecklistData,
     setIsSubmitted,
-    setIsLoading
+    setIsLoading,
   };
-}; 
+};

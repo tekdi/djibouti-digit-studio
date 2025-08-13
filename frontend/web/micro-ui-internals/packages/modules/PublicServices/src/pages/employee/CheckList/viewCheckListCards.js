@@ -45,13 +45,13 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           let items = res?.ServiceDefinitions || [];
 
           // Find checklistConfig for current service
-          const checklistConfig = checklistByService.find(list => list.service === service);
+          const checklistConfig = checklistByService.find((list) => list.service === service);
 
           // If there's a checklistConfig, filter the items accordingly
           if (checklistConfig) {
             const allowedCodes = checklistConfig.checklist;
-            items = items.filter(item => allowedCodes.includes(item.code));
-            
+            items = items.filter((item) => allowedCodes.includes(item.code));
+
             // Add custom checklist if configured
             if (allowedCodes.includes("customAgentChecklist")) {
               items.push({
@@ -59,8 +59,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 code: "customAgentChecklist",
                 clientId: "AGENT_FIELD_REPORT",
                 auditDetails: {
-                  createdTime: Date.now()
-                }
+                  createdTime: Date.now(),
+                },
               });
             }
           }
@@ -86,26 +86,11 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
         .map((item, index) => {
           // Check if this is a custom checklist
           if (item.code === "customAgentChecklist") {
-            return (
-              <AgentReportCard 
-                key={index}
-                service={service} 
-                state={state} 
-                t={t} 
-              />
-            );
+            return <AgentReportCard key={index} service={service} state={state} t={t} />;
           }
-          
+
           // Regular checklist
-          return (
-            <CheckListCard 
-              key={index}
-              item={item} 
-              t={t} 
-              accid={accountID} 
-              state={state} 
-            />
-          );
+          return <CheckListCard key={index} item={item} t={t} accid={accountID} state={state} />;
         })}
     </React.Fragment>
   );
