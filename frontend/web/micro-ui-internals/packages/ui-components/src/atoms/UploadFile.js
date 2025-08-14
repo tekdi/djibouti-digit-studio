@@ -32,8 +32,16 @@ const UploadFile = (props) => {
           return cleanType;
         }
         if (cleanType.includes('MSWORD')) return 'DOC';
+        if (cleanType.includes('OPENXMLFORMATS-OFFICEDOCUMENT')) {
+          if (cleanType.includes('WORDPROCESSINGML')) return 'DOCX';
+          if (cleanType.includes('SPREADSHEETML')) return 'XLSX';
+          if (cleanType.includes('PRESENTATIONML')) return 'PPTX';
+          return 'OFFICE';
+        }
+
         if (cleanType.includes('WORDPROCESSINGML') || cleanType.includes('DOCX')) return 'DOCX';
         if (cleanType.includes('SPREADSHEETML') || cleanType.includes('XLSX')) return 'XLSX';
+        if (cleanType.includes('MSWORD')) return 'DOC';
 
         return cleanType;
       });
