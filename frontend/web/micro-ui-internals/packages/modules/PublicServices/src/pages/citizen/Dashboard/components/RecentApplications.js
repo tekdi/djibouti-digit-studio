@@ -1,8 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { LuFileText, LuArrowRight } from "react-icons/lu";
+import { LuFileText, LuArrowRight, LuFilePlus } from "react-icons/lu";
 
-const RecentApplications = ({ applications }) => {
+const RecentApplications = ({ applications = [] }) => {
   const getStatusStyle = (status) => {
     switch (status) {
       case "En traitement":
@@ -31,6 +30,42 @@ const RecentApplications = ({ applications }) => {
         };
     }
   };
+
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center py-16 px-6">
+      <div 
+        className="p-4 rounded-full mb-6 shadow-sm"
+        style={{
+          background: "linear-gradient(135deg, rgba(0, 103, 105, 0.1) 0%, rgba(0, 103, 105, 0.05) 100%)"
+        }}
+      >
+        <LuFilePlus className="w-12 h-12 text-gray-400" />
+      </div>
+      <h3 className="text-lg font-semibold text-gray-700 mb-2">Aucune demande récente</h3>
+      <p className="text-sm text-gray-500 text-center max-w-sm leading-relaxed mb-6">
+        Vous n'avez soumis aucune demande récemment. Commencez par créer votre première demande.
+      </p>
+      <a 
+        href="/citizen/applications/new"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium text-white shadow-sm transition-all duration-200 hover:shadow-md"
+        style={{ 
+          backgroundColor: "#006769",
+          background: "linear-gradient(135deg, #006769 0%, #004a4b 100%)"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-1px)";
+          e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
+        }}
+      >
+        <LuFilePlus className="w-4 h-4" />
+        Nouvelle demande
+      </a>
+    </div>
+  );
 
   return (
     <div 
@@ -62,66 +97,72 @@ const RecentApplications = ({ applications }) => {
             </div>
             <h2 className="text-xl font-bold text-gray-800">Demandes récentes</h2>
           </div>
-          <Link 
-            to="/citizen/applications/pending" 
-            className="flex items-center gap-2 text-sm font-medium group transition-colors"
-            style={{ color: "#006769" }}
-            onMouseEnter={(e) => {
-              e.target.style.color = "#004a4b";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = "#006769";
-            }}
-          >
-            Voir tout
-            <LuArrowRight 
-              className="w-4 h-4 transition-transform group-hover:translate-x-1" 
-            />
-          </Link>
+          {applications.length > 0 && (
+            <a 
+              href="/citizen/applications/pending" 
+              className="flex items-center gap-2 text-sm font-medium group transition-colors"
+              style={{ color: "#006769" }}
+              onMouseEnter={(e) => {
+                e.target.style.color = "#004a4b";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = "#006769";
+              }}
+            >
+              Voir tout
+              <LuArrowRight 
+                className="w-4 h-4 transition-transform group-hover:translate-x-1" 
+              />
+            </a>
+          )}
         </div>
       </div>
       
       <div style={{ borderColor: "#e5e7eb" }}>
-        {applications.map((app) => (
-          <div 
-            key={app.id} 
-            className="p-6 transition-all duration-200 group"
-            style={{
-              borderBottom: "1px solid #e5e7eb"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(249, 250, 251, 0.8)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h3 
-                className="font-medium text-gray-900 group-hover:transition-colors"
-                onMouseEnter={(e) => {
-                  e.target.style.color = "#006769";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = "#111827";
-                }}
-              >
-                {app.title}
-              </h3>
-              <span 
-                className="px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm"
-                style={getStatusStyle(app.status)}
-              >
-                {app.status}
-              </span>
+        {applications.length === 0 ? (
+          <EmptyState />
+        ) : (
+          applications.map((app) => (
+            <div 
+              key={app.id} 
+              className="p-6 transition-all duration-200 group"
+              style={{
+                borderBottom: "1px solid #e5e7eb"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(249, 250, 251, 0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 
+                  className="font-medium text-gray-900 group-hover:transition-colors"
+                  onMouseEnter={(e) => {
+                    e.target.style.color = "#006769";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = "#111827";
+                  }}
+                >
+                  {app.title}
+                </h3>
+                <span 
+                  className="px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm"
+                  style={getStatusStyle(app.status)}
+                >
+                  {app.status}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">{app.location}</p>
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <span>Soumis le {app.submittedDate}</span>
+                <span>Dernière mise à jour: {app.lastUpdate}</span>
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mb-3">{app.location}</p>
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <span>Soumis le {app.submittedDate}</span>
-              <span>Dernière mise à jour: {app.lastUpdate}</span>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
   const [error, setError] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (mobileNumber && mobileNumber.length > 1) {
       if (!mobileNumber.startsWith("77")) {
         setError(t("CORE_COMMON_MOBILE_NUMBER_INVALID_MSG"));

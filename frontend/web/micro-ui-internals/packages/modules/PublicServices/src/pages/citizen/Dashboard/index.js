@@ -67,57 +67,6 @@ const CitizenDashboard = () => {
     }
   ];
 
-  const recentApplications = [
-    {
-      id: "1",
-      title: "Permis de construire",
-      status: "En traitement",
-      location: "123 Rue de la Paix, Djibouti",
-      submittedDate: "15/03/2024",
-      lastUpdate: "18/03/2024"
-    },
-    {
-      id: "2",
-      title: "Certificat d'urbanisme",
-      status: "Approuvée",
-      location: "45 Avenue des Champs-Élysées, Djibouti",
-      submittedDate: "10/03/2024",
-      lastUpdate: "15/03/2024"
-    },
-    {
-      id: "3",
-      title: "Déclaration préalable",
-      status: "Paiement requis",
-      location: "78 Boulevard Saint-Germain, Djibouti",
-      submittedDate: "05/03/2024",
-      lastUpdate: "08/03/2024"
-    }
-  ];
-
-  const notifications = [
-    {
-      id: "1",
-      title: "Demande approuvée",
-      message: "Votre permis de construire a été approuvé.",
-      type: "success",
-      time: "Il y a 2 heures"
-    },
-    {
-      id: "2",
-      title: "Paiement requis",
-      message: "Veuillez effectuer le paiement pour votre déclaration préalable.",
-      type: "warning",
-      time: "Il y a 1 jour"
-    },
-    {
-      id: "3",
-      title: "Mise à jour",
-      message: "Nouvelle fonctionnalité disponible : suivi en temps réel.",
-      type: "info",
-      time: "Il y a 2 jours"
-    }
-  ];
-
   return (
     <div className="max-w-7xl mx-auto pt-5">
       <div className="space-y-6">
@@ -130,8 +79,8 @@ const CitizenDashboard = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentApplications applications={recentApplications} />
-          <NotificationsList notifications={notifications} />
+          <RecentApplications applications={[]} />
+          <NotificationsList notifications={[]} />
         </div>
       </div>
     </div>
