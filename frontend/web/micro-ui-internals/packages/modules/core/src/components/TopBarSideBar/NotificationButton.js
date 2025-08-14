@@ -13,3 +13,4 @@ const NotificationButton = ({ notificationCount = 1 }) => {
 };
 
 export default NotificationButton;
+

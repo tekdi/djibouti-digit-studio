@@ -16,6 +16,9 @@ import Calculation from "../../../../core/src/pages/citizen/Calculation";
 import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
 import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
+import Apply from "../citizen/Apply";
+import CitizenDashboard from "../citizen/Dashboard";
+import CitizenHelp from "../citizen/Help";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -23,15 +26,20 @@ const SampleBreadCrumbs = ({ location }) => {
   const userType = userDetails?.info?.type?.toLowerCase();
   const pathname = location.pathname.replace(/\/$/, "").split("/").pop();
 
+  const homeLink =
+    userType === "citizen"
+      ? `/${window?.contextPath}/${userType}/publicservices/apply`
+      : `/${window?.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`;
+
   const crumbs = [
     {
-      internalLink: `/${window?.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`,
+      internalLink: homeLink,
       content: t("HOME"),
       show: true,
     },
   ];
 
-  if (pathname && pathname !== "modules") {
+  if (pathname && pathname !== "modules" && pathname !== "apply") {
     crumbs.push({
       content: t(pathname.toUpperCase()),
       show: true,
@@ -45,23 +53,31 @@ const App = ({ path, stateCode, userType, tenants }) => {
 
   return (
     <Switch>
-      <AppContainer className="ground-container">
-        <React.Fragment>
+      <AppContainer>
+        {/* <React.Fragment>
           <SampleBreadCrumbs location={location} />
-        </React.Fragment>
-        <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
-        <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
-        <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />
-        <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />
-        <PrivateRoute path={`${path}/modules`} component={() => <ModulePageComponent />} />
-        <PrivateRoute path={`${path}/:module/inbox`} component={() => <InboxService />} />
-        <PrivateRoute path={`${path}/:module/CitizenInbox`} component={() => <CitizenInboxService />} />
-        <PrivateRoute path={`${path}/viewapp`} component={() => <ViewCheckListCards />} />
-        <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
-        <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
-        <PrivateRoute path={`${path}/calculation`} component={() => <Calculation />} />
-        <PrivateRoute path={`${path}/:module/:service/Edit`} component={() => <DigitDemoEditComponent />} />
-        <PrivateRoute path={`${path}/:module/:service/Create`} component={() => <DigitDemoCreateComponent />} />
+        </React.Fragment> */}
+                  <div style={{ background: "#1a9a8d0f" }}>
+            {/* citizen */}
+            <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
+            <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
+            <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
+
+          {/* employee */}
+          <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
+          <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
+          <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />
+          <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />
+          <PrivateRoute path={`${path}/modules`} component={() => <ModulePageComponent />} />
+          <PrivateRoute path={`${path}/:module/inbox`} component={() => <InboxService />} />
+          <PrivateRoute path={`${path}/:module/CitizenInbox`} component={() => <CitizenInboxService />} />
+          <PrivateRoute path={`${path}/viewapp`} component={() => <ViewCheckListCards />} />
+          <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
+          <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
+          <PrivateRoute path={`${path}/calculation`} component={() => <Calculation />} />
+          <PrivateRoute path={`${path}/:module/:service/Edit`} component={() => <DigitDemoEditComponent />} />
+          <PrivateRoute path={`${path}/:module/:service/Create`} component={() => <DigitDemoCreateComponent />} />
+        </div>
       </AppContainer>
     </Switch>
   );

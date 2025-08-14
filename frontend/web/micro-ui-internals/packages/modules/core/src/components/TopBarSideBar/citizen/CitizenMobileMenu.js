@@ -20,7 +20,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
       id: "dashboard",
       label: "Tableau de bord",
       icon: LuLayoutDashboard,
-      path: `/${window?.contextPath}/citizen/publicservices/modules?selectedPath=Apply`,
+      path: `/${window?.contextPath}/citizen/publicservices/dashboard`,
     },
     {
       id: "requests",
@@ -38,7 +38,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
       id: "help",
       label: "Aide",
       icon: LuCircleHelp,
-      path: `/${window?.contextPath}/citizen/help`,
+      path: `/${window?.contextPath}/citizen/publicservices/help`,
     },
   ];
 
@@ -48,7 +48,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
   };
 
   const isTabActive = (tabId) => {
-    if (tabId === "dashboard" && pathname.includes("/publicservices/modules")) {
+    if (tabId === "dashboard" && (pathname.includes("/dashboard") || pathname.includes("/publicservices/modules"))) {
       return true;
     }
     return activeTab === tabId;
