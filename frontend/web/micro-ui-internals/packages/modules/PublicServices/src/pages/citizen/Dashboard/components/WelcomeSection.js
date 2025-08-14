@@ -32,8 +32,8 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
         </div>
         
         <div className="flex items-center gap-3 flex-wrap">
-          <Link 
-            to="/citizen/publicservices/apply" 
+          <a 
+            href={`/${window?.contextPath}/citizen/publicservices/apply`}
             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group"
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -54,10 +54,10 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
               <LuFile className="w-5 h-5" />
             </div>
             <span className="font-medium">Nouvelle demande</span>
-          </Link>
+          </a>
           
-          <Link 
-            to="/citizen/payments" 
+          <a 
+            href={`/${window?.contextPath}/citizen/payments`}
             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group"
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -78,10 +78,10 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
               <LuCreditCard className="w-5 h-5" />
             </div>
             <span className="font-medium">Effectuer un paiement</span>
-          </Link>
+          </a>
 
-          <Link 
-            to="/citizen/notifications" 
+          <a 
+            href={`#`}
             className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group relative"
             style={{
               backgroundColor: "rgba(239, 68, 68, 0.2)",
@@ -111,7 +111,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
             >
               3
             </span>
-          </Link>
+          </a>
         </div>
       </div>
     </div>
