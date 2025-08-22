@@ -256,7 +256,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 
                 {/* Resend Timer */}
                 <div className="text-center">
-                  {timeLeft > 0 ? (
+      {timeLeft > 0 ? (
                     <p className="text-sm text-gray-500">
                       Renvoyer le code dans {timeLeft}s
                     </p>
@@ -371,7 +371,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
           </div>
         </div>
       </div>
-    </div>
+      </div>
   );
 };
 

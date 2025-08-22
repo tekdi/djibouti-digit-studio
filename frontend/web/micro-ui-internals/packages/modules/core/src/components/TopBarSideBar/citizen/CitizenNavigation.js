@@ -41,7 +41,7 @@ const CitizenNavigation = ({ mobileView }) => {
         {
           id: "pending-requests",
           label: "Demandes en cours",
-          path: `/${window?.contextPath}/citizen/publicservices/BPA/CitizenInbox`,
+          path: `/${window?.contextPath}/citizen/publicservices/applications/all`,
           icon: LuClock,
         },
         {

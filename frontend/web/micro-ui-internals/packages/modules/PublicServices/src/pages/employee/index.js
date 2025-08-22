@@ -19,6 +19,7 @@ import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
 import Apply from "../citizen/Apply";
 import CitizenDashboard from "../citizen/Dashboard";
 import CitizenHelp from "../citizen/help";
+import CitizenApplications from "../citizen/CitizenApplications";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -61,6 +62,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
           {/* citizen */}
           <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
           <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
+          <PrivateRoute exact path={`${path}/applications/all`} component={() => <CitizenApplications />} />
           <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
 
           {/* employee */}
