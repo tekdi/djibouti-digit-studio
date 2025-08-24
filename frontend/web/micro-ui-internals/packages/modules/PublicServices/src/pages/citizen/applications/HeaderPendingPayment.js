@@ -26,7 +26,7 @@ const HeaderPendingPayment = ({
                 <LuCreditCard className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                <h1 className="text-4xl font-black text-gray-900 mb-2 flex items-center gap-3">
                   Demandes en Attente de Paiement
                   <LuCircleAlert className="w-8 h-8 text-orange-600" />
                 </h1>

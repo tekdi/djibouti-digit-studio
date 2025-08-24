@@ -40,7 +40,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
           </a>
           
           <a 
-            href={`/${window?.contextPath}/citizen/payments`}
+            href={`/${window?.contextPath}/citizen/publicservices/applications/pending-payment`}
             className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20 backdrop-blur-sm hover:scale-105 hover:shadow-lg hover:shadow-primary/20 group"
           >
             <div className="p-2 rounded-lg transition-all" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>

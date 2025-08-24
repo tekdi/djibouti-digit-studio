@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import { LuClock, LuDollarSign, LuUsers, LuDownload, LuCircleCheck, LuArrowLeft } from "react-icons/lu";
 import { servicesData } from "./servicesData";
+import axios from "axios";
 
 const TABS = [
   { key: 'steps', label: 'Étapes' },
@@ -20,17 +21,43 @@ const ServiceDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get service data from our servicesData
-    const serviceData = servicesData[serviceId];
-    const apiServiceData = location.state?.serviceData;
-    
-    if (serviceData) {
-      setService(serviceData);
-    }
-    if (apiServiceData) {
-      setServiceApiData(apiServiceData);
-    }
-    setLoading(false);
+    const fetchServiceData = async () => {
+      try {
+        // Get service data from our servicesData
+        const serviceData = servicesData[serviceId];
+        const apiServiceData = location.state?.serviceData;
+        
+        if (serviceData) {
+          setService(serviceData);
+        }
+        
+        // If we have API data from navigation state, use it
+        if (apiServiceData) {
+          setServiceApiData(apiServiceData);
+        } else {
+          // Otherwise, fetch it from the API
+          const tenantId = Digit.ULBService.getCurrentTenantId();
+          const response = await axios.get("/public-service/v1/service", {
+            params: { tenantId },
+            headers: {
+              "X-Tenant-Id": tenantId,
+              "auth-token": Digit.UserService.getUser()?.access_token,
+            },
+          });
+          
+          const apiData = response.data?.Services?.find(s => s.businessService === serviceId);
+          if (apiData) {
+            setServiceApiData(apiData);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching service data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServiceData();
   }, [serviceId, location.state]);
 
   const handleStartRequest = () => {
@@ -39,6 +66,10 @@ const ServiceDetailPage = () => {
     if (serviceApiData) {
       const url = `/${window.contextPath}/${userType}/publicservices/${serviceApiData.module}/${serviceApiData.businessService}/Apply?serviceCode=${serviceApiData.serviceCode}`;
       window.location.href = url;
+    } else {
+      // Fallback if API data is not available
+      console.error("Service API data not available");
+      // You could show a toast or error message here
     }
   };
 

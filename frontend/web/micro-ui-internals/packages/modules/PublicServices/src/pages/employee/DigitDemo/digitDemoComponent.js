@@ -2,6 +2,7 @@ import { FormComposerV2, Stepper, Toast } from "@egovernments/digit-ui-component
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
+import { LuArrowLeft } from "react-icons/lu";
 import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaUtil";
 import { transformToApplicationPayload } from "../../../utils";
 import Loader from "../../../../../../ui-components/src/atoms/Loader";
@@ -27,6 +28,30 @@ const DigitDemoComponent = ({ editdata }) => {
   const serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+
+  // Get service title from servicesData
+  const getServiceTitle = () => {
+    const servicesData = {
+      BPA_PCO: "Permis de Construire Ordinaire (PCO) - Établissements Recevant du Public",
+      BPA_PCO_SIMPLE: "Permis de Construire Ordinaire (PCO) - Constructions Simples",
+      BPA_PCS: "Permis de Construire Simplifié (PCS)",
+      BPA_PL: "Permis de Lotir",
+      BPA_PD: "Permis de Démolir",
+      BPA_PF: "Permis de Fonctionner",
+      BPA_ATARR: "Autorisation de Travaux d'Arrondissement",
+      BPA_PR: "Permis de Remblai (PR)",
+      BPA_APE: "Approbation de Plan d'Exécution (APE)",
+      BPA_PV: "P.V d'implantation",
+      BPA_PS: "Permis de Surélévation",
+      BPA_CCR: "Certificat de Conformité de Remblai (CCR)",
+      BPA_CCE: "Certificat de Conformité Électrique (CCE)",
+      BPA_CCP: "Certificat de Conformité Parasismique (CCP)",
+      BPA_CCG: "Certificat de Conformité Général (CCG)",
+    };
+    // Fix the service code issue - remove the duplicate BPA_ prefix
+    const cleanServiceCode = serviceCode.replace("BPA_BPA_", "BPA_");
+    return servicesData[cleanServiceCode] || cleanServiceCode;
+  };
 
   // Get persisted state from localStorage
   const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
@@ -335,6 +360,12 @@ const DigitDemoComponent = ({ editdata }) => {
 
   const closeToast = () => setShowToast(false);
 
+  // Handle back button click
+  const handleBackToServiceDetails = () => {
+    const userType = Digit.UserService.getUser()?.info?.type?.toLowerCase();
+    history.push(`/${window.contextPath}/${userType}/publicservices/service/${service}`);
+  };
+
   if (moduleListLoading || workflowDetailsLoading || isLoadingHrmsSearch) return <Loader />;
 
   if (isLoading) return <Loader />;
@@ -343,37 +374,60 @@ const DigitDemoComponent = ({ editdata }) => {
 
   return (
     <React.Fragment>
-      <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
-      {isSummaryStep ? (
-        <div className="summary-container">
-          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        {/* Beautiful Modern Header */}
+        <div className="bg-gradient-djibouti-light rounded-2xl p-4 mb-8 shadow-lg">
+          <div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-2 h-8 bg-white rounded-full"></div>
+                <h1 className="text-3xl font-bold text-white">Nouvelle Demande</h1>
+              </div>
+              <button
+                onClick={handleBackToServiceDetails}
+                className="flex items-center gap-3 bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-200 backdrop-blur-sm"
+              >
+                <LuArrowLeft className="w-5 h-5" />
+                <span className="font-medium">Retour aux détails</span>
+              </button>
+            </div>
+
+            <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl">{getServiceTitle()}</p>
+          </div>
         </div>
-      ) : (
-        <FormComposerV2
-          key={`${currentStep}-${currentFormConfig?.name}`}
-          heading={t(`${serviceCode}_HEADING`)}
-          label={currentStep === steps.length - 1 ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          config={[
-            {
-              ...currentFormConfig,
-              body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-            },
-          ]}
-          fieldStyle={{ marginRight: 0 }}
-          currentStep={currentStep}
-          defaultValues={
-            currentFormConfig?.type === "multiChildForm"
-              ? { ...formData }
-              : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
-          }
-          onSubmit={onSubmit}
-          onPrevious={onPrevious}
-          onFormValueChange={onFormValueChange}
-        />
-      )}
-      {showToast && (
-        <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
-      )}
+
+        <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
+        {isSummaryStep ? (
+          <div className="summary-container">
+            <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
+          </div>
+        ) : (
+          <FormComposerV2
+            key={`${currentStep}-${currentFormConfig?.name}`}
+            // heading={t(`${serviceCode}_HEADING`)}
+            label={currentStep === steps.length - 1 ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
+            config={[
+              {
+                ...currentFormConfig,
+                body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+              },
+            ]}
+            fieldStyle={{ marginRight: 0 }}
+            currentStep={currentStep}
+            defaultValues={
+              currentFormConfig?.type === "multiChildForm"
+                ? { ...formData }
+                : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
+            }
+            onSubmit={onSubmit}
+            onPrevious={onPrevious}
+            onFormValueChange={onFormValueChange}
+          />
+        )}
+        {showToast && (
+          <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
+        )}
+      </div>
     </React.Fragment>
   );
 };

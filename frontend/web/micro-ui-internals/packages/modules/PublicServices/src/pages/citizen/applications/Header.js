@@ -28,7 +28,7 @@ const Header = ({
                 <LuFileText className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Mes Demandes</h1>
+                <h1 className="text-4xl font-black text-gray-900 mb-2">Mes Demandes</h1>
                 <p className="text-lg text-gray-600">Gérez et suivez toutes vos demandes de permis</p>
               </div>
             </div>
