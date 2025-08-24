@@ -16,10 +16,14 @@ import Calculation from "../../../../core/src/pages/citizen/Calculation";
 import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
 import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
+
+// citizen
 import Apply from "../citizen/Apply";
 import CitizenDashboard from "../citizen/Dashboard";
 import CitizenHelp from "../citizen/help";
-import CitizenApplications from "../citizen/CitizenApplications";
+import CitizenApplications from "../citizen/applications";
+import CitizenApplicationsCompleted from "../citizen/applications/CitizenApplicationsCompleted";
+import CitizenApplicationsPendingPayment from "../citizen/applications/CitizenApplicationsPendingPayment";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -62,7 +66,9 @@ const App = ({ path, stateCode, userType, tenants }) => {
           {/* citizen */}
           <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
           <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
-          <PrivateRoute exact path={`${path}/applications/all`} component={() => <CitizenApplications />} />
+          <PrivateRoute exact path={`${path}/applications/pending`} component={() => <CitizenApplications />} />
+          <PrivateRoute exact path={`${path}/applications/completed`} component={() => <CitizenApplicationsCompleted />} />
+          <PrivateRoute exact path={`${path}/applications/pending-payment`} component={() => <CitizenApplicationsPendingPayment />} />
           <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
 
           {/* employee */}
