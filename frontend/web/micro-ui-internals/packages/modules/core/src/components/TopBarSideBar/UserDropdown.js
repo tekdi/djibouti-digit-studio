@@ -93,8 +93,8 @@ const UserDropdown = ({ userDetails, userOptions }) => {
           <button
             onClick={() => {
               const settingsPath = primaryRole === "CITIZEN" 
-                ? `/${window?.contextPath}/citizen/settings`
-                : `/${window?.contextPath}/employee/settings`;
+                ? `/${window?.contextPath}/citizen/publicservices/settings`
+                : `/${window?.contextPath}/employee/publicservices/settings`;
               history.push(settingsPath);
               setShowUserDropdown(false);
             }}

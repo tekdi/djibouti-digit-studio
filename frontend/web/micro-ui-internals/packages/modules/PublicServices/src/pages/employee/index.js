@@ -18,12 +18,14 @@ import DigitDemoEditComponent from "./DigitDemo/digitDemoEditComponent";
 import DigitDemoCreateComponent from "./DigitDemo/digitDemoCreateComponent";
 
 // citizen
-import Apply from "../citizen/Apply";
+import Apply from "../citizen/apply";
+import ServiceDetailPage from "../citizen/apply/ServiceDetailPage";
 import CitizenDashboard from "../citizen/Dashboard";
 import CitizenHelp from "../citizen/help";
 import CitizenApplications from "../citizen/applications";
 import CitizenApplicationsCompleted from "../citizen/applications/CitizenApplicationsCompleted";
 import CitizenApplicationsPendingPayment from "../citizen/applications/CitizenApplicationsPendingPayment";
+import Settings from "../citizen/Settings";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -62,13 +64,15 @@ const App = ({ path, stateCode, userType, tenants }) => {
         {/* <React.Fragment>
           <SampleBreadCrumbs location={location} />
         </React.Fragment> */}
-        <div style={{ background: "#1a9a8d0f" }}>
+        <div style={{ background: "#1a9a8d0f" }} className="pb-10">
           {/* citizen */}
           <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
           <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
+          <PrivateRoute exact path={`${path}/service/:serviceId`} component={() => <ServiceDetailPage />} />
           <PrivateRoute exact path={`${path}/applications/pending`} component={() => <CitizenApplications />} />
           <PrivateRoute exact path={`${path}/applications/completed`} component={() => <CitizenApplicationsCompleted />} />
           <PrivateRoute exact path={`${path}/applications/pending-payment`} component={() => <CitizenApplicationsPendingPayment />} />
+          <PrivateRoute exact path={`${path}/settings`} component={() => <Settings />} />
           <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
 
           {/* employee */}

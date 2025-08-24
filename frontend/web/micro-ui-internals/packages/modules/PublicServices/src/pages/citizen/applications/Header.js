@@ -14,7 +14,8 @@ const Header = ({
   setStartDate,
   endDate = "",
   setEndDate,
-  onRefresh 
+  onRefresh,
+  isRefreshing = false
 }) => {
   return (
     <Fragment>
@@ -33,10 +34,17 @@ const Header = ({
             </div>
             <button
               onClick={onRefresh || (() => window.location.reload())}
-              className="flex items-center gap-3 px-6 py-3 bg-white border border-blue-200 rounded-2xl hover:bg-blue-50 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md"
+              disabled={isRefreshing}
+              className={`flex items-center gap-3 px-6 py-3 bg-white border border-blue-200 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md ${
+                isRefreshing 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : 'hover:bg-blue-50 hover:border-blue-300'
+              }`}
             >
-              <LuRefreshCw className="w-5 h-5 text-blue-600" />
-              <span className="font-medium text-gray-700">Actualiser</span>
+              <LuRefreshCw className={`w-5 h-5 text-blue-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="font-medium text-gray-700">
+                {isRefreshing ? 'Actualisation...' : 'Actualiser'}
+              </span>
             </button>
           </div>
         </div>

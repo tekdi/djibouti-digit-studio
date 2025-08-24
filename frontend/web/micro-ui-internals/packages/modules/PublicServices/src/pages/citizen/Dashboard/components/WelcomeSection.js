@@ -13,10 +13,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
   const firstName = getFirstName(userName);
 
   return (
-    <div className="relative rounded-xl shadow-xl p-8 border overflow-hidden" style={{
-      background: "linear-gradient(135deg, #006769 0%, #004a4b 50%, #006769 100%)",
-      borderColor: "rgba(0, 103, 105, 0.2)"
-    }}>
+    <div className="relative rounded-xl shadow-xl p-8 overflow-hidden bg-gradient-djibouti-light">
       {/* Background patterns */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute -right-20 -top-20 w-40 h-40 bg-white rounded-full blur-3xl"></div>
@@ -34,21 +31,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
         <div className="flex items-center gap-3 flex-wrap">
           <a 
             href={`/${window?.contextPath}/citizen/publicservices/apply`}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderColor: "rgba(255, 255, 255, 0.2)"
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 10px 25px rgba(0, 103, 105, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "none";
-            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20 backdrop-blur-sm hover:scale-105 hover:shadow-lg hover:shadow-primary/20 group"
           >
             <div className="p-2 rounded-lg transition-all" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
               <LuFile className="w-5 h-5" />
@@ -58,21 +41,7 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
           
           <a 
             href={`/${window?.contextPath}/citizen/payments`}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderColor: "rgba(255, 255, 255, 0.2)"
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 10px 25px rgba(0, 103, 105, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "none";
-            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20 backdrop-blur-sm hover:scale-105 hover:shadow-lg hover:shadow-primary/20 group"
           >
             <div className="p-2 rounded-lg transition-all" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
               <LuCreditCard className="w-5 h-5" />
@@ -82,28 +51,14 @@ const WelcomeSection = ({ userName = "Ahmed" }) => {
 
           <a 
             href={`#`}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-white border backdrop-blur-sm group relative"
-            style={{
-              backgroundColor: "rgba(239, 68, 68, 0.2)",
-              borderColor: "rgba(239, 68, 68, 0.3)"
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "rgba(239, 68, 68, 0.3)";
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 10px 25px rgba(239, 68, 68, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "none";
-            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20 backdrop-blur-sm hover:scale-105 hover:shadow-lg hover:shadow-primary/20 group"
           >
             <div className="p-2 rounded-lg transition-all" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
               <LuBell className="w-5 h-5" />
             </div>
             <span className="font-medium">Notifications</span>
             <span 
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white border-2"
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white"
               style={{ 
                 backgroundColor: "#ef4444",
                 borderColor: "#006769"

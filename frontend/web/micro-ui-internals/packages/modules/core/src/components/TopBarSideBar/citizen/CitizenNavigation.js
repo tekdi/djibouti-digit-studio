@@ -115,7 +115,7 @@ const CitizenNavigation = ({ mobileView }) => {
             <div key={tab.id} className="relative dropdown-container">
               <button
                 onClick={() => setShowRequestsDropdown(!showRequestsDropdown)}
-                className={`group flex items-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium ${
                   active
                     ? "text-white bg-djibouti-primary shadow-lg scale-105"
                     : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary hover:scale-105"
@@ -155,7 +155,7 @@ const CitizenNavigation = ({ mobileView }) => {
           <button
             key={tab.id}
             onClick={() => handleTabClick(tab)}
-            className={`group flex items-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+            className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium text-sm ${
               active
                 ? "text-white bg-djibouti-primary shadow-lg scale-105"
                 : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary hover:scale-105"
