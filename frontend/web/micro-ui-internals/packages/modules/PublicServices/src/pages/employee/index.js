@@ -6,7 +6,7 @@ import { Switch } from "react-router-dom";
 import DigitDemoComponent from "./DigitDemo/digitDemoComponent";
 import DigitDemoSearch from "./DigitDemo/DigitDemoSearch";
 import Response from "./Response";
-import DigitDemoViewComponent from "./DigitDemo/digitDemoViewComponent";
+import DigitDemoViewComponent from "./DigitDemo/DetailsPage";
 import ModulePageComponent from "./DigitDemo/modulePageComponent";
 import InboxService from "./DigitDemo/InboxService";
 import ViewCheckListCards from "./CheckList/viewCheckListCards";
