@@ -81,26 +81,6 @@ const ProjectDataView = ({
     </div>
   );
 
-  const renderDocument = (doc, index) => (
-    <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-          <LuFileText className="w-5 h-5 text-blue-600" />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-gray-900">{t(doc?.documentType)}</p>
-          <p className="text-xs text-gray-500">Document #{index + 1}</p>
-        </div>
-      </div>
-      <button
-        onClick={() => downloadFile(doc.fileStoreId)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-      >
-        <LuDownload className="w-4 h-4" />
-        Télécharger
-      </button>
-    </div>
-  );
 
   return (
     <div className="space-y-6">

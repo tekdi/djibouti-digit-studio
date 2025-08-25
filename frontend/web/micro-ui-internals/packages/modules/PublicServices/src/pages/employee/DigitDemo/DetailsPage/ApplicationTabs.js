@@ -7,13 +7,14 @@ import {
   LuSquareCheck
 } from "react-icons/lu";
 
-const ApplicationTabs = ({ activeTab, setActiveTab }) => {
+const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
   const tabs = [
     { id: "project", label: "Détails du projet", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
     { id: "payments", label: "Paiements", icon: LuCreditCard },
     { id: "activities", label: "Activités", icon: LuActivity },
-    { id: "checklist", label: "Liste de vérification", icon: LuSquareCheck }
+    // Only show checklist tab for non-citizens
+    ...(isCitizen ? [] : [{ id: "checklist", label: "Contrôle", icon: LuSquareCheck }])
   ];
 
   return (

@@ -3,13 +3,9 @@ import { useTranslation } from "react-i18next";
 
 const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
   const { t } = useTranslation();
-
-  console.log(timeline);
-
   const renderTimeline = (timeline, isParallelWorkflow) => {
     return [...timeline].reverse().map((instance, index) => {
       const isCurrentState = index === timeline.length - 1;
-      const instanceBusinessService = instance?.businessService;
       const displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
       const auditCreated = instance?.auditDetails?.created;
 
@@ -30,13 +26,21 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
                 {displayAction}
               </h4>
               <span className="text-xs text-gray-500">
-                {auditCreated ? new Date(auditCreated).toLocaleDateString('fr-FR') : ''}
+                {auditCreated}
               </span>
             </div>
-            {instanceBusinessService && (
+            
+            {instance?.assignes?.length > 0 && (
               <p className="text-xs text-gray-500 mt-1">
-                Service: {instanceBusinessService}
+                {t("ASSIGNED_TO")}: {instance.assignes.map((assignee) => assignee?.name).join(", ")}
               </p>
+            )}
+
+            {instance?.comment && (
+              <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-xs font-medium text-gray-700 mb-1">{t("COMMENT")}</p>
+                <p className="text-xs text-gray-600">"{instance.comment}"</p>
+              </div>
             )}
           </div>
         </div>
@@ -46,7 +50,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Activités</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("ACTIVITIES")}</h3>
       
       <div className="relative">
         <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200"></div>

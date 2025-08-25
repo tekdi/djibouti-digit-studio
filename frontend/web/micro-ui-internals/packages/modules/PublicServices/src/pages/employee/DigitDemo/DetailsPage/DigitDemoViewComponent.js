@@ -273,7 +273,7 @@ const DigitDemoViewComponent = () => {
   };
 
   const serviceInfo = {
-    name: response?.businessService || "Service",
+    name: t(response?.businessService) || "Service",
     description: "Service administratif en ligne"
   };
   const applicant = response?.applicants?.[0];
@@ -296,6 +296,7 @@ const DigitDemoViewComponent = () => {
           <ApplicationTabs 
             activeTab={activeTab}
             setActiveTab={setActiveTab}
+            isCitizen={isCitizen}
           />
 
           {/* Content Area */}
