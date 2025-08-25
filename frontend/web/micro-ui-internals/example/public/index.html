@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link rel="icon" href="https://egov-dev-assets.s3.ap-south-1.amazonaws.com/browser-icon.png" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
       rel="stylesheet"
       type="text/css"
     />
@@ -15,6 +15,8 @@
     <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    
+
     <!-- Tailwind v4 Theme Configuration -->
     <style type="text/tailwindcss">
       @theme {
@@ -23,11 +25,27 @@
         --color-djibouti-primary-dark: #004a4b;
         --color-djibouti-secondary: #cdd23e;
         --color-djibouti-sage: #748269;
+        
+        /* Add color aliases for easier use */
+        --color-primary: #006769;
+        --color-primary-light: rgba(0, 103, 105, 0.1);
+        --color-primary-dark: #004a4b;
+        --color-secondary: #cdd23e;
+        --color-sage: #748269;
       }
     </style>
 
     <!-- Djibouti Design System -->
     <style>
+      /* Set Inter as the main font family */
+      * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      }
+      
       :root {
         --color-djibouti-primary: #006769;
         --color-djibouti-primary-light: #0067694a;
@@ -53,6 +71,13 @@
       .bg-djibouti-sage {
         background-color: #cdd23e !important;
       }
+      
+      /* Primary color aliases */
+      .bg-primary { background-color: #006769 !important; }
+      .bg-primary-light { background-color: rgba(0, 103, 105, 0.1) !important; }
+      .bg-primary-dark { background-color: #004a4b !important; }
+      .bg-secondary { background-color: #cdd23e !important; }
+      .bg-sage { background-color: #cdd23e !important; }
 
       .text-djibouti-primary {
         color: #006769 !important;
@@ -69,6 +94,13 @@
       .text-djibouti-sage {
         color: #cdd23e !important;
       }
+      
+      /* Primary text color aliases */
+      .text-primary { color: #006769 !important; }
+      .text-primary-light { color: #b3d9da !important; }
+      .text-primary-dark { color: #004a4b !important; }
+      .text-secondary { color: #cdd23e !important; }
+      .text-sage { color: #cdd23e !important; }
 
       .border-djibouti-primary {
         border-color: #006769 !important;
@@ -105,11 +137,41 @@
         --tw-ring-color: #006769 !important;
         box-shadow: 0 0 0 3px rgba(0, 103, 105, 0.1) !important;
       }
+      
+      /* Gradients */
+      .bg-gradient-to-r.from-djibouti-primary.to-djibouti-secondary {
+        background: linear-gradient(to right, #006769, #cdd23e) !important;
+      }
+      .bg-gradient-to-br.from-djibouti-primary\/95.to-djibouti-secondary\/95 {
+        background: linear-gradient(to bottom right, rgba(0, 103, 105, 0.95), rgba(205, 210, 62, 0.95)) !important;
+      }
+      
+              /* Primary gradient aliases */
+        .bg-gradient-to-r.from-primary.to-primary-dark {
+          background: linear-gradient(to right, #006769, #004a4b) !important;
+        }
+        .bg-gradient-to-r.from-primary.to-secondary {
+          background: linear-gradient(to right, #006769, #cdd23e) !important;
+        }
+        
+        /* Text gradient support */
+        .bg-gradient-to-r.from-primary.to-primary-dark.bg-clip-text {
+          background: linear-gradient(to right, #006769, #004a4b) !important;
+          -webkit-background-clip: text !important;
+          background-clip: text !important;
+          -webkit-text-fill-color: transparent !important;
+          color: transparent !important;
+        }
 
       /* Gradient backgrounds */
       .bg-gradient-djibouti {
         background: linear-gradient(90deg, #006769 0%, #cdd23e 100%) !important;
       }
+
+      .bg-opacity-20 {
+        background-color: rgb(255 255 255 / 30%) !important;
+      }
+
       .bg-gradient-djibouti-light {
         background: linear-gradient(90deg, #006769 0%, #cdd23e 100%) !important;
       }
@@ -124,6 +186,12 @@
         box-shadow: 0 4px 15px rgba(0, 103, 105, 0.1) !important;
         border: 1px solid rgba(0, 103, 105, 0.1) !important;
       }
+
+      /* CUstom components override */
+      .digit-stepper-container   {
+        margin-top: 0 !important;
+      }
+      
     </style>
     <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.8.2-beta.48/dist/index.css" />
     <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-components-css@0.2.0-beta.4/dist/index.css" />

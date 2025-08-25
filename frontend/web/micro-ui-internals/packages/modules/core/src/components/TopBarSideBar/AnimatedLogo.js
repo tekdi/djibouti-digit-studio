@@ -50,7 +50,7 @@ const AnimatedLogo = () => {
     <div className="flex items-center space-x-2">
       <div className="relative h-8 min-w-[148px] flex items-center">
         <img src="https://epermis-1fdee.web.app/map-logo.png" alt="Logo" className="w-10 h-10 mr-2" />
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-xl font-bold">
           <span style={{
             background: 'linear-gradient(to right, #006769, #cdd23e)',
             WebkitBackgroundClip: 'text',
@@ -68,7 +68,7 @@ const AnimatedLogo = () => {
             République de Djibouti
           </span>
         </div>
-        <span className="text-xs text-gray-400 italic">
+        <span className="text-xs text-gray-400 italic text-center">
           Unité - Égalité - Paix
         </span>
       </div>

@@ -204,16 +204,11 @@ const CitizenHelp = () => {
   );
 
   return (
-    <div className="min-h-screen py-12" style={{ background: "#f8fafc" }}>
+    <div className="min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-20">
-          <h1 className="text-6xl font-bold mb-6" style={{
-            background: "linear-gradient(to right, #006769, #cdd23e)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text"
-          }}>
+          <h1 className="text-6xl font-black mb-6 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
             Centre d'aide
           </h1>
           <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
@@ -230,28 +225,22 @@ const CitizenHelp = () => {
               className="group relative overflow-hidden rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white"
             >
               <div 
-                className="absolute inset-0 opacity-90 group-hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: link.color.includes("blue") ? "linear-gradient(135deg, #3b82f6, #1d4ed8)" :
-                             link.color.includes("purple") ? "linear-gradient(135deg, #8b5cf6, #7c3aed)" :
-                             link.color.includes("green") ? "linear-gradient(135deg, #10b981, #059669)" :
-                             "linear-gradient(135deg, #f97316, #ea580c)"
-                }}
+                className="absolute inset-0 bg-gradient-to-br opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+
               />
               <div className="relative z-10">
                 <div 
                   className="p-3 rounded-xl mb-4 inline-block"
                   style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    backdropFilter: "blur(4px)"
+                    backgroundColor: "rgba(0, 103, 105, 0.1)"
                   }}
                 >
-                  <link.icon className="w-8 h-8 text-white" />
+                  <link.icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {link.title}
                 </h3>
-                <p className="text-white text-sm" style={{ opacity: 0.9 }}>
+                <p className="text-gray-600 text-sm" >
                   {link.description}
                 </p>
               </div>
@@ -324,18 +313,15 @@ const CitizenHelp = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {supportOptions.map((option, index) => (
+              
               <div
                 key={index}
                 className="relative overflow-hidden rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white"
               >
                 <div 
-                  className="absolute inset-0 opacity-90 hover:opacity-100 transition-opacity duration-300"
-                  style={{
-                    background: option.color.includes("red") ? "linear-gradient(135deg, #ef4444, #dc2626)" :
-                               option.color.includes("indigo") ? "linear-gradient(135deg, #6366f1, #4f46e5)" :
-                               "linear-gradient(135deg, #14b8a6, #0d9488)"
-                  }}
+                  className="absolute inset-0 opacity-90 hover:opacity-100 transition-opacity duration-300 bg-djibouti-primary"
                 />
+                
                 <div className="relative z-10">
                   <div 
                     className="p-3 rounded-xl mb-4 inline-block"

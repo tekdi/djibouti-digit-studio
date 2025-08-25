@@ -21,11 +21,6 @@ const CitizenInboxService = () => {
   useEffect(async () => {
     try {
       const response = await axios.post(`/health-individual/v1/_search?tenantId=${tenantId}&limit=1&offset=0`, {
-        // headers: {
-        //   "X-Tenant-Id": tenantId,
-        //   "auth-token":
-        //     Digit.UserService.getUser()?.access_token,
-        // },
         "RequestInfo": {
           apiId: "Rainmaker",
           authToken: userDetails?.access_token,

@@ -41,13 +41,13 @@ const CitizenNavigation = ({ mobileView }) => {
         {
           id: "pending-requests",
           label: "Demandes en cours",
-          path: `/${window?.contextPath}/citizen/publicservices/BPA/CitizenInbox`,
+          path: `/${window?.contextPath}/citizen/publicservices/applications/pending`,
           icon: LuClock,
         },
         {
           id: "completed-requests",
           label: "Demandes complétées",
-          path: `/${window?.contextPath}/citizen/publicservices/applications`,
+          path: `/${window?.contextPath}/citizen/publicservices/applications/completed`,
           icon: LuFolderOpen,
         },
       ],
@@ -56,7 +56,7 @@ const CitizenNavigation = ({ mobileView }) => {
       id: "payments",
       label: "Paiements",
       icon: LuCreditCard,
-      path: `/${window?.contextPath}/citizen/payments`,
+      path: `/${window?.contextPath}/citizen/publicservices/applications/pending-payment`,
     },
     {
       id: "help",
@@ -72,8 +72,20 @@ const CitizenNavigation = ({ mobileView }) => {
   };
 
   const isTabActive = (tabId) => {
-    if (tabId === "dashboard" && (pathname.includes("/dashboard") || pathname.includes("/publicservices/modules"))) {
-      return true;
+    if (tabId === "dashboard") {
+      // Only activate dashboard for exact dashboard path or modules path
+      return pathname.includes("/publicservices/dashboard") || pathname.endsWith("/publicservices/modules");
+    }
+    if (tabId === "requests") {
+      // Activate requests tab for applications-related paths, but exclude pending-payment
+      return (pathname.includes("/publicservices/applications") || pathname.includes("/publicservices/apply")) && 
+             !pathname.includes("/pending-payment");
+    }
+    if (tabId === "payments") {
+      return pathname.includes("/publicservices/applications/pending-payment");
+    }
+    if (tabId === "help") {
+      return pathname.includes("/publicservices/help");
     }
     return activeTab === tabId;
   };
@@ -103,7 +115,7 @@ const CitizenNavigation = ({ mobileView }) => {
             <div key={tab.id} className="relative dropdown-container">
               <button
                 onClick={() => setShowRequestsDropdown(!showRequestsDropdown)}
-                className={`group flex items-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium ${
                   active
                     ? "text-white bg-djibouti-primary shadow-lg scale-105"
                     : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary hover:scale-105"
@@ -143,7 +155,7 @@ const CitizenNavigation = ({ mobileView }) => {
           <button
             key={tab.id}
             onClick={() => handleTabClick(tab)}
-            className={`group flex items-center gap-2.5 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+            className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium text-sm ${
               active
                 ? "text-white bg-djibouti-primary shadow-lg scale-105"
                 : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary hover:scale-105"
