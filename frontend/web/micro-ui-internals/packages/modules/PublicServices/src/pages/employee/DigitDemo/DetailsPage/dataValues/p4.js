@@ -1,19 +1,14 @@
 export const p4Data = {
-  // Define which blocks should be shown for P4 (BPA_PL) - Layout Permit
+  // Define which blocks should be shown for P4 (Layout Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Détails du projet de lotissement",
       icon: "LuBuilding",
       color: "purple",
       fields: [
         {
           label: "Type de travail",
           key: "workType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Usage prévu",
-          key: "intededUse",
           icon: "LuBuilding"
         },
         {
@@ -39,24 +34,10 @@ export const p4Data = {
           icon: "LuMapPin"
         },
         {
-          label: "Statut légal",
-          key: "legalStatus",
-          icon: "LuFileText"
-        },
-        {
-          label: "Titre foncier définitif",
-          key: "definitiveLandTitle",
-          icon: "LuFileText"
-        },
-        {
-          label: "Certificat d'enregistrement",
-          key: "registrationCertificate",
-          icon: "LuFileText"
-        },
-        {
-          label: "Numéro de titre foncier",
-          key: "tfNo",
-          icon: "LuHash"
+          label: "Coût par m²",
+          key: "constructionCostPerSqMt",
+          icon: "LuHash",
+          suffix: " Fdj"
         },
         {
           label: "Nombre d'unités",
@@ -84,13 +65,32 @@ export const p4Data = {
           icon: "LuHash"
         },
         {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
+          label: "Titre foncier définitif",
+          key: "definitiveLandTitle",
+          icon: "LuFileText"
         },
         {
-          label: "Autres détails",
+          label: "Statut légal",
+          key: "legalStatus",
+          icon: "LuFileText"
+        },
+        {
+          label: "Certificat d'enregistrement",
+          key: "registrationCertificate",
+          icon: "LuFileText"
+        },
+        {
+          label: "Numéro TF",
+          key: "tfNo",
+          icon: "LuHash"
+        },
+        {
+          label: "Détails autres types",
+          key: "detailsOnOtherType",
+          icon: "LuFileText"
+        },
+        {
+          label: "Autres informations",
           key: "other",
           icon: "LuFileText"
         }
@@ -147,6 +147,11 @@ export const p4Data = {
         {
           label: "Type de société",
           key: "companyType",
+          icon: "LuBuilding"
+        },
+        {
+          label: "Autre type de société",
+          key: "otherCompanyType",
           icon: "LuBuilding"
         },
         {

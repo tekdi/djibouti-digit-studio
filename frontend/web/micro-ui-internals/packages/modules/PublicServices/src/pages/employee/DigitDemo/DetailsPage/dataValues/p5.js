@@ -1,8 +1,8 @@
-export const p7Data = {
-  // Define which blocks should be shown for P7 (Project File)
+export const p5Data = {
+  // Define which blocks should be shown for P5 (Simplified Construction Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Détails du projet simplifié",
       icon: "LuBuilding",
       color: "purple",
       fields: [
@@ -18,10 +18,15 @@ export const p7Data = {
           suffix: " m²"
         },
         {
-          label: "Surface du terrain",
-          key: "plotArea",
+          label: "Surface totale",
+          key: "area",
           icon: "LuMapPin",
           suffix: " m²"
+        },
+        {
+          label: "Région",
+          key: "region",
+          icon: "LuMapPin"
         },
         {
           label: "Localisation",
@@ -37,26 +42,6 @@ export const p7Data = {
         {
           label: "Nombre d'unités",
           key: "noOfUnits",
-          icon: "LuHash"
-        },
-        {
-          label: "CES maximum autorisé",
-          key: "maximumAuthorizedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS maximum autorisé",
-          key: "maximumAuthorizedCos",
-          icon: "LuHash"
-        },
-        {
-          label: "CES projeté",
-          key: "projectedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS projeté",
-          key: "projectedCos",
           icon: "LuHash"
         },
         {
@@ -88,33 +73,6 @@ export const p7Data = {
           label: "Autres informations",
           key: "other",
           icon: "LuFileText"
-        }
-      ]
-    },
-    legalEntityDetails: {
-      title: "Entité légale",
-      icon: "LuBuilding",
-      color: "teal",
-      fields: [
-        {
-          label: "Raison sociale",
-          key: "corporateName",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Type de société",
-          key: "companyType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Autre type de société",
-          key: "otherCompanyType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Numéro d'enregistrement",
-          key: "registrationNumber",
-          icon: "LuHash"
         }
       ]
     }

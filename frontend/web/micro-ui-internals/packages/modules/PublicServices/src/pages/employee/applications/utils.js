@@ -185,6 +185,13 @@ export const getStatusInfo = (status) => {
       icon: LuClock,
       progress: 50
     },
+    "PENDING_REVIEW_BY_SUB_DIRECTOR": {
+      label: "En attente de révision par le Sous-directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 55
+    },
     
     // Report statuses
     "AGENT_REPORT_READY": {

@@ -1,8 +1,8 @@
-export const p2Data = {
-  // Define which blocks should be shown for P2 (Simple Construction Permit)
+export const p9Data = {
+  // Define which blocks should be shown for P9 (Extension Construction Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Détails du projet d'extension",
       icon: "LuBuilding",
       color: "purple",
       fields: [
@@ -24,6 +24,11 @@ export const p2Data = {
           suffix: " m²"
         },
         {
+          label: "Usage prévu",
+          key: "intededUse",
+          icon: "LuBuilding"
+        },
+        {
           label: "Région",
           key: "region",
           icon: "LuMapPin"
@@ -42,26 +47,6 @@ export const p2Data = {
         {
           label: "Nombre d'unités",
           key: "noOfUnits",
-          icon: "LuHash"
-        },
-        {
-          label: "CES maximum autorisé",
-          key: "maximumAuthorizedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS maximum autorisé",
-          key: "maximumAuthorizedCos",
-          icon: "LuHash"
-        },
-        {
-          label: "CES projeté",
-          key: "prjectedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS projeté",
-          key: "projectedCos",
           icon: "LuHash"
         },
         {
@@ -93,44 +78,6 @@ export const p2Data = {
           label: "Autres informations",
           key: "other",
           icon: "LuFileText"
-        }
-      ]
-    },
-    designOfficeDetailing: {
-      title: "Bureau d'études",
-      icon: "LuBuilding",
-      color: "orange",
-      fields: [
-        {
-          label: "Nom du bureau",
-          key: "nameOfDesignOffice",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Architecte",
-          key: "architectName",
-          icon: "LuUser"
-        },
-        {
-          label: "Téléphone",
-          key: "telephone",
-          icon: "LuPhone",
-          prefix: "+253 "
-        },
-        {
-          label: "Email",
-          key: "officeEmail",
-          icon: "LuMail"
-        },
-        {
-          label: "Numéro d'enregistrement",
-          key: "registrationNo",
-          icon: "LuHash"
-        },
-        {
-          label: "Numéro professionnel",
-          key: "registrationNoOnProfessionalRoll",
-          icon: "LuHash"
         }
       ]
     },

@@ -8,7 +8,7 @@ import LanguageSelector from "../LanguageSelector";
 
 const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   return (
-    <header className="bg-white bg-opacity-95 shadow-sm border-b border-gray-200 border-opacity-60 fixed top-0 left-0 right-0 z-50">
+    <header className="bg-white bg-opacity-95 shadow-sm border-b border-gray-200 border-opacity-60 sticky top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto py-3">
         <div className="flex items-center justify-between h-18">
           {/* Logo with Animation */}

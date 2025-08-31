@@ -2,7 +2,6 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { generateViewConfigFromResponse } from "../../../../utils";
 import { useWorkflowDetails, processBusinessServices } from "../../../../utils";
 import { checklistByService } from "../../../../utils/templateConfig.js";
 
@@ -20,14 +19,11 @@ const DigitDemoViewComponent = () => {
   const [activeTab, setActiveTab] = useState("project");
   const userInfo = Digit.UserService.getUser();
   const { module, service } = useParams();
-  const serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
-  const [isCalculatioDone, setIsCalculationDone] = useState(false);
   const history = useHistory();
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
   const checklistConfig = checklistByService.find((list) => list.service === service);
-  const isCalculationFees = checklistConfig?.checklist?.includes("calculationFees");
   const shouldShowChecklist = checklistConfig && checklistConfig.checklist && checklistConfig.checklist.length > 0;
 
   const isDownloadButtonEnable = userInfo?.info?.roles?.some(
@@ -89,8 +85,6 @@ const DigitDemoViewComponent = () => {
     },
   });
 
-  // Util method to generate view config for view composer
-  let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService || selectedBusinessService?.code, serviceConfig);
 
   // Extract the required data for ApplicationDataView
   const applicationData = {
@@ -102,11 +96,6 @@ const DigitDemoViewComponent = () => {
       designOffice: response?.serviceDetails?.designOfficeDetailing || [],
     },
   };
-
-  useEffect(() => {
-    const costEstimationExists = response?.additionalDetails?.costEstimation;
-    setIsCalculationDone(!!costEstimationExists);
-  }, [data?.Application]);
 
   useEffect(() => {
     // Guard clause to avoid calling with missing inputs
@@ -155,123 +144,8 @@ const DigitDemoViewComponent = () => {
     return <Loader />;
   }
 
-  const handleCalculationClick = () => {
-    const userDetails = Digit.UserService.getUser();
-    const userType = userDetails?.info?.type?.toLowerCase();
-    history.push({
-      pathname: `/${window.contextPath}/${userType}/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`,
-    });
-  };
 
-  const renderTimeline = (timeline, isParallelWorkflow) => {
-    return [...timeline].reverse().map((instance, index) => {
-      const isCurrentState = index === timeline.length - 1;
-      const instanceBusinessService = instance?.businessService;
-      const displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
-      const auditCreated = instance?.auditDetails?.created;
-
-      return (
-        <div key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "1rem" }}>
-          <div
-            style={{
-              height: "1.5rem",
-              width: "1.5rem",
-              borderRadius: "9999px",
-              border: `2px solid ${isCurrentState ? "#006769" : "#d1d5db"}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              backgroundColor: isCurrentState ? "#006769" : "white",
-              color: isCurrentState ? "white" : "inherit",
-              marginRight: "0.75rem",
-              flexShrink: 0,
-              zIndex: "999",
-            }}
-          >
-            {index + 1}
-          </div>
-          <div style={{ width: "100%", minWidth: 0, wordBreak: "break-word" }}>
-            <p
-              style={{
-                fontSize: "16px",
-                color: isCurrentState ? "#006769" : "#505A5F",
-                fontWeight: "400",
-                marginTop: "5px",
-                overflowWrap: "break-word",
-                whiteSpace: "normal",
-                fontFamily: "Inter",
-              }}
-            >
-              {displayAction}
-              <span
-                style={{
-                  color: isCurrentState ? "#006769" : "#6b7280",
-                  display: "inline-block",
-                  fontFamily: "Inter",
-                }}
-              >
-                {" "}
-                ({auditCreated})
-              </span>
-            </p>
-
-            {instance?.comment && (
-              <div
-                style={{
-                  marginTop: "0.5rem",
-                  border: "1px solid #e5e7eb",
-                  padding: "0.75rem",
-                  borderRadius: "0.5rem",
-                  fontSize: "0.85rem",
-                  color: "#505A5F",
-                  backgroundColor: "#f9fafb",
-                  wordBreak: "break-word",
-                  fontFamily: "Inter",
-                }}
-              >
-                <p style={{ marginTop: "5px", color: "black", fontFamily: "Inter" }}>{t("COMMENT")}</p>"{instance?.comment}"
-              </div>
-            )}
-
-            {instance?.assignes?.length > 0 && (
-              <div
-                style={{
-                  marginTop: "0.5rem",
-                  fontSize: "0.85rem",
-                  color: isCurrentState ? "#006769" : "#6b7280",
-                  wordBreak: "break-word",
-                  fontFamily: "Inter",
-                }}
-              >
-                {t("ASSIGNED_TO")}: {instance.assignes.map((assignee) => assignee?.name).join(", ")}
-              </div>
-            )}
-
-            {!isParallelWorkflow && (queryStrings?.businessService ? queryStrings?.businessService : service) !== instanceBusinessService && (
-              <div
-                style={{
-                  marginTop: "0.5rem",
-                  border: "1px solid #e5e7eb",
-                  padding: "0.75rem",
-                  borderRadius: "0.5rem",
-                  fontSize: "0.85rem",
-                  color: "#505A5F",
-                  backgroundColor: "#f9fafb",
-                  wordBreak: "break-word",
-                  fontFamily: "Inter",
-                }}
-              >
-                {t(`${instanceBusinessService}`)}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    });
-  };
-
+ 
   const serviceInfo = {
     name: t(response?.businessService) || "Service",
     description: "Service administratif en ligne"

@@ -1,19 +1,14 @@
 export const p8Data = {
-  // Define which blocks should be shown for P8 (BPA_PS) - Elevation Permit
+  // Define which blocks should be shown for P8 (Elevation Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Détails du projet d'élévation",
       icon: "LuBuilding",
       color: "purple",
       fields: [
         {
           label: "Type de travail",
           key: "workType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Usage prévu",
-          key: "intededUse",
           icon: "LuBuilding"
         },
         {
@@ -29,6 +24,11 @@ export const p8Data = {
           suffix: " m²"
         },
         {
+          label: "Usage prévu",
+          key: "intededUse",
+          icon: "LuBuilding"
+        },
+        {
           label: "Région",
           key: "region",
           icon: "LuMapPin"
@@ -39,24 +39,20 @@ export const p8Data = {
           icon: "LuMapPin"
         },
         {
-          label: "Statut légal",
-          key: "legalStatus",
-          icon: "LuFileText"
-        },
-        {
-          label: "Titre foncier définitif",
-          key: "definitiveLandTitle",
-          icon: "LuFileText"
-        },
-        {
-          label: "Certificat d'enregistrement",
-          key: "registrationCertificate",
-          icon: "LuFileText"
-        },
-        {
           label: "Nombre d'étages existants",
           key: "existingFloorCount",
           icon: "LuHash"
+        },
+        {
+          label: "Résumé des modifications proposées",
+          key: "summaryOfProposedChanges",
+          icon: "LuFileText"
+        },
+        {
+          label: "Coût par m²",
+          key: "constructionCostPerSqMt",
+          icon: "LuHash",
+          suffix: " Fdj"
         },
         {
           label: "Nombre d'unités",
@@ -84,14 +80,33 @@ export const p8Data = {
           icon: "LuHash"
         },
         {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
+          label: "Titre foncier définitif",
+          key: "definitiveLandTitle",
+          icon: "LuFileText"
         },
         {
-          label: "Résumé des modifications proposées",
-          key: "summaryOfProposedChanges",
+          label: "Statut légal",
+          key: "legalStatus",
+          icon: "LuFileText"
+        },
+        {
+          label: "Certificat d'enregistrement",
+          key: "registrationCertificate",
+          icon: "LuFileText"
+        },
+        {
+          label: "Numéro TF",
+          key: "tfNo",
+          icon: "LuHash"
+        },
+        {
+          label: "Détails autres types",
+          key: "detailsOnOtherType",
+          icon: "LuFileText"
+        },
+        {
+          label: "Autres informations",
+          key: "other",
           icon: "LuFileText"
         }
       ]
@@ -147,6 +162,11 @@ export const p8Data = {
         {
           label: "Type de société",
           key: "companyType",
+          icon: "LuBuilding"
+        },
+        {
+          label: "Autre type de société",
+          key: "otherCompanyType",
           icon: "LuBuilding"
         },
         {

@@ -1,27 +1,31 @@
-export const p2Data = {
-  // Define which blocks should be shown for P2 (Simple Construction Permit)
+export const p6Data = {
+  // Define which blocks should be shown for P6 (Demolition Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Détails du projet de démolition",
       icon: "LuBuilding",
       color: "purple",
       fields: [
         {
-          label: "Type de travail",
-          key: "workType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Surface couverte",
-          key: "coveredProjectArea",
-          icon: "LuMapPin",
-          suffix: " m²"
-        },
-        {
-          label: "Surface totale",
+          label: "Surface à démolir",
           key: "area",
           icon: "LuMapPin",
           suffix: " m²"
+        },
+        {
+          label: "Type de démolition",
+          key: "demolitionType",
+          icon: "LuBuilding"
+        },
+        {
+          label: "Détails autres types",
+          key: "otherOnDemolitionType",
+          icon: "LuFileText"
+        },
+        {
+          label: "Usage prévu",
+          key: "intededUse",
+          icon: "LuBuilding"
         },
         {
           label: "Région",
@@ -34,35 +38,14 @@ export const p2Data = {
           icon: "LuMapPin"
         },
         {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
-        },
-        {
           label: "Nombre d'unités",
           key: "noOfUnits",
           icon: "LuHash"
         },
         {
-          label: "CES maximum autorisé",
-          key: "maximumAuthorizedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS maximum autorisé",
-          key: "maximumAuthorizedCos",
-          icon: "LuHash"
-        },
-        {
-          label: "CES projeté",
-          key: "prjectedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS projeté",
-          key: "projectedCos",
-          icon: "LuHash"
+          label: "Date de construction",
+          key: "constructionDate",
+          icon: "LuCalendar"
         },
         {
           label: "Titre foncier définitif",
@@ -93,44 +76,6 @@ export const p2Data = {
           label: "Autres informations",
           key: "other",
           icon: "LuFileText"
-        }
-      ]
-    },
-    designOfficeDetailing: {
-      title: "Bureau d'études",
-      icon: "LuBuilding",
-      color: "orange",
-      fields: [
-        {
-          label: "Nom du bureau",
-          key: "nameOfDesignOffice",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Architecte",
-          key: "architectName",
-          icon: "LuUser"
-        },
-        {
-          label: "Téléphone",
-          key: "telephone",
-          icon: "LuPhone",
-          prefix: "+253 "
-        },
-        {
-          label: "Email",
-          key: "officeEmail",
-          icon: "LuMail"
-        },
-        {
-          label: "Numéro d'enregistrement",
-          key: "registrationNo",
-          icon: "LuHash"
-        },
-        {
-          label: "Numéro professionnel",
-          key: "registrationNoOnProfessionalRoll",
-          icon: "LuHash"
         }
       ]
     },

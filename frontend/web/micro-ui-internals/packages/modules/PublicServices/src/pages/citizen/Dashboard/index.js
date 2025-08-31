@@ -8,7 +8,8 @@ import { getSimplifiedStatus } from "../applications/utils";
 import { 
   LuCircleCheck, 
   LuCreditCard, 
-  LuFileText 
+  LuFileText,
+  LuLoader
 } from "react-icons/lu";
 
 const CitizenDashboard = () => {
@@ -132,6 +133,27 @@ const CitizenDashboard = () => {
   const handleRefresh = () => {
     refreshApplications();
   };
+
+  // Show loading spinner when data is being fetched
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto pt-5">
+        <div className="space-y-6">
+          <WelcomeSection userName={userName} />
+          
+          {/* Loading Spinner */}
+          <div className="flex items-center justify-center py-20">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative">
+                <LuLoader className="w-12 h-12 animate-spin" style={{ color: "#006769" }} />
+              </div>
+              <p className="text-lg font-medium text-gray-600">Chargement des données...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto pt-5">
