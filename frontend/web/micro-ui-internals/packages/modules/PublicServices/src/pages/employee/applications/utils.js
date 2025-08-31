@@ -6,11 +6,8 @@ import {
   LuCircleAlert,
   LuCreditCard,
   LuUserCheck,
-  LuSend,
-  LuBuilding,
   LuMapPin,
-  LuShield,
-  LuAward
+  LuCircle
 } from "react-icons/lu";
 
 // Get service info mapping
@@ -19,90 +16,105 @@ export const getServiceInfo = (businessService) => {
     BPA_PCO: {
       ref: "P1",
       name: "Permis de Construire Ordinaire (PCO) – Constructions Accueillant du Public",
+      shortName: "PCO - Constructions Publiques",
       description: "Hôtel, Hôpital, École, etc.",
       category: "permits"
     },
     BPA_PCO_SIMPLE: {
       ref: "P2", 
       name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
+      shortName: "PCO - Constructions Simples",
       description: "Pour les constructions résidentielles et commerciales simples",
       category: "permits"
     },
     BPA_PR: {
       ref: "P3",
       name: "Permis de Remblai (PR)",
+      shortName: "Permis de Remblai",
       description: "Autorisation pour travaux de remblai",
       category: "permits"
     },
     BPA_PL: {
       ref: "P4",
       name: "Permis de Lotir",
+      shortName: "Permis de Lotir",
       description: "Division d'un terrain en plusieurs lots",
       category: "permits"
     },
     BPA_PCS: {
       ref: "P5",
       name: "Permis de Construire Simplifié (PCS)",
+      shortName: "Permis de Construire Simplifié",
       description: "Pour les constructions de petite taille",
       category: "permits"
     },
     BPA_PD: {
       ref: "P6",
       name: "Permis de Démolir",
+      shortName: "Permis de Démolir",
       description: "Autorisation de démolition d'une construction",
       category: "permits"
     },
     BPA_PF: {
       ref: "P7",
       name: "Permis de Clôture",
+      shortName: "Permis de Clôture",
       description: "Autorisation pour construire une clôture",
       category: "permits"
     },
     BPA_PS: {
       ref: "P8",
       name: "Permis de Surélévation",
+      shortName: "Permis de Surélévation",
       description: "Ajout d'un ou plusieurs étages",
       category: "permits"
     },
     BPA_ATARR: {
       ref: "P9",
       name: "Autorisation des Travaux, d'Aménagement, de Rénovation et de Réhabilitation",
+      shortName: "ATARR - Travaux & Aménagement",
       description: "ATARR pour tous types de travaux",
       category: "permits"
     },
     BPA_CCR: {
       ref: "P10",
       name: "Certificat de Conformité de Remblai (CCR)",
+      shortName: "Certificat de Conformité Remblai",
       description: "Validation de conformité des travaux de remblai",
       category: "certificates"
     },
     BPA_CCE: {
       ref: "P11",
       name: "Certificat de Conformité Électrique (CCE)",
+      shortName: "Certificat de Conformité Électrique",
       description: "Validation de l'installation électrique",
       category: "certificates"
     },
     BPA_CCP: {
       ref: "P12",
       name: "Certificat de Conformité Parasismique (CCP)",
+      shortName: "Certificat de Conformité Parasismique",
       description: "Validation des normes parasismiques",
       category: "certificates"
     },
     BPA_CCG: {
       ref: "P13",
       name: "Certificat de Conformité Général (CCG)",
+      shortName: "Certificat de Conformité Général",
       description: "Validation générale de conformité",
       category: "certificates"
     },
     BPA_PV: {
       ref: "P14",
       name: "Procès-Verbal d'Implantation",
+      shortName: "PV d'Implantation",
       description: "PV d'Implantation pour positionnement",
       category: "validations"
     },
     BPA_APE: {
       ref: "P15",
       name: "Approbation de Plan d'Exécution (APE)",
+      shortName: "Approbation de Plan d'Exécution",
       description: "Validation des plans d'exécution",
       category: "validations"
     }
@@ -133,61 +145,156 @@ export const getSimplifiedStatus = (status) => {
 };
 
 export const getStatusInfo = (status) => {
-  const simplifiedStatus = getSimplifiedStatus(status);
-  
+  // Map actual status values to French translations and styling
   const statusConfig = {
-    pending: {
-      label: "En cours d'examen",
+    // Agent assignment statuses
+         "AGENT_NOT_ASSIGNED": {
+       label: "Agent non assigné",
+       color: "text-gray-600",
+       bgColor: "bg-gray-50",
+       icon: LuCircleAlert,
+       progress: 10
+     },
+    "AGENT_ASSIGNED": {
+      label: "Agent assigné",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
-      icon: LuClock,
-      progress: 25
+      icon: LuUserCheck,
+      progress: 20
     },
-    payment_pending: {
-      label: "En attente de paiement",
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
-      icon: LuCreditCard,
+    
+    // Review statuses
+         "PENDING_REVIEW_BY_SRA_HOD": {
+       label: "En attente de révision par Chef de service SRA",
+       color: "text-amber-600",
+       bgColor: "bg-amber-50",
+       icon: LuClock,
+       progress: 30
+     },
+    "PENDING_REVIEW_BY_ARCHITECT": {
+      label: "En attente de révision par l'architecte",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 40
+    },
+    "PENDING_REVIEW_BY_ENGINEER": {
+      label: "En attente de révision par l'ingénieur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
       progress: 50
     },
-    approved: {
-      label: "Approuvé",
+    
+    // Report statuses
+    "AGENT_REPORT_READY": {
+      label: "Rapport de l'agent prêt",
       color: "text-green-600",
       bgColor: "bg-green-50",
-      icon: LuUserCheck,
-      progress: 75
+      icon: LuCircleCheck,
+      progress: 60
     },
-    completed: {
-      label: "Complété",
+    "ARCHITECT_REPORT_READY": {
+      label: "Rapport de l'architecte prêt",
       color: "text-green-600",
       bgColor: "bg-green-50",
-        icon: LuCircleCheck,
+      icon: LuCircleCheck,
+      progress: 70
+    },
+    "ENGINEER_REPORT_READY": {
+      label: "Rapport de l'ingénieur prêt",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 80
+    },
+    
+    // Final statuses
+    "PERMIT_GRANTED": {
+      label: "Permis accordé",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
       progress: 100
     },
-    rejected: {
+    "CERTIFICATE_GRANTED": {
+      label: "Certificat accordé",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 100
+    },
+    "REJECTED": {
       label: "Rejeté",
       color: "text-red-600",
       bgColor: "bg-red-50",
       icon: LuCircleX,
       progress: 0
     },
-    cancelled: {
+    "CANCELLED": {
       label: "Annulé",
       color: "text-gray-600",
       bgColor: "bg-gray-50",
       icon: LuCircleX,
       progress: 0
     },
-    expired: {
-      label: "Expiré",
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-      icon: LuCircleAlert,
-      progress: 0
+    
+    // Payment statuses
+    "AWAITING_CITIZEN_PAYMENT": {
+      label: "En attente de paiement",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
+      icon: LuCreditCard,
+      progress: 45
+    },
+    "PAYMENT_PENDING": {
+      label: "Paiement en attente",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
+      icon: LuCreditCard,
+      progress: 45
+    },
+    
+    // Document verification
+    "DOCUMENT_VERIFICATION_PENDING": {
+      label: "Vérification des documents en attente",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuFileText,
+      progress: 25
+    },
+    "FIELD_VERIFICATION_PENDING": {
+      label: "Vérification sur site en attente",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuMapPin,
+      progress: 35
+    },
+    
+    // Default fallback
+    "INITIATED": {
+      label: "Initié",
+      color: "text-gray-600",
+      bgColor: "bg-gray-50",
+      icon: LuCircle,
+      progress: 5
+    },
+    "APPLIED": {
+      label: "Déposé",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 15
     }
   };
 
-  return statusConfig[simplifiedStatus] || statusConfig.pending;
+  return statusConfig[status] || {
+    label: status || "Statut inconnu",
+    color: "text-gray-600",
+    bgColor: "bg-gray-50",
+    icon: LuCircle,
+    progress: 0
+  };
 };
 
 export const formatDate = (dateString) => {

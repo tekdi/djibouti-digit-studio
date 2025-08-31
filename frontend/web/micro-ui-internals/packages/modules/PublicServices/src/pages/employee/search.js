@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { LuSearch, LuFileText, LuUser, LuCalendar, LuMapPin, LuEye, LuLoader, LuCircleAlert } from "react-icons/lu";
@@ -16,6 +16,43 @@ const EmployeeSearch = () => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();
+  const [serviceCodes, setServiceCodes] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+
+  // Fetch service codes from API
+  useEffect(() => {
+    const fetchServiceCodes = async () => {
+      setServicesLoading(true);
+      try {
+        const response = await axios.get("/public-service/v1/service", {
+          params: { tenantId: tenantId },
+          headers: {
+            "X-Tenant-Id": tenantId,
+            "auth-token": userInfo?.access_token,
+          },
+        });
+
+        const services = response?.data?.Services || [];
+        // Extract service codes from services
+        const codes = services.map((service) => service.serviceCode).filter(Boolean);
+        setServiceCodes(codes);
+      } catch (error) {
+        console.error("Error fetching service codes:", error);
+        setServiceCodes([]);
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    fetchServiceCodes();
+  }, [tenantId, userInfo?.access_token]);
+
+  // Clear error when starting a new search
+  useEffect(() => {
+    if (isLoading) {
+      setError(null);
+    }
+  }, [isLoading]);
 
   const searchApplications = async () => {
     if (!searchTerm.trim()) {
@@ -24,70 +61,76 @@ const EmployeeSearch = () => {
     }
 
     setIsLoading(true);
-    setError(null);
     setHasSearched(true);
 
     try {
-      const request = {
-        url: "/public-service/v1/application/_search",
-        headers: {
-          "X-Tenant-Id": tenantId,
-          "auth-token": userInfo?.access_token,
-        },
-        method: "POST",
-        data: {
-          RequestInfo: {
-            apiId: "org.egov.pt",
-            ver: "1.0",
-            ts: Date.now(),
-            action: "CREATE",
-            did: "1",
-            key: "",
-            msgId: "20170310130900|en_IN",
-            requesterId: "",
-            authToken: userInfo?.access_token,
-          },
-          ApplicationSearchCriteria: {
-            tenantId: tenantId,
-            search: searchTerm.trim(),
-            limit: 50,
-            offset: 0,
-          },
-        },
-        config: {
-          cacheTime: 0,
-        },
-      };
+      // Check if service codes are loaded
+      if (servicesLoading) {
+        setError("Chargement des services en cours...");
+        return;
+      }
 
-      const response = await axios(request);
+      if (serviceCodes.length === 0) {
+        setError("Aucun service configuré trouvé.");
+        return;
+      }
 
-      if (response.data && response.data.Applications) {
-        setSearchResults(response.data.Applications);
+      // Try to find by exact application number across all service codes
+      let foundApplications = [];
+
+      for (const serviceCode of serviceCodes) {
+        try {
+          const response = await axios.get(`/public-service/v1/application/${serviceCode}`, {
+            params: {
+              applicationNumber: searchTerm.trim(),
+              tenantId: tenantId,
+            },
+            headers: {
+              "X-Tenant-Id": tenantId,
+              "auth-token": userInfo?.access_token,
+            },
+          });
+
+          if (response.data?.Application && response.data.Application.length > 0) {
+            foundApplications = [...foundApplications, ...response.data.Application];
+            // If we found the application, we can break early
+            break;
+          }
+        } catch (searchError) {
+          // Continue searching other service codes if one fails
+          console.log(`Service code ${serviceCode} not found for application ${searchTerm}`);
+        }
+      }
+
+      if (foundApplications.length > 0) {
+        setSearchResults(foundApplications);
+        setError(null);
       } else {
         setSearchResults([]);
+        setError("Aucune demande trouvée avec ce numéro de dossier.");
       }
-         } catch (error) {
-       console.error("Error searching applications:", error);
-       
-       // Handle specific error types
-       let errorMessage = "Erreur lors de la recherche. Veuillez réessayer.";
-       
-       if (error.response?.data?.Errors) {
-         const errors = error.response.data.Errors;
-         if (errors.some(err => err.code === "TracerException")) {
-           errorMessage = "Le service de recherche est temporairement indisponible. Veuillez réessayer plus tard.";
-         } else if (errors.length > 0) {
-           errorMessage = errors[0].description || errors[0].message || errorMessage;
-         }
-       } else if (error.response?.status === 500) {
-         errorMessage = "Erreur serveur. Le service de recherche est temporairement indisponible.";
-       } else if (error.code === "NETWORK_ERROR" || error.message?.includes("Network Error")) {
-         errorMessage = "Erreur de connexion. Vérifiez votre connexion internet et réessayez.";
-       }
-       
-       setError(errorMessage);
-       setSearchResults([]);
-     } finally {
+    } catch (error) {
+      console.error("Error searching applications:", error);
+
+      // Handle specific error types
+      let errorMessage = "Erreur lors de la recherche. Veuillez réessayer.";
+
+      if (error.response?.data?.Errors) {
+        const errors = error.response.data.Errors;
+        if (errors.some((err) => err.code === "TracerException")) {
+          errorMessage = "Le service de recherche est temporairement indisponible. Veuillez réessayer plus tard.";
+        } else if (errors.length > 0) {
+          errorMessage = errors[0].description || errors[0].message || errorMessage;
+        }
+      } else if (error.response?.status === 500) {
+        errorMessage = "Erreur serveur. Le service de recherche est temporairement indisponible.";
+      } else if (error.code === "NETWORK_ERROR" || error.message?.includes("Network Error")) {
+        errorMessage = "Erreur de connexion. Vérifiez votre connexion internet et réessayez.";
+      }
+
+      setError(errorMessage);
+      setSearchResults([]);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -104,8 +147,15 @@ const EmployeeSearch = () => {
   };
 
   const viewApplicationDetails = (app) => {
-    const url = `/${window.contextPath}/citizen/publicservices/BPA/${app.businessService}/ViewScreen?applicationNumber=${app.applicationNumber}&serviceCode=${app.serviceCode}&businessService=${app.businessService}`;
-    history.push(url);
+    const businessObject = app;
+    const applicationNumber = businessObject?.applicationNumber;
+    const businessService = businessObject?.businessService;
+    const serviceCode = businessObject?.serviceCode;
+    const userType = Digit.UserService.getType()?.toLowerCase();
+    
+    history.push(
+      `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${businessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${businessService}`
+    );
   };
 
   const formatDate = (dateString) => {
@@ -122,11 +172,11 @@ const EmployeeSearch = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Recherche de Demandes</h1>
+        <div className="mb-8 flex flex-col items-center justify-center mt-5">
+          <h1 className="text-5xl font-black text-gray-900 mb-2">Recherche de Demandes</h1>
           <p className="text-gray-600">Recherchez et trouvez rapidement les demandes de permis de construction</p>
         </div>
 
@@ -148,13 +198,18 @@ const EmployeeSearch = () => {
             </div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || servicesLoading}
               className="px-8 py-4 bg-djibouti-primary text-white font-semibold rounded-xl hover:bg-djibouti-primary-dark transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
                   <LuLoader className="h-5 w-5 animate-spin" />
                   Recherche...
+                </>
+              ) : servicesLoading ? (
+                <>
+                  <LuLoader className="h-5 w-5 animate-spin" />
+                  Chargement...
                 </>
               ) : (
                 <>
@@ -165,21 +220,21 @@ const EmployeeSearch = () => {
             </button>
           </form>
 
-                     {error && (
-             <div className="mt-4 flex items-center justify-between text-red-600 bg-red-50 p-4 rounded-lg">
-               <div className="flex items-center gap-2">
-                 <LuCircleAlert className="h-5 w-5" />
-                 <span>{error}</span>
-               </div>
-               <button
-                 onClick={searchApplications}
-                 disabled={isLoading}
-                 className="text-sm px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors duration-200 disabled:opacity-50"
-               >
-                 Réessayer
-               </button>
-             </div>
-           )}
+          {error && (
+            <div className="mt-4 flex items-center justify-between text-red-600 bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2">
+                <LuCircleAlert className="h-5 w-5" />
+                <span>{error}</span>
+              </div>
+              <button
+                onClick={searchApplications}
+                disabled={isLoading}
+                className="text-sm px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition-colors duration-200 disabled:opacity-50"
+              >
+                Réessayer
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Search Results */}
@@ -213,68 +268,69 @@ const EmployeeSearch = () => {
                   Essayez avec d'autres termes ou vérifiez l'orthographe.
                 </p>
               </div>
-
             ) : (
-              <div className="divide-y divide-gray-200">
-                {searchResults.map((app) => {
-                  const applicant = app.applicants?.[0];
-                  const statusInfo = getStatusInfoFromUtils(app.status);
-                  const serviceInfo = getServiceInfo(app.businessService);
+                             <div className="divide-y divide-gray-200">
+                 {searchResults.map((app) => {
+                   // Extract data from the API response structure
+                   const applicant = app.applicants?.[0];
+                   const statusInfo = getStatusInfoFromUtils(app.status);
+                   const serviceInfo = getServiceInfo(app.businessService);
+                   const createdTime = app.auditDetails?.createdTime;
 
-                  return (
-                    <div key={app.applicationNumber} className="p-6 hover:bg-gray-50 transition-colors duration-200">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">{app.applicationNumber}</h3>
-                              <p className="text-sm text-gray-600">{serviceInfo?.name || app.businessService}</p>
-                            </div>
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.color}`}
-                            >
-                              {statusInfo.label}
-                            </span>
-                          </div>
+                   return (
+                     <div key={app.applicationNumber} className="p-6 hover:bg-gray-50 transition-colors duration-200">
+                       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                         <div className="flex-1">
+                           <div className="flex items-start justify-between mb-3">
+                             <div>
+                               <h3 className="text-lg font-semibold text-gray-900 mb-1">{app.applicationNumber}</h3>
+                               <p className="text-sm text-gray-600">{serviceInfo?.name || app.businessService}</p>
+                             </div>
+                             <span
+                               className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.bgColor} ${statusInfo.color}`}
+                             >
+                               {statusInfo.label}
+                             </span>
+                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div className="flex items-center gap-2 text-gray-600">
-                              <LuUser className="h-4 w-4 text-gray-400" />
-                              <span className="text-sm">
-                                <span className="font-medium">Demandeur:</span> {applicant?.name || "N/A"}
-                              </span>
-                            </div>
+                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                             <div className="flex items-center gap-2 text-gray-600">
+                               <LuUser className="h-4 w-4 text-gray-400" />
+                               <span className="text-sm">
+                                 <span className="font-medium">Demandeur:</span> {applicant?.name || "N/A"}
+                               </span>
+                             </div>
 
-                            <div className="flex items-center gap-2 text-gray-600">
-                              <LuMapPin className="h-4 w-4 text-gray-400" />
-                              <span className="text-sm">
-                                <span className="font-medium">Téléphone:</span> {applicant?.mobileNumber || "N/A"}
-                              </span>
-                            </div>
+                             <div className="flex items-center gap-2 text-gray-600">
+                               <LuMapPin className="h-4 w-4 text-gray-400" />
+                               <span className="text-sm">
+                                 <span className="font-medium">Téléphone:</span> {applicant?.mobileNumber || "N/A"}
+                               </span>
+                             </div>
 
-                            <div className="flex items-center gap-2 text-gray-600">
-                              <LuCalendar className="h-4 w-4 text-gray-400" />
-                              <span className="text-sm">
-                                <span className="font-medium">Date:</span> {formatDate(app.applicationDate)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
+                             <div className="flex items-center gap-2 text-gray-600">
+                               <LuCalendar className="h-4 w-4 text-gray-400" />
+                               <span className="text-sm">
+                                 <span className="font-medium">Date:</span> {formatDate(createdTime)}
+                               </span>
+                             </div>
+                           </div>
+                         </div>
 
-                        <div className="flex-shrink-0">
-                          <button
-                            onClick={() => viewApplicationDetails(app)}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-djibouti-primary text-white text-sm font-medium rounded-lg hover:bg-djibouti-primary-dark transition-colors duration-200"
-                          >
-                            <LuEye className="h-4 w-4" />
-                            Voir détails
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                         <div className="flex-shrink-0">
+                           <button
+                             onClick={() => viewApplicationDetails(app)}
+                             className="inline-flex items-center gap-2 px-4 py-2 bg-djibouti-primary text-white text-sm font-medium rounded-lg hover:bg-djibouti-primary-dark transition-colors duration-200"
+                           >
+                             <LuEye className="h-4 w-4" />
+                             Voir détails
+                           </button>
+                         </div>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
             )}
           </div>
         )}

@@ -4,6 +4,7 @@ import AnimatedLogo from "../AnimatedLogo";
 import EmployeeNavigation from "./EmployeeNavigation";
 import UserDropdown from "../UserDropdown";
 import EmployeeMobileMenu from "./EmployeeMobileMenu";
+import LanguageSelector from "../LanguageSelector";
 
 const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   return (
@@ -16,9 +17,12 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
           {/* Desktop Navigation */}
           <EmployeeNavigation mobileView={mobileView} />
 
-          {/* Right Side - Notifications & User Menu */}
+          {/* Right Side - Language Selector, Notifications & User Menu */}
           <div className="flex items-center gap-3">
   
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* User Dropdown */}
             <UserDropdown userDetails={userDetails} userOptions={userOptions} />
 

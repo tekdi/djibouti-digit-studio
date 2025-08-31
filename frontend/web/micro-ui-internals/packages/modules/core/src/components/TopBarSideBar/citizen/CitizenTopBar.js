@@ -4,6 +4,7 @@ import AnimatedLogo from "../AnimatedLogo";
 import CitizenNavigation from "./CitizenNavigation";
 import UserDropdown from "../UserDropdown";
 import CitizenMobileMenu from "./CitizenMobileMenu";
+import LanguageSelector from "../LanguageSelector";
 
 const CitizenTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   return (
@@ -16,9 +17,12 @@ const CitizenTopBar = ({ t, userDetails, userOptions, mobileView }) => {
           {/* Desktop Navigation */}
           <CitizenNavigation mobileView={mobileView} />
 
-          {/* Right Side - Notifications & User Menu */}
+          {/* Right Side - Language Selector, Notifications & User Menu */}
           <div className="flex items-center gap-3">
           
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* User Dropdown */}
             <UserDropdown userDetails={userDetails} userOptions={userOptions} />
 
