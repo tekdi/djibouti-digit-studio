@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import AnimatedLogo from "../AnimatedLogo";
 import CitizenNavigation from "./CitizenNavigation";
-import NotificationButton from "../NotificationButton";
 import UserDropdown from "../UserDropdown";
 import CitizenMobileMenu from "./CitizenMobileMenu";
 
@@ -19,9 +18,7 @@ const CitizenTopBar = ({ t, userDetails, userOptions, mobileView }) => {
 
           {/* Right Side - Notifications & User Menu */}
           <div className="flex items-center gap-3">
-            {/* Notifications */}
-            <NotificationButton />
-
+          
             {/* User Dropdown */}
             <UserDropdown userDetails={userDetails} userOptions={userOptions} />
 

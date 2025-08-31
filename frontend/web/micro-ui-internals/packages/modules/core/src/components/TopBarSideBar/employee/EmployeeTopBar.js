@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import AnimatedLogo from "../AnimatedLogo";
 import EmployeeNavigation from "./EmployeeNavigation";
-import NotificationButton from "../NotificationButton";
 import UserDropdown from "../UserDropdown";
 import EmployeeMobileMenu from "./EmployeeMobileMenu";
 
@@ -19,9 +18,7 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
 
           {/* Right Side - Notifications & User Menu */}
           <div className="flex items-center gap-3">
-            {/* Notifications */}
-            <NotificationButton />
-
+  
             {/* User Dropdown */}
             <UserDropdown userDetails={userDetails} userOptions={userOptions} />
 

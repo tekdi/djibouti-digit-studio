@@ -7,6 +7,7 @@ import {
   LuPlus,
   LuClock,
   LuFolderOpen,
+  LuSearch,
 } from "react-icons/lu";
 
 const EmployeeNavigation = ({ mobileView }) => {
@@ -21,34 +22,40 @@ const EmployeeNavigation = ({ mobileView }) => {
       id: "dashboard",
       label: "Tableau de bord",
       icon: LuLayoutDashboard,
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/employee/publicservices/dashboard-employee`,
     },
     {
       id: "dossiers",
       label: "Dossiers",
       icon: LuFileText,
-      path: `/${window?.contextPath}/employee/BPA/application-search`,
+      path: `/${window?.contextPath}/employee/publicservices/applications-employee/all`,
       hasDropdown: true,
       dropdownItems: [
         {
           id: "new-dossiers",
           label: "Nouveaux dossiers",
-          path: `/${window?.contextPath}/employee/BPA/inbox`,
+          path: `/${window?.contextPath}/employee/publicservices/applications-employee/new`,
           icon: LuPlus,
         },
         {
           id: "in-progress",
           label: "En cours",
-          path: `/${window?.contextPath}/employee/BPA/application-search?status=PENDINGAPPROVAL,PENDINGPAYMENT,FIELDINSPECTION,PENDINGDOCVERIFICATION`,
+          path: `/${window?.contextPath}/employee/publicservices/applications-employee/in-progress`,
           icon: LuClock,
         },
         {
           id: "all-dossiers",
           label: "Tous les dossiers",
-          path: `/${window?.contextPath}/employee/BPA/application-search`,
+          path: `/${window?.contextPath}/employee/publicservices/applications-employee/all`,
           icon: LuFolderOpen,
         },
       ],
+    },
+    {
+      id: "search",
+      label: "Recherche",
+      icon: LuSearch,
+      path: `/${window?.contextPath}/employee/publicservices/search`,
     },
   ];
 
@@ -62,6 +69,9 @@ const EmployeeNavigation = ({ mobileView }) => {
       return true;
     }
     if (tabId === "dossiers" && pathname.includes("/BPA")) {
+      return true;
+    }
+    if (tabId === "search" && pathname.includes("/employee/search")) {
       return true;
     }
     return activeTab === tabId;

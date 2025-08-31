@@ -40,7 +40,7 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   });
 
   return (
-    <div className="ground-container">
+    <div>
       <Switch>
         {appRoutes}
         <Route path={`${path}/forgot-password`}>

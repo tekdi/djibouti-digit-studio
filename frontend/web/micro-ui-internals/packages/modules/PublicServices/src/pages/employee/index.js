@@ -27,6 +27,11 @@ import CitizenApplicationsCompleted from "../citizen/applications/CitizenApplica
 import CitizenApplicationsPendingPayment from "../citizen/applications/CitizenApplicationsPendingPayment";
 import Settings from "../citizen/Settings";
 
+// employee
+import EmployeeDashboard from "./Dashboard";
+import EmployeeApplications from "./applications";
+import EmployeeSearch from "./search";
+
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
@@ -36,7 +41,7 @@ const SampleBreadCrumbs = ({ location }) => {
   const homeLink =
     userType === "citizen"
       ? `/${window?.contextPath}/${userType}/publicservices/apply`
-      : `/${window?.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`;
+      : `/${window?.contextPath}/${userType}/publicservices/dashboard-employee`;
 
   const crumbs = [
     {
@@ -76,6 +81,9 @@ const App = ({ path, stateCode, userType, tenants }) => {
           <PrivateRoute exact path={`${path}/help`} component={() => <CitizenHelp />} />
 
           {/* employee */}
+          <PrivateRoute exact path={`${path}/dashboard-employee`} component={() => <EmployeeDashboard />} />
+          <PrivateRoute exact path={`${path}/applications-employee/all`} component={() => <EmployeeApplications />} />
+          <PrivateRoute exact path={`${path}/search`} component={() => <EmployeeSearch />} />
           <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
           <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
           <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />
