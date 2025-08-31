@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 
 const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
   const { t } = useTranslation();
-  const renderTimeline = (timeline, isParallelWorkflow) => {
+
+  const renderTimeline = (timeline) => {
     return [...timeline].reverse().map((instance, index) => {
       const isCurrentState = index === timeline.length - 1;
       const displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
@@ -11,15 +12,15 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
 
       return (
         <div key={index} className="flex items-start mb-6">
-          <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium mr-4 ${
-            isCurrentState 
-              ? 'border-djibouti-primary bg-djibouti-primary text-white' 
-              : 'border-gray-300 bg-white text-gray-500'
-          }`}>
+                     <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium mr-4 relative z-10 ${
+             isCurrentState 
+               ? 'border-djibouti-primary bg-djibouti-primary text-white' 
+               : 'border-gray-300 bg-white text-gray-500'
+           }`}>
             {index + 1}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <h4 className={`text-sm font-medium ${
                 isCurrentState ? 'text-djibouti-primary' : 'text-gray-900'
               }`}>
@@ -31,7 +32,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
             </div>
             
             {instance?.assignes?.length > 0 && (
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500">
                 {t("ASSIGNED_TO")}: {instance.assignes.map((assignee) => assignee?.name).join(", ")}
               </p>
             )}
@@ -50,10 +51,10 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-black text-gray-900 mb-4">Historique des activités      </h3>
+      <h3 className="text-lg font-black text-gray-900 mb-4">Historique des activités</h3>
       
       <div className="relative">
-        <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200"></div>
+        <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200 z-0"></div>
         
         {Array.isArray(timeline) && renderTimeline(timeline, isParallelWorkflow)}
       </div>

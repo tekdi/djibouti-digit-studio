@@ -214,10 +214,7 @@ const TopBar = ({
         mobileView={mobileView}
       />
     );
-  }
-  
-  // Show modern employee header for BPA employees
-  if (isEmployee) {
+  }else{
     return (
       <EmployeeTopBar
         t={t}

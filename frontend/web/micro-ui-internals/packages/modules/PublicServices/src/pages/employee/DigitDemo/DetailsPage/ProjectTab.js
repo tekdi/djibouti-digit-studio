@@ -19,9 +19,13 @@ const ProjectTab = ({
     additionalDetails: response?.additionalDetails || {},
     documents: response?.documents || [],
     serviceDetails: {
-      landInfo: response?.serviceDetails?.landandProjectDesignDetails?.[0] || {},
-      designOffice: response?.serviceDetails?.designOfficeDetailing || [],
-      legalEntity: response?.serviceDetails?.legalEntityDetails || []
+      // Map the data to match the field definitions in dataValues files
+      landandProjectDesignDetails: response?.serviceDetails?.landandProjectDesignDetails || [],
+      designOfficeDetailing: response?.serviceDetails?.designOfficeDetailing || [],
+      legalEntityDetails: response?.serviceDetails?.legalEntityDetails || [],
+      // For P13 (BPA_CCG) - Certificate of Conformity
+      originalPermitDetails: response?.serviceDetails?.originalPermitDetails || [],
+      conformityCertificatesDetails: response?.serviceDetails?.conformityCertificatesDetails || []
     },
   };
 

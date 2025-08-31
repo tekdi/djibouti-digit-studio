@@ -24,7 +24,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
             photos: formData.photos,
             lastEditedAt: currentTimestamp,
             lastEditedBy: currentUser?.info?.uuid,
-            lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || "Unknown User",
+            lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
             service: service,
             state: state,
           };
@@ -36,10 +36,10 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
             photos: formData.photos,
             submittedAt: currentTimestamp,
             submittedBy: currentUser?.info?.uuid,
-            submittedByName: currentUser?.info?.name || currentUser?.info?.userName || "Unknown User",
+            submittedByName: currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
             lastEditedAt: currentTimestamp,
             lastEditedBy: currentUser?.info?.uuid,
-            lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || "Unknown User",
+            lastEditedByName: currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
             service: service,
             state: state,
           };
@@ -154,7 +154,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
       } catch (error) {
         console.error("Error downloading file:", error);
         if (Digit.Toast) {
-          Digit.Toast.error("Failed to download file");
+          Digit.Toast.error("Échec du téléchargement du fichier");
         }
       }
     },

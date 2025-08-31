@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { LuFile, LuCreditCard, LuBell } from "react-icons/lu";
 
-const WelcomeSection = ({ userName = "Ahmed" }) => {
+const WelcomeSection = ({ userName = "" }) => {
   // Extract first name only from full name
   const getFirstName = (fullName) => {
     if (!fullName) return "Utilisateur";

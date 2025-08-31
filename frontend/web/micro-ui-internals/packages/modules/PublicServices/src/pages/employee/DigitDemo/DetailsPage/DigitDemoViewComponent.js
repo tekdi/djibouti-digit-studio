@@ -10,6 +10,7 @@ import { checklistByService } from "../../../../utils/templateConfig.js";
 import ApplicationHeader from "./ApplicationHeader";
 import ApplicationTabs from "./ApplicationTabs";
 import MainView from "./MainView";
+import ActionButtons from "./ActionButtons";
 
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
@@ -319,6 +320,21 @@ const DigitDemoViewComponent = () => {
             selectedBusinessService={selectedBusinessService}
           />
         </div>
+
+        {/* Floating Action Buttons */}
+        <ActionButtons
+          isCitizen={isCitizen}
+          selectedBusinessService={selectedBusinessService}
+          matchedBusinessServices={matchedBusinessServices}
+          setSelectedBusinessService={setSelectedBusinessService}
+          response={response}
+          queryStrings={queryStrings}
+          tenantId={tenantId}
+          serviceConfig={serviceConfig}
+          processInstanceState={processInstanceState}
+          isDownloadButtonEnable={isDownloadButtonEnable}
+          service={service}
+        />
       </div>
     </React.Fragment>
   );

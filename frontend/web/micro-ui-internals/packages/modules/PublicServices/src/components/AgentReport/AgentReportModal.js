@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Button, TextArea } from "@egovernments/digit-ui-components";
 import { FileUploadSection } from "./components/FileUploadSection";
 import { ModalHeader } from "./components/ModalHeader";
 import { useAgentReportForm } from "./hooks/useAgentReportForm";
@@ -67,7 +66,7 @@ const AgentReportModal = ({
     } catch (error) {
       console.error("Error checking existing checklist:", error);
       if (Digit.Toast) {
-        Digit.Toast.error("Failed to load existing checklist data");
+        Digit.Toast.error("Échec du chargement des données de liste de contrôle existantes");
       }
     }
   };
@@ -83,7 +82,7 @@ const AgentReportModal = ({
 
       // Show success message
       if (Digit.Toast) {
-        Digit.Toast.success(isEdit ? "Checklist updated successfully" : "Checklist submitted successfully");
+        Digit.Toast.success(isEdit ? "Liste de contrôle mise à jour avec succès" : "Liste de contrôle soumise avec succès");
       }
 
       // Close modal and notify parent
@@ -95,7 +94,7 @@ const AgentReportModal = ({
     } catch (error) {
       console.error("Error submitting checklist:", error);
       if (Digit.Toast) {
-        Digit.Toast.error("Failed to submit checklist");
+        Digit.Toast.error("Échec de la soumission de la liste de contrôle");
       }
     }
   };
@@ -131,65 +130,17 @@ const AgentReportModal = ({
       `}</style>
 
       <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.6)",
-          backdropFilter: "blur(4px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          animation: "modalBackdrop 0.3s ease-out",
-        }}
+        className="fixed top-0 left-0 right-0 bottom-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] animate-[modalBackdrop_0.3s_ease-out]"
         onClick={onClose}
       >
         <div
-          style={{
-            width: "750px",
-            maxWidth: "95vw",
-            maxHeight: "90vh",
-            backgroundColor: "white",
-            borderRadius: "20px",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
-            overflow: "hidden",
-            animation: "modalContent 0.3s ease-out",
-            position: "relative",
-          }}
+          className="w-[750px] max-w-[95vw] max-h-[90vh] bg-white rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4)] overflow-hidden animate-[modalContent_0.3s_ease-out] relative"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
           <button
             onClick={onClose}
-            style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
-              backdropFilter: "blur(10px)",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 10,
-              transition: "all 0.2s ease",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 1)";
-              e.target.style.transform = "scale(1.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
-              e.target.style.transform = "scale(1)";
-            }}
+            className="absolute top-5 right-5 w-10 h-10 rounded-full border-none bg-white/90 backdrop-blur-[10px] cursor-pointer flex items-center justify-center z-10 transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-white hover:scale-110"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -209,18 +160,10 @@ const AgentReportModal = ({
           />
 
           {/* Content */}
-          <div
-            style={{
-              padding: "40px",
-              background: "white",
-              borderRadius: "0 0 20px 20px",
-              maxHeight: "60vh",
-              overflowY: "auto",
-            }}
-          >
+          <div className="p-10 bg-white rounded-b-[20px] max-h-[60vh] overflow-y-auto">
             {/* Report Upload */}
             <FileUploadSection
-              title="Field Report Files"
+              title="Fichiers de rapport sur site"
               fieldName="report"
               accept=".pdf,.doc,.docx,.xlsx,.xls"
               maxFiles={5}
@@ -238,67 +181,27 @@ const AgentReportModal = ({
             />
 
             {/* Notes */}
-            <div style={{ marginBottom: "2rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "12px",
-                  fontWeight: "600",
-                  fontSize: "16px",
-                  color: "#1f2937",
-                }}
-              >
-                Additional Notes {!isViewMode && "(Optional)"}
+            <div className="mb-8">
+              <label className="block mb-3 font-semibold text-base text-gray-800">
+                Notes supplémentaires {!isViewMode && "(Optionnel)"}
               </label>
               {isViewMode && !isEditMode ? (
-                <div
-                  style={{
-                    width: "100%",
-                    minHeight: "120px",
-                    padding: "16px",
-                    border: "2px solid #e5e7eb",
-                    borderRadius: "12px",
-                    fontSize: "14px",
-                    fontFamily: "inherit",
-                    backgroundColor: "#f9fafb",
-                    color: "#374151",
-                    lineHeight: "1.5",
-                  }}
-                >
-                  {formData.notes || "No additional notes provided."}
+                <div className="w-full min-h-[120px] p-4 border-2 border-gray-200 rounded-xl text-sm font-inherit bg-gray-50 text-gray-700 leading-relaxed">
+                  {formData.notes || "Aucune note supplémentaire fournie."}
                 </div>
               ) : (
-                <TextArea
+                <textarea
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
-                  placeholder="Enter any additional notes or observations from your field inspection..."
-                  style={{
-                    width: "100%",
-                    minHeight: "120px",
-                    padding: "16px",
-                    border: "2px solid #e5e7eb",
-                    borderRadius: "12px",
-                    fontSize: "14px",
-                    fontFamily: "inherit",
-                    resize: "vertical",
-                    transition: "all 0.2s ease",
-                    outline: "none",
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = "#0f6769";
-                    e.target.style.boxShadow = "0 0 0 3px rgba(15, 103, 105, 0.1)";
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#e5e7eb";
-                    e.target.style.boxShadow = "none";
-                  }}
+                  placeholder="Entrez des notes supplémentaires ou des observations de votre inspection sur site..."
+                  className="w-full min-h-[120px] p-4 border-2 border-gray-200 rounded-xl text-sm font-inherit resize-y transition-all duration-200 outline-none focus:border-[#0f6769] focus:shadow-[0_0_0_3px_rgba(15,103,105,0.1)]"
                 />
               )}
             </div>
 
             {/* Photos Upload */}
             <FileUploadSection
-              title="Field Photos"
+              title="Photos sur site"
               fieldName="photos"
               accept=".jpg,.jpeg,.png"
               maxFiles={10}
@@ -317,86 +220,34 @@ const AgentReportModal = ({
 
             {/* Action Buttons */}
             {!isViewMode && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "16px",
-                  justifyContent: "flex-end",
-                  marginTop: "32px",
-                  paddingTop: "24px",
-                  borderTop: "1px solid #f3f4f6",
-                }}
-              >
-                <Button
-                  label="Cancel"
+              <div className="flex gap-4 justify-end mt-8 pt-6 border-t border-gray-100">
+                <button
                   onClick={onClose}
-                  variation="secondary"
-                  style={{
-                    backgroundColor: "white",
-                    color: "#6b7280",
-                    border: "2px solid #e5e7eb",
-                    borderRadius: "12px",
-                    padding: "12px 24px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    minWidth: "100px",
-                  }}
-                />
-                <Button
-                  label={isLoading ? "Submitting..." : "Submit Report"}
+                  className="bg-white text-gray-500 border-2 border-gray-200 rounded-xl px-6 py-3 text-sm font-semibold cursor-pointer transition-all duration-200 min-w-[100px] hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+                <button
                   onClick={onSubmitChecklist}
                   disabled={isLoading || uploadingFiles}
-                  variation="primary"
-                  style={{
-                    background: "linear-gradient(135deg, #0f6769 0%, #73836a 100%)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "12px",
-                    padding: "12px 24px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    cursor: isLoading || uploadingFiles ? "not-allowed" : "pointer",
-                    opacity: isLoading || uploadingFiles ? 0.7 : 1,
-                    transition: "all 0.2s ease",
-                    minWidth: "140px",
-                    boxShadow: "0 4px 12px rgba(15, 103, 105, 0.3)",
-                  }}
-                />
+                  className={`bg-gradient-to-br from-[#0f6769] to-[#73836a] text-white border-none rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-200 min-w-[140px] shadow-[0_4px_12px_rgba(15,103,105,0.3)] ${
+                    isLoading || uploadingFiles ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:shadow-[0_6px_16px_rgba(15,103,105,0.4)]'
+                  }`}
+                >
+                  {isLoading ? "Soumission..." : "Soumettre le rapport"}
+                </button>
               </div>
             )}
 
             {/* Close button for view mode */}
             {isViewMode && !isEditMode && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "16px",
-                  justifyContent: "flex-end",
-                  marginTop: "32px",
-                  paddingTop: "24px",
-                  borderTop: "1px solid #f3f4f6",
-                }}
-              >
-                <Button
-                  label="Close"
+              <div className="flex gap-4 justify-end mt-8 pt-6 border-t border-gray-100">
+                <button
                   onClick={onClose}
-                  variation="primary"
-                  style={{
-                    background: "linear-gradient(135deg, #0f6769 0%, #73836a 100%)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "12px",
-                    padding: "12px 24px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    minWidth: "100px",
-                    boxShadow: "0 4px 12px rgba(15, 103, 105, 0.3)",
-                  }}
-                />
+                  className="bg-gradient-to-br from-[#0f6769] to-[#73836a] text-white border-none rounded-xl px-6 py-3 text-sm font-semibold cursor-pointer transition-all duration-200 min-w-[100px] shadow-[0_4px_12px_rgba(15,103,105,0.3)] hover:shadow-[0_6px_16px_rgba(15,103,105,0.4)]"
+                >
+                  Fermer
+                </button>
               </div>
             )}
           </div>

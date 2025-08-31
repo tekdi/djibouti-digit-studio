@@ -24,6 +24,24 @@ const EmployeeDashboard = () => {
 
   const { applications, isLoading, lastFetchTime } = useApplications();
 
+  // Function to get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Bonjour";
+    if (hour < 18) return "Bon après-midi";
+    return "Bonsoir";
+  };
+
+  // Extract first name only from full name
+  const getFirstName = (fullName) => {
+    if (!fullName) return "Employé";
+    const nameParts = fullName.trim().split(' ');
+    return nameParts[0];
+  };
+
+  const firstName = getFirstName(userName);
+  const greeting = getGreeting();
+
   // Calculate real statistics from API data
   const stats = useMemo(() => {
     if (!applications || applications.length === 0) {
@@ -151,7 +169,7 @@ const EmployeeDashboard = () => {
       <div className="bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-sm p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Tableau de bord Employé</h1>
+            <h1 className="text-2xl font-bold">{greeting}, {firstName}</h1>
             <p className="mt-1 opacity-90">Gestion et traitement des demandes d'autorisation</p>
           </div>
           <div className="text-right">

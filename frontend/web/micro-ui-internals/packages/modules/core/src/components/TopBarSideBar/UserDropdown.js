@@ -13,6 +13,7 @@ const UserDropdown = ({ userDetails, userOptions }) => {
   const roleTranslations = {
     "CITIZEN": "Citoyen",
     "BPA_ARCHITECT": "Architecte",
+    "BPA_DIRECTOR": "Directeur DATUH",
     "BPA_HOD": "Chef de Service SRA",
     "BPA_AGENTS": "Agent SRA",
     "BPA_SDECC_HOD": "Chef SDECC",
@@ -42,7 +43,7 @@ const UserDropdown = ({ userDetails, userOptions }) => {
   // Get user roles and find the display role
   const userRoles = userDetails?.info?.roles || [];
   const priorityRoles = [
-    "BPA_ARCHITECT", "BPA_HOD", "BPA_AGENTS", "BPA_SDECC_HOD", 
+    "BPA_ARCHITECT", "BPA_DIRECTOR", "BPA_HOD", "BPA_AGENTS", "BPA_SDECC_HOD", 
     "BPA_SDECC_AGENTS", "BPA_SDECC_COMM", "BPA_SDECC_AGENT", 
     "TOPOGRAPHY_HOD", "TOPOGRAPHY_AGENT"
   ];
