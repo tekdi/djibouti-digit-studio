@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { LuFile, LuCreditCard, LuBell } from "react-icons/lu";
+import { LuFile, LuCreditCard } from "react-icons/lu";
 
 const WelcomeSection = ({ userName = "" }) => {
   // Extract first name only from full name
@@ -47,25 +47,6 @@ const WelcomeSection = ({ userName = "" }) => {
               <LuCreditCard className="w-5 h-5" />
             </div>
             <span className="font-medium">Effectuer un paiement</span>
-          </a>
-
-          <a 
-            href={`#`}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white border border-white/20 backdrop-blur-sm hover:scale-105 hover:shadow-lg hover:shadow-primary/20 group"
-          >
-            <div className="p-2 rounded-lg transition-all" style={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}>
-              <LuBell className="w-5 h-5" />
-            </div>
-            <span className="font-medium">Notifications</span>
-            <span 
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium text-white"
-              style={{ 
-                backgroundColor: "#ef4444",
-                borderColor: "#006769"
-              }}
-            >
-              3
-            </span>
           </a>
         </div>
       </div>

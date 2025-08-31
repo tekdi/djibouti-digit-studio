@@ -81,7 +81,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
                     handleTabClick(tab);
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium text-sm ${
                     active
                       ? "text-white bg-djibouti-primary shadow-lg"
                       : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary"

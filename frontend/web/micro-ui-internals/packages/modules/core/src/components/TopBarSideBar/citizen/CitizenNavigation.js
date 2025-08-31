@@ -115,7 +115,7 @@ const CitizenNavigation = ({ mobileView }) => {
             <div key={tab.id} className="relative dropdown-container">
               <button
                 onClick={() => setShowRequestsDropdown(!showRequestsDropdown)}
-                className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium ${
+                className={`group flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-300 font-medium text-sm ${
                   active
                     ? "text-white bg-djibouti-primary shadow-lg scale-105"
                     : "text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary hover:scale-105"
@@ -137,7 +137,7 @@ const CitizenNavigation = ({ mobileView }) => {
                         setShowRequestsDropdown(false);
                         setActiveTab(tab.id);
                       }}
-                      className="w-full flex items-center gap-3 px-2 py-3 text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary transition-all duration-200 rounded-xl text-left"
+                      className="w-full flex items-center gap-3 px-2 py-3 text-gray-700 hover:bg-djibouti-primary-light hover:bg-opacity-10 hover:text-djibouti-primary transition-all duration-200 rounded-xl text-left text-sm"
                     >
                       <div className="p-2 rounded-lg bg-gray-100">
                         <item.icon className="w-4 h-4" />
