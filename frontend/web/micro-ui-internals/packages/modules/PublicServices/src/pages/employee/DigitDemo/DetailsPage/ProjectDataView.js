@@ -24,20 +24,7 @@ const ProjectDataView = ({
 
   if (!data) return null;
 
-  const { applicants = [], additionalDetails = {}, documents = [], serviceDetails = {} } = data;
-
-  const downloadFile = async (fileStoreId) => {
-    try {
-      const tenantId = Digit.ULBService.getCurrentTenantId();
-      const response = await Digit.UploadServices.Filefetch([fileStoreId], tenantId);
-
-      if (response?.data?.[fileStoreId]) {
-        window.open(response.data[fileStoreId], "_blank");
-      }
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    }
-  };
+  const { additionalDetails = {}, serviceDetails = {} } = data;
 
   const renderValue = (value) => {
     if (!value) return "N/A";

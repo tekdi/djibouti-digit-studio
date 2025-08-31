@@ -50,7 +50,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("ACTIVITIES")}</h3>
+      <h3 className="text-lg font-black text-gray-900 mb-4">Historique des activités      </h3>
       
       <div className="relative">
         <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200"></div>

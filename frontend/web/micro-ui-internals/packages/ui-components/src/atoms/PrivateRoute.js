@@ -10,11 +10,7 @@ export const PrivateRoute = ({ component: Component, roles, ...rest }) => {
         const user = window?.Digit?.UserService.getUser();
         const userType = window?.Digit?.UserService.getType();
         function getLoginRedirectionLink() {
-          if (userType === "employee") {
-            return `/${window?.contextPath}/employee/user/login`;
-          } else {
-            return `/${window?.contextPath}/citizen/login`;
-          }
+          return `/${window?.contextPath}/profile-selection`;
         }
         if (!user || !user.access_token) {
           // not logged in so redirect to login page with the return url

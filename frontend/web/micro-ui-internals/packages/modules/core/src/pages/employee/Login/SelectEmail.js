@@ -7,6 +7,7 @@ import {
   LuSparkles,
   LuZap,
   LuArrowRight,
+  LuArrowLeft,
 } from "react-icons/lu";
 
 const features = [
@@ -54,6 +55,10 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
 
   const handleCitizenLogin = () => {
     window.location.href = `/${window?.contextPath}/citizen/login`;
+  };
+
+  const handleBackToProfileSelection = () => {
+    window.location.href = `/${window?.contextPath}/profile-selection`;
   };
 
   const handleSubmit = (data) => {
@@ -232,11 +237,13 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
               
               <div className="text-center space-y-4 mt-8">
                 <button
-                  onClick={handleCitizenLogin}
-                  className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
+                  onClick={handleBackToProfileSelection}
+                  className="flex items-center justify-center w-full text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-2"
                 >
-                  Espace citoyen
+                  <LuArrowLeft className="h-4 w-4 mr-2" />
+                  Retour à la sélection de profil
                 </button>
+           
               </div>
             </div>
           </div>
@@ -316,11 +323,13 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
             
             <div className="text-center space-y-4 mt-8">
               <button
-                onClick={handleCitizenLogin}
-                className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
+                onClick={handleBackToProfileSelection}
+                className="flex items-center justify-center w-full text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-2"
               >
-                  Espace citoyen
+                <LuArrowLeft className="h-4 w-4 mr-2" />
+                Retour à la sélection de profil
               </button>
+           
             </div>
           </div>
         </div>

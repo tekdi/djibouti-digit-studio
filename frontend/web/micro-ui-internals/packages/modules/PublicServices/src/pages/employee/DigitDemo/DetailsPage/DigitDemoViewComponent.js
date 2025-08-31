@@ -10,7 +10,6 @@ import { checklistByService } from "../../../../utils/templateConfig.js";
 import ApplicationHeader from "./ApplicationHeader";
 import ApplicationTabs from "./ApplicationTabs";
 import MainView from "./MainView";
-import SidebarActions from "./SidebarActions";
 
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
@@ -282,8 +281,8 @@ const DigitDemoViewComponent = () => {
 
   return (
     <React.Fragment>
-      <div  className="max-w-7xl mx-auto flex gap-5 p-10 pt-5">
-        <div className="mt-4 flex flex-col gap-4 w-2/3">
+      <div className="max-w-7xl mx-auto p-10 pt-5">
+        <div className="mt-4 flex flex-col gap-4">
           {/* Header Card */}
           <ApplicationHeader 
             response={response}
@@ -320,30 +319,6 @@ const DigitDemoViewComponent = () => {
             selectedBusinessService={selectedBusinessService}
           />
         </div>
-
-        {/* Sidebar Actions */}
-        <SidebarActions
-          isCitizen={isCitizen}
-          selectedBusinessService={selectedBusinessService}
-          matchedBusinessServices={matchedBusinessServices}
-          setSelectedBusinessService={setSelectedBusinessService}
-          response={response}
-          queryStrings={queryStrings}
-          tenantId={tenantId}
-          serviceConfig={serviceConfig}
-          isCalculationFees={isCalculationFees}
-          isCalculatioDone={isCalculatioDone}
-          handleCalculationClick={handleCalculationClick}
-          shouldShowChecklist={shouldShowChecklist}
-          checkListCodes={checkListCodes}
-          data={data}
-          processInstanceState={processInstanceState}
-          isDownloadButtonEnable={isDownloadButtonEnable}
-          renderTimeline={renderTimeline}
-          timelineWorkflowDetails={timelineWorkflowDetails}
-          workflowDetails={workflowDetails}
-          service={service}
-        />
       </div>
     </React.Fragment>
   );

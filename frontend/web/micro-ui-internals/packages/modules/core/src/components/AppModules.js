@@ -18,9 +18,7 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   const user = Digit.UserService.getUser();
 
   if (!user || !user?.access_token || !user?.info) {
-    const redirectUrl = userType === "employee"
-      ? `/${window?.contextPath}/employee/user/login`
-      : `/${window?.contextPath}/citizen/login`;
+    const redirectUrl = `/${window?.contextPath}/profile-selection`;
     return <Redirect to={{ pathname: redirectUrl, state: { from: location.pathname + location.search } }} />;
   }
 

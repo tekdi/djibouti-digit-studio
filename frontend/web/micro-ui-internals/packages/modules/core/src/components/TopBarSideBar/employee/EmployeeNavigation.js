@@ -65,16 +65,26 @@ const EmployeeNavigation = ({ mobileView }) => {
   };
 
   const isTabActive = (tabId) => {
-    if (tabId === "dashboard" && (pathname.includes("/employee") && !pathname.includes("/BPA"))) {
+    // Dashboard tab - matches dashboard-employee route
+    if (tabId === "dashboard" && pathname.includes("/dashboard-employee")) {
       return true;
     }
-    if (tabId === "dossiers" && pathname.includes("/BPA")) {
+    
+    // Dossiers tab - matches all applications routes and BPA routes
+    if (tabId === "dossiers" && (
+      pathname.includes("/applications-employee") || 
+      pathname.includes("/BPA")
+    )) {
       return true;
     }
-    if (tabId === "search" && pathname.includes("/employee/search")) {
+    
+    // Search tab - matches search route
+    if (tabId === "search" && pathname.includes("/search")) {
       return true;
     }
-    return activeTab === tabId;
+    
+    // If no route matches, return false instead of relying on activeTab state
+    return false;
   };
 
   // Close dropdowns when clicking outside

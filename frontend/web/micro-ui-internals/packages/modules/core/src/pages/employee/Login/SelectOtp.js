@@ -17,6 +17,29 @@ import {
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, canSubmit }) => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [otpValue, setOtpValue] = useState(otp || "");
+  
+  // Get type from URL parameters
+  const searchParams = new URLSearchParams(window.location.search);
+  const userType = searchParams.get('type');
+  
+
+  
+  const getSubtitle = () => {
+    switch(userType) {
+      case 'citizen':
+        return 'Vérification pour les particuliers';
+      case 'professional':
+        return 'Vérification pour les professionnels du bâtiment';
+      case 'promoter':
+        return 'Vérification pour les promoteurs immobiliers';
+      case 'instructor':
+        return 'Vérification pour les agents instructeurs';
+      case 'authority':
+        return 'Vérification pour les autorités décisionnaires';
+      default:
+        return 'Vérification professionnelle';
+    }
+  };
 
   // Sync with props
   useEffect(() => {
@@ -57,6 +80,10 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
 
   const handleCitizenLogin = () => {
     window.location.href = `/${window?.contextPath}/citizen/login`;
+  };
+
+  const handleBackToProfileSelection = () => {
+    window.location.href = `/${window?.contextPath}/profile-selection`;
   };
 
   return (
@@ -152,9 +179,8 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                   <h1 className="text-3xl font-bold text-gray-900">Vérification</h1>
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Code OTP</h2>
               <p className="text-gray-600 text-base mb-2 text-center">
-                Entrez le code à 6 chiffres envoyé à
+                {getSubtitle()}
               </p>
               <p className="text-djibouti-primary font-medium mb-8 text-center">
                 {config.email || "votre email"}
@@ -234,11 +260,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
 
               <div className="text-center space-y-4 mt-8">
                 <button
-                  onClick={handleCitizenLogin}
-                  className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
+                  onClick={handleBackToProfileSelection}
+                  className="flex items-center justify-center w-full text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-2"
                 >
-                  Espace citoyen
+                  <LuArrowLeft className="h-4 w-4 mr-2" />
+                  Retour à la sélection de profil
                 </button>
+               
               </div>
             </div>
           </div>
@@ -255,9 +283,9 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                 <h1 className="text-3xl font-bold text-gray-900">Vérification</h1>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Code OTP</h2>
+
             <p className="text-gray-600 text-base mb-2 text-center">
-              Entrez le code à 6 chiffres envoyé à
+              {getSubtitle()}
             </p>
             <p className="text-djibouti-primary font-medium mb-8 text-center">
               {config.email || "votre email"}
@@ -333,15 +361,6 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                   </button>
                 )}
               </div>
-            </div>
-
-            <div className="text-center space-y-4 mt-8">
-              <button
-                onClick={handleCitizenLogin}
-                className="text-sm text-djibouti-primary hover:text-djibouti-secondary transition-colors duration-200"
-              >
-                Espace citoyen
-              </button>
             </div>
           </div>
         </div>

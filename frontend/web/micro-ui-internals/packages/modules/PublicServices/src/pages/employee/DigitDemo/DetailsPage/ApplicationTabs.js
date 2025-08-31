@@ -12,7 +12,7 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
     { id: "project", label: "Détails du projet", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
     { id: "payments", label: "Paiements", icon: LuCreditCard },
-    { id: "activities", label: "Activités", icon: LuActivity },
+    { id: "activities", label: "Historique", icon: LuActivity },
     // Only show checklist tab for non-citizens
     ...(isCitizen ? [] : [{ id: "checklist", label: "Contrôle", icon: LuSquareCheck }])
   ];

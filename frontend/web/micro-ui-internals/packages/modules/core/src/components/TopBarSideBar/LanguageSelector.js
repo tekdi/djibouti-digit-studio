@@ -13,7 +13,6 @@ const LanguageSelector = () => {
 
   // Map the languages to include flags
   const languagesWithFlags = languages?.map(lang => {
-    console.log("Language:", lang); // Debug log
     return {
       ...lang,
       flag: lang.value === "fr_FR_IN" ? "🇫🇷" : lang.value === "en_IN" ? "🇬🇧" : "🌐"
@@ -21,7 +20,6 @@ const LanguageSelector = () => {
   }) || [];
 
   const currentLanguage = languagesWithFlags.find(lang => lang.value === selected);
-  console.log("Current language:", currentLanguage); // Debug log
 
   // Sync selected state with current language
   useEffect(() => {
