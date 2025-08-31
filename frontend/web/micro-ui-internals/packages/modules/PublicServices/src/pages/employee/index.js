@@ -30,6 +30,8 @@ import Settings from "../citizen/Settings";
 // employee
 import EmployeeDashboard from "./Dashboard";
 import EmployeeApplications from "./applications";
+import InProgressApplications from "./applications/InProgressApplications";
+import NewApplications from "./applications/NewApplications";
 import EmployeeSearch from "./search";
 
 const SampleBreadCrumbs = ({ location }) => {
@@ -83,6 +85,8 @@ const App = ({ path, stateCode, userType, tenants }) => {
           {/* employee */}
           <PrivateRoute exact path={`${path}/dashboard-employee`} component={() => <EmployeeDashboard />} />
           <PrivateRoute exact path={`${path}/applications-employee/all`} component={() => <EmployeeApplications />} />
+          <PrivateRoute exact path={`${path}/applications-employee/in-progress`} component={() => <InProgressApplications />} />
+          <PrivateRoute exact path={`${path}/applications-employee/new`} component={() => <NewApplications />} />
           <PrivateRoute exact path={`${path}/search`} component={() => <EmployeeSearch />} />
           <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
           <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />

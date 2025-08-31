@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import StatsCard from "./components/StatsCard";
 import RecentApplications from "./components/RecentApplications";
+import useApplications from "../applications/useApplications";
+import { getStatusInfo, formatDate, getServiceInfo } from "../applications/utils";
 import { 
   LuFileText, 
   LuUsers, 
@@ -20,106 +22,128 @@ const EmployeeDashboard = () => {
   const userName = userDetails?.info?.name || "Employé";
   const userRoles = userDetails?.info?.roles?.map((roleData) => roleData?.code) || [];
 
-  const stats = [
-    {
-      title: "Nouveaux dossiers",
-      value: 45,
-      icon: LuFileText,
-      change: { value: 12, isPositive: true },
-      gradient: "from-primary to-primary-dark"
-    },
-    {
-      title: "Dossiers assignés",
-      value: 156,
-      icon: LuUserCheck,
-      change: { value: 8, isPositive: true },
-      gradient: "from-green-500 to-emerald-600"
-    },
-    {
-      title: "En cours de traitement",
-      value: 28,
-      icon: LuUsers,
-      change: { value: 3, isPositive: true },
-      gradient: "from-blue-500 to-indigo-600"
-    },
-    {
-      title: "Transferts effectués",
-      value: 23,
-      icon: LuSend,
-      change: { value: 5, isPositive: false },
-      gradient: "from-amber-500 to-orange-600"
+  const { applications, isLoading, lastFetchTime } = useApplications();
+
+  // Calculate real statistics from API data
+  const stats = useMemo(() => {
+    if (!applications || applications.length === 0) {
+      return [
+        {
+          title: "Nouveaux dossiers",
+          value: 0,
+          icon: LuFileText,
+          change: { value: 0, isPositive: true },
+          gradient: "from-primary to-primary-dark"
+        },
+        {
+          title: "Dossiers assignés",
+          value: 0,
+          icon: LuUserCheck,
+          change: { value: 0, isPositive: true },
+          gradient: "from-green-500 to-emerald-600"
+        },
+        {
+          title: "En cours de traitement",
+          value: 0,
+          icon: LuUsers,
+          change: { value: 0, isPositive: true },
+          gradient: "from-blue-500 to-indigo-600"
+        },
+        {
+          title: "Approuvés",
+          value: 0,
+          icon: LuSend,
+          change: { value: 0, isPositive: true },
+          gradient: "from-amber-500 to-orange-600"
+        }
+      ];
     }
-  ];
 
-  const recentApplications = [
-    {
-      id: 'PCO-2024-0156',
-      title: 'Complexe résidentiel Hayableh',
-      client: 'Société Immobilière Djibouti',
-      status: 'Nouveau',
-      priority: 'Haute',
-      submittedDate: '20/01/2024',
-      agent: null
-    },
-    {
-      id: 'PCO-2024-0155',
-      title: 'Centre commercial Balbala',
-      client: 'OpenTrade SARL',
-      status: 'Assigné',
-      priority: 'Moyenne',
-      submittedDate: '18/01/2024',
-      agent: 'Fatouma Ali'
-    },
-    {
-      id: 'PCO-2024-0154',
-      title: 'Hôtel 4 étoiles Ambouli',
-      client: 'Djibouti Hotels Group',
-      status: 'En cours',
-      priority: 'Haute',
-      submittedDate: '15/01/2024',
-      agent: 'Mohamed Youssouf'
-    },
-    {
-      id: 'PCO-2024-0153',
-      title: 'Résidence Les Palmiers',
-      client: 'Hassan Osman',
-      status: 'Transféré',
-      priority: 'Basse',
-      submittedDate: '12/01/2024',
-      agent: 'Amina Said',
-      transferredTo: 'SDATUH'
-    }
-  ];
+    const newApplicationsCount = applications.filter(
+      (app) => app.ProcessInstance?.state?.applicationStatus === "AGENT_NOT_ASSIGNED"
+    ).length;
 
+    const assignedApplicationsCount = applications.filter(
+      (app) => app.ProcessInstance?.state?.applicationStatus !== "AGENT_NOT_ASSIGNED" &&
+               app.ProcessInstance?.state?.applicationStatus !== "PERMIT_GRANTED" &&
+               app.ProcessInstance?.state?.applicationStatus !== "CERTIFICATE_GRANTED"
+    ).length;
 
+    const inProgressCount = applications.filter(
+      (app) => {
+        const status = app.ProcessInstance?.state?.applicationStatus;
+        return status !== "AGENT_NOT_ASSIGNED" && 
+               status !== "PERMIT_GRANTED" && 
+               status !== "CERTIFICATE_GRANTED";
+      }
+    ).length;
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Nouveau':
-        return 'bg-blue-100 text-blue-800';
-      case 'Assigné':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'En cours':
-        return 'bg-orange-100 text-orange-800';
-      case 'Transféré':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+    const approvedCount = applications.filter(
+      (app) => {
+        const status = app.ProcessInstance?.state?.applicationStatus;
+        return status === "PERMIT_GRANTED" || status === "CERTIFICATE_GRANTED";
+      }
+    ).length;
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'Haute':
-        return 'bg-red-100 text-red-800';
-      case 'Moyenne':
-        return 'bg-amber-100 text-amber-800';
-      case 'Basse':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+    return [
+      {
+        title: "Nouveaux dossiers",
+        value: newApplicationsCount,
+        icon: LuFileText,
+        change: { value: 12, isPositive: true },
+        gradient: "from-primary to-primary-dark"
+      },
+      {
+        title: "Dossiers assignés",
+        value: assignedApplicationsCount,
+        icon: LuUserCheck,
+        change: { value: 8, isPositive: true },
+        gradient: "from-green-500 to-emerald-600"
+      },
+      {
+        title: "En cours de traitement",
+        value: inProgressCount,
+        icon: LuUsers,
+        change: { value: 3, isPositive: true },
+        gradient: "from-blue-500 to-indigo-600"
+      },
+      {
+        title: "Approuvés",
+        value: approvedCount,
+        icon: LuSend,
+        change: { value: 5, isPositive: true },
+        gradient: "from-amber-500 to-orange-600"
+      }
+    ];
+  }, [applications]);
+
+  // Get recent applications from API data
+  const recentApplications = useMemo(() => {
+    if (!applications || applications.length === 0) return [];
+
+    return applications
+      .slice(0, 4) // Get first 4 applications
+      .map((app) => {
+        const businessObject = app.businessObject;
+        const processInstance = app.ProcessInstance;
+        const status = processInstance?.state?.applicationStatus;
+        const statusInfo = getStatusInfo(status);
+        const serviceInfo = getServiceInfo(businessObject?.businessService);
+        const applicant = businessObject?.applicants?.[0];
+
+        return {
+          id: businessObject?.applicationNumber,
+          title: serviceInfo?.shortName || businessObject?.businessService,
+          client: applicant?.name || "N/A",
+          status: statusInfo?.label || status,
+          statusColor: statusInfo?.bgColor + " " + statusInfo?.color,
+          submittedDate: formatDate(businessObject?.auditDetails?.createdTime),
+          businessService: businessObject?.businessService,
+          serviceCode: businessObject?.serviceCode,
+          module: businessObject?.module
+        };
+      });
+  }, [applications]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-5 pt-4">
@@ -132,7 +156,9 @@ const EmployeeDashboard = () => {
           </div>
           <div className="text-right">
             <p className="text-sm opacity-75">Dernière mise à jour</p>
-            <p className="font-medium">Aujourd'hui, 14:30</p>
+            <p className="font-medium">
+              {lastFetchTime ? formatDate(lastFetchTime) : "Aujourd'hui, 14:30"}
+            </p>
           </div>
         </div>
       </div>
@@ -169,7 +195,7 @@ const EmployeeDashboard = () => {
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-800">Dossiers récents</h2>
-            <Link to="/employee/publicservices/applications-employee/all" className="text-sm text-primary font-medium hover:text-primary-dark flex items-center">
+            <Link to={`/${window?.contextPath}/employee/publicservices/applications-employee/all`} className="text-sm text-primary font-medium hover:text-primary-dark flex items-center">
               Voir tout <LuArrowRight className="w-4 h-4 ml-1" />
             </Link>
           </div>
@@ -181,48 +207,59 @@ const EmployeeDashboard = () => {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dossier</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priorité</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Demandeur</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {recentApplications.map((app) => (
-                <tr key={app.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{app.id}</div>
-                      <div className="text-sm text-gray-500">{app.title}</div>
-                      <div className="text-xs text-gray-400">{app.client}</div>
+              {isLoading ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center">
+                      <LuArrowRight className="animate-spin h-6 w-6 text-primary" />
+                      <span className="ml-2">Chargement...</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(app.status)}`}>
-                      {app.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(app.priority)}`}>
-                      {app.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {app.agent || '-'}
-                    {app.transferredTo && (
-                      <div className="text-xs text-purple-600">→ {app.transferredTo}</div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <Link
-                      to={`/employee/applications/${app.id}`}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
-                    >
-                      <span>Détails</span>
-                      <LuArrowUpRight className="h-3.5 w-3.5" />
-                    </Link>
+                </tr>
+              ) : recentApplications.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                    Aucun dossier récent
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentApplications.map((app) => (
+                  <tr key={app.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{app.id}</div>
+                        <div className="text-sm text-gray-500">{app.title}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${app.statusColor}`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {app.client}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {app.submittedDate}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <Link
+                        to={`/${window?.contextPath}/employee/publicservices/${app.module}/${app.businessService}/ViewScreen?applicationNumber=${app.id}&serviceCode=${app.serviceCode}&businessService=${app.businessService}`}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+                      >
+                        <span>Détails</span>
+                        <LuArrowUpRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

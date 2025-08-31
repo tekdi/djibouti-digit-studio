@@ -46,7 +46,7 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant })
       </div>
 
       {/* Key Details Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-gray-100">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-gray-100 pt-3">
         <InfoCard icon={LuMapPin} iconBgColor="bg-green-50" iconColor="text-green-600" label="Région" value={t(projectDetails?.region)} />
 
         <InfoCard icon={LuMapPin} iconBgColor="bg-teal-50" iconColor="text-teal-600" label="Adresse" value={address} />

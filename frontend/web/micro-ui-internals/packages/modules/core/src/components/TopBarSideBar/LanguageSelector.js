@@ -1,27 +1,32 @@
 import React, { useState, useRef, useEffect } from "react";
-import { LuChevronDown, LuGlobe } from "react-icons/lu";
+import { LuChevronDown } from "react-icons/lu";
 
 const LanguageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("fr");
   const dropdownRef = useRef(null);
 
-  const languages = [
-    {
-      code: "fr",
-      name: "Français",
-      flag: "🇫🇷",
-      label: "French"
-    },
-    {
-      code: "en",
-      name: "English", 
-      flag: "🇬🇧",
-      label: "English"
-    }
-  ];
+  // Use the same business logic as the old ChangeLanguage component
+  const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
+  const { languages, stateInfo } = storeData || {};
+  const selectedLanguage = Digit.StoreData.getCurrentLanguage();
+  const [selected, setselected] = useState(selectedLanguage);
 
-  const currentLanguage = languages.find(lang => lang.code === selectedLanguage);
+  // Map the languages to include flags
+  const languagesWithFlags = languages?.map(lang => {
+    console.log("Language:", lang); // Debug log
+    return {
+      ...lang,
+      flag: lang.value === "fr_FR_IN" ? "🇫🇷" : lang.value === "en_IN" ? "🇬🇧" : "🌐"
+    };
+  }) || [];
+
+  const currentLanguage = languagesWithFlags.find(lang => lang.value === selected);
+  console.log("Current language:", currentLanguage); // Debug log
+
+  // Sync selected state with current language
+  useEffect(() => {
+    setselected(selectedLanguage);
+  }, [selectedLanguage]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -36,14 +41,17 @@ const LanguageSelector = () => {
     };
   }, []);
 
-  const handleLanguageChange = (languageCode) => {
-    setSelectedLanguage(languageCode);
-    setIsOpen(false);
+  const handleLanguageChange = (language) => {
+    // Use the same business logic as the old ChangeLanguage component
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
     
-    // Change the language using Digit's localization service
-    const stateInfo = Digit.StoreData.getStateInfo();
-    Digit.LocalizationService.changeLanguage(languageCode, stateInfo?.code);
+    // Update state after language change
+    setselected(language.value);
+    setIsOpen(false);
   };
+
+  // Show loading state
+  if (isLoading) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -53,9 +61,9 @@ const LanguageSelector = () => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <LuGlobe className="h-4 w-4 text-gray-500" />
+
         <span className="text-lg mr-1">{currentLanguage?.flag}</span>
-        <span className="hidden sm:inline">{currentLanguage?.name}</span>
+        <span className="hidden sm:inline">{currentLanguage?.label}</span>
         <LuChevronDown 
           className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -63,31 +71,31 @@ const LanguageSelector = () => {
         />
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-          <div className="py-1">
-            {languages.map((language) => (
-              <button
-                key={language.code}
-                onClick={() => handleLanguageChange(language.code)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors duration-150 ${
-                  selectedLanguage === language.code
-                    ? "bg-djibouti-primary text-white"
-                    : "text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <span className="text-lg">{language.flag}</span>
-                <span className="font-medium">{language.name}</span>
-                {selectedLanguage === language.code && (
-                  <div className="ml-auto">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+             {isOpen && (
+         <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+           <div className="py-1">
+             {languagesWithFlags.map((language) => (
+               <button
+                 key={language.value}
+                 onClick={() => handleLanguageChange(language)}
+                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors duration-150 ${
+                   selected === language.value
+                     ? "bg-djibouti-primary text-white"
+                     : "text-gray-700 hover:bg-gray-50"
+                 }`}
+               >
+                 <span className="text-lg">{language.flag}</span>
+                 <span className="font-medium">{language.label}</span>
+                 {selected === language.value && (
+                   <div className="ml-auto">
+                     <div className="w-2 h-2 bg-white rounded-full"></div>
+                   </div>
+                 )}
+               </button>
+             ))}
+           </div>
+         </div>
+       )}
     </div>
   );
 };

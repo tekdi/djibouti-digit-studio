@@ -1,12 +1,12 @@
 import React from "react";
 import { LuRefreshCw } from "react-icons/lu";
 
-const Header = ({ isRefreshing, onRefresh }) => {
+const InProgressHeader = ({ isRefreshing, onRefresh }) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-black text-gray-900">Tous les dossiers</h1>
-        <p className="text-gray-500 mt-1">Vue d'ensemble de tous les dossiers</p>
+        <h1 className="text-2xl font-black text-gray-900">Dossiers en cours</h1>
+        <p className="text-gray-500 mt-1">Dossiers assignés et en cours de traitement</p>
       </div>
 
       <div className="flex items-center gap-2">
@@ -23,4 +23,4 @@ const Header = ({ isRefreshing, onRefresh }) => {
   );
 };
 
-export default Header;
+export default InProgressHeader;
