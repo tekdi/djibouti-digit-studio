@@ -1,38 +1,10 @@
 import React from "react";
-import { LuFileText, LuArrowRight, LuFilePlus } from "react-icons/lu";
+import { LuFileText, LuArrowRight, LuFilePlus, LuRefreshCw } from "react-icons/lu";
+import ApplicationCard from "../../applications/ApplicationCard";
 
-const RecentApplications = ({ applications = [] }) => {
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "En traitement":
-        return {
-          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
-          color: "#92400e",
-          borderColor: "rgba(245, 158, 11, 0.5)"
-        };
-      case "Approuvée":
-        return {
-          background: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
-          color: "#166534",
-          borderColor: "rgba(34, 197, 94, 0.5)"
-        };
-      case "Paiement requis":
-        return {
-          background: "linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)",
-          color: "#991b1b",
-          borderColor: "rgba(239, 68, 68, 0.5)"
-        };
-      default:
-        return {
-          background: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
-          color: "#374151",
-          borderColor: "rgba(107, 114, 128, 0.5)"
-        };
-    }
-  };
-
+const RecentApplications = ({ applications = [], onRefresh, isRefreshing = false }) => {
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-16 px-6">
+    <div className="flex flex-col items-center justify-center py-16 px-6 bg-white rounded-2xl shadow-sm border border-gray-200">
       <div 
         className="p-4 rounded-full mb-6 shadow-sm"
         style={{
@@ -46,7 +18,7 @@ const RecentApplications = ({ applications = [] }) => {
         Vous n'avez soumis aucune demande récemment. Commencez par créer votre première demande.
       </p>
       <a 
-        href="/citizen/applications/new"
+        href={`/${window?.contextPath}/citizen/publicservices/apply`}
         className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium text-white shadow-sm transition-all duration-200 hover:shadow-md"
         style={{ 
           backgroundColor: "#006769",
@@ -68,38 +40,41 @@ const RecentApplications = ({ applications = [] }) => {
   );
 
   return (
-    <div 
-      className="bg-white rounded-xl shadow-sm border overflow-hidden transition-all duration-300"
-      style={{ borderColor: "#e5e7eb" }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
-      }}
-    >
-      <div 
-        className="p-6 border-b"
-        style={{ 
-          borderColor: "#e5e7eb",
-          background: "linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)"
-        }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div 
-              className="p-2.5 rounded-xl shadow-sm"
-              style={{
-                background: "linear-gradient(135deg, rgba(0, 103, 105, 0.2) 0%, rgba(0, 103, 105, 0.1) 100%)"
-              }}
-            >
-              <LuFileText className="w-5 h-5" style={{ color: "#006769" }} />
-            </div>
-            <h2 className="text-xl font-bold text-gray-800">Demandes récentes</h2>
+    <div className="space-y-6">
+      {/* Header - Title and View All link */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div 
+            className="p-2.5 rounded-xl shadow-sm"
+            style={{
+              background: "linear-gradient(135deg, rgba(0, 103, 105, 0.2) 0%, rgba(0, 103, 105, 0.1) 100%)"
+            }}
+          >
+            <LuFileText className="w-5 h-5" style={{ color: "#006769" }} />
           </div>
+          <h2 className="text-xl font-bold text-gray-800">Demandes récentes</h2>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Refresh Button */}
+          <button
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
+              isRefreshing 
+                ? 'opacity-50 cursor-not-allowed bg-gray-100 text-gray-500' 
+                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm'
+            }`}
+          >
+            <LuRefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span className="text-sm font-medium">
+              {isRefreshing ? 'Actualisation...' : 'Actualiser'}
+            </span>
+          </button>
+          
+          {/* View All Link */}
           {applications.length > 0 && (
             <a 
-              href="/citizen/applications/pending" 
+              href={`/${window?.contextPath}/citizen/publicservices/applications/pending`}
               className="flex items-center gap-2 text-sm font-medium group transition-colors"
               style={{ color: "#006769" }}
               onMouseEnter={(e) => {
@@ -118,52 +93,16 @@ const RecentApplications = ({ applications = [] }) => {
         </div>
       </div>
       
-      <div style={{ borderColor: "#e5e7eb" }}>
-        {applications.length === 0 ? (
-          <EmptyState />
-        ) : (
-          applications.map((app) => (
-            <div 
-              key={app.id} 
-              className="p-6 transition-all duration-200 group"
-              style={{
-                borderBottom: "1px solid #e5e7eb"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(249, 250, 251, 0.8)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h3 
-                  className="font-medium text-gray-900 group-hover:transition-colors"
-                  onMouseEnter={(e) => {
-                    e.target.style.color = "#006769";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.color = "#111827";
-                  }}
-                >
-                  {app.title}
-                </h3>
-                <span 
-                  className="px-3 py-1.5 rounded-full text-xs font-medium border shadow-sm"
-                  style={getStatusStyle(app.status)}
-                >
-                  {app.status}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">{app.location}</p>
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>Soumis le {app.submittedDate}</span>
-                <span>Dernière mise à jour: {app.lastUpdate}</span>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      {/* Applications Grid or Empty State */}
+      {applications.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {applications.map((app) => (
+            <ApplicationCard key={app.id} app={app} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

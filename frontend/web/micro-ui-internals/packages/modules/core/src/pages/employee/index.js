@@ -135,8 +135,8 @@ const EmployeeApp = ({
             linkData={linkData}
             islinkDataLoading={islinkDataLoading}
           />
-          <div className={`main ${DSO ? "m-auto" : ""}`}>
-            <div className="employee-app-wrapper">
+          <div className={`${DSO ? "m-auto" : ""}`}>
+            <div>
               <ErrorBoundary initData={initData}>
                 <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
               </ErrorBoundary>

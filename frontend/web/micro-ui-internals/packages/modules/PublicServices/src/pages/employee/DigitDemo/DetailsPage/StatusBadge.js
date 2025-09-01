@@ -54,3 +54,4 @@ const StatusBadge = ({ state }) => {
 };
 
 export default StatusBadge;
+

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
+import ProfileSelection from "./pages/ProfileSelection";
 
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, defaultLanding = "citizen" }) => {
   const history = useHistory();
@@ -79,6 +80,9 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
 
   return (
     <Switch>
+      <Route path={`/${window?.contextPath}/profile-selection`}>
+        <ProfileSelection />
+      </Route>
       <Route path={`/${window?.contextPath}/employee`}>
         <EmployeeApp {...commonProps} />
       </Route>
@@ -86,7 +90,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to={`/${window?.contextPath}/${defaultLanding}`} />
+        <Redirect to={`/${window?.contextPath}/profile-selection`} />
       </Route>
     </Switch>
   );

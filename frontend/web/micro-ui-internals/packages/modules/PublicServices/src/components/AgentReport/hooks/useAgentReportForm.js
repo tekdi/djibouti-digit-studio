@@ -90,12 +90,12 @@ export const useAgentReportForm = () => {
       }
 
       if (Digit.Toast) {
-        Digit.Toast.success(`${files.length} file(s) uploaded successfully`);
+        Digit.Toast.success(`${files.length} fichier(s) téléchargé(s) avec succès`);
       }
     } catch (error) {
       console.error("Error uploading files:", error);
       if (Digit.Toast) {
-        Digit.Toast.error("Failed to upload files");
+        Digit.Toast.error("Échec du téléchargement des fichiers");
       }
     } finally {
       setUploadingFiles(false);
@@ -113,7 +113,7 @@ export const useAgentReportForm = () => {
     const newErrors = {};
     
     if (!formData.report || formData.report.length === 0) {
-      newErrors.report = "Report files are required";
+      newErrors.report = "Les fichiers de rapport sont requis";
     }
     
     setErrors(newErrors);

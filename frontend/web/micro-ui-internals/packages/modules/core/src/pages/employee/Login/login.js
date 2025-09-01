@@ -73,7 +73,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     }
 
     if (window?.location?.href?.includes("digit-studio/employee")) {
-      redirectPath = `/${window?.contextPath}/employee/publicservices/modules?selectedPath=Apply`;
+      redirectPath = `/${window?.contextPath}/employee/publicservices/dashboard-employee`;
     }
 
     history.replace(redirectPath);

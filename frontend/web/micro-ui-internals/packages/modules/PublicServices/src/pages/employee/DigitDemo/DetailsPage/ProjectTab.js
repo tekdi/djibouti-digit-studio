@@ -19,9 +19,45 @@ const ProjectTab = ({
     additionalDetails: response?.additionalDetails || {},
     documents: response?.documents || [],
     serviceDetails: {
-      landInfo: response?.serviceDetails?.landandProjectDesignDetails?.[0] || {},
-      designOffice: response?.serviceDetails?.designOfficeDetailing || [],
-      legalEntity: response?.serviceDetails?.legalEntityDetails || []
+      // Common blocks for most service types
+      landandProjectDesignDetails: response?.serviceDetails?.landandProjectDesignDetails || [],
+      designOfficeDetailing: response?.serviceDetails?.designOfficeDetailing || [],
+      legalEntityDetails: response?.serviceDetails?.legalEntityDetails || [],
+      
+      // For P13 (BPA_CCG) - Certificate of Conformity
+      originalPermitDetails: response?.serviceDetails?.originalPermitDetails || [],
+      conformityCertificatesDetails: response?.serviceDetails?.conformityCertificatesDetails || [],
+      
+      // For P3 (BPA_PR) - Fill Permit
+      terrainDetails: response?.serviceDetails?.terrainDetails || [],
+      
+      // For P6 (BPA_PD) - Demolition Permit - additional fields
+      demolitionDetails: response?.serviceDetails?.demolitionDetails || [],
+      
+      // For P7 (BPA_PF) - Project File - additional fields
+      projectFileDetails: response?.serviceDetails?.projectFileDetails || [],
+      
+      // For P8 (BPA_PS) - Elevation Permit - additional fields
+      elevationDetails: response?.serviceDetails?.elevationDetails || [],
+      
+      // For P4 (BPA_PL) - Layout Permit - additional fields
+      layoutDetails: response?.serviceDetails?.layoutDetails || [],
+      
+      // For P1 (BPA_PCO) - Construction Permit - additional fields
+      constructionDetails: response?.serviceDetails?.constructionDetails || [],
+      
+      // For P2 (BPA_PCO_SIMPLE) - Simple Construction Permit - additional fields
+      simpleConstructionDetails: response?.serviceDetails?.simpleConstructionDetails || [],
+      
+      // For P10 (BPA_CCR) - Backfill Verification Certificate
+      terrainVerificationDetails: response?.serviceDetails?.terrainVerificationDetails || [],
+      testResultsDetails: response?.serviceDetails?.testResultsDetails || [],
+      
+      // For P11 (BPA_CCE) - Construction Completion Certificate
+      propertyDetails: response?.serviceDetails?.propertyDetails || [],
+      
+      // For P14 (BPA_PV) - Project Validation
+      projectDetails: response?.serviceDetails?.projectDetails || []
     },
   };
 

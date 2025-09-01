@@ -12,6 +12,7 @@ import {
   LuCalendar,
   LuHash
 } from "react-icons/lu";
+import { getServiceData } from "./dataValues";
 
 const ProjectDataView = ({ 
   serviceCode, 
@@ -24,20 +25,10 @@ const ProjectDataView = ({
 
   if (!data) return null;
 
-  const { applicants = [], additionalDetails = {}, documents = [], serviceDetails = {} } = data;
-
-  const downloadFile = async (fileStoreId) => {
-    try {
-      const tenantId = Digit.ULBService.getCurrentTenantId();
-      const response = await Digit.UploadServices.Filefetch([fileStoreId], tenantId);
-
-      if (response?.data?.[fileStoreId]) {
-        window.open(response.data[fileStoreId], "_blank");
-      }
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    }
-  };
+  const { additionalDetails = {}, serviceDetails = {} } = data;
+  
+  // Get hardcoded data based on business service
+  const hardcodedData = getServiceData(businessService);
 
   const renderValue = (value) => {
     if (!value) return "N/A";
@@ -51,6 +42,11 @@ const ProjectDataView = ({
         return t(value.name);
       }
       return value.code || "N/A";
+    }
+
+    // Handle BPA_ translation keys
+    if (typeof value === "string" && value.startsWith("BPA_")) {
+      return t(value);
     }
 
     return value;
@@ -81,87 +77,120 @@ const ProjectDataView = ({
     </div>
   );
 
+  // Create blocks array for grid layout
+  const blocks = [];
+
+  // Get icon component by name
+  const getIconComponent = (iconName) => {
+    const icons = {
+      LuUser, LuBuilding, LuFileText, LuCircleCheck, LuDownload, 
+      LuMapPin, LuPhone, LuMail, LuCalendar, LuHash
+    };
+    return icons[iconName] || LuBuilding;
+  };
+
+  // Get color classes by color name
+  const getColorClasses = (color) => {
+    const colors = {
+      purple: "from-purple-50 to-violet-50 border-purple-100 bg-purple-100 text-purple-600",
+      orange: "from-orange-50 to-amber-50 border-orange-100 bg-orange-100 text-orange-600",
+      teal: "from-teal-50 to-cyan-50 border-teal-100 bg-teal-100 text-teal-600",
+      green: "from-green-50 to-emerald-50 border-green-100 bg-green-100 text-green-600",
+      pink: "from-pink-50 to-rose-50 border-pink-100 bg-pink-100 text-pink-600"
+    };
+    return colors[color] || colors.purple;
+  };
+
+  // Render blocks based on service configuration
+  if (hardcodedData && hardcodedData.blocks) {
+    Object.entries(hardcodedData.blocks).forEach(([blockKey, blockConfig]) => {
+      const data = serviceDetails[blockKey];
+      
+      // Check if data exists and has any non-empty values
+      const hasValidData = data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0);
+      let hasAnyValues = false;
+      
+      if (hasValidData) {
+        // Check if any field has non-empty values
+        (Array.isArray(data) ? data : [data]).forEach((item) => {
+          blockConfig.fields.forEach((field) => {
+            const value = item[field.key];
+            if (value !== undefined && value !== null && value !== '') {
+              hasAnyValues = true;
+            }
+          });
+        });
+      }
+      
+      const colorClasses = getColorClasses(blockConfig.color);
+      const IconComponent = getIconComponent(blockConfig.icon);
+      
+      blocks.push(
+        <div key={blockKey} className={`bg-gradient-to-r ${colorClasses.split(' ')[0]} ${colorClasses.split(' ')[1]} rounded-2xl p-6 border ${colorClasses.split(' ')[2]}`}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`w-8 h-8 ${colorClasses.split(' ')[3]} rounded-lg flex items-center justify-center`}>
+              <IconComponent className={`w-4 h-4 ${colorClasses.split(' ')[4]}`} />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">{blockConfig.title}</h3>
+          </div>
+          
+          {hasAnyValues ? (
+            // Render fields with data
+            (Array.isArray(data) ? data : [data]).map((item, index) => (
+              <div key={index} className="space-y-1">
+                {blockConfig.fields.map((field, fieldIndex) => {
+                  const value = item[field.key];
+                  if (value !== undefined && value !== null && value !== '') {
+                    const FieldIcon = getIconComponent(field.icon);
+                    let displayValue = value;
+                    
+                    if (field.prefix) displayValue = field.prefix + value;
+                    if (field.suffix) displayValue = value + field.suffix;
+                    
+                    return renderField(field.label, displayValue, <FieldIcon className="w-4 h-4" />);
+                  }
+                  return null;
+                })}
+              </div>
+            ))
+          ) : (
+            // Show "Not filled" message
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className={`w-16 h-16 ${colorClasses.split(' ')[3]} rounded-full flex items-center justify-center mb-4`}>
+                <IconComponent className={`w-8 h-8 ${colorClasses.split(' ')[4]}`} />
+              </div>
+              <h4 className="text-lg font-medium text-gray-700 mb-2">Non rempli</h4>
+              <p className="text-sm text-gray-500">Aucune information disponible pour cette section</p>
+            </div>
+          )}
+        </div>
+      );
+    });
+  }
+
+  // Declarations Block (always show if available)
+  if (additionalDetails?.applicants && Object.keys(additionalDetails.applicants).length > 0) {
+    blocks.push(
+      <div key="declarations" className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
+            <LuCircleCheck className="w-4 h-4 text-pink-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Déclarations</h3>
+        </div>
+        <div className="space-y-2">
+          {additionalDetails.applicants.accuracyDeclaration && renderCheckbox("Déclaration d'exactitude", true)}
+          {additionalDetails.applicants.checkValidation && renderCheckbox("Validation des informations", true)}
+          {additionalDetails.applicants.eligibilityDeclaration && renderCheckbox("Déclaration d'éligibilité", true)}
+          {additionalDetails.applicants.taxCalculationAgreement && renderCheckbox("Accord de calcul des taxes", true)}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Project Details */}
-      {serviceDetails.landInfo && Object.keys(serviceDetails.landInfo).length > 0 && (
-        <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-              <LuBuilding className="w-4 h-4 text-purple-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Détails du projet</h3>
-          </div>
-          <div className="space-y-1">
-            {renderField("Type de travail", serviceDetails.landInfo.workType, <LuBuilding className="w-4 h-4" />)}
-            {renderField("Surface couverte", `${serviceDetails.landInfo.coveredProjectArea || 0} m²`, <LuMapPin className="w-4 h-4" />)}
-            {renderField("Région", serviceDetails.landInfo.region, <LuMapPin className="w-4 h-4" />)}
-            {renderField("Localisation", serviceDetails.landInfo.siteLocation, <LuMapPin className="w-4 h-4" />)}
-            {serviceDetails.landInfo.area && renderField("Surface totale", `${serviceDetails.landInfo.area} m²`, <LuMapPin className="w-4 h-4" />)}
-            {serviceDetails.landInfo.constructionCostPerSqMt && renderField("Coût par m²", `${serviceDetails.landInfo.constructionCostPerSqMt} Fdj`, <LuHash className="w-4 h-4" />)}
-          </div>
-        </div>
-      )}
-
-      {/* Design Office Details */}
-      {serviceDetails.designOffice && serviceDetails.designOffice.length > 0 && (
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border border-orange-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-              <LuBuilding className="w-4 h-4 text-orange-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Bureau d'études</h3>
-          </div>
-          {serviceDetails.designOffice.map((office, index) => (
-            <div key={index} className="space-y-1">
-              {renderField("Nom du bureau", office.nameOfDesignOffice, <LuBuilding className="w-4 h-4" />)}
-              {renderField("Architecte", office.architectName, <LuUser className="w-4 h-4" />)}
-              {renderField("Téléphone", `+253 ${office.telephone}`, <LuPhone className="w-4 h-4" />)}
-              {renderField("Email", office.officeEmail, <LuMail className="w-4 h-4" />)}
-              {renderField("Numéro d'enregistrement", office.registrationNo, <LuHash className="w-4 h-4" />)}
-              {office.registrationNoOnProfessionalRoll && renderField("Numéro professionnel", office.registrationNoOnProfessionalRoll, <LuHash className="w-4 h-4" />)}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Legal Entity Details */}
-      {serviceDetails.legalEntity && serviceDetails.legalEntity.length > 0 && (
-        <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-              <LuBuilding className="w-4 h-4 text-teal-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Entité légale</h3>
-          </div>
-          {serviceDetails.legalEntity.map((entity, index) => (
-            <div key={index} className="space-y-1">
-              {renderField("Raison sociale", entity.corporateName, <LuBuilding className="w-4 h-4" />)}
-              {renderField("Type de société", entity.companyType, <LuBuilding className="w-4 h-4" />)}
-              {renderField("Numéro d'enregistrement", entity.registrationNumber, <LuHash className="w-4 h-4" />)}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Declarations */}
-      {additionalDetails?.applicants && Object.keys(additionalDetails.applicants).length > 0 && (
-        <div className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
-              <LuCircleCheck className="w-4 h-4 text-pink-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">Déclarations</h3>
-          </div>
-          <div className="space-y-2">
-            {additionalDetails.applicants.accuracyDeclaration && renderCheckbox("Déclaration d'exactitude", true)}
-            {additionalDetails.applicants.checkValidation && renderCheckbox("Validation des informations", true)}
-            {additionalDetails.applicants.eligibilityDeclaration && renderCheckbox("Déclaration d'éligibilité", true)}
-            {additionalDetails.applicants.taxCalculationAgreement && renderCheckbox("Accord de calcul des taxes", true)}
-          </div>
-        </div>
-      )}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {blocks}
     </div>
   );
 };

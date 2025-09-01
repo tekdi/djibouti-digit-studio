@@ -71,69 +71,44 @@ export const FileUploadSection = ({
   };
   
   return (
-    <div style={{ marginBottom: "2rem" }}>
-      <label style={{ 
-        display: "block", 
-        marginBottom: "12px", 
-        fontWeight: "600",
-        fontSize: "16px",
-        color: "#1f2937"
-      }}>
-        {title} {required && <span style={{ color: "#ef4444" }}>*</span>}
+    <div className="mb-8">
+      <label className="block mb-3 font-semibold text-base text-gray-800">
+        {title} {required && <span className="text-red-500">*</span>}
       </label>
       
       {!isReadOnly && (
-        <div style={{
-          border: "2px dashed #d1d5db",
-          borderRadius: "12px",
-          padding: "24px",
-          textAlign: "center",
-          transition: "all 0.2s ease",
-          backgroundColor: "#fafafa",
-          position: "relative",
-          overflow: "hidden"
-        }}
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center transition-all duration-200 bg-gray-50 relative overflow-hidden hover:border-[#0f6769] hover:bg-[#f0f9f9] min-h-[160px] flex items-center justify-center"
         onDragOver={(e) => {
           e.preventDefault();
-          e.currentTarget.style.borderColor = "#0f6769";
-          e.currentTarget.style.backgroundColor = "#f0f9f9";
+          e.currentTarget.classList.add('border-[#0f6769]', 'bg-[#f0f9f9]');
         }}
         onDragLeave={(e) => {
-          e.currentTarget.style.borderColor = "#d1d5db";
-          e.currentTarget.style.backgroundColor = "#fafafa";
+          e.currentTarget.classList.remove('border-[#0f6769]', 'bg-[#f0f9f9]');
         }}
         onDrop={(e) => {
           e.preventDefault();
-          e.currentTarget.style.borderColor = "#d1d5db";
-          e.currentTarget.style.backgroundColor = "#fafafa";
+          e.currentTarget.classList.remove('border-[#0f6769]', 'bg-[#f0f9f9]');
           const files = Array.from(e.dataTransfer.files);
           if (files.length > 0) {
             handleFileUpload({ target: { files } }, fieldName);
           }
         }}>
           
-          <div style={{ marginBottom: "16px" }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="#9ca3af"/>
-            </svg>
-          </div>
-          
-          <div style={{ marginBottom: "16px" }}>
-            <p style={{ 
-              fontSize: "16px", 
-              fontWeight: "600", 
-              color: "#374151", 
-              margin: "0 0 8px 0" 
-            }}>
-              Drop files here or click to browse
-            </p>
-            <p style={{ 
-              fontSize: "14px", 
-              color: "#6b7280", 
-              margin: 0 
-            }}>
-              Accepted formats: {accept.replace(/\./g, "").toUpperCase()} (Max {maxFiles} files, {maxSizeMB}MB each)
-            </p>
+          <div className="flex flex-col items-center justify-center w-full">
+            <div className="mb-4 flex items-center justify-center">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-400">
+                <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
+              </svg>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-base font-semibold text-gray-700 mb-2">
+                Glissez les fichiers ici ou cliquez pour parcourir
+              </p>
+              <p className="text-sm text-gray-500">
+                Formats acceptés: {accept.replace(/\./g, "").toUpperCase()} (Max {maxFiles} fichiers, {maxSizeMB}MB chacun)
+              </p>
+            </div>
           </div>
           
           <input
@@ -142,42 +117,15 @@ export const FileUploadSection = ({
             accept={accept}
             onChange={(e) => handleFileUpload(e, fieldName)}
             disabled={uploadingFiles}
-            style={{ 
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              opacity: 0,
-              cursor: "pointer"
-            }}
+            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
           />
           
           {uploadingFiles && (
-            <div style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(255, 255, 255, 0.9)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "12px"
-            }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{
-                  width: "32px",
-                  height: "32px",
-                  border: "3px solid #e5e7eb",
-                  borderTop: "3px solid #0f6769",
-                  borderRadius: "50%",
-                  animation: "spin 1s linear infinite",
-                  margin: "0 auto 8px auto"
-                }} />
-                <p style={{ color: "#0f6769", fontSize: "14px", fontWeight: "600", margin: 0 }}>
-                  Uploading...
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/90 flex items-center justify-center rounded-xl">
+              <div className="text-center">
+                <div className="w-8 h-8 border-3 border-gray-200 border-t-[#0f6769] rounded-full animate-spin mx-auto mb-2" />
+                <p className="text-[#0f6769] text-sm font-semibold">
+                  Téléchargement...
                 </p>
               </div>
             </div>
@@ -186,84 +134,36 @@ export const FileUploadSection = ({
       )}
 
       {errors[fieldName] && (
-        <div style={{ 
-          color: "#ef4444", 
-          fontSize: "14px", 
-          marginTop: "8px",
-          padding: "12px",
-          backgroundColor: "#fef2f2",
-          borderRadius: "8px",
-          border: "1px solid #fecaca"
-        }}>
+        <div className="text-red-500 text-sm mt-2 p-3 bg-red-50 rounded-lg border border-red-200">
           ⚠️ {errors[fieldName]}
         </div>
       )}
 
       {formData[fieldName] && formData[fieldName].length > 0 && (
-        <div style={{ marginTop: "16px" }}>
-          <h4 style={{ 
-            fontSize: "14px", 
-            fontWeight: "600", 
-            color: "#374151", 
-            margin: "0 0 12px 0" 
-          }}>
-            {isReadOnly ? "Files" : "Uploaded files"} ({formData[fieldName].length})
+        <div className="mt-4">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">
+            {isReadOnly ? "Fichiers" : "Fichiers téléchargés"} ({formData[fieldName].length})
           </h4>
           {formData[fieldName].map((file, index) => (
-            <div key={index} style={{ 
-              display: "flex", 
-              justifyContent: "space-between", 
-              alignItems: "center",
-              padding: "12px 16px",
-              backgroundColor: "#f8fafc",
-              borderRadius: "8px",
-              marginBottom: "8px",
-              border: "1px solid #e2e8f0"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+            <div key={index} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg mb-2 border border-slate-200">
+              <div className="flex items-center gap-3 flex-1">
                 {/* File Icon or Image Thumbnail */}
                 {isImageFile(file.fileName) && fileUrls[file.fileStoreId] ? (
                   <div 
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "6px",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                      border: "2px solid #e2e8f0",
-                      transition: "all 0.2s ease"
-                    }}
+                    className="w-12 h-12 rounded-md overflow-hidden cursor-pointer border-2 border-slate-200 transition-all duration-200 hover:border-[#0f6769] hover:scale-105"
                     onClick={() => handleImageClick(file)}
-                    onMouseEnter={(e) => {
-                      e.target.style.borderColor = "#0f6769";
-                      e.target.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.borderColor = "#e2e8f0";
-                      e.target.style.transform = "scale(1)";
-                    }}
-                    title="Click to preview"
+                    title="Cliquez pour prévisualiser"
                   >
                     <img 
                       src={fileUrls[file.fileStoreId]} 
                       alt={file.fileName}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover"
-                      }}
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 ) : (
-                  <div style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "6px",
-                    backgroundColor: isPdfFile(file.fileName) ? "#ef4444" : "#0f6769",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
+                  <div className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                    isPdfFile(file.fileName) ? 'bg-red-500' : 'bg-[#0f6769]'
+                  }`}>
                     {isPdfFile(file.fileName) ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="white"/>
@@ -276,50 +176,28 @@ export const FileUploadSection = ({
                   </div>
                 )}
                 
-                <div style={{ flex: 1 }}>
-                  <p style={{ 
-                    fontSize: "14px", 
-                    fontWeight: "500", 
-                    color: "#1f2937", 
-                    margin: "0 0 2px 0",
-                    cursor: isImageFile(file.fileName) ? "pointer" : "default"
-                  }}
+                <div className="flex-1">
+                  <p className={`text-sm font-medium text-gray-800 mb-0.5 ${
+                    isImageFile(file.fileName) ? 'cursor-pointer' : 'cursor-default'
+                  }`}
                   onClick={() => isImageFile(file.fileName) && handleImageClick(file)}
-                  title={isImageFile(file.fileName) ? "Click to preview" : ""}
+                  title={isImageFile(file.fileName) ? "Cliquez pour prévisualiser" : ""}
                   >
                     {file.fileName}
                   </p>
-                  <p style={{ 
-                    fontSize: "12px", 
-                    color: "#6b7280", 
-                    margin: 0 
-                  }}>
+                  <p className="text-xs text-gray-500">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
               </div>
               
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex gap-2">
                 {/* Download button */}
                 <button
                   type="button"
                   onClick={() => downloadFile(file)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#0f6769",
-                    cursor: "pointer",
-                    padding: "4px",
-                    borderRadius: "4px",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#f0f9f9";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "transparent";
-                  }}
-                  title="Download file"
+                  className="bg-none border-none text-[#0f6769] cursor-pointer p-1 rounded transition-all duration-200 hover:bg-[#f0f9f9]"
+                  title="Télécharger le fichier"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 9H15V3H9V9H5L12 16L19 9ZM5 18V20H19V18H5Z" fill="currentColor"/>
@@ -331,22 +209,8 @@ export const FileUploadSection = ({
                   <button
                     type="button"
                     onClick={() => removeFile(fieldName, index)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#ef4444",
-                      cursor: "pointer",
-                      padding: "4px",
-                      borderRadius: "4px",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = "#fef2f2";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = "transparent";
-                    }}
-                    title="Remove file"
+                    className="bg-none border-none text-red-500 cursor-pointer p-1 rounded transition-all duration-200 hover:bg-red-50"
+                    title="Supprimer le fichier"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
@@ -361,48 +225,12 @@ export const FileUploadSection = ({
 
       {/* Image Preview Modal */}
       {imagePreview && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.9)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000,
-          padding: "20px"
-        }} onClick={closeImagePreview}>
-          <div style={{
-            position: "relative",
-            maxWidth: "90vw",
-            maxHeight: "90vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }} onClick={(e) => e.stopPropagation()}>
+        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/90 flex items-center justify-center z-[10000] p-5" onClick={closeImagePreview}>
+          <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
             {/* Close button */}
             <button
               onClick={closeImagePreview}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                right: "0px",
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                border: "none",
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-                color: "white",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "18px",
-                fontWeight: "bold",
-                zIndex: 10001
-              }}
+              className="absolute -top-10 right-0 w-8 h-8 rounded-full border-none bg-white/20 text-white cursor-pointer flex items-center justify-center text-lg font-bold z-[10001] hover:bg-white/30"
             >
               ×
             </button>
@@ -410,14 +238,8 @@ export const FileUploadSection = ({
             {/* Image */}
             <img 
               src={imagePreview} 
-              alt="Preview"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                objectFit: "contain",
-                borderRadius: "8px",
-                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)"
-              }}
+              alt="Aperçu"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
             />
           </div>
         </div>

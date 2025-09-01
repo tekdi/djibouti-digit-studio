@@ -7,14 +7,16 @@ import {
   LuEye
 } from "react-icons/lu";
 import { getStatusInfo, getServiceInfo, formatDate } from "./utils";
+import { useTranslation } from "react-i18next";
 
 const ApplicationCard = ({ app }) => {
+  const { t } = useTranslation();
   const statusInfo = getStatusInfo(app.processInstance?.[0]?.state?.applicationStatus);
   const StatusIcon = statusInfo.icon;
   const serviceInfo = getServiceInfo(app.businessService);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
       {/* Header with status tag only */}
       <div className="p-4 pb-0 border-b border-gray-100">
         <div className="flex items-start justify-between mb-4">
@@ -39,9 +41,9 @@ const ApplicationCard = ({ app }) => {
         </p>
       </div>
 
-      {/* Content */}
-      <div className="p-4 pt-0">
-        <div className="space-y-4">
+      {/* Content - This will flex to fill available space */}
+      <div className="p-4 pt-0 flex-1 flex flex-col">
+        <div className="space-y-4 flex-1">
           {/* Progress */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -118,14 +120,14 @@ const ApplicationCard = ({ app }) => {
                   Localisation
                 </p>
                 <p className="text-xs text-gray-600">
-                  {app.serviceDetails.landandProjectDesignDetails[0].region}
+                  {t(app.serviceDetails.landandProjectDesignDetails[0].region)}
                 </p>
               </div>
             </div>
           )}
         </div>
 
-        {/* Actions */}
+        {/* Actions - This will always be at the bottom */}
         <div className="mt-6 pt-4 border-t border-gray-100">
           <a 
             href={`/${window.contextPath}/citizen/publicservices/BPA/${app.businessService}/ViewScreen?applicationNumber=${app.applicationNumber}&serviceCode=${app.serviceCode}&businessService=${app.businessService}`}

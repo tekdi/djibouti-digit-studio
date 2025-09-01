@@ -18,25 +18,25 @@ const EmployeeMobileMenu = ({ mobileView }) => {
       id: "dashboard",
       label: "Tableau de bord",
       icon: LuLayoutDashboard,
-      path: `/${window?.contextPath}/employee`,
+      path: `/${window?.contextPath}/employee/dashboard`,
     },
     {
       id: "dossiers",
       label: "Tous les dossiers",
       icon: LuFileText,
-      path: `/${window?.contextPath}/employee/BPA/application-search`,
+      path: `/${window?.contextPath}/employee/applications/all`,
     },
     {
       id: "new-dossiers",
       label: "Nouveaux dossiers",
       icon: LuFileText,
-      path: `/${window?.contextPath}/employee/BPA/inbox`,
+      path: `/${window?.contextPath}/employee/applications/new`,
     },
     {
       id: "in-progress",
       label: "Dossiers en cours",
       icon: LuFileText,
-      path: `/${window?.contextPath}/employee/BPA/application-search?status=PENDINGAPPROVAL,PENDINGPAYMENT,FIELDINSPECTION,PENDINGDOCVERIFICATION`,
+      path: `/${window?.contextPath}/employee/applications/in-progress`,
     },
   ];
 

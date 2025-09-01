@@ -137,7 +137,7 @@ const Home = ({
 
   return (
     <div className={classname}>
-      {!location?.pathname?.includes('login') && (
+      {!location?.pathname?.includes('login') && !location?.pathname?.includes('register') && (
       <TopBarSideBar
         t={t}
         stateInfo={stateInfo}
@@ -221,7 +221,7 @@ const Home = ({
           </ErrorBoundary>
         </Switch>
       </div>
-      {!(window.location.href.includes("login")) &&
+      {!(window.location.href.includes("login")) && !(window.location.href.includes("register")) &&
         <div className="employee-home-footer">
         <img
           alt="Powered by DIGIT"

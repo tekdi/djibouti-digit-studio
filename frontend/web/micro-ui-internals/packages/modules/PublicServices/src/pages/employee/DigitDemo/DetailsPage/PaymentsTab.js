@@ -31,3 +31,4 @@ const PaymentsTab = ({ costEstimation }) => {
 };
 
 export default PaymentsTab;
+

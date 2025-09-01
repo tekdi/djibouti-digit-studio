@@ -10,7 +10,6 @@ import SelectOtp from "./SelectOtp";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
-const DEFAULT_USER = "digit-user";
 const DEFAULT_REDIRECT_URL = `/${window?.contextPath || "digit-studio"}/citizen/publicservices/dashboard`;
 
 
