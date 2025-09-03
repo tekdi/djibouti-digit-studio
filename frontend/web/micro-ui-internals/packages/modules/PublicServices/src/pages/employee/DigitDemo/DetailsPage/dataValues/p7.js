@@ -1,5 +1,5 @@
 export const p7Data = {
-  // Define which blocks should be shown for P7 (Project File)
+  // Define which blocks should be shown for P7 (BPA_PF)
   blocks: {
     landandProjectDesignDetails: {
       title: "Détails du projet",
@@ -9,6 +9,11 @@ export const p7Data = {
         {
           label: "Type de travail",
           key: "workType",
+          icon: "LuBuilding"
+        },
+        {
+          label: "Usage prévu",
+          key: "intededUse",
           icon: "LuBuilding"
         },
         {
@@ -24,15 +29,29 @@ export const p7Data = {
           suffix: " m²"
         },
         {
+          label: "Région",
+          key: "region",
+          icon: "LuMapPin"
+        },
+        {
           label: "Localisation",
           key: "siteLocation",
           icon: "LuMapPin"
         },
         {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
+          label: "Statut légal",
+          key: "legalStatus",
+          icon: "LuFileText"
+        },
+        {
+          label: "Titre foncier définitif",
+          key: "definitiveLandTitle",
+          icon: "LuFileText"
+        },
+        {
+          label: "Certificat d'enregistrement",
+          key: "registrationCertificate",
+          icon: "LuFileText"
         },
         {
           label: "Nombre d'unités",
@@ -60,34 +79,10 @@ export const p7Data = {
           icon: "LuHash"
         },
         {
-          label: "Titre foncier définitif",
-          key: "definitiveLandTitle",
-          icon: "LuFileText"
-        },
-        {
-          label: "Statut légal",
-          key: "legalStatus",
-          icon: "LuFileText"
-        },
-        {
-          label: "Certificat d'enregistrement",
-          key: "registrationCertificate",
-          icon: "LuFileText"
-        },
-        {
-          label: "Numéro TF",
-          key: "tfNo",
-          icon: "LuHash"
-        },
-        {
-          label: "Détails autres types",
-          key: "detailsOnOtherType",
-          icon: "LuFileText"
-        },
-        {
-          label: "Autres informations",
-          key: "other",
-          icon: "LuFileText"
+          label: "Coût par m²",
+          key: "constructionCostPerSqMt",
+          icon: "LuHash",
+          suffix: " Fdj"
         }
       ]
     },
@@ -104,11 +99,6 @@ export const p7Data = {
         {
           label: "Type de société",
           key: "companyType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Autre type de société",
-          key: "otherCompanyType",
           icon: "LuBuilding"
         },
         {
