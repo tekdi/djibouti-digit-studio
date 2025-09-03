@@ -249,7 +249,7 @@ export const assigneeMapping = [
   {
     // P4
     permit: "BPA_PL",
-    role: "BPA_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P5
@@ -368,5 +368,5 @@ export const checklistByService = [
   {
     service: "BPA_PF",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
-  }
+  },
 ];
