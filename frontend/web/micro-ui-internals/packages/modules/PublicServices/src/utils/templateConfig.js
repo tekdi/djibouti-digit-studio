@@ -115,7 +115,7 @@ export const ApplicantFields = [
           schema: "common-masters.GenderType",
           required: true,
           reference: "mdms",
-          orderNumber: 13, // After company fields
+          orderNumber: 16, // After representative section header
         },
         {
           name: "name",
@@ -130,7 +130,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "NAME_LENGTH_ERR",
           },
-          orderNumber: 14,
+          orderNumber: 17,
         },
         {
           name: "address",
@@ -145,7 +145,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "ADDRESS_LENGTH_ERR",
           },
-          orderNumber: 15,
+          orderNumber: 18,
         },
         {
           name: "idType",
@@ -155,7 +155,7 @@ export const ApplicantFields = [
           required: true,
           schema: "BPA.IdentityType",
           reference: "mdms",
-          orderNumber: 16,
+          orderNumber: 19,
         },
         {
           name: "nationalIdNumber",
@@ -170,7 +170,7 @@ export const ApplicantFields = [
           },
           maxLength: 30,
           minLength: 1,
-          orderNumber: 17,
+          orderNumber: 20,
         },
         {
           name: "mobileNumber",
@@ -185,7 +185,7 @@ export const ApplicantFields = [
           placeholder: "77 XX XX XX",
           maxLength: 8,
           minLength: 8,
-          orderNumber: 18,
+          orderNumber: 21,
         },
         
         // Section Header for Company Information
@@ -250,31 +250,6 @@ export const ApplicantFields = [
           orderNumber: 11,
         },
         {
-          name: "qualiteRepresentant",
-          type: "string",
-          label: "Qualité du représentant *",
-          format: "text",
-          placeholder: "Directeur général, Gérant, etc.",
-          required: true,
-          maxLength: 256,
-          minLength: 2,
-          validation: {
-            regex: "^.{2,256}$",
-            message: "QUALITE_REPRESENTANT_ERR",
-          },
-          orderNumber: 12,
-        },
-        
-        // Section Header for Representative Information
-        {
-          name: "representativeInfoHeader",
-          type: "section",
-          label: "Informations du représentant",
-          orderNumber: 12.5,
-        },
-        
-        // Representative's personal information - using same fields as individual, labels will be changed dynamically
-        {
           name: "adresseSiege",
           type: "string",
           label: "Adresse du siège social *",
@@ -287,7 +262,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "ADDRESS_LENGTH_ERR",
           },
-          orderNumber: 19, // After representative fields
+          orderNumber: 13, // Part of company information
         },
         {
           name: "telephone",
@@ -302,7 +277,32 @@ export const ApplicantFields = [
           placeholder: "77 XX XX XX",
           maxLength: 8,
           minLength: 8,
-          orderNumber: 20, // After representative fields
+          orderNumber: 14, // Part of company information
+        },
+        
+        // Section Header for Representative Information
+        {
+          name: "representativeInfoHeader",
+          type: "section",
+          label: "Informations du représentant",
+          orderNumber: 15,
+        },
+        
+        // Representative's personal information - using same fields as individual, labels will be changed dynamically
+        {
+          name: "qualiteRepresentant",
+          type: "string",
+          label: "Qualité du représentant *",
+          format: "text",
+          placeholder: "Directeur général, Gérant, etc.",
+          required: true,
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "QUALITE_REPRESENTANT_ERR",
+          },
+          orderNumber: 15.5, // After representative section header, before other representative fields
         },
         
         // Common fields for both types

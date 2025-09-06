@@ -155,15 +155,20 @@ const DigitDemoComponent = ({ editdata }) => {
         if (fieldName === 'personType') {
           return true;
         }
-
-        // If no personType selected, hide all other fields
+        
+        // If no personType selected, hide all fields including section headers
         if (!personType) {
           return false;
         }
 
+        // Show section headers only for legal entities
+        if (field?.type === 'section') {
+          return personType === "LEGAL_ENTITY";
+        }
+
         // Show fields based on personType selection
         if (personType === "INDIVIDUAL") {
-          // Show individual fields
+          // Show individual fields (no section headers for individuals)
           const individualFields = [
             'wayToAddress',
             'name',
@@ -183,21 +188,20 @@ const DigitDemoComponent = ({ editdata }) => {
             // Section headers
             'companyInfoHeader',
             'representativeInfoHeader',
-            // Company information first
+            // Company information first (including address and phone)
             'corporateName',
             'companyType',
             'registrationNumber',
-            'qualiteRepresentant',
+            'adresseSiege',
+            'telephone',
             // Representative's personal information (same field names as individual for API)
+            'qualiteRepresentant',
             'wayToAddress',
             'name',
             'address',
             'idType',
             'nationalIdNumber',
             'mobileNumber',
-            // Company address and phone
-            'adresseSiege',
-            'telephone',
             // Common fields
             // 'eligibilityDeclaration',
             // 'accuracyDeclaration',

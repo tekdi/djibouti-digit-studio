@@ -2,6 +2,7 @@ import React from "react";
 // import FieldComposer from "./FieldComposer";
 import FieldV1 from "./FieldV1";
 import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import get from "lodash/get";
 
 function FieldController(args) {
@@ -21,6 +22,8 @@ function FieldController(args) {
     defaultValues,
     controllerProps,
   } = args;
+  
+  const { t } = useTranslation();
   let { apiDetails } = props;
   let disableFormValidation = false;
   if (sectionFormCategory && selectedFormCategory) {
@@ -40,6 +43,23 @@ function FieldController(args) {
   error = errorObject ? populators?.error : null;
   const customProps = config?.customProps;
 
+  // Handle section headers - don't wrap in Controller
+  if (type === "section") {
+    return (
+      <div className="mt-8 mb-6 w-full">
+        <div className="flex items-center w-full">
+          <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="px-4">
+            <h3 className="text-lg font-semibold text-gray-800 whitespace-nowrap">
+              {config?.label || populators?.label || ""}
+            </h3>
+          </div>
+          <div className="flex-1 h-px bg-gray-300"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Controller
       defaultValue={formData?.[populators?.name] ?? ""}
@@ -49,11 +69,7 @@ function FieldController(args) {
         const ref = contoprops?.ref;
         const value = contoprops?.value;
         const onBlur = contoprops?.onBlur;
-        console.log(contoprops, "propssst");
-        console.log("FieldController - onChange:", onChange);
-        console.log("FieldController - value:", value);
-        console.log("populators name", populators?.name);
-        console.log("Controller Render - onChange:", onChange);
+
         return (
           <FieldV1
             error={error}

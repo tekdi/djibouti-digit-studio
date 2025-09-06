@@ -116,6 +116,19 @@ export const FormComposer = (props) => {
 
   const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) => {
     
+    // Handle section headers
+    if (type === "section") {
+      return (
+        <div className="mt-8 mb-6">
+          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-3 mb-4">
+              {config?.label || populators?.label || ""}
+            </h3>
+          </div>
+        </div>
+      );
+    }
+    
     // Check if this is a custom component
     if (type === "component" && component && customComponents[component]) {
       const CustomComponent = customComponents[component];
@@ -284,6 +297,15 @@ export const FormComposer = (props) => {
         {section?.type !== "multiChildForm" &&
           section?.body?.map((field, index) => {
             if (field?.populators?.hideInForm) return null;
+            // Handle section fields differently - render without wrapper
+            if (field.type === "section") {
+              return (
+                <React.Fragment key={index}>
+                  {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field, sectionFormCategory)}
+                </React.Fragment>
+              );
+            }
+            
             if (props.inline)
               return (
                 <React.Fragment key={index}>
@@ -321,6 +343,7 @@ export const FormComposer = (props) => {
                   </div>
                 </React.Fragment>
               );
+            
             return (
               <Fragment>
                 <LabelFieldPair
