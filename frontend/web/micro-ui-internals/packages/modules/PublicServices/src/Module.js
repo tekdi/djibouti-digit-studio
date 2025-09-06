@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 import PublicServicesCard from "./components/PublicServicesCard";
+import PersonTypeSelector from "./pages/employee/DigitDemo/components/PersonTypeSelector";
 import { updateCustomConfigs } from "./utils";
 import axios from "axios";
 
@@ -14,6 +15,11 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
   const [serviceData, setServiceData] = useState(null);
   const [moduleListLoading, setModuleListLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
+
+  // Initialize custom components
+  useEffect(() => {
+    initPublicServiceComponents();
+  }, []);
 
   useEffect(() => {
     const fetchServiceData = async () => {
@@ -62,6 +68,7 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   PublicServicesModule,
+  PersonTypeSelector,
   // PublicServicesCard,
 };
 

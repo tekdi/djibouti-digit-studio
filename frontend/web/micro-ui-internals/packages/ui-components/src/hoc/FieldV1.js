@@ -299,6 +299,8 @@ const FieldV1 = ({
           <Component
             userType={"employee"}
             t={t}
+            value={value}
+            onChange={onChange}
             setValue={controllerProps?.setValue}
             onSelect={controllerProps?.setValue}
             config={config}

@@ -23,6 +23,8 @@ export const generateFormConfig = (config, module, service) => {
   const createField = (field) => {
     return {
       type: field.format || field.type, // Use `format` if available, else fallback to `type`
+      component: field.component, // Preserve custom component property
+      options: field.options, // Preserve options for custom components
       label: `${module}_${service}_${field.name.toUpperCase()}`, // Internationalized label
       withoutLabel: field.withoutLabel,
       isMandatory: !!field.required,

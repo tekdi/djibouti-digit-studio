@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, Fragment, useCallback } from "reac
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
+import PersonTypeSelector from "../../../modules/PublicServices/src/pages/employee/DigitDemo/components/PersonTypeSelector";
 
 // atoms need for initial setup
 import BreakLine from "../atoms/BreakLine";
@@ -16,6 +17,11 @@ import MultiChildFormWrapper from "./MultiChildFormWrapper";
 
 // import Fields from "./Fields";    //This is a field selector pickup from formcomposer
 import FieldController from "./FieldController";
+
+// Custom components mapping
+const customComponents = {
+  PersonTypeSelector: PersonTypeSelector,
+};
 
 const wrapperStyles = {
   display: "flex",
@@ -108,9 +114,47 @@ export const FormComposer = (props) => {
     props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
   }, [formData]);
 
-  const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) =>
+  const fieldSelector = (type, populators, isMandatory, disable = false, component, config, sectionFormCategory) => {
+    
+    // Check if this is a custom component
+    if (type === "component" && component && customComponents[component]) {
+      const CustomComponent = customComponents[component];
+      const fieldName = populators?.name || config?.name;
+      
+      // For nested fields like applicantDetails.0.personType, we need to get the value differently
+      let fieldValue = "";
+      if (fieldName && fieldName.includes('.')) {
+        // Handle nested field names like "applicantDetails.0.personType"
+        const parts = fieldName.split('.');
+        let current = formData;
+        for (const part of parts) {
+          if (current && typeof current === 'object') {
+            current = current[part];
+          } else {
+            current = undefined;
+            break;
+          }
+        }
+        fieldValue = current || "";
+      } else {
+        fieldValue = formData[fieldName] || "";
+      }
+      
+      return (
+        <CustomComponent
+          value={fieldValue}
+          onChange={(value) => {
+            setValue(fieldName, value);
+            props.onFormValueChange && props.onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
+          }}
+          required={isMandatory}
+          options={config?.options || []}
+        />
+      );
+    }
+    
     // Calling field controller to render all label and fields
-    FieldController({
+    return FieldController({
       type: type,
       populators: populators,
       isMandatory: isMandatory,
@@ -141,6 +185,7 @@ export const FormComposer = (props) => {
         unregister,
       },
     });
+  };
 
   const getCombinedStyle = (placementinBox) => {
     switch (placementinBox) {

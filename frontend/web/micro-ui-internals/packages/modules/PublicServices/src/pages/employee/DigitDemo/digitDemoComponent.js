@@ -56,6 +56,11 @@ const DigitDemoComponent = ({ editdata }) => {
   // Get persisted state from localStorage
   const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
   const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+  
+  // Clear personType from saved form data to start fresh
+  if (savedFormData.applicantDetails && savedFormData.applicantDetails[0]) {
+    delete savedFormData.applicantDetails[0].personType;
+  }
 
   const [currentStep, setCurrentStep] = useState(savedStep);
   const [formData, setFormData] = useState(savedFormData);
@@ -81,6 +86,7 @@ const DigitDemoComponent = ({ editdata }) => {
       setFormData(editdata);
     }
   }, [editdata]);
+
 
   // Fetch service configuration from MDMS
   const requestCriteria = {
@@ -122,8 +128,87 @@ const DigitDemoComponent = ({ editdata }) => {
   //logic to handle steps in apply screen flow
   const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
-  const currentFormConfig = rawConfig[currentStep - 1];
+  let currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode;
+
+  // Filter fields based on personType selection for applicantDetails step
+  if (currentFormConfig && currentFormConfig?.name === "applicantDetails") {
+    const applicantDetails = formData.applicantDetails && formData.applicantDetails[0];
+    const personTypeValue = applicantDetails?.personType;
+    const personType = typeof personTypeValue === 'string' 
+      ? personTypeValue.toUpperCase() 
+      : personTypeValue?.code?.toUpperCase() || '';
+
+    // Create a copy of the form config to avoid mutating the original
+    currentFormConfig = {
+      ...currentFormConfig,
+      body: currentFormConfig.body ? [...currentFormConfig.body] : []
+    };
+
+    // Filter fields based on personType
+    if (currentFormConfig.body) {
+      
+      currentFormConfig.body = currentFormConfig.body.filter(field => {
+        const fieldName = field?.populators?.name; // Use the populators name from config
+        
+        // Always show personType field
+        if (fieldName === 'personType') {
+          return true;
+        }
+
+        // If no personType selected, hide all other fields
+        if (!personType) {
+          return false;
+        }
+
+        // Show fields based on personType selection
+        if (personType === "INDIVIDUAL") {
+          // Show individual fields
+          const individualFields = [
+            'wayToAddress',
+            'name',
+            'address',
+            'idType',
+            'nationalIdNumber',
+            'mobileNumber',
+            'eligibilityDeclaration',
+            'accuracyDeclaration',
+            'taxCalculationAgreement',
+            'checkValidation'
+          ];
+          return individualFields.includes(fieldName);
+        } else if (personType === "LEGAL_ENTITY") {
+          // Show legal entity fields
+          const legalEntityFields = [
+            'corporateName',
+            'companyType',
+            'registrationNumber',
+            'representantLegal',
+            'qualiteRepresentant',
+            'adresseSiege',
+            'telephone',
+            'eligibilityDeclaration',
+            'accuracyDeclaration',
+            'taxCalculationAgreement',
+            'checkValidation'
+          ];
+          
+          // Show otherCompanyType only when companyType is OTHER
+          if (fieldName === 'otherCompanyType') {
+            const companyTypeValue = applicantDetails?.companyType;
+            const companyType = typeof companyTypeValue === 'string'
+              ? companyTypeValue.toUpperCase()
+              : companyTypeValue?.code?.toUpperCase() || '';
+            return companyType === "OTHER";
+          }
+          
+          return legalEntityFields.includes(fieldName);
+        }
+
+        return false;
+      });
+    }
+  }
   const isLastStep = currentStep === rawConfig.length;
   const applicationNumber = queryStrings?.applicationNumber;
 
@@ -135,6 +220,7 @@ const DigitDemoComponent = ({ editdata }) => {
       enable: true,
     },
   });
+
 
   useEffect(() => {
     if (currentFormConfig?.name === "landandProjectDesignDetails") {
@@ -267,26 +353,6 @@ const DigitDemoComponent = ({ editdata }) => {
     }
   };
 
-  if (currentFormConfig && currentFormConfig?.name === "legalEntityDetails") {
-    const entityDetails = formData.legalEntityDetails && formData.legalEntityDetails[0];
-    const companyType = entityDetails?.companyType?.code?.toUpperCase();
-
-    if (currentFormConfig && currentFormConfig.body) {
-      currentFormConfig.body = currentFormConfig.body.map((field) => {
-        if (field?.populators?.name === "otherCompanyType") {
-          return {
-            ...field,
-            populators: {
-              ...field.populators,
-              disable: companyType !== "OTHER",
-              required: companyType === "OTHER",
-            },
-          };
-        }
-        return field;
-      });
-    }
-  }
 
   if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
     // Safely access nested properties

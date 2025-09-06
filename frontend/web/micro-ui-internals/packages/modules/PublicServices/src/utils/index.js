@@ -24,6 +24,20 @@ const getServiceDetails = (formData) => {
     }
     return acc;
   }, {});
+  
+  // Handle legal entity details from applicant details
+  if (formData.applicantDetails && formData.applicantDetails[0]?.personType === "LEGAL_ENTITY") {
+    const applicant = formData.applicantDetails[0];
+    if (!validSections.legalEntityDetails) {
+      validSections.legalEntityDetails = [{
+        corporateName: applicant.corporateName,
+        companyType: applicant.companyType,
+        otherCompanyType: applicant.otherCompanyType,
+        registrationNumber: applicant.registrationNumber,
+      }];
+    }
+  }
+  
   const flattenValues = (obj) => {
     const flat = {};
     for (const [key, val] of Object.entries(obj)) {
