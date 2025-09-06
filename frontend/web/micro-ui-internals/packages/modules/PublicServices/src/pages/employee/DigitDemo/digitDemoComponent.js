@@ -171,26 +171,38 @@ const DigitDemoComponent = ({ editdata }) => {
             'idType',
             'nationalIdNumber',
             'mobileNumber',
-            'eligibilityDeclaration',
-            'accuracyDeclaration',
-            'taxCalculationAgreement',
-            'checkValidation'
+            // 'eligibilityDeclaration',
+            // 'accuracyDeclaration',
+            // 'taxCalculationAgreement',
+            // 'checkValidation'
           ];
           return individualFields.includes(fieldName);
         } else if (personType === "LEGAL_ENTITY") {
-          // Show legal entity fields
+          // Show legal entity fields in correct order
           const legalEntityFields = [
+            // Section headers
+            'companyInfoHeader',
+            'representativeInfoHeader',
+            // Company information first
             'corporateName',
             'companyType',
             'registrationNumber',
-            'representantLegal',
             'qualiteRepresentant',
+            // Representative's personal information (same field names as individual for API)
+            'wayToAddress',
+            'name',
+            'address',
+            'idType',
+            'nationalIdNumber',
+            'mobileNumber',
+            // Company address and phone
             'adresseSiege',
             'telephone',
-            'eligibilityDeclaration',
-            'accuracyDeclaration',
-            'taxCalculationAgreement',
-            'checkValidation'
+            // Common fields
+            // 'eligibilityDeclaration',
+            // 'accuracyDeclaration',
+            // 'taxCalculationAgreement',
+            // 'checkValidation'
           ];
           
           // Show otherCompanyType only when companyType is OTHER

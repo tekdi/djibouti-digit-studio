@@ -106,17 +106,16 @@ export const ApplicantFields = [
           orderNumber: 1,
         },
         
-        // Personal Information Fields - Only shown when personType === "INDIVIDUAL"
+        // Personal Information Fields - Shown for both individual and legal entity (representative)
         {
           name: "wayToAddress",
           type: "string",
-          label: "Préférence d'adresse",
+          label: "Civilité *",
           format: "radioordropdown",
           schema: "common-masters.GenderType",
           required: true,
           reference: "mdms",
-          orderNumber: 2,
-          showWhen: "personType === 'INDIVIDUAL'",
+          orderNumber: 13, // After company fields
         },
         {
           name: "name",
@@ -131,8 +130,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "NAME_LENGTH_ERR",
           },
-          orderNumber: 3,
-          showWhen: "personType === 'INDIVIDUAL'",
+          orderNumber: 14,
         },
         {
           name: "address",
@@ -147,8 +145,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "ADDRESS_LENGTH_ERR",
           },
-          orderNumber: 4,
-          showWhen: "personType === 'INDIVIDUAL'",
+          orderNumber: 15,
         },
         {
           name: "idType",
@@ -158,8 +155,7 @@ export const ApplicantFields = [
           required: true,
           schema: "BPA.IdentityType",
           reference: "mdms",
-          orderNumber: 5,
-          showWhen: "personType === 'INDIVIDUAL'",
+          orderNumber: 16,
         },
         {
           name: "nationalIdNumber",
@@ -174,8 +170,7 @@ export const ApplicantFields = [
           },
           maxLength: 30,
           minLength: 1,
-          orderNumber: 6,
-          showWhen: "personType === 'INDIVIDUAL'",
+          orderNumber: 17,
         },
         {
           name: "mobileNumber",
@@ -190,8 +185,15 @@ export const ApplicantFields = [
           placeholder: "77 XX XX XX",
           maxLength: 8,
           minLength: 8,
+          orderNumber: 18,
+        },
+        
+        // Section Header for Company Information
+        {
+          name: "companyInfoHeader",
+          type: "section",
+          label: "Informations de l'entreprise",
           orderNumber: 7,
-          showWhen: "personType === 'INDIVIDUAL'",
         },
         
         // Legal Entity Fields - Only shown when personType === "LEGAL_ENTITY"
@@ -209,7 +211,6 @@ export const ApplicantFields = [
             message: "CORPORATE_NAME_LENGTH_ERR",
           },
           orderNumber: 8,
-          showWhen: "personType === 'LEGAL_ENTITY'",
         },
         {
           name: "companyType",
@@ -220,7 +221,6 @@ export const ApplicantFields = [
           schema: "BPA.CompanyType",
           reference: "mdms",
           orderNumber: 9,
-          showWhen: "personType === 'LEGAL_ENTITY'",
         },
         {
           name: "otherCompanyType",
@@ -248,23 +248,6 @@ export const ApplicantFields = [
           maxLength: 50,
           minLength: 1,
           orderNumber: 11,
-          showWhen: "personType === 'LEGAL_ENTITY'",
-        },
-        {
-          name: "representantLegal",
-          type: "string",
-          label: "Représentant légal *",
-          format: "text",
-          placeholder: "Nom du représentant",
-          required: true,
-          maxLength: 256,
-          minLength: 2,
-          validation: {
-            regex: "^.{2,256}$",
-            message: "REPRESENTANT_NAME_ERR",
-          },
-          orderNumber: 12,
-          showWhen: "personType === 'LEGAL_ENTITY'",
         },
         {
           name: "qualiteRepresentant",
@@ -279,9 +262,18 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "QUALITE_REPRESENTANT_ERR",
           },
-          orderNumber: 13,
-          showWhen: "personType === 'LEGAL_ENTITY'",
+          orderNumber: 12,
         },
+        
+        // Section Header for Representative Information
+        {
+          name: "representativeInfoHeader",
+          type: "section",
+          label: "Informations du représentant",
+          orderNumber: 12.5,
+        },
+        
+        // Representative's personal information - using same fields as individual, labels will be changed dynamically
         {
           name: "adresseSiege",
           type: "string",
@@ -295,8 +287,7 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "ADDRESS_LENGTH_ERR",
           },
-          orderNumber: 14,
-          showWhen: "personType === 'LEGAL_ENTITY'",
+          orderNumber: 19, // After representative fields
         },
         {
           name: "telephone",
@@ -311,8 +302,7 @@ export const ApplicantFields = [
           placeholder: "77 XX XX XX",
           maxLength: 8,
           minLength: 8,
-          orderNumber: 15,
-          showWhen: "personType === 'LEGAL_ENTITY'",
+          orderNumber: 20, // After representative fields
         },
         
         // Common fields for both types
@@ -362,6 +352,7 @@ export const ApplicantFields = [
     },
   },
 ];
+
 
 export const documentFields = [
   {
