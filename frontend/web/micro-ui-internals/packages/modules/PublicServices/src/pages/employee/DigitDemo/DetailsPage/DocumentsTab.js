@@ -36,7 +36,7 @@ const DocumentsTab = ({ documents }) => {
         {documents?.map((doc, index) => (
           <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-3">
-              <div className="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full text-sm font-bold">
+              <div className="flex items-center justify-center w-8 h-8 bg-primary/10 text-primary rounded-full text-sm font-bold">
                 {index + 1}
               </div>
               <div className="p-2 bg-primary/10 rounded-lg">
@@ -53,7 +53,7 @@ const DocumentsTab = ({ documents }) => {
             </div>
             <button
               onClick={() => downloadFile(doc.fileStoreId)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
             >
               <LuDownload className="w-4 h-4" />
               {t("DOWNLOAD")}
