@@ -168,25 +168,27 @@ const ProjectDataView = ({
     });
   }
 
-  // Declarations Block (always show if available)
-  if (additionalDetails?.applicants && Object.keys(additionalDetails.applicants).length > 0) {
-    blocks.push(
-      <div key="declarations" className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
-            <LuCircleCheck className="w-4 h-4 text-pink-600" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900">Déclarations</h3>
-        </div>
-        <div className="space-y-2">
-          {additionalDetails.applicants.accuracyDeclaration && renderCheckbox("Déclaration d'exactitude", true)}
-          {additionalDetails.applicants.checkValidation && renderCheckbox("Validation des informations", true)}
-          {additionalDetails.applicants.eligibilityDeclaration && renderCheckbox("Déclaration d'éligibilité", true)}
-          {additionalDetails.applicants.taxCalculationAgreement && renderCheckbox("Accord de calcul des taxes", true)}
-        </div>
-      </div>
-    );
-  }
+  //
+  // 
+  //  Declarations Block (always show if available) TODO: Check if this is needed
+  // if (additionalDetails?.applicants && Object.keys(additionalDetails.applicants).length > 0) {
+  //   blocks.push(
+  //     <div key="declarations" className="bg-gradient-to-r from-pink-50 to-rose-50 rounded-2xl p-6 border border-pink-100">
+  //       <div className="flex items-center gap-3 mb-4">
+  //         <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center">
+  //           <LuCircleCheck className="w-4 h-4 text-pink-600" />
+  //         </div>
+  //         <h3 className="text-lg font-semibold text-gray-900">Déclarations</h3>
+  //       </div>
+  //       <div className="space-y-2">
+  //         {additionalDetails.applicants.accuracyDeclaration && renderCheckbox("Déclaration d'exactitude", true)}
+  //         {additionalDetails.applicants.checkValidation && renderCheckbox("Validation des informations", true)}
+  //         {additionalDetails.applicants.eligibilityDeclaration && renderCheckbox("Déclaration d'éligibilité", true)}
+  //         {additionalDetails.applicants.taxCalculationAgreement && renderCheckbox("Accord de calcul des taxes", true)}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

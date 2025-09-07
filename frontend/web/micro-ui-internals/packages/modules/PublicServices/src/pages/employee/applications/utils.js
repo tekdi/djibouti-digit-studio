@@ -261,6 +261,13 @@ export const getStatusInfo = (status) => {
       icon: LuCreditCard,
       progress: 45
     },
+    "CITIZEN_PAYMENT_DONE": {
+      label: "Paiement effectué",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 50
+    },
     
     // Document verification
     "DOCUMENT_VERIFICATION_PENDING": {
