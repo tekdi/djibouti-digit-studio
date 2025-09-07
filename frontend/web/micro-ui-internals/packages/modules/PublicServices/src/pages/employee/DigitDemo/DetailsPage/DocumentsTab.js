@@ -32,12 +32,15 @@ const DocumentsTab = ({ documents }) => {
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{t("DOCUMENTS")}</h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {documents?.map((doc, index) => (
           <div key={index} className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <LuFileText className="w-4 h-4 text-blue-600" />
+              <div className="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full text-sm font-bold">
+                {index + 1}
+              </div>
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <LuFileText className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
@@ -50,7 +53,7 @@ const DocumentsTab = ({ documents }) => {
             </div>
             <button
               onClick={() => downloadFile(doc.fileStoreId)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
             >
               <LuDownload className="w-4 h-4" />
               {t("DOWNLOAD")}
