@@ -278,6 +278,15 @@ export const getStatusInfo = (status) => {
       progress: 35
     },
     
+    // Commissioner status
+    "AWAITING_ON_COMMISSIONER": {
+      label: "En attente du Commissaire",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 85
+    },
+    
     // Default fallback
     "INITIATED": {
       label: "Initié",
@@ -292,6 +301,13 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-blue-50",
       icon: LuClock,
       progress: 15
+    },
+    "APPLICATION_SUBMITTED": {
+      label: "Demande soumise",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 20
     }
   };
 

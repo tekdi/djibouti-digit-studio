@@ -139,6 +139,8 @@ const DigitDemoViewComponent = () => {
 
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
+  console.log("response", workflowDetails);
+  console.log("checkListCodes", checkListCodes);
 
   if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
     return <Loader />;

@@ -41,7 +41,13 @@ const MainView = ({
       )}
 
       {activeTab === "payments" && (
-        <PaymentsTab costEstimation={costEstimation} />
+        <PaymentsTab 
+          costEstimation={costEstimation}
+          checkListCodes={checkListCodes}
+          data={data}
+          isCitizen={isCitizen}
+          service={service}
+        />
       )}
 
       {activeTab === "activities" && (

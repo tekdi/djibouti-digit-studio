@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useApplications from "./useApplications";
-import { getServiceInfo } from "./utils";
 import axios from "axios";
 
 // Import components

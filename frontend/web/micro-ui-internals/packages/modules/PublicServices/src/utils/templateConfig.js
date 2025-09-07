@@ -456,12 +456,19 @@ export const assigneeMapping = [
 
 export const checklistByService = [
   {
+    // p1
     service: "BPA_PCO",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
   },
   {
+    // p2
     service: "BPA_PCO_SIMPLE",
     checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+  },
+  {
+    // p3
+    service: "BPA_PR",
+    checklist: ["customAgentChecklist"],
   },
   {
     service: "BPA_PL",
@@ -482,10 +489,6 @@ export const checklistByService = [
   {
     service: "BPA_ATARR",
     checklist: ["calculationFees"],
-  },
-  {
-    service: "BPA_PR",
-    checklist: ["customAgentChecklist"],
   },
   {
     service: "BPA_CCR",
