@@ -4,7 +4,7 @@ import StatusBadge from "./StatusBadge";
 import InfoCard from "./InfoCard";
 import { useTranslation } from "react-i18next";
 
-const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant }) => {
+const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, isCitizen = false }) => {
   const { t } = useTranslation();
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
@@ -26,7 +26,7 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant })
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold text-gray-900">{response?.applicationNumber}</h1>
-              <StatusBadge state={response?.processInstance?.[0]?.state?.state} />
+              <StatusBadge state={response?.processInstance?.[0]?.state?.state} isCitizen={isCitizen} />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-1">
               Demande de {serviceInfo.name} pour un projet à {t(projectDetails?.siteLocation) || t(projectDetails?.region) || "Non précisé"}

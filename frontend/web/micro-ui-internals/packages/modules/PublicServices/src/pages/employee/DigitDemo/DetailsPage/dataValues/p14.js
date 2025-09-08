@@ -20,6 +20,7 @@ export const p14Data = {
           label: "Surface du terrain",
           key: "plotArea",
           icon: "LuMapPin",
+          
           suffix: " m²"
         },
         {
@@ -32,3 +33,7 @@ export const p14Data = {
     }
   }
 };
+
+
+
+

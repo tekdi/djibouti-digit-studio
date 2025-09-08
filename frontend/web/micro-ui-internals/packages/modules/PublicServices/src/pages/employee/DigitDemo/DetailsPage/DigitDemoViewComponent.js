@@ -21,7 +21,7 @@ const DigitDemoViewComponent = () => {
   const { module, service } = useParams();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
-  const history = useHistory();
+
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
   const checklistConfig = checklistByService.find((list) => list.service === service);
   const shouldShowChecklist = checklistConfig && checklistConfig.checklist && checklistConfig.checklist.length > 0;
@@ -85,18 +85,6 @@ const DigitDemoViewComponent = () => {
     },
   });
 
-
-  // Extract the required data for ApplicationDataView
-  const applicationData = {
-    applicants: response?.applicants || [],
-    additionalDetails: response?.additionalDetails || {},
-    documents: response?.documents || [],
-    serviceDetails: {
-      landInfo: response?.serviceDetails?.landandProjectDesignDetails?.[0] || {},
-      designOffice: response?.serviceDetails?.designOfficeDetailing || [],
-    },
-  };
-
   useEffect(() => {
     // Guard clause to avoid calling with missing inputs
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
@@ -129,16 +117,14 @@ const DigitDemoViewComponent = () => {
     const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
     const assigneeUuids = latestProcessInstance?.assignes?.map((assignee) => assignee.uuid) || [];
 
-    // Redirecting to the inbox page if the logged in user has no actions available for the particular application
-    if (!assigneeUuids?.includes(loggedUser)) {
-      history.push({
-        pathname: `/${window.contextPath}/${userType}/publicservices/${module}/Inbox`,
-      });
-    }
+    // Allow users to view applications even if they don't have actions available
+    // No redirect - users can view the application details
   }, [userInfo, workflowDetails]);
 
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
+  console.log("response", workflowDetails);
+  console.log("checkListCodes", checkListCodes);
 
   if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
     return <Loader />;
@@ -164,6 +150,7 @@ const DigitDemoViewComponent = () => {
             serviceInfo={serviceInfo}
             projectDetails={projectDetails}
             applicant={applicant}
+            isCitizen={isCitizen}
           />
 
           {/* Tabs */}

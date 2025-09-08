@@ -87,27 +87,42 @@ export const AddressFields = [
 export const ApplicantFields = [
   {
     name: "applicantDetails",
-    label: "Applicant Details ",
+    label: "Identité du demandeur",
     type: "array",
     items: {
       type: "object",
       properties: [
+        // Person Type Selector - Always shown first
+        {
+          name: "personType",
+          type: "component",
+          format: "component",
+          component: "PersonTypeSelector",
+          required: true,
+          options: [
+            { value: "INDIVIDUAL", label: "Personne physique" },
+            { value: "LEGAL_ENTITY", label: "Personne morale" }
+          ],
+          orderNumber: 1,
+        },
+        
+        // Personal Information Fields - Shown for both individual and legal entity (representative)
         {
           name: "wayToAddress",
           type: "string",
-          placeholder: "ENTER_WAY_TO_ADDRESS",
-          label: "Preferred Way to Address",
+          label: "Civilité *",
           format: "radioordropdown",
           schema: "common-masters.GenderType",
           required: true,
           reference: "mdms",
+          orderNumber: 16, // After representative section header
         },
         {
           name: "name",
           type: "string",
-          label: "Legal Name",
+          label: "Nom complet *",
           format: "text",
-          placeholder: "ENTER_LEGAL_NAME",
+          placeholder: "Nom et prénom complets",
           required: true,
           maxLength: 256,
           minLength: 2,
@@ -115,35 +130,38 @@ export const ApplicantFields = [
             regex: "^.{2,256}$",
             message: "NAME_LENGTH_ERR",
           },
+          orderNumber: 17,
         },
         {
           name: "address",
           type: "string",
-          label: "Address",
-          placeholder: "ENTER_ADDRESS",
+          label: "Adresse complète *",
+          placeholder: "Adresse complète",
           format: "text",
           required: true,
           maxLength: 256,
           minLength: 2,
           validation: {
             regex: "^.{2,256}$",
-            message: "NAME_LENGTH_ERR",
+            message: "ADDRESS_LENGTH_ERR",
           },
+          orderNumber: 18,
         },
         {
           name: "idType",
-          label: "ID type",
+          label: "Type de pièce d'identité *",
           type: "string",
           format: "radioordropdown",
           required: true,
           schema: "BPA.IdentityType",
           reference: "mdms",
+          orderNumber: 19,
         },
         {
           name: "nationalIdNumber",
           type: "string",
-          label: "National Identification Number (CIN)",
-          placeholder: "ENTER_NATIONAL_ID_NUMBER",
+          label: "Numéro de pièce d'identité *",
+          placeholder: "Numéro de la pièce",
           format: "number",
           required: true,
           validation: {
@@ -152,61 +170,189 @@ export const ApplicantFields = [
           },
           maxLength: 30,
           minLength: 1,
+          orderNumber: 20,
         },
         {
           name: "mobileNumber",
           type: "string",
-          label: "Mobile number",
+          label: "Numéro de téléphone *",
           format: "mobileNumber",
           required: true,
           validation: {
             regex: "(^$|^77[0-9]{6}$)",
             message: "TELEPHONE_NUMBER_ERR",
           },
-          placeholder: "00 00 00 00",
+          placeholder: "77 XX XX XX",
           maxLength: 8,
           minLength: 8,
+          orderNumber: 21,
+        },
+        
+        // Section Header for Company Information
+        {
+          name: "companyInfoHeader",
+          type: "section",
+          label: "Informations de l'entreprise",
+          orderNumber: 7,
+        },
+        
+        // Legal Entity Fields - Only shown when personType === "LEGAL_ENTITY"
+        {
+          name: "corporateName",
+          type: "string",
+          label: "Raison sociale *",
+          format: "text",
+          placeholder: "Nom de l'entreprise",
+          required: true,
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "CORPORATE_NAME_LENGTH_ERR",
+          },
+          orderNumber: 8,
         },
         {
-          name: "eligibilityDeclaration",
+          name: "companyType",
           type: "string",
-          label: "I certify I am entitled to request this authorization",
-          format: "checkbox",
-          withoutLabel: true,
+          label: "Forme juridique *",
+          format: "radioordropdown",
           required: true,
+          schema: "BPA.CompanyType",
+          reference: "mdms",
+          orderNumber: 9,
         },
         {
-          name: "accuracyDeclaration",
+          name: "otherCompanyType",
           type: "string",
-          label: "I, the undersigned, author of the request, certify that the information provided is correct",
-          format: "checkbox",
-          withoutLabel: true,
+          label: "Autre forme juridique *",
+          format: "text",
+          placeholder: "Préciser la forme juridique",
           required: true,
-          excludeServices: ["BPA_PD"],
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "OTHER_COMPANY_TYPE_ERR",
+          },
+          orderNumber: 10,
+          showWhen: "personType === 'LEGAL_ENTITY' && companyType === 'OTHER'",
         },
         {
-          name: "taxCalculationAgreement",
+          name: "registrationNumber",
           type: "string",
-          label:
-            "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
-          format: "checkbox",
-          withoutLabel: true,
+          label: "Numéro de registre du commerce *",
+          format: "text",
+          placeholder: "Numéro RC",
           required: true,
-          excludeServices: ["BPA_PCS", "BPA_PD", "BPA_ATARR"],
+          maxLength: 50,
+          minLength: 1,
+          orderNumber: 11,
         },
         {
-          name: "checkValidation",
+          name: "adresseSiege",
           type: "string",
-          label: "The phone number will be used for communication regarding the application and payment details",
-          format: "checkbox",
-          withoutLabel: true,
+          label: "Adresse du siège social *",
+          format: "text",
+          placeholder: "Adresse complète du siège social",
           required: true,
-          excludeServices: ["BPA_PD"],
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "ADDRESS_LENGTH_ERR",
+          },
+          orderNumber: 13, // Part of company information
         },
+        {
+          name: "telephone",
+          type: "string",
+          label: "Téléphone *",
+          format: "mobileNumber",
+          required: true,
+          validation: {
+            regex: "(^$|^77[0-9]{6}$)",
+            message: "TELEPHONE_NUMBER_ERR",
+          },
+          placeholder: "77 XX XX XX",
+          maxLength: 8,
+          minLength: 8,
+          orderNumber: 14, // Part of company information
+        },
+        
+        // Section Header for Representative Information
+        {
+          name: "representativeInfoHeader",
+          type: "section",
+          label: "Informations du représentant",
+          orderNumber: 15,
+        },
+        
+        // Representative's personal information - using same fields as individual, labels will be changed dynamically
+        {
+          name: "qualiteRepresentant",
+          type: "string",
+          label: "Qualité du représentant *",
+          format: "text",
+          placeholder: "Directeur général, Gérant, etc.",
+          required: true,
+          maxLength: 256,
+          minLength: 2,
+          validation: {
+            regex: "^.{2,256}$",
+            message: "QUALITE_REPRESENTANT_ERR",
+          },
+          orderNumber: 15.5, // After representative section header, before other representative fields
+        },
+        
+        // Common fields for both types
+        // Email field removed as requested
+        
+        // Declarations - Always shown at the end
+        // {
+        //   name: "eligibilityDeclaration",
+        //   type: "string",
+        //   label: "Je certifie être habilité à demander cette autorisation",
+        //   format: "checkbox",
+        //   withoutLabel: true,
+        //   required: true,
+        //   orderNumber: 17,
+        // },
+        // {
+        //   name: "accuracyDeclaration",
+        //   type: "string",
+        //   label: "Je certifie que les informations fournies sont exactes",
+        //   format: "checkbox",
+        //   withoutLabel: true,
+        //   required: true,
+        //   excludeServices: ["BPA_PD"],
+        //   orderNumber: 18,
+        // },
+        // {
+        //   name: "taxCalculationAgreement",
+        //   type: "string",
+        //   label: "J'accepte que les informations soient utilisées pour le calcul des taxes",
+        //   format: "checkbox",
+        //   withoutLabel: true,
+        //   required: true,
+        //   excludeServices: ["BPA_PCS", "BPA_PD", "BPA_ATARR"],
+        //   orderNumber: 19,
+        // },
+        // {
+        //   name: "checkValidation",
+        //   type: "string",
+        //   label: "J'accepte que le téléphone soit utilisé pour les communications",
+        //   format: "checkbox",
+        //   withoutLabel: true,
+        //   required: true,
+        //   excludeServices: ["BPA_PD"],
+        //   orderNumber: 20,
+        // },
       ],
     },
   },
 ];
+
 
 export const documentFields = [
   {
@@ -310,36 +456,39 @@ export const assigneeMapping = [
 
 export const checklistByService = [
   {
+    // p1
     service: "BPA_PCO",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
+    // p2
     service: "BPA_PCO_SIMPLE",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
+  },
+  {
+    // p3
+    service: "BPA_PR",
+    checklist: ["customAgentChecklist"],
   },
   {
     service: "BPA_PL",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PCS",
-    checklist: ["calculationFees"],
+    checklist: ["calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PD",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PS",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_ATARR",
     checklist: ["calculationFees"],
-  },
-  {
-    service: "BPA_PR",
-    checklist: ["customAgentChecklist"],
   },
   {
     service: "BPA_CCR",

@@ -88,7 +88,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
           <PrivateRoute exact path={`${path}/applications-employee/in-progress`} component={() => <InProgressApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/new`} component={() => <NewApplications />} />
           <PrivateRoute exact path={`${path}/search`} component={() => <EmployeeSearch />} />
-          <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
+          <PrivateRoute path={`${path}/:module/:service/apply`} component={() => <DigitDemoComponent />} />
           <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
           <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />
           <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />

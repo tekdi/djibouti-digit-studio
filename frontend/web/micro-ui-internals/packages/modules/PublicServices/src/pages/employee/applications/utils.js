@@ -164,6 +164,13 @@ export const getStatusInfo = (status) => {
     },
     
     // Review statuses
+    "PENDING_REVIEW_BY_SRA_AGENT": {
+      label: "En attente de révision par Agent SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 25
+    },
          "PENDING_REVIEW_BY_SRA_HOD": {
        label: "En attente de révision par Chef de service SRA",
        color: "text-amber-600",
@@ -261,6 +268,13 @@ export const getStatusInfo = (status) => {
       icon: LuCreditCard,
       progress: 45
     },
+    "CITIZEN_PAYMENT_DONE": {
+      label: "Paiement effectué",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 50
+    },
     
     // Document verification
     "DOCUMENT_VERIFICATION_PENDING": {
@@ -278,6 +292,15 @@ export const getStatusInfo = (status) => {
       progress: 35
     },
     
+    // Commissioner status
+    "AWAITING_ON_COMMISSIONER": {
+      label: "En attente du Commissaire",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 85
+    },
+    
     // Default fallback
     "INITIATED": {
       label: "Initié",
@@ -292,6 +315,13 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-blue-50",
       icon: LuClock,
       progress: 15
+    },
+    "APPLICATION_SUBMITTED": {
+      label: "Demande soumise",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 20
     }
   };
 
