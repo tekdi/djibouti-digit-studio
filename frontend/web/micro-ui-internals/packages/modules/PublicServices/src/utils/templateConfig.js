@@ -404,7 +404,7 @@ export const assigneeMapping = [
   {
     // P6
     permit: "BPA_PD",
-    role: "BPA_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P7
@@ -479,7 +479,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_PD",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist", "customCommissionersChecklist"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist"],
   },
   {
     service: "BPA_PS",
