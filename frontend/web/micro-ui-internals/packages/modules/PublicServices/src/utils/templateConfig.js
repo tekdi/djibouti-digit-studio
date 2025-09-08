@@ -101,11 +101,11 @@ export const ApplicantFields = [
           required: true,
           options: [
             { value: "INDIVIDUAL", label: "Personne physique" },
-            { value: "LEGAL_ENTITY", label: "Personne morale" }
+            { value: "LEGAL_ENTITY", label: "Personne morale" },
           ],
           orderNumber: 1,
         },
-        
+
         // Personal Information Fields - Shown for both individual and legal entity (representative)
         {
           name: "wayToAddress",
@@ -187,7 +187,7 @@ export const ApplicantFields = [
           minLength: 8,
           orderNumber: 21,
         },
-        
+
         // Section Header for Company Information
         {
           name: "companyInfoHeader",
@@ -195,7 +195,7 @@ export const ApplicantFields = [
           label: "Informations de l'entreprise",
           orderNumber: 7,
         },
-        
+
         // Legal Entity Fields - Only shown when personType === "LEGAL_ENTITY"
         {
           name: "corporateName",
@@ -279,7 +279,7 @@ export const ApplicantFields = [
           minLength: 8,
           orderNumber: 14, // Part of company information
         },
-        
+
         // Section Header for Representative Information
         {
           name: "representativeInfoHeader",
@@ -287,7 +287,7 @@ export const ApplicantFields = [
           label: "Informations du représentant",
           orderNumber: 15,
         },
-        
+
         // Representative's personal information - using same fields as individual, labels will be changed dynamically
         {
           name: "qualiteRepresentant",
@@ -304,10 +304,10 @@ export const ApplicantFields = [
           },
           orderNumber: 15.5, // After representative section header, before other representative fields
         },
-        
+
         // Common fields for both types
         // Email field removed as requested
-        
+
         // Declarations - Always shown at the end
         // {
         //   name: "eligibilityDeclaration",
@@ -352,7 +352,6 @@ export const ApplicantFields = [
     },
   },
 ];
-
 
 export const documentFields = [
   {
@@ -400,7 +399,7 @@ export const assigneeMapping = [
   {
     // P5
     permit: "BPA_PCS",
-    role: "BPA_HOD",
+    role: "BPA_DGDCF",
   },
   {
     // P6
