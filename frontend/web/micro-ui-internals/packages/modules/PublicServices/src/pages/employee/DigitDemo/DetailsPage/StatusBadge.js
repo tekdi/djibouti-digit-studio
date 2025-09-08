@@ -1,45 +1,58 @@
 import React from "react";
-import { 
-  LuCircleCheck, 
-  LuCircleAlert, 
-  LuFileText, 
-  LuClock 
-} from "react-icons/lu";
+import { getStatusInfo, getSimplifiedStatus } from "../../applications/utils";
 
-const StatusBadge = ({ state }) => {
-  const getStatusInfo = (state) => {
-    switch (state) {
-      case "PERMIT_GRANTED":
-        return { 
-          color: "text-green-600", 
-          bgColor: "bg-green-50", 
-          icon: LuCircleCheck, 
-          label: "Permis Accordé"
-        };
-      case "PERMIT_REJECTED":
-        return { 
-          color: "text-red-600", 
-          bgColor: "bg-red-50", 
-          icon: LuCircleAlert, 
-          label: "Permis Rejeté"
-        };
-      case "INITIATED":
-        return { 
-          color: "text-gray-600", 
-          bgColor: "bg-gray-50", 
-          icon: LuFileText, 
-          label: "Brouillon"
-        };
-      default:
-        return { 
-          color: "text-blue-600", 
-          bgColor: "bg-blue-50", 
-          icon: LuClock, 
-          label: "En cours d'examen"
-        };
-    }
-  };
+const StatusBadge = ({ state, isCitizen = false }) => {
+  // For citizens, use simplified status
+  if (isCitizen) {
+    const simplifiedStatus = getSimplifiedStatus(state);
+    const getSimplifiedStatusInfo = (status) => {
+      switch (status) {
+        case "approved":
+        case "completed":
+          return { 
+            color: "text-green-600", 
+            bgColor: "bg-green-50", 
+            label: "Approuvé"
+          };
+        case "rejected":
+          return { 
+            color: "text-red-600", 
+            bgColor: "bg-red-50", 
+            label: "Rejeté"
+          };
+        case "payment_pending":
+          return { 
+            color: "text-orange-600", 
+            bgColor: "bg-orange-50", 
+            label: "Paiement en attente"
+          };
+        case "cancelled":
+        case "expired":
+          return { 
+            color: "text-gray-600", 
+            bgColor: "bg-gray-50", 
+            label: "Annulé"
+          };
+        default:
+          return { 
+            color: "text-blue-600", 
+            bgColor: "bg-blue-50", 
+            label: "En cours d'examen"
+          };
+      }
+    };
 
+    const statusInfo = getSimplifiedStatusInfo(simplifiedStatus);
+    return (
+      <div className={`inline-flex items-center px-3 py-1 rounded-full ${statusInfo.bgColor}`}>
+        <span className={`text-sm font-medium ${statusInfo.color}`}>
+          {statusInfo.label}
+        </span>
+      </div>
+    );
+  }
+
+  // For employees, use detailed status from utils.js
   const statusInfo = getStatusInfo(state);
   const StatusIcon = statusInfo.icon;
 

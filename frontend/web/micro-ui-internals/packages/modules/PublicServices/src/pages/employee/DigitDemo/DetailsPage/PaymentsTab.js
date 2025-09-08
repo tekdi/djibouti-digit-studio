@@ -44,6 +44,7 @@ const PaymentsTab = ({
         </div>
       ) : (
         <div>
+          
           {/* Cost Estimation Section */}
           {costEstimation ? (
             <div className="bg-gray-50 rounded-xl p-4 mb-6">

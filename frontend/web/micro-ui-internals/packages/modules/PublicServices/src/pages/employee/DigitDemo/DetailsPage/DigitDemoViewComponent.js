@@ -150,6 +150,7 @@ const DigitDemoViewComponent = () => {
             serviceInfo={serviceInfo}
             projectDetails={projectDetails}
             applicant={applicant}
+            isCitizen={isCitizen}
           />
 
           {/* Tabs */}

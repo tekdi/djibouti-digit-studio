@@ -458,12 +458,12 @@ export const checklistByService = [
   {
     // p1
     service: "BPA_PCO",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p2
     service: "BPA_PCO_SIMPLE",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p3
@@ -472,19 +472,19 @@ export const checklistByService = [
   },
   {
     service: "BPA_PL",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PCS",
-    checklist: ["calculationFees"],
+    checklist: ["calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PD",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PS",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees"],
+    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_ATARR",

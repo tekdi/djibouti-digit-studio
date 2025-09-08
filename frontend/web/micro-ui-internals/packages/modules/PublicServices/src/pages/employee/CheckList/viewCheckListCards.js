@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
 import { AgentReportCard } from "../../../components/AgentReport";
+import { CommissionersCheckListCard } from "../../../components/CommissionersCheckList";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -62,6 +63,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 }
               });
             }
+
+            // Add commissioners checklist if configured
+            if (allowedCodes.includes("customCommissionersChecklist")) {
+              items.push({
+                id: "custom-commissioners-checklist",
+                code: "customCommissionersChecklist",
+                clientId: "COMMISSIONERS_CHECKLIST",
+                auditDetails: {
+                  createdTime: Date.now() + 1
+                }
+              });
+            }
           }
 
           setCardItems(items);
@@ -83,10 +96,22 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
       {cardItems
         .sort((a, b) => a.auditDetails.createdTime - b.auditDetails.createdTime)
         .map((item, index) => {
-          // Check if this is a custom checklist
+          // Check if this is a custom agent checklist
           if (item.code === "customAgentChecklist") {
             return (
               <AgentReportCard 
+                key={index}
+                service={service} 
+                state={state} 
+                t={t} 
+              />
+            );
+          }
+
+          // Check if this is a commissioners checklist
+          if (item.code === "customCommissionersChecklist") {
+            return (
+              <CommissionersCheckListCard 
                 key={index}
                 service={service} 
                 state={state} 

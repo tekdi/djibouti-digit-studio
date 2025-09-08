@@ -164,6 +164,13 @@ export const getStatusInfo = (status) => {
     },
     
     // Review statuses
+    "PENDING_REVIEW_BY_SRA_AGENT": {
+      label: "En attente de révision par Agent SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 25
+    },
          "PENDING_REVIEW_BY_SRA_HOD": {
        label: "En attente de révision par Chef de service SRA",
        color: "text-amber-600",
