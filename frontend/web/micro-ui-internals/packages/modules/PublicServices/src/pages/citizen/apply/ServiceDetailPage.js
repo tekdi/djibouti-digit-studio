@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
 import { LuClock, LuDollarSign, LuUsers, LuDownload, LuCircleCheck, LuArrowLeft } from "react-icons/lu";
 import { servicesData } from "./servicesData";
+import { getServiceInfo } from "./utils";
 import axios from "axios";
 
 const TABS = [
@@ -19,6 +20,7 @@ const ServiceDetailPage = () => {
   const [service, setService] = useState(null);
   const [serviceApiData, setServiceApiData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const serviceInfo = getServiceInfo(serviceId);
 
   useEffect(() => {
     const fetchServiceData = async () => {
@@ -123,6 +125,9 @@ const ServiceDetailPage = () => {
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex-1">
+            <div className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-700 mb-2">
+              Réf. {serviceInfo?.ref}
+            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{service.title}</h1>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">{service.description}</p>
             

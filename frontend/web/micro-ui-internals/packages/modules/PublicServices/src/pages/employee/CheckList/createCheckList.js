@@ -289,7 +289,7 @@ const CreateCheckList = () => {
   };
 
   return (
-    <div>
+    <div class="max-w-7xl mx-auto p-10 pt-5">
       {config && loading ? (
         <div style={styleCondition}>
           <FormComposerV2

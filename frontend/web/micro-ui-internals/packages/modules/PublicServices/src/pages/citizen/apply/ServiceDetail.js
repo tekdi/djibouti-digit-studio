@@ -33,6 +33,9 @@ const ServiceDetail = ({ service, product, userType, onBack }) => {
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex-1">
+            <div className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-700 mb-2">
+              Réf. {service.ref || service.serviceInfo?.ref || service.businessService}
+            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{service.title}</h1>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">{service.description}</p>
             
