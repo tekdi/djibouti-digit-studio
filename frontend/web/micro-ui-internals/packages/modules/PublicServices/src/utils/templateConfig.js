@@ -419,7 +419,7 @@ export const assigneeMapping = [
   {
     // P9
     permit: "BPA_ATARR",
-    role: "BPA_HOD",
+    role: "BPA_DIRECTOR",
   },
   {
     // P10
