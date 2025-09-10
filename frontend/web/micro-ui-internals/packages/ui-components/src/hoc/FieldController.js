@@ -41,7 +41,6 @@ function FieldController(args) {
   let error = populators?.name && errors && errors[populators?.name] && Object.keys(errors[populators?.name]).length ? populators?.error : null;
   const errorObject = get(errors, populators?.name);
   error = errorObject ? populators?.error : null;
-  const customProps = config?.customProps;
 
   // Handle section headers - don't wrap in Controller
   if (type === "section") {

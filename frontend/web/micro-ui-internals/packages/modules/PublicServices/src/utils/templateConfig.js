@@ -104,6 +104,7 @@ export const ApplicantFields = [
             { value: "LEGAL_ENTITY", label: "Personne morale" }
           ],
           orderNumber: 1,
+          label: "Type de personne",
         },
         
         // Personal Information Fields - Shown for both individual and legal entity (representative)

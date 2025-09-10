@@ -8,6 +8,7 @@ import { transformToApplicationPayload } from "../../../utils";
 import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
 import { assigneeMapping } from "../../../utils/templateConfig";
+import { getServiceInfo } from "../../citizen/apply/utils";
 
 // Add styles for disabled inputs
 const disabledInputStyles = `
@@ -26,6 +27,8 @@ const DigitDemoComponent = ({ editdata }) => {
   const [showToast, setShowToast] = useState(null);
   const { module, service } = useParams();
   const serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
+  const cleanServiceCode = serviceCode.replace("BPA_BPA_", "BPA_");
+  const serviceRef = getServiceInfo(cleanServiceCode)?.ref;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
 
@@ -473,8 +476,12 @@ const DigitDemoComponent = ({ editdata }) => {
                 <span className="font-medium">Retour aux détails</span>
               </button>
             </div>
-
+            <div className="flex items-center">
+            <div className="inline-flex items-center px-2 py-1 rounded-full bg-white text-djibouti-primary text-xs font-semibold mb-2 w-fit">
+              Réf. {serviceRef || cleanServiceCode}
+            </div>
             <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl">{getServiceTitle()}</p>
+              </div>
           </div>
         </div>
 

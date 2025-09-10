@@ -72,6 +72,7 @@ const FieldV1 = ({
   const customRules = customValidation ? { validate: customValidation } : {};
   const customProps = config?.customProps;
   const fieldId = Digit?.Utils.getFieldIdName?.(label) || "NA";
+  const labelHasAsterisk = typeof label === "string" && /\*\s*$/.test(label);
 
   const [currentCharCount, setCurrentCharCount] = useState(0);
 
@@ -616,7 +617,7 @@ const FieldV1 = ({
                   maxLength: 64,
                 })
               )}
-              <span style={{ color: "#B91900" }}>{required ? " * " : null}</span>
+              <span style={{ color: "#B91900" }}>{required && !labelHasAsterisk ? " * " : null}</span>
             </label>
             {infoMessage ? (
               <div className="info-icon">

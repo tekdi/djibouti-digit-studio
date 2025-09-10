@@ -20,12 +20,16 @@ export const generateFormConfig = (config, module, service) => {
   const sortByOrderNumber = (fields = []) => [...fields].sort((a, b) => (a.orderNumber || 999) - (b.orderNumber || 999));
 
   // Generates a single field configuration object
-  const createField = (field) => {
+  const createField = (field, options = {}) => {
+    const fieldType = field.format || field.type;
+    const isSection = fieldType === "section";
+    const useLiteralLabel = Boolean(options.useLiteralLabel) || isSection;
     return {
-      type: field.format || field.type, // Use `format` if available, else fallback to `type`
+      type: fieldType, // Use `format` if available, else fallback to `type`
       component: field.component, // Preserve custom component property
       options: field.options, // Preserve options for custom components
-      label: `${module}_${service}_${field.name.toUpperCase()}`, // Internationalized label
+      // For section headers and when explicitly requested, keep the literal label (no translation key)
+      label: useLiteralLabel ? (field.label || field.name) : `${module}_${service}_${field.name.toUpperCase()}`,
       withoutLabel: field.withoutLabel,
       isMandatory: !!field.required,
       populators: {
@@ -100,7 +104,7 @@ export const generateFormConfig = (config, module, service) => {
       prefix: `${module}_${service}`,
       body: sortByOrderNumber(arrayField.items.properties)
         .filter((field) => !field?.excludeServices?.includes(service))
-        .map((subField) => createField(subField)),
+        .map((subField) => createField(subField, { useLiteralLabel: arrayField.name === "applicantDetails" })),
       step: dynamicStep++,
     };
   };
