@@ -88,11 +88,11 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    window.location.reload();
   };
 
   const handleSuccess = () => {
-    checkExistingChecklist(); // Refresh data
+    checkExistingChecklist(); 
+    window.location.reload();
   };
 
   const handleViewReport = () => {
