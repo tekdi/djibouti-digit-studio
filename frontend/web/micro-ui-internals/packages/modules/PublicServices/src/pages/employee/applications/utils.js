@@ -130,6 +130,7 @@ export const getSimplifiedStatus = (status) => {
   const statusMap = {
     "INITIATED": "pending",
     "APPLIED": "pending",
+    "INPROGRESS": "pending",
     "PAYMENT_PENDING": "payment_pending",
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
@@ -147,14 +148,21 @@ export const getSimplifiedStatus = (status) => {
 export const getStatusInfo = (status) => {
   // Map actual status values to French translations and styling
   const statusConfig = {
+    "INPROGRESS": {
+      label: "En cours",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 30
+    },
     // Agent assignment statuses
-         "AGENT_NOT_ASSIGNED": {
-       label: "Agent non assigné",
-       color: "text-gray-600",
-       bgColor: "bg-gray-50",
-       icon: LuCircleAlert,
-       progress: 10
-     },
+    "AGENT_NOT_ASSIGNED": {
+      label: "Agent non assigné",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleAlert,
+      progress: 10
+    },
     "AGENT_ASSIGNED": {
       label: "Agent assigné",
       color: "text-blue-600",
