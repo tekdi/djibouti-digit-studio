@@ -57,7 +57,9 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
         };
 
         const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
-        const currentApplication = applicationResponse?.Application?.[0];
+        const currentApplication = Array.isArray(applicationResponse?.Application)
+          ? applicationResponse?.Application?.[0]
+          : applicationResponse?.Application;
 
         if (!currentApplication) {
           throw new Error("Application not found");
@@ -96,12 +98,17 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
         };
 
         const response = await Digit.CustomService.getResponse(updateRequest);
-        
-        if (response && response.Application && response.Application.length > 0) {
-          return checklistData;
-        } else {
-          throw new Error("Failed to update application with commissioners checklist");
+
+        const updatedApplication = Array.isArray(response?.Application)
+          ? response?.Application?.[0]
+          : response?.Application;
+
+        if (updatedApplication) {
+          // prefer echo from backend if it returns additionalDetails
+          const echoed = updatedApplication?.additionalDetails?.commissionersChecklist;
+          return echoed || checklistData;
         }
+        throw new Error("Failed to update application with commissioners checklist");
       } catch (error) {
         console.error("Error submitting commissioners checklist:", error);
         throw error;
@@ -128,7 +135,9 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
         };
 
         const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
-        const currentApplication = applicationResponse?.Application?.[0];
+        const currentApplication = Array.isArray(applicationResponse?.Application)
+          ? applicationResponse?.Application?.[0]
+          : applicationResponse?.Application;
 
         if (currentApplication && currentApplication.additionalDetails?.commissionersChecklist) {
           return currentApplication.additionalDetails.commissionersChecklist;

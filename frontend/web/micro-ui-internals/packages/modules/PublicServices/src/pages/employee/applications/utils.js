@@ -131,6 +131,8 @@ export const getSimplifiedStatus = (status) => {
     "INITIATED": "pending",
     "APPLIED": "pending",
     "INPROGRESS": "pending",
+    "PENDING_ACTION": "pending",
+    "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT": "pending",
     "PAYMENT_PENDING": "payment_pending",
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
@@ -154,6 +156,20 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-blue-50",
       icon: LuClock,
       progress: 30
+    },
+    "PENDING_ACTION": {
+      label: "Action requise",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 35
+    },
+    "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT": {
+      label: "En attente du calcul des frais (Agent SRA)",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 45
     },
     // Agent assignment statuses
     "AGENT_NOT_ASSIGNED": {

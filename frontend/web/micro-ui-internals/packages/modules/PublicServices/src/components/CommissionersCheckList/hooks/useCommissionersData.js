@@ -39,10 +39,16 @@ export const useCommissionersData = (applicationNumber, serviceCode) => {
     checkExistingChecklist();
   }, [checkExistingChecklist]);
 
+  // Provide an imperative refresh helper for callers that want to ensure latest state
+  const refresh = useCallback(async () => {
+    await checkExistingChecklist();
+  }, [checkExistingChecklist]);
+
   return {
     checklistData,
     isSubmitted,
     isLoading,
     checkExistingChecklist,
+    refresh,
   };
 };
