@@ -148,6 +148,7 @@ const EmployeeDashboard = () => {
         const statusInfo = getStatusInfo(status);
         const serviceInfo = getServiceInfo(businessObject?.businessService);
         const applicant = businessObject?.applicants?.[0];
+        const currentBusinessService = processInstance?.businessService || businessObject?.businessService;
 
         return {
           id: businessObject?.applicationNumber,
@@ -157,6 +158,7 @@ const EmployeeDashboard = () => {
           statusColor: statusInfo?.bgColor + " " + statusInfo?.color,
           submittedDate: formatDate(businessObject?.auditDetails?.createdTime),
           businessService: businessObject?.businessService,
+          currentBusinessService,
           serviceCode: businessObject?.serviceCode,
           module: businessObject?.module
         };
@@ -268,7 +270,7 @@ const EmployeeDashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Link
-                        to={`/${window?.contextPath}/employee/publicservices/${app.module}/${app.businessService}/ViewScreen?applicationNumber=${app.id}&serviceCode=${app.serviceCode}&businessService=${app.businessService}`}
+                        to={`/${window?.contextPath}/employee/publicservices/${app.module}/${app.businessService}/ViewScreen?applicationNumber=${app.id}&serviceCode=${app.serviceCode}&businessService=${app.currentBusinessService}`}
                         className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
                       >
                         <span>Détails</span>
