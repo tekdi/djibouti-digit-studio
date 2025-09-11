@@ -1,21 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { LuArrowRight, LuArrowUpRight } from "react-icons/lu";
+import { getStatusInfo } from "../../applications/utils";
 
 const RecentApplications = ({ applications = [] }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Nouveau':
-        return 'bg-blue-100 text-blue-800';
-      case 'Assigné':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'En cours':
-        return 'bg-orange-100 text-orange-800';
-      case 'Transféré':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const getStatusColor = (rawStatus) => {
+    const info = getStatusInfo(rawStatus);
+    return `${info.bgColor} ${info.color}`;
   };
 
   const getPriorityColor = (priority) => {

@@ -52,47 +52,53 @@ const ActionButtons = ({
       )}
       
       {/* Workflow Actions */}
-      <WorkflowActions
-        forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
-        businessService={queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices?.[0]?.code}
-        applicationNo={response?.applicationNumber}
-        tenantId={tenantId}
-        applicationDetails={response}
-        serviceConfig={serviceConfig}
-        url={`/public-service/v1/application/${queryStrings?.serviceCode}`}
-        isDisabled={!selectedBusinessService}
-        moduleCode={response?.module}
-        ActionBarStyle={{
-          position: "relative",
-          boxShadow: "none",
-          backgroundColor: "transparent",
-          marginBottom: "1rem",
-        }}
-        MenuStyle={{
-          top: "100%",
-          bottom: "unset",
-          backgroundColor: "#006769",
-          color: "white",
-        }}
-        {...(matchedBusinessServices.length > 1 && {
-          actionFields: [
-            <Button
-              t={t}
-              type={"actionButton"}
-              options={matchedBusinessServices}
-              label={"Business Service"}
-              variation={"primary"}
-              optionsKey={"displayname"}
-              isSearchable={false}
-              onOptionSelect={(value) => setSelectedBusinessService(value)}
-              menuStyle={{
-                top: "100%",
-                bottom: "unset",
-              }}
-            />,
-          ],
-        })}
-      />
+      {(() => {
+        const effectiveBusinessService = queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices?.[0]?.code;
+        const isActionsDisabled = !effectiveBusinessService;
+        return (
+          <WorkflowActions
+            forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
+            businessService={effectiveBusinessService}
+            applicationNo={response?.applicationNumber}
+            tenantId={tenantId}
+            applicationDetails={response}
+            serviceConfig={serviceConfig}
+            url={`/public-service/v1/application/${queryStrings?.serviceCode}`}
+            isDisabled={isActionsDisabled}
+            moduleCode={response?.module}
+            ActionBarStyle={{
+              position: "relative",
+              boxShadow: "none",
+              backgroundColor: "transparent",
+              marginBottom: "1rem",
+            }}
+            MenuStyle={{
+              top: "100%",
+              bottom: "unset",
+              backgroundColor: "#006769",
+              color: "white",
+            }}
+            {...(matchedBusinessServices.length > 1 && {
+              actionFields: [
+                <Button
+                  t={t}
+                  type={"actionButton"}
+                  options={matchedBusinessServices}
+                  label={"Business Service"}
+                  variation={"primary"}
+                  optionsKey={"displayname"}
+                  isSearchable={false}
+                  onOptionSelect={(value) => setSelectedBusinessService(value)}
+                  menuStyle={{
+                    top: "100%",
+                    bottom: "unset",
+                  }}
+                />,
+              ],
+            })}
+          />
+        );
+      })()}
     </div>
   );
 };

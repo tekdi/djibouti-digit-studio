@@ -130,12 +130,34 @@ export const getSimplifiedStatus = (status) => {
   const statusMap = {
     "INITIATED": "pending",
     "APPLIED": "pending",
+    "INPROGRESS": "pending",
+    "PENDING_ACTION": "pending",
+    "PENDING_ACTION_BY_AGENT": "pending",
+    "PENDING_ACTION_BY_ARCHITECT": "pending",
+    "APPLICATION_CANCEL": "cancelled",
+    "AGENT_REPORT_READY": "pending",
+    "SDECC_AGENT_NOT_ASSSIGNED": "pending",
+    "PENDING_ACTION_BY_SDECC_AGENT": "pending",
+    "SDECC_AGENT_REPORT_READY": "pending",
+    "REVIEW_IN_PROGRESS_BY_SRA_HOD": "pending",
+    "UNDER_REVIEW_BY_DIRECTOR": "pending",
+    "UNDER_REVIEW_BY_SUB_DIRECTOR": "pending",
+    "PENDING_REVIEW_BY_SRA_HOD": "pending",
+    "PENDING_REVIEW_BY_SRA_AGENT": "pending",
+    "PENDING_REVIEW_BY_SUB_DIRECTOR": "pending",
+    "PENDING_REVIEW_BY_DIRECTOR": "pending",
+    "AWAITING_ON_COMMISSIONER": "pending",
+    "AWAITING_ON_SUB_DIRECTOR_REVIEW": "pending",
+    "AWAITING_ON_SRA_HOD_REVIEW": "pending",
+    "AWAITING_ON_DIRECTOR_REVIEW": "pending",
+    "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT": "pending",
     "PAYMENT_PENDING": "payment_pending",
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
     "FIELD_VERIFICATION_PENDING": "pending",
     "APPROVED": "approved",
     "REJECTED": "rejected",
+    "PERMIT_REJECTED": "rejected",
     "PERMIT_GRANTED": "completed",
     "CERTIFICATE_GRANTED": "completed",
     "CANCELLED": "cancelled",
@@ -147,14 +169,42 @@ export const getSimplifiedStatus = (status) => {
 export const getStatusInfo = (status) => {
   // Map actual status values to French translations and styling
   const statusConfig = {
+    "INPROGRESS": {
+      label: "En cours",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 30
+    },
+    "PENDING_ACTION": {
+      label: "Action requise",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 35
+    },
+    "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT": {
+      label: "En attente du calcul des frais (Agent SRA)",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 45
+    },
+    "PENDING_ACTION_BY_AGENT": {
+      label: "En attente d'action de l'agent",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 40
+    },
     // Agent assignment statuses
-         "AGENT_NOT_ASSIGNED": {
-       label: "Agent non assigné",
-       color: "text-gray-600",
-       bgColor: "bg-gray-50",
-       icon: LuCircleAlert,
-       progress: 10
-     },
+    "AGENT_NOT_ASSIGNED": {
+      label: "Agent non assigné",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleAlert,
+      progress: 10
+    },
     "AGENT_ASSIGNED": {
       label: "Agent assigné",
       color: "text-blue-600",
@@ -221,6 +271,111 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-green-50",
       icon: LuCircleCheck,
       progress: 80
+    },
+    "PENDING_ACTION_BY_ARCHITECT": {
+      label: "Action requise par l'architecte",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 20
+    },
+    "APPLICATION_CANCEL": {
+      label: "Demande annulée",
+      color: "text-gray-600",
+      bgColor: "bg-gray-50",
+      icon: LuCircleX,
+      progress: 0
+    },
+    "SDECC_AGENT_NOT_ASSSIGNED": {
+      label: "Agent SDECC non assigné",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleAlert,
+      progress: 10
+    },
+    "PENDING_ACTION_BY_SDECC_AGENT": {
+      label: "Action requise par l'agent SDECC",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 45
+    },
+    "SDECC_AGENT_REPORT_READY": {
+      label: "Rapport de l'agent SDECC prêt",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 60
+    },
+    "REVIEW_IN_PROGRESS_BY_SRA_HOD": {
+      label: "Révision en cours par Chef SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 65
+    },
+    "UNDER_REVIEW_BY_DIRECTOR": {
+      label: "Révision par le Directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 70
+    },
+    "UNDER_REVIEW_BY_SUB_DIRECTOR": {
+      label: "Révision par le Sous-directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 60
+    },
+    "PENDING_REVIEW_BY_SRA_HOD": {
+      label: "En attente de révision par Chef SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 55
+    },
+    "PENDING_REVIEW_BY_SRA_AGENT": {
+      label: "En attente de révision par Agent SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 50
+    },
+    "PENDING_REVIEW_BY_SUB_DIRECTOR": {
+      label: "En attente de révision par Sous-directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 65
+    },
+    "PENDING_REVIEW_BY_DIRECTOR": {
+      label: "En attente de révision par Directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 75
+    },
+    "AWAITING_ON_SUB_DIRECTOR_REVIEW": {
+      label: "En attente de révision du Sous-directeur",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 80
+    },
+    "AWAITING_ON_SRA_HOD_REVIEW": {
+      label: "En attente de révision du Chef SRA",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 75
+    },
+    "AWAITING_ON_DIRECTOR_REVIEW": {
+      label: "En attente de révision du Directeur",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 85
     },
     
     // Final statuses

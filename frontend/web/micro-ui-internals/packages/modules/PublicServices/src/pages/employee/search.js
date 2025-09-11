@@ -149,12 +149,17 @@ const EmployeeSearch = () => {
   const viewApplicationDetails = (app) => {
     const businessObject = app;
     const applicationNumber = businessObject?.applicationNumber;
-    const businessService = businessObject?.businessService;
+    const baseBusinessService = businessObject?.businessService;
+    const currentBusinessService =
+      app?.processInstance?.[0]?.businessService || // array form
+      app?.processInstance?.businessService || // object form (rare)
+      app?.ProcessInstance?.businessService || // capitalized form
+      baseBusinessService;
     const serviceCode = businessObject?.serviceCode;
     const userType = Digit.UserService.getType()?.toLowerCase();
     
     history.push(
-      `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${businessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${businessService}`
+      `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${baseBusinessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${currentBusinessService}`
     );
   };
 

@@ -6,6 +6,7 @@ import { useCommissionersData } from "./hooks/useCommissionersData";
 
 const CommissionersCheckListCard = ({ service, state, t }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewMode, setIsViewMode] = useState(false);
 
   const {
     serviceCode,
@@ -81,6 +82,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
   const selectedCommissioners = checklistData?.selectedCommissioners || [];
 
   const handleOpenModal = () => {
+    setIsViewMode(false);
     setIsModalOpen(true);
   };
 
@@ -89,10 +91,12 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
   };
 
   const handleSuccess = () => {
-    checkExistingChecklist(); // Refresh data
+    checkExistingChecklist(); 
+    window.location.reload();
   };
 
   const handleViewReport = () => {
+    setIsViewMode(true);
     setIsModalOpen(true);
   };
 
@@ -128,7 +132,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
                 </div>
               </div>
               <button
-                onClick={handleViewReport}
+                onClick={handleOpenModal}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition-colors duration-200 backdrop-blur-sm"
               >
                 <LuEye className="w-4 h-4" />
@@ -232,7 +236,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
             {/* Actions */}
             <div className="flex gap-3 pt-6 border-t border-gray-100">
               <button
-                onClick={handleViewReport}
+                onClick={handleOpenModal}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200"
               >
                 <LuPen className="w-4 h-4" />
@@ -257,7 +261,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
           serviceCode={serviceCode}
           state={state}
           onSuccess={handleSuccess}
-          isViewMode={isSubmitted}
+          isViewMode={isViewMode}
           existingData={checklistData}
           commissioners={commissioners}
         />

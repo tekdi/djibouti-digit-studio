@@ -1,5 +1,4 @@
 import { AppContainer, Loader, Toast } from "@egovernments/digit-ui-react-components";
-import Modal from "../../../../../../ui-components/src/hoc/Modal";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -38,7 +37,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [error, setError] = useState(null);
   const [params, setParams] = useState({});
   const [isOtpValid, setIsOtpValid] = useState(true);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  
   const [canSubmitEmail, setCanSubmitEmail] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [formError, setFormError] = useState("");
@@ -202,12 +201,8 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
       const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
       Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
-      setShowSuccessModal(true);
-      setTimeout(() => {
-        setUser({ info, ...tokens });
-        Digit.UserService.setUser(user);
-        setShowSuccessModal(false);
-      }, 2000);
+      setUser({ info, ...tokens });
+      Digit.UserService.setUser(user);
     } catch (err) {
       setCanSubmitOtp(true); // Re-enable if submission fails
       setIsOtpValid(false);
@@ -262,40 +257,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="employee-login-wrapper">
       <Switch>
         <AppContainer>
-          {showSuccessModal && (
-            <Modal popupModuleMianStyles={{}} hideSubmit={true} showClose={false} headerBarMain={null} headerBarEnd={null}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_51_5398)">
-                      <path
-                        d="M38.71 17.6867L23.3333 33.0633L14.9566 24.71L11.6666 28L23.3333 39.6667L42 21L38.71 17.6867ZM28 4.66666C15.12 4.66666 4.66663 15.12 4.66663 28C4.66663 40.88 15.12 51.3333 28 51.3333C40.88 51.3333 51.3333 40.88 51.3333 28C51.3333 15.12 40.88 4.66666 28 4.66666ZM28 46.6667C17.6866 46.6667 9.33329 38.3133 9.33329 28C9.33329 17.6867 17.6866 9.33332 28 9.33332C38.3133 9.33332 46.6666 17.6867 46.6666 28C46.6666 38.3133 38.3133 46.6667 28 46.6667Z"
-                        fill="#006769"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_51_5398">
-                        <rect width="56" height="56" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </div>
-                <p style={{ fontSize: "24px", textAlign: "center", margin: "10px", fontWeight: "700", fontFamily: "Inter" }}>
-                  {t("MODEL_LOGIN_SUCCESSFUL_HEADER")}
-                </p>
-                <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>{t("EMPLOYEE_EMAIL_LOGIN_SUCCESSFUL")}</p>
-              </div>
-            </Modal>
-          )}
+          {/* Success modal removed as requested */}
 
           <Route path={`${path}`} exact>
             <SelectEmail

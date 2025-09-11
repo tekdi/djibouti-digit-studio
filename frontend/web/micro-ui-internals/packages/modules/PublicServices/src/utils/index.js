@@ -662,12 +662,24 @@ export const processBusinessServices = async (serviceConfig, tenantId, applicati
   const allDetails = await getAllDetails(tenantId, applicationNumber, workflowDetails?.triggerParallelWorkflow);
 
   const filtered = allDetails.reduce((acc, detail) => {
-    if (!detail?.nextActions || !detail?.applicationBusinessService) return acc;
+    if (!detail?.applicationBusinessService) return acc;
 
-    const hasMatchingRole = detail.nextActions.some((action) => {
-      const roles = action.roles?.split(",") || [];
-      return roles.some((role) => userRoles.includes(role));
-    });
+    // Prefer explicit nextActions mapping of roles
+    let hasMatchingRole = false;
+    if (detail?.nextActions && detail.nextActions.length > 0) {
+      hasMatchingRole = detail.nextActions.some((action) => {
+        const roles = action.roles?.split(",") || [];
+        return roles.some((role) => userRoles.includes(role));
+      });
+    }
+
+    // Fallback: use aggregated roles from current actionState when nextActions is empty
+    if (!hasMatchingRole && detail?.actionState?.roles) {
+      const aggregatedRoles = Array.isArray(detail.actionState.roles)
+        ? detail.actionState.roles
+        : String(detail.actionState.roles).split(",");
+      hasMatchingRole = aggregatedRoles.some((role) => userRoles.includes(role));
+    }
 
     if (hasMatchingRole) {
       acc.push({

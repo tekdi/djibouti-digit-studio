@@ -27,16 +27,16 @@ const CommissionersCheckListModal = ({
 
   // Initialize form data
   useEffect(() => {
-    if (isOpen) {
-      if (isViewMode && existingData) {
-        setSelectedCommissioners(existingData.selectedCommissioners || []);
-        setNotes(existingData.notes || "");
-      } else {
-        setSelectedCommissioners([]);
-        setNotes("");
-      }
-      setErrors({});
+    if (!isOpen) return;
+    // Always prefill with existing data when available
+    if (existingData) {
+      setSelectedCommissioners(existingData.selectedCommissioners || []);
+      setNotes(existingData.notes || "");
+    } else {
+      setSelectedCommissioners([]);
+      setNotes("");
     }
+    setErrors({});
   }, [isOpen, isViewMode, existingData]);
 
   const handleCommissionerToggle = (commissionerId) => {
@@ -59,9 +59,7 @@ const CommissionersCheckListModal = ({
     if (selectedCommissioners.length === 0) {
       newErrors.commissioners = "Veuillez sélectionner au moins un commissaire";
     }
-    if (notes.trim().length < 10) {
-      newErrors.notes = "Veuillez fournir des notes détaillées (minimum 10 caractères)";
-    }
+    // Notes are optional; no validation
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -79,7 +77,7 @@ const CommissionersCheckListModal = ({
       onClose();
     } catch (error) {
       console.error("Error submitting commissioners checklist:", error);
-      setErrors({ submit: "Erreur lors de la soumission. Veuillez réessayer." });
+      setErrors({ submit: error?.message || "Erreur lors de la soumission. Veuillez réessayer." });
     }
   };
 
@@ -174,11 +172,7 @@ const CommissionersCheckListModal = ({
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Notes et Commentaires
             </h3>
-            {errors.notes && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                <p className="text-sm text-red-600">{errors.notes}</p>
-              </div>
-            )}
+            {/* Notes are optional; no validation error shown */}
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -188,7 +182,7 @@ const CommissionersCheckListModal = ({
             />
             <div className="flex justify-between items-center mt-3">
               <span className="text-xs text-gray-500">
-                Minimum 10 caractères requis
+                Facultatif
               </span>
               <span className="text-xs text-gray-500">
                 {notes.length}/500

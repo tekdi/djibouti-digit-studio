@@ -30,11 +30,12 @@ const ApplicationsTable = ({
     const businessObject = app.businessObject;
     const applicationNumber = businessObject?.applicationNumber;
     const businessService = businessObject?.businessService;
+    const currentBusinessService = app?.ProcessInstance?.businessService || businessService;
     const serviceCode = businessObject?.serviceCode;
     const userType = Digit.UserService.getType()?.toLowerCase();
     
     history.push(
-      `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${businessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${businessService}`
+      `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${businessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${currentBusinessService}`
     );
   };
 
