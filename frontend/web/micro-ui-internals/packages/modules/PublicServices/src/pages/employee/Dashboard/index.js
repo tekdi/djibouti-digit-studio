@@ -22,7 +22,7 @@ const EmployeeDashboard = () => {
   const userName = userDetails?.info?.name || "Employé";
   const userRoles = userDetails?.info?.roles?.map((roleData) => roleData?.code) || [];
 
-  const { applications, isLoading, lastFetchTime } = useApplications();
+  const { applications, isLoading, isRefreshing, refreshApplications, lastFetchTime } = useApplications();
 
   // Function to get greeting based on time of day
   const getGreeting = () => {
@@ -199,6 +199,7 @@ const EmployeeDashboard = () => {
               </div>
               <div className="mt-2 text-xs text-white/80 flex items-center gap-0.5">
                 {stat.change.isPositive ? (
+                  
                   <LuTrendingUp className="w-3 h-3" />
                 ) : (
                   <LuTrendingDown className="w-3 h-3" />
@@ -215,9 +216,25 @@ const EmployeeDashboard = () => {
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-800">Dossiers récents</h2>
-            <Link to={`/${window?.contextPath}/employee/publicservices/applications-employee/all`} className="text-sm text-primary font-medium hover:text-primary-dark flex items-center">
-              Voir tout <LuArrowRight className="w-4 h-4 ml-1" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={refreshApplications}
+                disabled={isRefreshing}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium rounded-lg transition-colors disabled:opacity-60"
+              >
+                {isRefreshing ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 border-2 border-primary/70 border-t-transparent rounded-full animate-spin" />
+                    Actualisation...
+                  </span>
+                ) : (
+                  'Actualiser'
+                )}
+              </button>
+              <Link to={`/${window?.contextPath}/employee/publicservices/applications-employee/all`} className="text-sm text-primary font-medium hover:text-primary-dark flex items-center">
+                Voir tout <LuArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
           </div>
         </div>
         
