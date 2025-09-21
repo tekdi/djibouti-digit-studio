@@ -76,7 +76,7 @@ The original `CitizenApplications.js` file now imports from this folder, maintai
 ## 🎨 Styling
 
 All components use Tailwind CSS classes and follow the project's design system:
-- Primary color: `djibouti-primary` (#006769)
+- Primary color: `djibouti-primary` (#22a4d9)
 - Hover states: `djibouti-primary-dark`
 - Consistent spacing and border radius
 - Responsive design

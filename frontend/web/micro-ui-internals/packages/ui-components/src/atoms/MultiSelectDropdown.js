@@ -813,7 +813,7 @@ const MultiSelectDropdown = ({
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: "12px",
-                border: "1px solid #006769",
+                border: "1px solid #22a4d9",
                 background: background,
               }}
               textStyles={{

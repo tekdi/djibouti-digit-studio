@@ -1,7 +1,7 @@
 const Colors = {
   lightTheme: {
     primary: {
-      1: "#006769",
+      1: "#22a4d9",
       2: "#0B4B66",
       bg: "#FBEEE8",
     },

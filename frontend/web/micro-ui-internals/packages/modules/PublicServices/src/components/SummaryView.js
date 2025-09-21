@@ -134,11 +134,11 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                           <svg width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                               d="M11.8337 5.5H8.50033V0.5H3.50033V5.5H0.166992L6.00033 11.3333L11.8337 5.5ZM0.166992 13V14.6667H11.8337V13H0.166992Z"
-                              fill="#006769"
+                              fill="#22a4d9"
                             />
                           </svg>
 
-                          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>{t(`${serviceCode}_DOWNLOAD`)}</h2>
+                          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#22a4d9" }}>{t(`${serviceCode}_DOWNLOAD`)}</h2>
                         </button>
                       </div>
                     </div>
@@ -164,7 +164,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
       <div className="flex justify-end mt-8">
         <div className="footer-buttons-wrapper">
           <button style={{ width: "auto", marginLeft: "auto" }} className="digit-submit-bar previous-btn" onClick={onPrevious}>
-            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>{t(`${serviceCode}_PREVIOUS`)}</h2>
+            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#22a4d9" }}>{t(`${serviceCode}_PREVIOUS`)}</h2>
           </button>
           <button className="digit-submit-bar digit-formcomposer-submitbar" style={{ marginLeft: "0" }} onClick={() => onSubmit(formData)}>
             <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>{t(`${serviceCode}_APPLY`)}</h2>

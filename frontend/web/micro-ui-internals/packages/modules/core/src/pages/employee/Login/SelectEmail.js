@@ -225,7 +225,7 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
                   disabled={(!email || !isValidEmail(email)) || !canSubmit || isDisabled || disable}
                   className="w-full flex justify-center items-center py-4 px-4 rounded-2xl shadow-lg text-base font-semibold text-white btn-gradient-djibouti focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djibouti-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 mt-2"
                   style={{
-                    background: 'linear-gradient(to right, #006769, #cdd23e)',
+                    background: 'linear-gradient(to right, #22a4d9, #52ac47)',
                     color: 'white',
                     border: 'none'
                   }}
@@ -311,7 +311,7 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
                 disabled={(!email || !isValidEmail(email)) || !canSubmit || isDisabled || disable}
                 className="w-full flex justify-center items-center py-4 px-4 rounded-2xl shadow-lg text-base font-semibold text-white btn-gradient-djibouti focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djibouti-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 mt-2"
                 style={{
-                  background: 'linear-gradient(to right, #006769, #cdd23e)',
+                  background: 'linear-gradient(to right, #22a4d9, #52ac47)',
                   color: 'white',
                   border: 'none'
                 }}

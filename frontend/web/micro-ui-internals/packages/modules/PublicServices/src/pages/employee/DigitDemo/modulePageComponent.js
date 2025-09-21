@@ -222,14 +222,14 @@ const ModulePageComponent = () => {
                       <button className="toggle-btn" onClick={() => setExpandedBpaCardIndex(null)}>
                         {t("SHOW_LESS")}
                         <svg className="arrow-icon" viewBox="0 0 14 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M0 7.5L1.41 8.91L6 4.33V20.5H8V4.33L12.59 8.92L14 7.5L7 0.5L0 7.5Z" fill="#006769" />
+                          <path d="M0 7.5L1.41 8.91L6 4.33V20.5H8V4.33L12.59 8.92L14 7.5L7 0.5L0 7.5Z" fill="#22a4d9" />
                         </svg>
                       </button>
                     ) : (
                       <button className="toggle-btn" onClick={() => setExpandedBpaCardIndex(index)}>
                         {t("SHOW_MORE")}
                         <svg className="arrow-icon" viewBox="0 0 14 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M14 13.5L12.59 12.09L8 16.67V0.5H6V16.67L1.41 12.08L0 13.5L7 20.5L14 13.5Z" fill="#006769" />
+                          <path d="M14 13.5L12.59 12.09L8 16.67V0.5H6V16.67L1.41 12.08L0 13.5L7 20.5L14 13.5Z" fill="#22a4d9" />
                         </svg>
                       </button>
                     )}
@@ -245,7 +245,7 @@ const ModulePageComponent = () => {
                   <HeaderComponent className="product-title">{t("INBOX_HEADING")}</HeaderComponent>
                   <div className="product-icon">
                     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="56" height="56" rx="2" fill="#006769" />
+                      <rect width="56" height="56" rx="2" fill="#22a4d9" />
                       <g clip-path="url(#clip0_101_37716)">
                         <path
                           d="M41.3334 11.3333H14.6667C12.8334 11.3333 11.35 12.8333 11.35 14.6667L11.3334 44.6667L18 38H41.3334C43.1667 38 44.6667 36.5 44.6667 34.6667V14.6667C44.6667 12.8333 43.1667 11.3333 41.3334 11.3333ZM29.6667 26.3333H26.3334V16.3333H29.6667V26.3333ZM29.6667 33H26.3334V29.6667H29.6667V33Z"
@@ -269,7 +269,7 @@ const ModulePageComponent = () => {
                     {t("VIEW_ALL")}
                   </Link>
                   <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
+                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#22a4d9" />
                   </svg>
                 </div>
                 {/* <Link className="link" to={{
@@ -294,7 +294,7 @@ const ModulePageComponent = () => {
                     {t("BPA_SEARCH")}
                   </Link>
                   <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
+                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#22a4d9" />
                   </svg>
                 </div>
               </Card>
@@ -307,7 +307,7 @@ const ModulePageComponent = () => {
                   <HeaderComponent className="product-title">{t("MY_APPLICATION_HEADER")}</HeaderComponent>
                   <div className="product-icon">
                     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="56" height="56" rx="2" fill="#006769" />
+                      <rect width="56" height="56" rx="2" fill="#22a4d9" />
                       <g clip-path="url(#clip0_101_37716)">
                         <path
                           d="M41.3334 11.3333H14.6667C12.8334 11.3333 11.35 12.8333 11.35 14.6667L11.3334 44.6667L18 38H41.3334C43.1667 38 44.6667 36.5 44.6667 34.6667V14.6667C44.6667 12.8333 43.1667 11.3333 41.3334 11.3333ZM29.6667 26.3333H26.3334V16.3333H29.6667V26.3333ZM29.6667 33H26.3334V29.6667H29.6667V33Z"
@@ -331,7 +331,7 @@ const ModulePageComponent = () => {
                     {t("VIEW_ALL")}
                   </Link>
                   <svg width="21" height="14" viewBox="0 0 21 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#006769" />
+                    <path d="M13.5 0L12.09 1.41L16.67 6H0.5V8H16.67L12.08 12.59L13.5 14L20.5 7L13.5 0Z" fill="#22a4d9" />
                   </svg>
                 </div>
                 {/* <Link className="link" to={{

@@ -85,7 +85,7 @@
 
     th {
         background-color: #f2f2f2;
-        color: #006769;
+        color: #22a4d9;
         text-wrap: wrap;
         font-weight: 600;
         height: 60px;
@@ -125,7 +125,7 @@
     input:active,
     input:focus,
     input:focus-visible {
-        border: 1px solid #006769 !important;
+        border: 1px solid #22a4d9 !important;
         outline: none !important;
         box-shadow: none !important;
     }
@@ -141,7 +141,7 @@
     .action-button {
         margin-top: 15px;
         padding: 12px;
-        background-color: #006769;
+        background-color: #22a4d9;
         color: white;
         border-radius: 10px;
         cursor: pointer;
@@ -157,7 +157,7 @@
         justify-content: center;
         gap: 10px;
         background-color: rgb(255, 255, 255);
-        border: 1px solid #006769;
+        border: 1px solid #22a4d9;
         border-radius: 15px;
         margin-left: auto;
 
@@ -168,15 +168,15 @@
     .add-floor-button-title {
         font-size: 16px;
         font-weight: 400;
-        color: #006769;
+        color: #22a4d9;
         margin: 0;
     }
 
     .add-floor-button-icon {
         font-size: 16px;
         font-weight: 400;
-        color: #006769;
-        border: 2px solid #006769;
+        color: #22a4d9;
+        border: 2px solid #22a4d9;
         border-radius: 100%;
         width: 20px;
         height: 20px;

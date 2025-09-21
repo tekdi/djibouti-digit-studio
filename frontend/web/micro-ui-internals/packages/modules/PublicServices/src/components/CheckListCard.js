@@ -102,7 +102,7 @@ const CheckListCard = (props) => {
                 border: "1px solid rgb(209, 213, 219)",
                 width: "100%",
                 backgroundColor: "white",
-                color: "#006769",
+                color: "#22a4d9",
                 borderRadius: "10px",
                 padding: "8px",
               }}
@@ -122,10 +122,10 @@ const CheckListCard = (props) => {
           ( */}
           <button
             style={{
-              border: "1px solid #006769",
+              border: "1px solid #22a4d9",
               width: "100%",
               backgroundColor: "white",
-              color: "#006769",
+              color: "#22a4d9",
               borderRadius: "10px",
               padding: "8px",
               fontSize: "16px",

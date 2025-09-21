@@ -84,7 +84,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
         fontSize: "14px",
       }}
       actionSaveOnSubmitStyle={{
-        backgroundColor: "#006769",
+        backgroundColor: "#22a4d9",
         borderRadius: "10px",
         width: "100%",
         color: "white"
@@ -147,7 +147,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
         fontSize: "14px",
       }}
       actionSaveOnSubmitStyle={{
-        backgroundColor: "#006769",
+        backgroundColor: "#22a4d9",
         borderRadius: "10px",
         color: "white",
         width: "90%",

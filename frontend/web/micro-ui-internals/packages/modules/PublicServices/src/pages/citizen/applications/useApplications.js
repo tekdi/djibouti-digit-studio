@@ -140,12 +140,19 @@ const useApplications = () => {
 
       console.log("API Response:", response?.data);
       const applicationsData = response?.data?.Application || [];
-      setApplications(applicationsData);
+      
+      // Remove duplicates based on applicationNumber
+      const uniqueApplications = applicationsData.filter((app, index, self) => 
+        index === self.findIndex(a => a.applicationNumber === app.applicationNumber)
+      );
+      
+      console.log(`Filtered ${applicationsData.length - uniqueApplications.length} duplicate applications`);
+      setApplications(uniqueApplications);
       setLastFetchTime(Date.now());
       setError(null);
       
       // Save to cache
-      saveToCache(applicationsData);
+      saveToCache(uniqueApplications);
     } catch (error) {
       console.error("Error fetching applications:", error);
       console.error("Error details:", {
@@ -186,6 +193,18 @@ const useApplications = () => {
     if (indId && hasInitialized.current) {
       fetchApplications();
     }
+  }, [indId]);
+
+  // Auto-refetch every 3 minutes (180000 ms)
+  useEffect(() => {
+    if (!indId || !hasInitialized.current) return;
+
+    const intervalId = setInterval(() => {
+      console.log("Auto-refreshing citizen applications after 3 minutes");
+      refreshApplications();
+    }, 180000); // 3 minutes
+
+    return () => clearInterval(intervalId);
   }, [indId]);
 
   return {
