@@ -132,12 +132,12 @@ const Modal = ({
         .btn-cancel {
           min-width: 80px;
           padding: 8px 24px;
-          border: 1px solid #00796b;
+          border: 1px solid #22a4d9;
           border-radius: 4px;
           font-size: 16px;
           font-weight: 600;
           background-color: #fff;
-          color: #00796b;
+          color: #22a4d9;
           cursor: pointer;
           word-break: break-word;
           border-radius: 10px;
@@ -151,7 +151,7 @@ const Modal = ({
         .btn-confirm {
           min-width: 80px;
           padding: 8px 24px;
-          background-color: #00796b;
+          background-color: #22a4d9;
           border: none;
           border-radius: 4px;
           font-size: 16px;

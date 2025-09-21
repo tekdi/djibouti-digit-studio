@@ -136,6 +136,8 @@ export const getSimplifiedStatus = (status) => {
     "PENDING_ACTION_BY_ARCHITECT": "pending",
     "PENDING_SUB_DIRECTOR_ACTION": "pending",
     "PENDING_SUB_DIRECTOR_APPROVAL": "pending",
+    "PENDING_DIRECTOR_APPROVAL": "pending",
+    "PENDING_VERIFICATION": "pending",
     "APPLICATION_CANCEL": "cancelled",
     "AGENT_REPORT_READY": "pending",
     "SDECC_AGENT_NOT_ASSSIGNED": "pending",
@@ -364,6 +366,20 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-amber-50",
       icon: LuClock,
       progress: 70
+    },
+    "PENDING_DIRECTOR_APPROVAL": {
+      label: "En attente d'approbation du Directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 80
+    },
+    "PENDING_VERIFICATION": {
+      label: "En attente de vérification",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 50
     },
     "PENDING_REVIEW_BY_DIRECTOR": {
       label: "En attente de révision par Directeur",
