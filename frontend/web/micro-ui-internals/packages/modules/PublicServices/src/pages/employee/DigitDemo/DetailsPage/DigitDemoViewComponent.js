@@ -44,6 +44,7 @@ const DigitDemoViewComponent = () => {
     },
     config: {
       cacheTime: 0,
+      refetchInterval: 30000, // Auto-refetch every 30 seconds
     },
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
@@ -59,6 +60,9 @@ const DigitDemoViewComponent = () => {
         schemaCode: "Studio.ServiceConfiguration",
       },
     },
+    config: {
+      refetchInterval: 30000, // Auto-refetch every 30 seconds
+    },
   };
 
   const { isLoading: ServiceConfigLoading, data: serviceConfigData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
@@ -73,6 +77,7 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
+      refetchInterval: 180000, // Auto-refetch every 3 minutes
     },
   });
 
@@ -82,6 +87,7 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
+      refetchInterval: 180000, // Auto-refetch every 3 minutes
     },
   });
 

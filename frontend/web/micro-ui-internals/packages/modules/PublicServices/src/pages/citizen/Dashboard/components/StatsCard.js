@@ -26,7 +26,7 @@ const StatsCard = ({ title, value, icon: Icon, gradient, borderColor, textGradie
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <h3 
             className="text-3xl font-bold mt-2"
-            style={{ color: "#006769" }}
+            style={{ color: "#22a4d9" }}
           >
             {value}
           </h3>
@@ -43,7 +43,7 @@ const StatsCard = ({ title, value, icon: Icon, gradient, borderColor, textGradie
             e.currentTarget.style.boxShadow = "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)";
           }}
         >
-          <Icon className="w-6 h-6" style={{ color: "#006769" }} />
+          <Icon className="w-6 h-6" style={{ color: "#22a4d9" }} />
         </div>
       </div>
     </div>

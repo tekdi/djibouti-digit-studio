@@ -116,7 +116,7 @@ const SidebarActions = ({
           MenuStyle={{
             top: "100%",
             bottom: "unset",
-            backgroundColor: "#006769",
+            backgroundColor: "#22a4d9",
             color: "white",
           }}
           {...(matchedBusinessServices.length > 1 && {
@@ -180,8 +180,8 @@ const SidebarActions = ({
             style={{
               marginTop: "1.5rem",
               width: "100%",
-              border: "1px solid #006769",
-              color: "#006769",
+              border: "1px solid #22a4d9",
+              color: "#22a4d9",
               fontWeight: 500,
               fontSize: "16px",
               padding: "0.5rem 0",

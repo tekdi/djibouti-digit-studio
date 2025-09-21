@@ -21,8 +21,8 @@ const RecentApplications = ({ applications = [], onRefresh, isRefreshing = false
         href={`/${window?.contextPath}/citizen/publicservices/apply`}
         className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium text-white shadow-sm transition-all duration-200 hover:shadow-md"
         style={{ 
-          backgroundColor: "#006769",
-          background: "linear-gradient(135deg, #006769 0%, #004a4b 100%)"
+          backgroundColor: "#22a4d9",
+          background: "linear-gradient(135deg, #22a4d9 0%, #1978a0 100%)"
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = "translateY(-1px)";
@@ -50,7 +50,7 @@ const RecentApplications = ({ applications = [], onRefresh, isRefreshing = false
               background: "linear-gradient(135deg, rgba(0, 103, 105, 0.2) 0%, rgba(0, 103, 105, 0.1) 100%)"
             }}
           >
-            <LuFileText className="w-5 h-5" style={{ color: "#006769" }} />
+            <LuFileText className="w-5 h-5" style={{ color: "#22a4d9" }} />
           </div>
           <h2 className="text-xl font-bold text-gray-800">Demandes récentes</h2>
         </div>
@@ -76,12 +76,12 @@ const RecentApplications = ({ applications = [], onRefresh, isRefreshing = false
             <a 
               href={`/${window?.contextPath}/citizen/publicservices/applications/pending`}
               className="flex items-center gap-2 text-sm font-medium group transition-colors"
-              style={{ color: "#006769" }}
+              style={{ color: "#22a4d9" }}
               onMouseEnter={(e) => {
-                e.target.style.color = "#004a4b";
+                e.target.style.color = "#1978a0";
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = "#006769";
+                e.target.style.color = "#22a4d9";
               }}
             >
               Voir tout

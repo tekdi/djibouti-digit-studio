@@ -74,12 +74,12 @@ const ConfirmationModal = ({
 
         .btn-cancel {
           padding: 8px 24px;
-          border: 1px solid #00796B;
+          border: 1px solid #22a4d9;
           border-radius: 12px;
           font-size: 16px;
           font-weight: 600;
           background-color: #fff;
-          color: #00796B;
+          color: #22a4d9;
           cursor: pointer;
         }
 
@@ -89,7 +89,7 @@ const ConfirmationModal = ({
 
         .btn-confirm {
           padding: 8px 24px;
-          background-color: #00796B;
+          background-color: #22a4d9;
           border: none;
           border-radius: 12px;
           font-size: 16px;

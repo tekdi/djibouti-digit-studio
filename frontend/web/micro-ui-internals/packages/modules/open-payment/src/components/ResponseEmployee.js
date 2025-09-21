@@ -76,7 +76,7 @@ const ResponseEmployee = () => {
           <button
             style={{
               borderRadius: "10px",
-              backgroundColor: "#006769",
+              backgroundColor: "#22a4d9",
               color: "white",
               padding: "10px 20px",
               border: "none",

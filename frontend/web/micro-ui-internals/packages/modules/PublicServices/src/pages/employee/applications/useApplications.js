@@ -156,12 +156,19 @@ const useApplications = () => {
 
              console.log("Inbox API Response:", response?.data);
        const applicationsData = response?.data?.items || [];
-       setApplications(applicationsData);
+       
+       // Remove duplicates based on applicationNumber (from Data object)
+       const uniqueApplications = applicationsData.filter((item, index, self) => 
+         index === self.findIndex(a => a.Data?.applicationNumber === item.Data?.applicationNumber)
+       );
+       
+       console.log(`Filtered ${applicationsData.length - uniqueApplications.length} duplicate applications`);
+       setApplications(uniqueApplications);
       setLastFetchTime(Date.now());
       setError(null);
 
       // Save to cache
-      saveToCache(applicationsData);
+      saveToCache(uniqueApplications);
     } catch (error) {
       console.error("Error fetching applications:", error);
       console.error("Error details:", {
@@ -192,6 +199,18 @@ const useApplications = () => {
     hasInitialized.current = true;
 
     fetchApplications();
+  }, []);
+
+  // Auto-refetch every 3 minutes (180000 ms)
+  useEffect(() => {
+    if (!hasInitialized.current) return;
+
+    const intervalId = setInterval(() => {
+      console.log("Auto-refreshing employee applications after 3 minutes");
+      refreshApplications();
+    }, 180000); // 3 minutes
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return {

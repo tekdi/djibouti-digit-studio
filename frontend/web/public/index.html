@@ -16,17 +16,26 @@
           theme: {
             extend: {
               colors: {
-                'djibouti-primary': '#006769',
-                'djibouti-primary-light': 'rgba(0, 103, 105, 0.1)',
-                'djibouti-primary-dark': '#004a4b',
-                'djibouti-secondary': '#cdd23e',
-                'djibouti-sage': '#748269',
-                // Primary color aliases
-                'primary': '#006769',
-                'primary-light': 'rgba(0, 103, 105, 0.1)',
-                'primary-dark': '#004a4b',
-                'secondary': '#cdd23e',
-                'sage': '#748269',
+              'djibouti-primary': '#22a4d9',
+              'djibouti-primary-light': 'rgba(34, 164, 217, 0.1)',
+              'djibouti-primary-dark': '#1978a0',
+
+              'djibouti-secondary': '#52ac47',
+              'djibouti-secondary-light': 'rgba(82, 172, 71, 0.1)',
+              'djibouti-secondary-dark': '#3a7d34',
+
+              'djibouti-sage': '#3f8c7a', // mix équilibré entre primary & secondary
+
+              // Aliases
+              'primary': '#22a4d9',
+              'primary-light': 'rgba(34, 164, 217, 0.1)',
+              'primary-dark': '#1978a0',
+
+              'secondary': '#52ac47',
+              'secondary-light': 'rgba(82, 172, 71, 0.1)',
+              'secondary-dark': '#3a7d34',
+
+              'sage': '#3f8c7a',
               }
             }
           }
@@ -56,61 +65,61 @@
       }
         
         :root {
-          --color-djibouti-primary: #006769;
-          --color-djibouti-primary-light: #0067694a;
-          --color-djibouti-primary-dark: #004a4b;
-          --color-djibouti-secondary: #cdd23e;
+          --color-djibouti-primary: #22a4d9;
+          --color-djibouti-primary-light: #22a4d94a;
+          --color-djibouti-primary-dark: #1978a0;
+          --color-djibouti-secondary: #52ac47;
           --color-djibouti-sage: #748269;
         }
         
         /* Djibouti Brand Colors */
-        .bg-djibouti-primary { background-color: #006769 !important; }
+        .bg-djibouti-primary { background-color: #22a4d9 !important; }
         .bg-djibouti-primary-light { background-color: rgba(0, 103, 105, 0.1) !important; }
-        .bg-djibouti-primary-dark { background-color: #004a4b !important; }
-        .bg-djibouti-secondary { background-color: #cdd23e !important; }
+        .bg-djibouti-primary-dark { background-color: #1978a0 !important; }
+        .bg-djibouti-secondary { background-color: #52ac47 !important; }
         .bg-djibouti-sage { background-color: #748269 !important; }
         
         /* Primary color aliases */
-        .bg-primary { background-color: #006769 !important; }
+        .bg-primary { background-color: #22a4d9 !important; }
         .bg-primary-light { background-color: rgba(0, 103, 105, 0.1) !important; }
-        .bg-primary-dark { background-color: #004a4b !important; }
-        .bg-secondary { background-color: #cdd23e !important; }
+        .bg-primary-dark { background-color: #1978a0 !important; }
+        .bg-secondary { background-color: #52ac47 !important; }
         .bg-sage { background-color: #748269 !important; }
         
-        .text-djibouti-primary { color: #006769 !important; }
+        .text-djibouti-primary { color: #22a4d9 !important; }
         .text-djibouti-primary-light { color: #b3d9da !important; }
-        .text-djibouti-primary-dark { color: #004a4b !important; }
-        .text-djibouti-secondary { color: #cdd23e !important; }
+        .text-djibouti-primary-dark { color: #1978a0 !important; }
+        .text-djibouti-secondary { color: #52ac47 !important; }
         .text-djibouti-sage { color: #748269 !important; }
         
         /* Primary text color aliases */
-        .text-primary { color: #006769 !important; }
+        .text-primary { color: #22a4d9 !important; }
         .text-primary-light { color: #b3d9da !important; }
-        .text-primary-dark { color: #004a4b !important; }
-        .text-secondary { color: #cdd23e !important; }
+        .text-primary-dark { color: #1978a0 !important; }
+        .text-secondary { color: #52ac47 !important; }
         .text-sage { color: #748269 !important; }
         
-        .border-djibouti-primary { border-color: #006769 !important; }
-        .border-djibouti-secondary { border-color: #cdd23e !important; }
+        .border-djibouti-primary { border-color: #22a4d9 !important; }
+        .border-djibouti-secondary { border-color: #52ac47 !important; }
         .border-djibouti-sage { border-color: #748269 !important; }
         
         /* Hover states */
-        .hover\:bg-djibouti-primary:hover { background-color: #006769 !important; }
+        .hover\:bg-djibouti-primary:hover { background-color: #22a4d9 !important; }
         .hover\:bg-djibouti-primary-light:hover { background-color: rgba(0, 103, 105, 0.1) !important; }
-        .hover\:bg-djibouti-primary-dark:hover { background-color: #004a4b !important; }
-        .hover\:bg-djibouti-secondary:hover { background-color: #cdd23e !important; }
+        .hover\:bg-djibouti-primary-dark:hover { background-color: #1978a0 !important; }
+        .hover\:bg-djibouti-secondary:hover { background-color: #52ac47 !important; }
         .hover\:bg-djibouti-sage:hover { background-color: #748269 !important; }
         
         /* Focus states */
-        .focus\:border-djibouti-primary:focus { border-color: #006769 !important; }
+        .focus\:border-djibouti-primary:focus { border-color: #22a4d9 !important; }
         .focus\:ring-djibouti-primary:focus { 
-          --tw-ring-color: #006769 !important; 
+          --tw-ring-color: #22a4d9 !important; 
           box-shadow: 0 0 0 3px rgba(0, 103, 105, 0.1) !important;
         }
         
         /* Gradients */
         .bg-gradient-to-r.from-djibouti-primary.to-djibouti-secondary {
-          background: linear-gradient(to right, #006769, #cdd23e) !important;
+          background: linear-gradient(to right, #22a4d9, #52ac47) !important;
         }
         .bg-gradient-to-br.from-djibouti-primary\/95.to-djibouti-secondary\/95 {
           background: linear-gradient(to bottom right, rgba(0, 103, 105, 0.95), rgba(205, 210, 62, 0.95)) !important;
@@ -118,15 +127,15 @@
         
         /* Primary gradient aliases */
         .bg-gradient-to-r.from-primary.to-primary-dark {
-          background: linear-gradient(to right, #006769, #004a4b) !important;
+          background: linear-gradient(to right, #22a4d9, #1978a0) !important;
         }
         .bg-gradient-to-r.from-primary.to-secondary {
-          background: linear-gradient(to right, #006769, #cdd23e) !important;
+          background: linear-gradient(to right, #22a4d9, #52ac47) !important;
         }
         
         /* Text gradient support */
         .bg-gradient-to-r.from-primary.to-primary-dark.bg-clip-text {
-          background: linear-gradient(to right, #006769, #004a4b) !important;
+          background: linear-gradient(to right, #22a4d9, #1978a0) !important;
           -webkit-background-clip: text !important;
           background-clip: text !important;
           -webkit-text-fill-color: transparent !important;
@@ -135,14 +144,14 @@
         
         /* Button specific overrides */
         button.bg-gradient-to-r.from-djibouti-primary.to-djibouti-secondary {
-          background: linear-gradient(to right, #006769, #cdd23e) !important;
+          background: linear-gradient(to right, #22a4d9, #52ac47) !important;
           color: white !important;
           border: none !important;
         }
         
         /* Override any white button issues */
         .btn-gradient-djibouti {
-          background: linear-gradient(to right, #006769, #006769) !important;
+          background: linear-gradient(to right, #22a4d9, #22a4d9) !important;
           color: white !important;
           border: none !important;
         }
@@ -150,10 +159,10 @@
   
         /* Gradient backgrounds */
         .bg-gradient-djibouti { 
-          background: linear-gradient(90deg, #006769 0%, #006769 100%) !important; 
+          background: linear-gradient(90deg, #22a4d9 0%, #22a4d9 100%) !important; 
         }
         .bg-gradient-djibouti-light { 
-          background: linear-gradient(90deg, #006769 0%, #006769   100%) !important; 
+          background: linear-gradient(90deg, #22a4d9 0%, #22a4d9   100%) !important; 
         }
         
         /* Custom utilities */

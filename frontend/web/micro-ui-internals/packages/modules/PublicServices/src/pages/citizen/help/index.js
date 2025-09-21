@@ -254,7 +254,7 @@ const CitizenHelp = () => {
             <div 
               className="p-3 rounded-xl"
               style={{
-                background: "linear-gradient(135deg, #006769, #004a4b)"
+                background: "linear-gradient(135deg, #22a4d9, #1978a0)"
               }}
             >
               <LuBookOpen className="w-6 h-6 text-white" />
@@ -278,7 +278,7 @@ const CitizenHelp = () => {
                         backgroundColor: "rgba(0, 103, 105, 0.1)"
                       }}
                     >
-                      <item.icon className="w-5 h-5" style={{ color: "#006769" }} />
+                      <item.icon className="w-5 h-5" style={{ color: "#22a4d9" }} />
                     </div>
                     <span className="font-medium text-gray-900">{item.question}</span>
                   </div>
@@ -304,7 +304,7 @@ const CitizenHelp = () => {
             <div 
               className="p-3 rounded-xl"
               style={{
-                background: "linear-gradient(135deg, #006769, #004a4b)"
+                background: "linear-gradient(135deg, #22a4d9, #1978a0)"
               }}
             >
               <LuMessageSquare className="w-6 h-6 text-white" />
@@ -364,7 +364,7 @@ const CitizenHelp = () => {
                         backgroundColor: "rgba(0, 103, 105, 0.1)"
                       }}
                     >
-                      <item.icon className="w-5 h-5" style={{ color: "#006769" }} />
+                      <item.icon className="w-5 h-5" style={{ color: "#22a4d9" }} />
                     </div>
                     <span className="font-medium text-gray-900">{item.question}</span>
                   </div>

@@ -12,7 +12,7 @@ module.exports = {
     colors: {
       primary: {
         light: "#F18F5E",
-        main: "#006769",
+        main: "#22a4d9",
         dark: "#C8602B",
       },
       secondary: "#22394D",
@@ -104,7 +104,7 @@ module.exports = {
     extend: {},
     digitv2: {
       lightTheme: {
-        primary: "#006769",
+        primary: "#22a4d9",
         "text-color-primary": "#0B0C0C",
         "text-color-secondary": "#505A5F",
         "text-color-disabled": "#B1B4B6",
@@ -113,10 +113,10 @@ module.exports = {
         divider: "#D6D5D4",
         "header-sidenav": "#0B4B66",
         "input-border": "#505A5F",
-        "primary-orange": "#006769",
+        "primary-orange": "#22a4d9",
         "primary-bluegray": "#0B4B66",
         "primary-orangebg": "#FEEFE7",
-        "primary-1": "#006769",
+        "primary-1": "#22a4d9",
         "primary-1-gradient": "linear-gradient(90deg, #016769 0%, #728269 100%)",
         "primary-bg": "#FBEEE8",
         "primary-2": "#0B4B66",

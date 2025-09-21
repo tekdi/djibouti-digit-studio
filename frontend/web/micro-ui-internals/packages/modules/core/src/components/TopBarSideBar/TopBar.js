@@ -14,7 +14,7 @@ const TextToImg = (props) => (
 );
 
 
-const UserInfoBlock = ({ profilePic, userDetails, roleLabel, t, userOptions, handleUserDropdownSelection, mobileView, roleColor = "#006769" }) => (
+const UserInfoBlock = ({ profilePic, userDetails, roleLabel, t, userOptions, handleUserDropdownSelection, mobileView, roleColor = "#22a4d9" }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'space-between', maxWidth: '340px' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       <div>
@@ -252,7 +252,7 @@ const TopBar = ({
                 userOptions={userOptions}
                 handleUserDropdownSelection={handleUserDropdownSelection}
                 mobileView={mobileView}
-                roleColor="#006769"
+                roleColor="#22a4d9"
               />
             )}
           </div>

@@ -145,7 +145,7 @@ const CitizenDashboard = () => {
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
-                <LuLoader className="w-12 h-12 animate-spin" style={{ color: "#006769" }} />
+                <LuLoader className="w-12 h-12 animate-spin" style={{ color: "#22a4d9" }} />
               </div>
               <p className="text-lg font-medium text-gray-600">Chargement des données...</p>
             </div>

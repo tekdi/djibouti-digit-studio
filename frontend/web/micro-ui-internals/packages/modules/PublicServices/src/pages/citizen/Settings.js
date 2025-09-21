@@ -112,7 +112,7 @@ const Settings = () => {
           <div className="bg-gradient-djibouti-light rounded-3xl p-8 border border-purple-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="bg-gradient-to-br from-[#006769] to-[#006769] p-3 rounded-2xl shadow-lg">
+                <div className="bg-gradient-to-br from-[#22a4d9] to-[#22a4d9] p-3 rounded-2xl shadow-lg">
                   <LuShield className="w-8 h-8 text-white" />
                 </div>
                 <div>
