@@ -435,7 +435,7 @@ export const assigneeMapping = [
   {
     // P12
     permit: "BPA_CCP",
-    role: "BPA_SDECC_HOD",
+    role: "BPA_SDECC_SUB_DIRECTOR",
   },
   {
     // P13
@@ -445,12 +445,12 @@ export const assigneeMapping = [
   {
     // P14
     permit: "BPA_PV",
-    role: "BPA_SDECC_HOD",
+    role: "BPA_SDECC_SUB_DIRECTOR",
   },
   {
     // P15
     permit: "BPA_APE",
-    role: "BPA_SDECC_HOD",
+    role: "BPA_SDECC_SUB_DIRECTOR",
   },
 ];
 

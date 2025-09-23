@@ -138,6 +138,12 @@ export const getSimplifiedStatus = (status) => {
     "PENDING_SUB_DIRECTOR_APPROVAL": "pending",
     "PENDING_DIRECTOR_APPROVAL": "pending",
     "PENDING_VERIFICATION": "pending",
+    "BPA_SRA_SUB_DIRECTOR_REVIEW": "pending",
+    "BCIE_HOD_REVIEW": "pending",
+    "AGENT_INSPECTION_PENDING": "pending",
+    "BPA_SRA_SUB_DIRECTOR_APPROVAL": "pending",
+    "SUB_DIRECTOR_APPROVAL_PENDING": "pending",
+    "DIRECTOR_APPROVAL_PENDING": "pending",
     "APPLICATION_CANCEL": "cancelled",
     "AGENT_REPORT_READY": "pending",
     "SDECC_AGENT_NOT_ASSSIGNED": "pending",
@@ -164,6 +170,7 @@ export const getSimplifiedStatus = (status) => {
     "PERMIT_REJECTED": "rejected",
     "PERMIT_GRANTED": "completed",
     "CERTIFICATE_GRANTED": "completed",
+    "CERTIFICATE_ISSUED": "completed",
     "CANCELLED": "cancelled",
     "EXPIRED": "expired"
   };
@@ -381,6 +388,48 @@ export const getStatusInfo = (status) => {
       icon: LuClock,
       progress: 50
     },
+    "BPA_SRA_SUB_DIRECTOR_REVIEW": {
+      label: "Révision par le Sous-directeur SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 65
+    },
+    "BCIE_HOD_REVIEW": {
+      label: "Révision par le Chef de service BCIE",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 60
+    },
+    "AGENT_INSPECTION_PENDING": {
+      label: "Inspection de l'agent en attente",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuMapPin,
+      progress: 45
+    },
+    "BPA_SRA_SUB_DIRECTOR_APPROVAL": {
+      label: "En attente d'approbation du Sous-directeur SRA",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 75
+    },
+    "SUB_DIRECTOR_APPROVAL_PENDING": {
+      label: "En attente d'approbation du Sous-directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 70
+    },
+    "DIRECTOR_APPROVAL_PENDING": {
+      label: "En attente d'approbation du Directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 75
+    },
     "PENDING_REVIEW_BY_DIRECTOR": {
       label: "En attente de révision par Directeur",
       color: "text-amber-600",
@@ -420,6 +469,13 @@ export const getStatusInfo = (status) => {
     },
     "CERTIFICATE_GRANTED": {
       label: "Certificat accordé",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 100
+    },
+    "CERTIFICATE_ISSUED": {
+      label: "Certificat délivré",
       color: "text-green-600",
       bgColor: "bg-green-50",
       icon: LuCircleCheck,
