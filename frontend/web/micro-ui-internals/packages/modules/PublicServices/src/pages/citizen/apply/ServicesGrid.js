@@ -48,7 +48,14 @@ const ServicesGrid = ({
               
               return true;
             })
-            ?.sort((a, b) => a.displayOrder - b.displayOrder)
+            ?.sort((a, b) => {
+              const refA = getServiceInfo(a.businessService).ref;
+              const refB = getServiceInfo(b.businessService).ref;
+              // Extract number from ref (e.g., "P1" -> 1)
+              const numA = parseInt(refA.replace('P', ''));
+              const numB = parseInt(refB.replace('P', ''));
+              return numA - numB;
+            })
             ?.map((service, serviceIndex) => {
               const ServiceIcon = getServiceIcon(service.businessService);
               const serviceInfo = getServiceInfo(service.businessService);

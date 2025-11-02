@@ -12,95 +12,95 @@ import {
 // Get service info mapping
 export const getServiceInfo = (businessService) => {
   const serviceMap = {
-    BPA_PCO: {
-      ref: "P1",
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Accueillant du Public",
-      description: "Hôtel, Hôpital, École, etc.",
-      category: "permits"
-    },
-    BPA_PCO_SIMPLE: {
-      ref: "P2", 
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
-      description: "Pour les constructions résidentielles et commerciales simples",
-      category: "permits"
-    },
     BPA_PR: {
-      ref: "P3",
+      ref: "P1",
       name: "Permis de Remblai (PR)",
       description: "Autorisation pour travaux de remblai",
       category: "permits"
     },
-    BPA_PL: {
-      ref: "P4",
-      name: "Permis de Lotir",
-      description: "Division d'un terrain en plusieurs lots",
-      category: "permits"
-    },
-    BPA_PCS: {
-      ref: "P5",
-      name: "Permis de Construire Simplifié (PCS)",
-      description: "Pour les constructions de petite taille",
-      category: "permits"
-    },
-    BPA_PD: {
-      ref: "P6",
-      name: "Permis de Démolir",
-      description: "Autorisation de démolition d'une construction",
-      category: "permits"
-    },
-    BPA_PF: {
-      ref: "P7",
-      name: "Permis de Clôture",
-      description: "Autorisation pour construire une clôture",
-      category: "permits"
-    },
-    BPA_PS: {
-      ref: "P8",
-      name: "Permis de Surélévation",
-      description: "Ajout d'un ou plusieurs étages",
-      category: "permits"
-    },
-    BPA_ATARR: {
-      ref: "P9",
-      name: "Autorisation des Travaux, d'Aménagement, de Rénovation et de Réhabilitation",
-      description: "ATARR pour tous types de travaux",
-      category: "permits"
-    },
     BPA_CCR: {
-      ref: "P10",
+      ref: "P2",
       name: "Certificat de Conformité de Remblai (CCR)",
       description: "Validation de conformité des travaux de remblai",
       category: "certificates"
     },
-    BPA_CCE: {
-      ref: "P11",
-      name: "Certificat de Conformité Électrique (CCE)",
-      description: "Validation de l'installation électrique",
-      category: "certificates"
+    BPA_PCO_SIMPLE: {
+      ref: "P3", 
+      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
+      description: "Pour les constructions résidentielles et commerciales simples",
+      category: "permits"
     },
-    BPA_CCP: {
-      ref: "P12",
-      name: "Certificat de Conformité Parasismique (CCP)",
-      description: "Validation des normes parasismiques",
-      category: "certificates"
+    BPA_PCO: {
+      ref: "P4",
+      name: "Permis de Construire Ordinaire (PCO) – Constructions Accueillant du Public",
+      description: "Hôtel, Hôpital, École, etc.",
+      category: "permits"
     },
-    BPA_CCG: {
-      ref: "P13",
-      name: "Certificat de Conformité Général (CCG)",
-      description: "Validation générale de conformité",
-      category: "certificates"
+    BPA_PL: {
+      ref: "P5",
+      name: "Permis de Lotir",
+      description: "Division d'un terrain en plusieurs lots",
+      category: "permits"
+    },
+    BPA_PS: {
+      ref: "P6",
+      name: "Permis de Surélévation",
+      description: "Ajout d'un ou plusieurs étages",
+      category: "permits"
+    },
+    BPA_PCS: {
+      ref: "P7",
+      name: "Permis de Construire Simplifié (PCS)",
+      description: "Pour les constructions de petite taille",
+      category: "permits"
+    },
+    BPA_PF: {
+      ref: "P8",
+      name: "Permis de Clôture",
+      description: "Autorisation pour construire une clôture",
+      category: "permits"
+    },
+    BPA_PD: {
+      ref: "P9",
+      name: "Permis de Démolir",
+      description: "Autorisation de démolition d'une construction",
+      category: "permits"
+    },
+    BPA_ATARR: {
+      ref: "P10",
+      name: "Autorisation des Travaux, d'Aménagement, de Rénovation et de Réhabilitation",
+      description: "ATARR pour tous types de travaux",
+      category: "permits"
     },
     BPA_PV: {
-      ref: "P14",
+      ref: "P11",
       name: "Procès-Verbal d'Implantation",
       description: "PV d'Implantation pour positionnement",
       category: "validations"
     },
     BPA_APE: {
-      ref: "P15",
+      ref: "P12",
       name: "Approbation de Plan d'Exécution (APE)",
       description: "Validation des plans d'exécution",
       category: "validations"
+    },
+    BPA_CCE: {
+      ref: "P13",
+      name: "Certificat de Conformité Électrique (CCE)",
+      description: "Validation de l'installation électrique",
+      category: "certificates"
+    },
+    BPA_CCP: {
+      ref: "P14",
+      name: "Certificat de Conformité Parasismique (CCP)",
+      description: "Validation des normes parasismiques",
+      category: "certificates"
+    },
+    BPA_CCG: {
+      ref: "P15",
+      name: "Certificat de Conformité Général (CCG)",
+      description: "Validation générale de conformité",
+      category: "certificates"
     }
   };
   return serviceMap[businessService] || {

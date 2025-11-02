@@ -13,110 +13,110 @@ import {
 // Get service info mapping
 export const getServiceInfo = (businessService) => {
   const serviceMap = {
-    BPA_PCO: {
-      ref: "P1",
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Accueillant du Public",
-      shortName: "PCO - Constructions Publiques",
-      description: "Hôtel, Hôpital, École, etc.",
-      category: "permits"
-    },
-    BPA_PCO_SIMPLE: {
-      ref: "P2", 
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
-      shortName: "PCO - Constructions Simples",
-      description: "Pour les constructions résidentielles et commerciales simples",
-      category: "permits"
-    },
     BPA_PR: {
-      ref: "P3",
+      ref: "P1",
       name: "Permis de Remblai (PR)",
       shortName: "Permis de Remblai",
       description: "Autorisation pour travaux de remblai",
       category: "permits"
     },
-    BPA_PL: {
-      ref: "P4",
-      name: "Permis de Lotir",
-      shortName: "Permis de Lotir",
-      description: "Division d'un terrain en plusieurs lots",
-      category: "permits"
-    },
-    BPA_PCS: {
-      ref: "P5",
-      name: "Permis de Construire Simplifié (PCS)",
-      shortName: "Permis de Construire Simplifié",
-      description: "Pour les constructions de petite taille",
-      category: "permits"
-    },
-    BPA_PD: {
-      ref: "P6",
-      name: "Permis de Démolir",
-      shortName: "Permis de Démolir",
-      description: "Autorisation de démolition d'une construction",
-      category: "permits"
-    },
-    BPA_PF: {
-      ref: "P7",
-      name: "Permis de Clôture",
-      shortName: "Permis de Clôture",
-      description: "Autorisation pour construire une clôture",
-      category: "permits"
-    },
-    BPA_PS: {
-      ref: "P8",
-      name: "Permis de Surélévation",
-      shortName: "Permis de Surélévation",
-      description: "Ajout d'un ou plusieurs étages",
-      category: "permits"
-    },
-    BPA_ATARR: {
-      ref: "P9",
-      name: "Autorisation des Travaux, d'Aménagement, de Rénovation et de Réhabilitation",
-      shortName: "ATARR - Travaux & Aménagement",
-      description: "ATARR pour tous types de travaux",
-      category: "permits"
-    },
     BPA_CCR: {
-      ref: "P10",
+      ref: "P2",
       name: "Certificat de Conformité de Remblai (CCR)",
       shortName: "Certificat de Conformité Remblai",
       description: "Validation de conformité des travaux de remblai",
       category: "certificates"
     },
-    BPA_CCE: {
-      ref: "P11",
-      name: "Certificat de Conformité Électrique (CCE)",
-      shortName: "Certificat de Conformité Électrique",
-      description: "Validation de l'installation électrique",
-      category: "certificates"
+    BPA_PCO_SIMPLE: {
+      ref: "P3", 
+      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
+      shortName: "PCO - Constructions Simples",
+      description: "Pour les constructions résidentielles et commerciales simples",
+      category: "permits"
     },
-    BPA_CCP: {
-      ref: "P12",
-      name: "Certificat de Conformité Parasismique (CCP)",
-      shortName: "Certificat de Conformité Parasismique",
-      description: "Validation des normes parasismiques",
-      category: "certificates"
+    BPA_PCO: {
+      ref: "P4",
+      name: "Permis de Construire Ordinaire (PCO) – Constructions Accueillant du Public",
+      shortName: "PCO - Constructions Publiques",
+      description: "Hôtel, Hôpital, École, etc.",
+      category: "permits"
     },
-    BPA_CCG: {
-      ref: "P13",
-      name: "Certificat de Conformité Général (CCG)",
-      shortName: "Certificat de Conformité Général",
-      description: "Validation générale de conformité",
-      category: "certificates"
+    BPA_PL: {
+      ref: "P5",
+      name: "Permis de Lotir",
+      shortName: "Permis de Lotir",
+      description: "Division d'un terrain en plusieurs lots",
+      category: "permits"
+    },
+    BPA_PS: {
+      ref: "P6",
+      name: "Permis de Surélévation",
+      shortName: "Permis de Surélévation",
+      description: "Ajout d'un ou plusieurs étages",
+      category: "permits"
+    },
+    BPA_PCS: {
+      ref: "P7",
+      name: "Permis de Construire Simplifié (PCS)",
+      shortName: "Permis de Construire Simplifié",
+      description: "Pour les constructions de petite taille",
+      category: "permits"
+    },
+    BPA_PF: {
+      ref: "P8",
+      name: "Permis de Clôture",
+      shortName: "Permis de Clôture",
+      description: "Autorisation pour construire une clôture",
+      category: "permits"
+    },
+    BPA_PD: {
+      ref: "P9",
+      name: "Permis de Démolir",
+      shortName: "Permis de Démolir",
+      description: "Autorisation de démolition d'une construction",
+      category: "permits"
+    },
+    BPA_ATARR: {
+      ref: "P10",
+      name: "Autorisation des Travaux, d'Aménagement, de Rénovation et de Réhabilitation",
+      shortName: "ATARR - Travaux & Aménagement",
+      description: "ATARR pour tous types de travaux",
+      category: "permits"
     },
     BPA_PV: {
-      ref: "P14",
+      ref: "P11",
       name: "Procès-Verbal d'Implantation",
       shortName: "PV d'Implantation",
       description: "PV d'Implantation pour positionnement",
       category: "validations"
     },
     BPA_APE: {
-      ref: "P15",
+      ref: "P12",
       name: "Approbation de Plan d'Exécution (APE)",
       shortName: "Approbation de Plan d'Exécution",
       description: "Validation des plans d'exécution",
       category: "validations"
+    },
+    BPA_CCE: {
+      ref: "P13",
+      name: "Certificat de Conformité Électrique (CCE)",
+      shortName: "Certificat de Conformité Électrique",
+      description: "Validation de l'installation électrique",
+      category: "certificates"
+    },
+    BPA_CCP: {
+      ref: "P14",
+      name: "Certificat de Conformité Parasismique (CCP)",
+      shortName: "Certificat de Conformité Parasismique",
+      description: "Validation des normes parasismiques",
+      category: "certificates"
+    },
+    BPA_CCG: {
+      ref: "P15",
+      name: "Certificat de Conformité Général (CCG)",
+      shortName: "Certificat de Conformité Général",
+      description: "Validation générale de conformité",
+      category: "certificates"
     }
   };
   return serviceMap[businessService] || {
@@ -394,6 +394,62 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-amber-50",
       icon: LuClock,
       progress: 65
+    },
+    "BPA_SDECC_SUB_DIRECTOR_REVIEW": {
+      label: "Révision par le Sous-directeur SDECC",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 65
+    },
+    "SUBMITTED_TO_SDECC": {
+      label: "Soumis au SDECC",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 40
+    },
+    "SUBMITTED_TO_SDECC_HOD": {
+      label: "Soumis au Chef de Département SDECC",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 50
+    },
+    "UNDER_REVIEW": {
+      label: "En cours de révision",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 60
+    },
+    "SDECC_HOD_REVIEW": {
+      label: "Révision par le Chef de Département SDECC",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 70
+    },
+    "SUBMITTED_TO_TOPOGRAPHY_HOD": {
+      label: "Soumis au Chef de Département Topographie",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuClock,
+      progress: 45
+    },
+    "TOPOGRAPHY_HOD_REVIEW": {
+      label: "Révision par le Chef de Département Topographie",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 55
+    },
+    "UNDER_APPROVAL": {
+      label: "En cours d'approbation",
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      icon: LuClock,
+      progress: 80
     },
     "BCIE_HOD_REVIEW": {
       label: "Révision par le Chef de service BCIE",

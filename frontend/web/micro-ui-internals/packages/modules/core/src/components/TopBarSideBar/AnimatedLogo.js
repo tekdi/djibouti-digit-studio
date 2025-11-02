@@ -49,7 +49,7 @@ const AnimatedLogo = () => {
   return (
     <div className="flex items-center space-x-2">
       <div className="relative h-8 min-w-[148px] flex items-center">
-        <img src="https://epermis-1fdee.web.app/map-logo.png" alt="Logo" className="w-10 h-10 mr-2" />
+        <img src="https://demo-epermit.site/map-logo.png" alt="Logo" className="w-10 h-10 mr-2" />
         <h1 className="text-xl font-bold">
           <span style={{
             background: 'linear-gradient(to right, #22a4d9, #52ac47)',

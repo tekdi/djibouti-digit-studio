@@ -5,6 +5,7 @@ import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-rou
 import { loginConfig } from "./config";
 import SelectEmail from "./SelectEmail";
 import SelectOtp from "./SelectOtp";
+import SelectMobileID from "./SelectMobileID";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -235,6 +236,45 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     history.push(`/${window?.contextPath}/employee/user/forgot-password`);
   };
 
+  /**
+   * Gérer le succès de l'authentification MobileID
+   * @param {Object} mobileIDData - Données reçues de MobileID (clientId, name, dob)
+   */
+  const handleMobileIDSuccess = async (mobileIDData) => {
+    try {
+      // Pour le moment, nous utilisons le CNI comme username
+      // Dans une implémentation complète, il faudrait un backend qui valide
+      // l'authentification MobileID et retourne un token approprié
+      
+      // Tentative de connexion avec le système existant
+      // Le backend devrait avoir un endpoint spécial pour MobileID
+      const requestData = {
+        username: mobileIDData.clientId, // CNI
+        // Le backend devrait valider que cette session MobileID est valide
+        // et ne pas demander de mot de passe
+        tenantId: Digit.ULBService.getStateId(),
+        userType: "EMPLOYEE",
+        authType: "MOBILEID", // Nouveau type d'authentification
+      };
+
+      // Note: Cette partie nécessite des modifications backend pour gérer
+      // l'authentification MobileID de manière appropriée
+      // Pour l'instant, nous affichons un message de succès
+      
+      // TODO: Implémenter l'endpoint backend pour MobileID
+      // const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+      // Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
+      // setUser({ info, ...tokens });
+      
+      // Message temporaire en attendant l'implémentation backend
+      setError("Authentification MobileID réussie ! Backend en cours d'implémentation.");
+      
+    } catch (err) {
+      console.error("Error handling MobileID success:", err);
+      setError("Erreur lors de la finalisation de l'authentification.");
+    }
+  };
+
   const defaultValue = {
     code: Digit.ULBService.getStateId(),
     name: Digit.Utils.locale.getTransformedLocale(`TENANT_TENANTS_${Digit.ULBService.getStateId()}`),
@@ -307,6 +347,14 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
               error={isOtpValid}
               canSubmit={true}
               t={t}
+            />
+          </Route>
+
+          <Route path={`${path}/mobileid`}>
+            <SelectMobileID
+              t={t}
+              onSuccess={handleMobileIDSuccess}
+              onCancel={() => history.push(path)}
             />
           </Route>
 
