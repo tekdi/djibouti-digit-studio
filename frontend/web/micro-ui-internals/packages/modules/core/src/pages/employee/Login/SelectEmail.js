@@ -8,6 +8,7 @@ import {
   LuZap,
   LuArrowRight,
   LuArrowLeft,
+  LuSmartphone,
 } from "react-icons/lu";
 
 const features = [

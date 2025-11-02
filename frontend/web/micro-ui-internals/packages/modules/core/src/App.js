@@ -3,6 +3,7 @@ import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-d
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 import ProfileSelection from "./pages/ProfileSelection";
+import SelectMobileID from "./pages/employee/Login/SelectMobileID";
 
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, defaultLanding = "citizen" }) => {
   const history = useHistory();
@@ -82,6 +83,9 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
     <Switch>
       <Route path={`/${window?.contextPath}/profile-selection`}>
         <ProfileSelection />
+      </Route>
+      <Route path={`/${window?.contextPath}/login/mobileid`}>
+        <SelectMobileID />
       </Route>
       <Route path={`/${window?.contextPath}/employee`}>
         <EmployeeApp {...commonProps} />
