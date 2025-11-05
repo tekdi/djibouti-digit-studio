@@ -205,23 +205,23 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
               </form>
 
               {/* Séparateur OU */}
-              <div className="relative my-6 w-full">
+              {/* <div className="relative my-6 w-full">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-4 bg-white text-gray-500 font-medium">OU</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Bouton Mobile ID */}
-              <button
+              {/* <button
                 onClick={handleMobileIDLogin}
                 className="w-full flex justify-center items-center py-4 px-4 rounded-2xl shadow-lg text-base font-semibold border-2 border-djibouti-primary text-djibouti-primary bg-white hover:bg-djibouti-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djibouti-primary transition-all duration-200"
               >
                 <LuSmartphone className="h-5 w-5 mr-2" />
                 Se connecter avec Mobile ID
-              </button>
+              </button> */}
 
               <div className="text-center space-y-4 mt-8">
                 <button
@@ -291,23 +291,23 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
             </form>
 
             {/* Séparateur OU */}
-            <div className="relative my-6 w-full">
+            {/* <div className="relative my-6 w-full">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-4 bg-white text-gray-500 font-medium">OU</span>
               </div>
-            </div>
+            </div> */}
 
             {/* Bouton Mobile ID */}
-            <button
+            {/* <button
               onClick={handleMobileIDLogin}
               className="w-full flex justify-center items-center py-4 px-4 rounded-2xl shadow-lg text-base font-semibold border-2 border-djibouti-primary text-djibouti-primary bg-white hover:bg-djibouti-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djibouti-primary transition-all duration-200"
             >
               <LuSmartphone className="h-5 w-5 mr-2" />
               Se connecter avec Mobile ID
-            </button>
+            </button> */}
 
             <div className="text-center space-y-4 mt-8">
               <button
