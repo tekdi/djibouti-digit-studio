@@ -29,7 +29,7 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
               <StatusBadge state={response?.processInstance?.[0]?.state?.state} isCitizen={isCitizen} />
             </div>
             <h2 className="text-xl font-semibold text-white mb-1">
-              Demande de {serviceInfo.name} pour un projet à {t(projectDetails?.siteLocation) || t(projectDetails?.region) || "Non précisé"}
+              {serviceInfo.name} 
             </h2>
           </div>
         </div>
@@ -41,15 +41,15 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
           iconBgColor="bg-white/20"
           iconColor="text-white"
           label="Demandeur"
-          value={`${applicant?.name} - +253 ${applicant?.mobileNumber}`}
+          value={`${applicant?.name} Téléphone : +253 ${applicant?.mobileNumber}`}
         />
       </div>
 
       {/* Key Details Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/20 pt-3">
-        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(projectDetails?.region)} />
+        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Localisation de la parcelle" value={address} />
 
-        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Adresse" value={address} />
+        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(projectDetails?.region)} />
 
         <InfoCard
           icon={LuCalendar}
@@ -58,8 +58,6 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
           label="Soumis le"
           value={formatDate(response?.auditDetails?.createdTime)}
         />
-
-        <InfoCard icon={LuClock} iconBgColor="bg-white/20" iconColor="text-white" label="Étape" value="2/11" />
       </div>
     </div>
   );

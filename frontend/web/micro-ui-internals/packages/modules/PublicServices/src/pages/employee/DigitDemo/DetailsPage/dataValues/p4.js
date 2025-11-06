@@ -97,7 +97,7 @@ export const p4Data = {
       ]
     },
     designOfficeDetailing: {
-      title: "Bureau d'études",
+      title: "Cabinet d’Architecture / Bureau d’Étude",
       icon: "LuBuilding",
       color: "orange",
       fields: [
@@ -125,11 +125,6 @@ export const p4Data = {
         {
           label: "Numéro d'enregistrement",
           key: "registrationNo",
-          icon: "LuHash"
-        },
-        {
-          label: "Numéro professionnel",
-          key: "registrationNoOnProfessionalRoll",
           icon: "LuHash"
         }
       ]
