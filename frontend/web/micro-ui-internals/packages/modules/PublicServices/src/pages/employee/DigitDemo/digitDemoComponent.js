@@ -477,10 +477,8 @@ const DigitDemoComponent = ({ editdata }) => {
               </button>
             </div>
             <div className="flex items-center">
-            <div className="inline-flex items-center px-2 py-1 rounded-full bg-white text-djibouti-primary text-xs font-semibold mr-2 w-fit">
-              Réf. {serviceRef || cleanServiceCode}
-            </div>
-            <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl">{getServiceTitle()}</p>
+          
+            <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl"> {serviceRef || cleanServiceCode} - {getServiceTitle()}</p>
               </div>
           </div>
         </div>

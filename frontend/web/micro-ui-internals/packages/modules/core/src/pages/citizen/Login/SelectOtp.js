@@ -26,7 +26,7 @@ const features = [
     icon: LuRocket,
     title: "Accès instantané",
     description:
-      "Saisissez votre code pour accéder à tous vos services citoyens",
+      "Saisissez votre code pour accéder à tous vos services Citoyen (ne)s",
     color: "text-djibouti-secondary",
   },
   {

@@ -26,12 +26,8 @@ const ServiceCard = ({ service, servicesData }) => {
             <ServiceIcon className="w-7 h-7 text-djibouti-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            {/* Reference Number */}
-            <div className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-700 mb-2">
-              Réf. {serviceInfo.ref}
-            </div>
             <h3 className="text-lg font-bold text-gray-900 leading-tight mb-2 group-hover:text-djibouti-primary transition-colors">
-              {serviceInfo.name}
+            {serviceInfo.ref} - {serviceInfo.name}
             </h3>
             <p 
               className="text-sm text-gray-600 leading-relaxed overflow-hidden" 

@@ -125,10 +125,7 @@ const ServiceDetailPage = () => {
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex-1">
-            <div className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-700 mb-2">
-              Réf. {serviceInfo?.ref}
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{service.title}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{serviceInfo.ref} - {service.title}</h1>
             <p className="text-gray-600 text-lg leading-relaxed mb-6">{service.description}</p>
             
             <div className="flex flex-wrap gap-4">
@@ -148,7 +145,7 @@ const ServiceDetailPage = () => {
               onClick={handleStartRequest}
               className="px-6 py-3 bg-djibouti-primary text-white rounded-xl hover:bg-djibouti-primary-dark transition-colors font-medium"
             >
-              Commencer la demande
+              Nouvelle demande
             </button>
             <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
               <LuDownload className="w-4 h-4 inline mr-2" />

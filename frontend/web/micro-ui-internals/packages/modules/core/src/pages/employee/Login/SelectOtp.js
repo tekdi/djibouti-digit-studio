@@ -33,7 +33,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
       case 'promoter':
         return 'Vérification pour les promoteurs immobiliers';
       case 'instructor':
-        return 'Vérification pour les agents instructeurs';
+        return 'Vérification pour les Instructeur Technique';
       case 'authority':
         return 'Vérification pour les autorités décisionnaires';
       default:

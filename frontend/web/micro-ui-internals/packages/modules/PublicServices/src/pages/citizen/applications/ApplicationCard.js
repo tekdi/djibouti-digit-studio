@@ -32,32 +32,18 @@ const ApplicationCard = ({ app }) => {
         
         {/* Title - Service Name */}
         <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {serviceInfo.name}
+        {serviceInfo.ref} - {serviceInfo.name}
         </h3>
         
         {/* Reference */}
         <p className="text-sm text-gray-500 mb-4">
-          Réf. {serviceInfo.ref} • {app.applicationNumber}
+          Réf • {app.applicationNumber}
         </p>
       </div>
 
       {/* Content - This will flex to fill available space */}
       <div className="p-4 pt-0 flex-1 flex flex-col">
         <div className="space-y-4 flex-1">
-          {/* Progress */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Progression</span>
-              <span className="text-sm font-medium text-gray-900">{statusInfo.progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${statusInfo.progress}%` }}
-              ></div>
-            </div>
-          </div>
-
           {/* Current Step */}
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-50 rounded-lg">

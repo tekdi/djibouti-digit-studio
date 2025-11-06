@@ -11,7 +11,7 @@ const UserDropdown = ({ userDetails, userOptions }) => {
 
   // Role translation mapping
   const roleTranslations = {
-    "CITIZEN": "Citoyen",
+    "CITIZEN": "Citoyen (ne)",
     "BPA_ARCHITECT": "Architecte",
     "BPA_DIRECTOR": "Directeur DATUH",
     "BPA_HOD": "Chef de Service SRA",
