@@ -64,8 +64,8 @@ const ApplicationCard = ({ app }) => {
 
           {/* Created Date */}
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-50 rounded-lg">
-              <LuCalendar className="w-4 h-4 text-green-600" />
+            <div className="p-2 bg-gray-50 rounded-lg">
+              <LuCalendar className="w-4 h-4 text-gray-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">
@@ -80,8 +80,8 @@ const ApplicationCard = ({ app }) => {
           {/* Applicant Name */}
           {app.applicants?.[0]?.name && (
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-50 rounded-lg">
-                <LuUser className="w-4 h-4 text-purple-600" />
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <LuUser className="w-4 h-4 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">
@@ -97,8 +97,8 @@ const ApplicationCard = ({ app }) => {
           {/* Location */}
           {app.serviceDetails?.landandProjectDesignDetails?.[0]?.siteLocation && (
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-50 rounded-lg">
-                <LuMapPin className="w-4 h-4 text-orange-600" />
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <LuMapPin className="w-4 h-4 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">

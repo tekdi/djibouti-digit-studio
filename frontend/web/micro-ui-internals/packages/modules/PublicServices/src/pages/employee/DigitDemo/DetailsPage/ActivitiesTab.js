@@ -1,13 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
+const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) => {
   const { t } = useTranslation();
 
   const renderTimeline = (timeline) => {
     return [...timeline].reverse().map((instance, index) => {
       const isCurrentState = index === timeline.length - 1;
-      const displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
+      
+      // Special case: if performedAction is "EDIT" and status is "AGENT_NOT_ASSIGNED", display "Demande soumise"
+      let displayAction;
+      if (instance?.performedAction === "EDIT" && instance?.status === "AGENT_NOT_ASSIGNED") {
+        displayAction = "Demande soumise";
+      } else {
+        displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
+      }
+      
       const auditCreated = instance?.auditDetails?.created;
 
       return (
@@ -31,7 +39,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow }) => {
               </span>
             </div>
             
-            {instance?.assignes?.length > 0 && (
+            {!isCitizen && instance?.assignes?.length > 0 && (
               <p className="text-xs text-gray-500">
                 {t("ASSIGNED_TO")}: {instance.assignes.map((assignee) => assignee?.name).join(", ")}
               </p>

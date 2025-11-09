@@ -172,7 +172,7 @@ const EmployeeDashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">{greeting}, {firstName}</h1>
-            <p className="mt-1 opacity-90">Gestion et traitement des demandes d'autorisation</p>
+            <p className="mt-1 opacity-90">Gestion et traitement des demandes</p>
           </div>
           <div className="text-right">
             <p className="text-sm opacity-75">Dernière mise à jour</p>
