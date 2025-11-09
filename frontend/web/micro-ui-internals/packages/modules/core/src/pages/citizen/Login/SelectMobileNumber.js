@@ -5,7 +5,7 @@ import { LuBuilding, LuPhone, LuInfo, LuRocket, LuSparkles, LuZap, LuArrowRight,
 const features = [
   {
     icon: LuRocket,
-    title: "Démarches citoyennes",
+    title: "Démarches Citoyen (ne)nes",
     description: "Accédez facilement à tous vos services administratifs en ligne",
     color: "text-djibouti-primary",
   },
@@ -139,7 +139,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">5k+</div>
-                  <div className="text-white/60 text-base">Citoyens</div>
+                  <div className="text-white/60 text-base">Citoyen (ne)s</div>
                 </div>
               </div>
             </div>

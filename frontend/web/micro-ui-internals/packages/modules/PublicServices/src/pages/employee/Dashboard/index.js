@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import StatsCard from "./components/StatsCard";
-import RecentApplications from "./components/RecentApplications";
 import useApplications from "../applications/useApplications";
 import { getStatusInfo, formatDate, getServiceInfo } from "../applications/utils";
 import { 
   LuFileText, 
   LuUsers, 
   LuUserCheck, 
-  LuSend,
-  LuTrendingUp,
-  LuTrendingDown,
   LuArrowRight,
   LuArrowUpRight
 } from "react-icons/lu";
@@ -50,29 +45,19 @@ const EmployeeDashboard = () => {
           title: "Nouveaux dossiers",
           value: 0,
           icon: LuFileText,
-          change: { value: 0, isPositive: true },
           gradient: "from-primary to-primary-dark"
         },
         {
           title: "Dossiers assignés",
           value: 0,
           icon: LuUserCheck,
-          change: { value: 0, isPositive: true },
           gradient: "from-green-500 to-emerald-600"
         },
         {
           title: "En cours de traitement",
           value: 0,
           icon: LuUsers,
-          change: { value: 0, isPositive: true },
           gradient: "from-blue-500 to-indigo-600"
-        },
-        {
-          title: "Approuvés",
-          value: 0,
-          icon: LuSend,
-          change: { value: 0, isPositive: true },
-          gradient: "from-amber-500 to-orange-600"
         }
       ];
     }
@@ -96,41 +81,24 @@ const EmployeeDashboard = () => {
       }
     ).length;
 
-    const approvedCount = applications.filter(
-      (app) => {
-        const status = app.ProcessInstance?.state?.applicationStatus;
-        return status === "PERMIT_GRANTED" || status === "CERTIFICATE_GRANTED";
-      }
-    ).length;
-
     return [
       {
         title: "Nouveaux dossiers",
         value: newApplicationsCount,
         icon: LuFileText,
-        change: { value: 12, isPositive: true },
         gradient: "from-primary to-primary-dark"
       },
       {
         title: "Dossiers assignés",
         value: assignedApplicationsCount,
         icon: LuUserCheck,
-        change: { value: 8, isPositive: true },
         gradient: "from-green-500 to-emerald-600"
       },
       {
         title: "En cours de traitement",
         value: inProgressCount,
         icon: LuUsers,
-        change: { value: 3, isPositive: true },
         gradient: "from-blue-500 to-indigo-600"
-      },
-      {
-        title: "Approuvés",
-        value: approvedCount,
-        icon: LuSend,
-        change: { value: 5, isPositive: true },
-        gradient: "from-amber-500 to-orange-600"
       }
     ];
   }, [applications]);
@@ -152,7 +120,7 @@ const EmployeeDashboard = () => {
 
         return {
           id: businessObject?.applicationNumber,
-          title: serviceInfo?.shortName || businessObject?.businessService,
+          title: serviceInfo?.name || businessObject?.businessService,
           client: applicant?.name || "N/A",
           status: statusInfo?.label || status,
           statusColor: statusInfo?.bgColor + " " + statusInfo?.color,
@@ -172,7 +140,7 @@ const EmployeeDashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">{greeting}, {firstName}</h1>
-            <p className="mt-1 opacity-90">Gestion et traitement des demandes d'autorisation</p>
+            <p className="mt-1 opacity-90">Gestion et traitement des demandes</p>
           </div>
           <div className="text-right">
             <p className="text-sm opacity-75">Dernière mise à jour</p>
@@ -184,9 +152,9 @@ const EmployeeDashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
         {stats.map((stat, index) => (
-          <div key={index} className="rounded-xl shadow-sm overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1">
+          <div key={index} className="rounded-xl shadow-sm overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-lg">
             <div className={`bg-gradient-to-r ${stat.gradient} p-4`}>
               <div className="flex items-start justify-between">
                 <div>
@@ -196,15 +164,6 @@ const EmployeeDashboard = () => {
                 <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10">
                   <stat.icon className="h-6 w-6 text-white" />
                 </div>
-              </div>
-              <div className="mt-2 text-xs text-white/80 flex items-center gap-0.5">
-                {stat.change.isPositive ? (
-                  
-                  <LuTrendingUp className="w-3 h-3" />
-                ) : (
-                  <LuTrendingDown className="w-3 h-3" />
-                )}
-                <span>{Math.abs(stat.change.value)}% ce mois</span>
               </div>
             </div>
           </div>

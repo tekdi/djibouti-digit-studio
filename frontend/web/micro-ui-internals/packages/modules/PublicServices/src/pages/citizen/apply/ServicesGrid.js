@@ -23,7 +23,14 @@ const ServicesGrid = ({
                   bs.businessService === "BPA_PL" ||
                   bs.businessService === "BPA_PD" ||
                   bs.businessService === "BPA_PF" ||
-                  bs.businessService === "BPA_ATARR"
+                  bs.businessService === "BPA_ATARR" ||
+                  bs.businessService === "BPA_APE" ||
+                  bs.businessService === "BPA_PV" ||
+                  bs.businessService === "BPA_CCG" ||
+                  bs.businessService === "BPA_CCP" ||
+                  bs.businessService === "BPA_CCE" ||
+                  bs.businessService === "BPA_CCR" ||
+                  bs.businessService === "BPA_PR"
                 );
               }
               return true; // show all for architects

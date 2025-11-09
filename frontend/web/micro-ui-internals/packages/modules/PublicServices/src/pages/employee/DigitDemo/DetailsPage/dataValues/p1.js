@@ -2,47 +2,41 @@ export const p1Data = {
   // Define which blocks should be shown for P1 (Construction Permit)
   blocks: {
     landandProjectDesignDetails: {
-      title: "Détails du projet",
+      title: "Informations de la demande",
       icon: "LuBuilding",
       color: "purple",
       fields: [
         {
-          label: "Type de travail",
+          label: "Type de projet",
           key: "workType",
           icon: "LuBuilding"
         },
         {
-          label: "Surface couverte",
-          key: "coveredProjectArea",
-          icon: "LuMapPin",
-          suffix: " m²"
-        },
-        {
-          label: "Région",
-          key: "region",
-          icon: "LuMapPin"
-        },
-        {
-          label: "Localisation",
+          label: "Localisation de parcelle",
           key: "siteLocation",
           icon: "LuMapPin"
         },
         {
-          label: "Surface totale",
+          label: "Surface de la parcelle",
           key: "area",
           icon: "LuMapPin",
           suffix: " m²"
         },
         {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
+          label: "Surface totale bâtie",
+          key: "coveredProjectArea",
+          icon: "LuMapPin",
+          suffix: " m²"
+        },
+        {
+          label: "Destination du projet",
+          key: "intededUse",
+          icon: "LuBuilding"
         }
       ]
     },
     designOfficeDetailing: {
-      title: "Bureau d'études",
+      title: "Cabinet d’Architecture / Bureau d’Étude",
       icon: "LuBuilding",
       color: "orange",
       fields: [
@@ -70,11 +64,6 @@ export const p1Data = {
         {
           label: "Numéro d'enregistrement",
           key: "registrationNo",
-          icon: "LuHash"
-        },
-        {
-          label: "Numéro professionnel",
-          key: "registrationNoOnProfessionalRoll",
           icon: "LuHash"
         }
       ]

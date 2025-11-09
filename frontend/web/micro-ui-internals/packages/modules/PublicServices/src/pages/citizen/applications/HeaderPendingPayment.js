@@ -30,7 +30,7 @@ const HeaderPendingPayment = ({
                   Demandes en Attente de Paiement
                   <LuCircleAlert className="w-8 h-8 text-orange-600" />
                 </h1>
-                <p className="text-lg text-gray-600">Effectuez le paiement pour finaliser vos demandes de permis</p>
+                <p className="text-lg text-gray-600">Effectuez le paiement pour finaliser vos demandes</p>
               </div>
             </div>
             <button

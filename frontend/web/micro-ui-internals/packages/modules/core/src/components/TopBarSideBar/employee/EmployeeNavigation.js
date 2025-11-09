@@ -4,7 +4,7 @@ import {
   LuLayoutDashboard,
   LuFileText,
   LuChevronDown,
-  LuPlus,
+  LuClipboardList,
   LuClock,
   LuFolderOpen,
   LuSearch,
@@ -35,7 +35,7 @@ const EmployeeNavigation = ({ mobileView }) => {
           id: "new-dossiers",
           label: "Nouveaux dossiers",
           path: `/${window?.contextPath}/employee/publicservices/applications-employee/new`,
-          icon: LuPlus,
+          icon: LuClipboardList,
         },
         {
           id: "in-progress",

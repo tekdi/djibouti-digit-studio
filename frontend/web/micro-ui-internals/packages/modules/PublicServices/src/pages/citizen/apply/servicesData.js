@@ -3,18 +3,18 @@ export const servicesData = {
     id: "permis-construire-ordinaire-public",
     title: "Permis de Construire Ordinaire (PCO) - Établissements Recevant du Public",
     description: "Pour les constructions accueillant du public (hôtels, hôpitaux, écoles, etc.)",
-    delaiTraitement: "90 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "15 jours",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
       {
         titre: "Vérification de la conformité",
-        acteur: "Agents instructeurs - Autorité décisionnaire",
+        acteur: "Instructeur Technique - Autorité décisionnaire",
         description: "Analyse technique et réglementaire du projet par les services compétents (SRA, SDECC)",
         systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)"
       },
@@ -165,12 +165,12 @@ export const servicesData = {
     id: "permis-construire-ordinaire-simple",
     title: "Permis de Construire Ordinaire (PCO) - Constructions Simples",
     description: "Pour les constructions résidentielles et commerciales simples",
-    delaiTraitement: "30 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "15 jours",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -303,12 +303,12 @@ export const servicesData = {
     id: "permis-construire-simplifie",
     title: "Permis de Construire Simplifié (PCS)",
     description: "Pour les constructions de petite taille",
-    delaiTraitement: "30 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "3 jours",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -442,11 +442,11 @@ export const servicesData = {
     title: "Permis de Lotir",
     description: "Pour la division de terrains en lots destinés à la construction",
     delaiTraitement: "60 jours",
-    frais: "à partir de XXXXX",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -543,12 +543,12 @@ export const servicesData = {
     id: "permis-demolir",
     title: "Permis de Démolir",
     description: "Pour la démolition de constructions existantes",
-    delaiTraitement: "15 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "3 jours",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -612,11 +612,11 @@ export const servicesData = {
     title: "Permis de Fonctionner",
     description: "Pour l'ouverture d'établissements recevant du public",
     delaiTraitement: "30 jours",
-    frais: "à partir de XXXXX",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet",
         systeme: "Génération automatique d'un numéro de suivi"
       },
@@ -667,12 +667,12 @@ export const servicesData = {
     id: "autorisation-travaux-arrondissement",
     title: "Autorisation de Travaux d'Arrondissement",
     description: "Pour les travaux d'aménagement et d'embellissement",
-    delaiTraitement: "20 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "3 jours",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet",
         systeme: "Génération automatique d'un numéro de suivi"
       },
@@ -723,12 +723,12 @@ export const servicesData = {
     id: "permis-remblai",
     title: "Permis de Remblai (PR)",
     description: "Autorisation pour les travaux de remblai",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "3 jours",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -799,12 +799,12 @@ export const servicesData = {
     id: "approbation-plan-execution",
     title: "Approbation de Plan d'Exécution (APE)",
     description: "Validation des plans d'exécution des projets",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "1 jour",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet sur la plateforme numérique dédiée",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -913,11 +913,11 @@ export const servicesData = {
     title: "P.V d'implantation",
     description: "Procès-verbal d'implantation des constructions",
     delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique dédiée",
         systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
       },
@@ -1000,12 +1000,12 @@ export const servicesData = {
     id: "permis-surelevation",
     title: "Permis de Surélévation",
     description: "Autorisation pour ajouter un ou plusieurs étages",
-    delaiTraitement: "30 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "5 jours",
+    frais: "Tax applicable",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
         systeme: "Génération automatique d'un numéro de suivi"
       },
@@ -1086,12 +1086,12 @@ export const servicesData = {
     id: "certificat-conformite-remblai",
     title: "Certificat de Conformité de Remblai (CCR)",
     description: "Certification de la conformité des travaux de remblai",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "4 jours",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
         systeme: "Génération automatique d'un numéro de suivi"
       },
@@ -1168,12 +1168,12 @@ export const servicesData = {
     id: "certificat-conformite-electrique",
     title: "Certificat de Conformité Électrique (CCE)",
     description: "Certification de la conformité des installations électriques",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "2 jours",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Dépôt du dossier complet",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi"
       },
@@ -1250,12 +1250,12 @@ export const servicesData = {
     id: "certificat-conformite-parasismique",
     title: "Certificat de Conformité Parasismique (CCP)",
     description: "Certification de la conformité aux normes parasismiques",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "1 jour",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Soumission et transmission initiale du dossier",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne via la plateforme numérique",
         systeme: "Numéro de suivi et accusé de réception générés automatiquement"
       },
@@ -1326,12 +1326,12 @@ export const servicesData = {
     id: "certificat-conformite-general",
     title: "Certificat de Conformité Général (CCG)",
     description: "Certification générale de conformité des constructions",
-    delaiTraitement: "7 jours",
-    frais: "à partir de XXXXX",
+    delaiTraitement: "3 jours",
+    frais: "Aucun frais",
     etapeCles: [
       {
         titre: "Soumission et transmission initiale du dossier",
-        acteur: "Citoyen",
+        acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique",
         systeme: "Génération automatique d'un numéro de suivi"
       },

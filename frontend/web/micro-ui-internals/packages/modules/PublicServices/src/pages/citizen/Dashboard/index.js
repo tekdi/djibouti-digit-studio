@@ -15,7 +15,7 @@ import {
 const CitizenDashboard = () => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
-  const userName = userDetails?.info?.name || "Citoyen";
+  const userName = userDetails?.info?.name || "Citoyen (ne)";
   const { applications, isLoading, error, refreshApplications, isRefreshing } = useApplications();
 
   // Calculate stats from real API data

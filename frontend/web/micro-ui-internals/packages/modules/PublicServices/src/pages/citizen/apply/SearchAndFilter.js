@@ -5,9 +5,9 @@ const SearchAndFilter = ({ searchTerm, setSearchTerm, selectedFilter, setSelecte
   // Filter options
   const filterOptions = [
     { value: "all", label: "Tous les services", icon: LuFilter },
-    { value: "permits", label: "Permis", icon: LuBuilding },
+    { value: "permits", label: "Autorisations ", icon: LuBuilding },
     { value: "certificates", label: "Certificats", icon: LuAward },
-    { value: "validations", label: "Validations", icon: LuFileText }
+    { value: "validations", label: "Approbations", icon: LuFileText }
   ];
 
   return (

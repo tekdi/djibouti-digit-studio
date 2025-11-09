@@ -19,13 +19,13 @@ const ProfileSelection = () => {
     {
       type: 'citizen',
       icon: LuUser,
-      title: 'Citoyen',
+      title: 'Citoyen (ne)',
       description: 'Pour les particuliers souhaitant effectuer des démarches'
     },
     {
       type: 'professional',
       icon: LuBriefcase,
-      title: 'Profession réglementée',
+      title: 'Cabinet d’Architecture/Bureau d’Étude',
       description: 'Pour les professionnels du bâtiment et de l\'immobilier'
     },
     {
@@ -37,13 +37,13 @@ const ProfileSelection = () => {
     {
       type: 'instructor',
       icon: LuShield,
-      title: 'Agents instructeurs',
+      title: 'Instructeur Technique',
       description: 'Pour les agents chargés d\'instruire les dossiers'
     },
     {
       type: 'authority',
       icon: LuGavel,
-      title: 'Autorité décisionnaire',
+      title: 'Responsable Décisionnaire',
       description: 'Pour les autorités habilitées à prendre des décisions'
     }
   ];

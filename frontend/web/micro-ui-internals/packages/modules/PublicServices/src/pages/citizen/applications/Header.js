@@ -29,7 +29,7 @@ const Header = ({
               </div>
               <div>
                 <h1 className="text-4xl font-black text-gray-900 mb-2">Mes Demandes</h1>
-                <p className="text-lg text-gray-600">Gérez et suivez toutes vos demandes de permis</p>
+                <p className="text-lg text-gray-600">Gérez et suivez toutes vos demandes</p>
               </div>
             </div>
             <button
@@ -104,36 +104,42 @@ const Header = ({
           </div>
 
           {/* Second Row - Date Filters */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Start Date */}
-            <div className="lg:w-64">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <LuCalendar className="text-gray-400 w-6 h-6" />
+          <div className="flex flex-col lg:flex-row gap-6 items-center">
+            {/* Start Date with "Du" label */}
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-medium text-gray-700">Du</span>
+              <div className="lg:w-64">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <LuCalendar className="text-gray-400 w-6 h-6" />
+                  </div>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate && setStartDate(e.target.value)}
+                    className="w-full pl-12 pr-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-lg"
+                    placeholder="Date de début"
+                  />
                 </div>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate && setStartDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-lg"
-                  placeholder="Date de début"
-                />
               </div>
             </div>
 
-            {/* End Date */}
-            <div className="lg:w-64">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <LuCalendar className="text-gray-400 w-6 h-6" />
+            {/* End Date with "au" label */}
+            <div className="flex items-center gap-3">
+              <span className="text-lg font-medium text-gray-700">au</span>
+              <div className="lg:w-64">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <LuCalendar className="text-gray-400 w-6 h-6" />
+                  </div>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate && setEndDate(e.target.value)}
+                    className="w-full pl-12 pr-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-lg"
+                    placeholder="Date de fin"
+                  />
                 </div>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate && setEndDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-lg"
-                  placeholder="Date de fin"
-                />
               </div>
             </div>
 

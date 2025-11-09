@@ -134,21 +134,6 @@ export const ApplicantFields = [
           orderNumber: 17,
         },
         {
-          name: "address",
-          type: "string",
-          label: "Adresse complète *",
-          placeholder: "Adresse complète",
-          format: "text",
-          required: true,
-          maxLength: 256,
-          minLength: 2,
-          validation: {
-            regex: "^.{2,256}$",
-            message: "ADDRESS_LENGTH_ERR",
-          },
-          orderNumber: 18,
-        },
-        {
           name: "idType",
           label: "Type de pièce d'identité *",
           type: "string",
@@ -193,7 +178,7 @@ export const ApplicantFields = [
         {
           name: "companyInfoHeader",
           type: "section",
-          label: "Informations de l'entreprise",
+          label: "Informations de l'entité",
           orderNumber: 7,
         },
 
@@ -226,7 +211,7 @@ export const ApplicantFields = [
         {
           name: "otherCompanyType",
           type: "string",
-          label: "Autre forme juridique *",
+          label: "Autre forme juridique",
           format: "text",
           placeholder: "Préciser la forme juridique",
           required: true,
@@ -238,32 +223,6 @@ export const ApplicantFields = [
           },
           orderNumber: 10,
           showWhen: "personType === 'LEGAL_ENTITY' && companyType === 'OTHER'",
-        },
-        {
-          name: "registrationNumber",
-          type: "string",
-          label: "Numéro de registre du commerce *",
-          format: "text",
-          placeholder: "Numéro RC",
-          required: true,
-          maxLength: 50,
-          minLength: 1,
-          orderNumber: 11,
-        },
-        {
-          name: "adresseSiege",
-          type: "string",
-          label: "Adresse du siège social *",
-          format: "text",
-          placeholder: "Adresse complète du siège social",
-          required: true,
-          maxLength: 256,
-          minLength: 2,
-          validation: {
-            regex: "^.{2,256}$",
-            message: "ADDRESS_LENGTH_ERR",
-          },
-          orderNumber: 13, // Part of company information
         },
         {
           name: "telephone",

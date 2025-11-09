@@ -27,7 +27,7 @@ const CitizenNavigation = ({ mobileView }) => {
     },
     {
       id: "requests",
-      label: "Mes Demandes",
+      label: "Demandes",
       icon: LuFileText,
       path: `/${window?.contextPath}/citizen/publicservices/applications`,
       hasDropdown: true,

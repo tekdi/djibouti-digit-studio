@@ -1,9 +1,9 @@
 import React from "react";
 import { 
   LuClock, 
-  LuCircleCheck, 
   LuCalendar,
   LuMapPin,
+  LuUser,
   LuEye
 } from "react-icons/lu";
 import { getStatusInfo, getServiceInfo, formatDate } from "./utils";
@@ -32,39 +32,25 @@ const ApplicationCard = ({ app }) => {
         
         {/* Title - Service Name */}
         <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {serviceInfo.name}
+        {serviceInfo.ref} - {serviceInfo.name}
         </h3>
         
         {/* Reference */}
         <p className="text-sm text-gray-500 mb-4">
-          Réf. {serviceInfo.ref} • {app.applicationNumber}
+          Réf • {app.applicationNumber}
         </p>
       </div>
 
       {/* Content - This will flex to fill available space */}
       <div className="p-4 pt-0 flex-1 flex flex-col">
         <div className="space-y-4 flex-1">
-          {/* Progress */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Progression</span>
-              <span className="text-sm font-medium text-gray-900">{statusInfo.progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${statusInfo.progress}%` }}
-              ></div>
-            </div>
-          </div>
-
           {/* Current Step */}
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-50 rounded-lg">
               <LuClock className="w-4 h-4 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 underline">
+              <p className="text-sm font-medium text-gray-900">
                 Étape actuelle
               </p>
               <p className="text-xs text-gray-600">
@@ -72,24 +58,6 @@ const ApplicationCard = ({ app }) => {
                  statusInfo.label === "En cours d'examen" ? "Vérification des documents" :
                  statusInfo.label === "Permis Accordé" ? "Permis délivré" :
                  statusInfo.label === "Permis Rejeté" ? "Demande rejetée" : "Traitement en cours"}
-              </p>
-            </div>
-          </div>
-
-          {/* Next Step */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-50 rounded-lg">
-              <LuCircleCheck className="w-4 h-4 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">
-                Prochaine étape
-              </p>
-              <p className="text-xs text-gray-600">
-                {statusInfo.label === "Brouillon" ? "Soumission" :
-                 statusInfo.label === "En cours d'examen" ? "Analyse technique" :
-                 statusInfo.label === "Permis Accordé" ? "Permis disponible" :
-                 statusInfo.label === "Permis Rejeté" ? "Nouvelle demande" : "Validation"}
               </p>
             </div>
           </div>
@@ -109,18 +77,35 @@ const ApplicationCard = ({ app }) => {
             </div>
           </div>
 
+          {/* Applicant Name */}
+          {app.applicants?.[0]?.name && (
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <LuUser className="w-4 h-4 text-gray-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  Nom du demandeur
+                </p>
+                <p className="text-xs text-gray-600">
+                  {app.applicants[0].name}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Location */}
-          {app.serviceDetails?.landandProjectDesignDetails?.[0]?.region && (
+          {app.serviceDetails?.landandProjectDesignDetails?.[0]?.siteLocation && (
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gray-50 rounded-lg">
                 <LuMapPin className="w-4 h-4 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  Localisation
+                  Localisation de la parcelle
                 </p>
                 <p className="text-xs text-gray-600">
-                  {t(app.serviceDetails.landandProjectDesignDetails[0].region)}
+                  {app.serviceDetails.landandProjectDesignDetails[0].siteLocation}
                 </p>
               </div>
             </div>

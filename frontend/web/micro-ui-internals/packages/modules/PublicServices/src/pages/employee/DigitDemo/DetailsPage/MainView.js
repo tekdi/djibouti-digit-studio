@@ -58,6 +58,7 @@ const MainView = ({
               : workflowDetails?.timeline
           }
           response={response}
+          isCitizen={isCitizen}
           isParallelWorkflow={service !== queryStrings?.businessService}
         />
       )}

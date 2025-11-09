@@ -1,7 +1,9 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
 
 const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
+  const [documentAttestation, setDocumentAttestation] = useState(false);
+
   const downloadFile = async (fileStoreId) => {
     try {
       const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -160,13 +162,53 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
         {renderSection(formData.landandProjectDesignDetails, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
         {renderSection(formData.designOfficeDetailing, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
         {renderDocuments(formData.uploadedDocs)}
+        
+        {/* Document Attestation Checkbox */}
+        <div className="mt-8 p-5 bg-gray-50 border-2 border-gray-300 rounded-lg">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="documentAttestation"
+              checked={documentAttestation}
+              onChange={(e) => setDocumentAttestation(e.target.checked)}
+              className="w-6 h-6 min-w-[24px] mt-1 cursor-pointer accent-[#22a4d9]"
+            />
+            <label htmlFor="documentAttestation" className="flex-1 text-gray-900 text-base leading-relaxed cursor-pointer select-none">
+              <strong className="block mb-3 text-[17px] text-gray-900">J'atteste avoir soumis :</strong>
+              <ul className="m-0 pl-5 list-disc">
+                <li className="mb-2 text-gray-700 text-[15px]">des documents légaux et conformes</li>
+                <li className="mb-2 text-gray-700 text-[15px]">des documents scannés clairs, lisible et d'une qualité de résolution optimale ;</li>
+                <li className="mb-2 text-gray-700 text-[15px]">chaque document à son emplacement spécifique ;</li>
+                <li className="mb-2 text-gray-700 text-[15px]">un fichier en format AutoCAD (*.DWG) ou ArchiCAD (*.PLN) fonctionnel, à échelle correcte et ne contenant que les plans de ce projet de manière ordonnée.</li>
+              </ul>
+            </label>
+          </div>
+          {!documentAttestation && (
+            <div className="mt-3 px-3 py-2 bg-yellow-50 border border-yellow-400 rounded text-yellow-800 text-sm font-medium">
+              Veuillez cocher cette attestation pour continuer
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex justify-end mt-8">
         <div className="footer-buttons-wrapper">
           <button style={{ width: "auto", marginLeft: "auto" }} className="digit-submit-bar previous-btn" onClick={onPrevious}>
             <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#22a4d9" }}>{t(`${serviceCode}_PREVIOUS`)}</h2>
           </button>
-          <button className="digit-submit-bar digit-formcomposer-submitbar" style={{ marginLeft: "0" }} onClick={() => onSubmit(formData)}>
+          <button 
+            className="digit-submit-bar digit-formcomposer-submitbar" 
+            style={{ marginLeft: "0", opacity: documentAttestation ? 1 : 0.5, cursor: documentAttestation ? 'pointer' : 'not-allowed' }} 
+            onClick={() => {
+              if (documentAttestation) {
+                const dataWithAttestation = {
+                  ...formData,
+                  documentAttestation: documentAttestation
+                };
+                onSubmit(dataWithAttestation);
+              }
+            }}
+            disabled={!documentAttestation}
+          >
             <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>{t(`${serviceCode}_APPLY`)}</h2>
           </button>
         </div>

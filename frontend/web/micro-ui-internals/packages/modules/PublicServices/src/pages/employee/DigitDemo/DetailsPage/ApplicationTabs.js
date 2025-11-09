@@ -9,11 +9,11 @@ import {
 
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
   const tabs = [
-    { id: "project", label: "Détails du projet", icon: LuBuilding },
+    { id: "project", label: "Informations de la demande", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
     { id: "payments", label: "Paiements", icon: LuCreditCard },
     // Only show checklist tab for non-citizens
-    ...(isCitizen ? [] : [{ id: "checklist", label: "Contrôle", icon: LuSquareCheck }]),
+    ...(isCitizen ? [] : [{ id: "checklist", label: "Instruction", icon: LuSquareCheck }]),
     { id: "activities", label: "Historique", icon: LuActivity },
   ];
 
