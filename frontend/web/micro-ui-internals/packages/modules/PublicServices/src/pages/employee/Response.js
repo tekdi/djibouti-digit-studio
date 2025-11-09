@@ -78,11 +78,6 @@ const Response = () => {
           </LinkLabel>
         </div>
       )}
-      <ActionBar>
-        <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
-          <SubmitBar style={{ borderRadius: "10px" }} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
-        </Link>
-      </ActionBar>
     </div>
   );
 };

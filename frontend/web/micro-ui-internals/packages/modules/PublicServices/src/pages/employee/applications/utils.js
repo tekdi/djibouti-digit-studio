@@ -593,7 +593,7 @@ export const getStatusInfo = (status) => {
     
     // Commissioner status
     "AWAITING_ON_COMMISSIONER": {
-      label: "En attente du Commissaire",
+      label: "En cours d’instruction",
       color: "text-purple-600",
       bgColor: "bg-purple-50",
       icon: LuClock,

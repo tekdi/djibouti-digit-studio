@@ -8,10 +8,15 @@ import {
 } from "react-icons/lu";
 
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
+
+  const userDetails = Digit.UserService.getUser();
+  // BPA_ARCHITECT
+  const showPaymentsTab = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT" ||   role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "COUNTER_EMPLOYEE");
+
   const tabs = [
     { id: "project", label: "Informations de la demande", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
-    { id: "payments", label: "Paiements", icon: LuCreditCard },
+    ...(showPaymentsTab ? [{ id: "payments", label: "Paiements", icon: LuCreditCard }] : []),
     // Only show checklist tab for non-citizens
     ...(isCitizen ? [] : [{ id: "checklist", label: "Instruction", icon: LuSquareCheck }]),
     { id: "activities", label: "Historique", icon: LuActivity },

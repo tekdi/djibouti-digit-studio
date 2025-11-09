@@ -39,7 +39,7 @@ const EmployeeNavigation = ({ mobileView }) => {
         },
         {
           id: "in-progress",
-          label: "En cours",
+          label: "En cours d’instruction",
           path: `/${window?.contextPath}/employee/publicservices/applications-employee/in-progress`,
           icon: LuClock,
         },

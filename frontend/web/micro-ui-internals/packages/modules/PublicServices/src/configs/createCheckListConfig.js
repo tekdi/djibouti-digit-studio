@@ -17,9 +17,16 @@ export const CreateCheckListConfig = (item, t) => {
    * @param {Boolean} hide - Whether to initially hide this field in the form.
    */
   const createConfig = (field, label, codes, hide) => {
-    let type = field.dataType === "SingleValueList" ? "radio" : "text"; // Determine input type
+    let type = "text"; // Default type
+    
+    // Determine input type based on dataType
+    if (field.dataType === "SingleValueList") {
+      type = "radio";
+    } else if (field.dataType === "MultiValueList") {
+      type = "checkbox";
+    }
 
-    if (type == "radio") {
+    if (type === "radio") {
       return {
         isMandatory: field.required,
         key: field.code,
@@ -32,6 +39,24 @@ export const CreateCheckListConfig = (item, t) => {
           hideInForm: hide, // Dynamic hiding for conditional fields
           alignVertical: false,
           options: field.values?.slice(0, -1).map((item) => ({
+            code: item,
+            name: `${label}.${item}`, // Translatable option label
+          })),
+        },
+      };
+    } else if (type === "checkbox") {
+      return {
+        isMandatory: field.required,
+        key: field.code,
+        type: type,
+        label: `${label}.${codes}`, // Translation key
+        disable: false,
+        populators: {
+          name: field.code,
+          optionsKey: "name",
+          hideInForm: hide,
+          alignVertical: false,
+          options: field.values?.map((item) => ({
             code: item,
             name: `${label}.${item}`, // Translatable option label
           })),

@@ -20,7 +20,7 @@ const PaymentsTab = ({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Paiements</h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Paiement de la taxe</h3>
       
       {/* Free Service Message */}
       {isFreeService ? (
@@ -73,7 +73,7 @@ const PaymentsTab = ({
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-900">Calcul des frais</h4>
               <div className="bg-white rounded-xl p-6 border border-gray-200">
-                <Calculation />
+                <Calculation isCitizen={isCitizen} />
               </div>
             </div>
           )}

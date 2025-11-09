@@ -5,6 +5,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) =>
   const { t } = useTranslation();
 
   const renderTimeline = (timeline) => {
+    console.log(timeline);
     return [...timeline].reverse().map((instance, index) => {
       const isCurrentState = index === timeline.length - 1;
       

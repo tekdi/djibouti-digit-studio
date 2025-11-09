@@ -30,6 +30,9 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
   };
   const mutation = Digit.Hooks.useCustomAPIMutationHook(request);
 
+  const userDetails = Digit.UserService.getUser();
+  const showCommunisionersChecklist =  userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR");
+ 
   const getcarditems = async (code) => {
     await mutation.mutate(
       {
@@ -109,7 +112,7 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           }
 
           // Check if this is a commissioners checklist
-          if (item.code === "customCommissionersChecklist") {
+          if (item.code === "customCommissionersChecklist" && showCommunisionersChecklist) {
             return (
               <CommissionersCheckListCard 
                 key={index}

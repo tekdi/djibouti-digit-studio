@@ -1,9 +1,10 @@
 import React from "react";
-import { Card, TextBlock, Button, Loader } from "@egovernments/digit-ui-components";
+import { Loader } from "@egovernments/digit-ui-components";
 import { transformViewApplication } from "../utils/createUtils";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { LuClipboardList, LuCircleCheck } from "react-icons/lu";
 
 const CheckListCard = (props) => {
   const [filled, setFilled] = useState(false);
@@ -13,15 +14,6 @@ const CheckListCard = (props) => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
-
-  const style = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "1rem",
-    width: "100%",
-    position: "relative",
-    padding: "20px",
-  };
 
   //To fetch the checklist data
   const request = {
@@ -68,69 +60,43 @@ const CheckListCard = (props) => {
     isFilled(props.item.id, props.accid);
   }, [props.item.id, props.accid]);
 
+  if (!loading) {
+    return (
+      <div className="flex w-full items-center justify-center py-8">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
-    <div style={{ marginBottom: "15px" }}>
-      {loading ? (
-        <Card type="primary" style={style}>
-          {filled ? (
-            <span
-              style={{
-                fontSize: "0.75rem",
-                position: "absolute",
-                top: "10px",
-                left: "20px",
-                fontWeight: 500,
-                color: "#166534",
-                backgroundColor: "#dcfce7",
-                padding: "0.25rem 0.5rem",
-                borderRadius: "9999px",
-              }}
-            >
-              {t("REPORT_DONE")}
-            </span>
-          ) : (
-            ""
-          )}
-          {/* <TextBlock style={{color:'black',fontSize:'40px', fontWeight:'700' }} body={props.t(props.item.code)} /> */}
-          <h2 style={{ color: "black", fontSize: "40px", fontWeight: "700", wordBreak: "break-word", overflowWrap: "break-word", margin: "15px 0" }}>
-            {props.t(props.item.clientId)}
-          </h2>
-          {/* {
-          filled  ? (
-            <button
-              style={{
-                border: "1px solid rgb(209, 213, 219)",
-                width: "100%",
-                backgroundColor: "white",
-                color: "#22a4d9",
-                borderRadius: "10px",
-                padding: "8px",
-              }}
-              onClick={() =>
-                history.push({
-                  pathname:`/${window.contextPath}/employee/publicservices/viewresponse`,
-                  search: `?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}`,
-                  state:{
-                      cardItems:props.item,
-                  },
-                })
-              }
-            >
-              {t("VIEW_RESPONSE")}
-            </button>
-          ) :
-          ( */}
+    <div className="group relative flex w-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark" />
+
+      {filled && (
+        <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+          <LuCircleCheck className="h-4 w-4" />
+          {t("REPORT_DONE")}
+        </span>
+      )}
+
+      <div className="flex flex-1 flex-col gap-6 p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-3">
+            <div className="inline-flex items-center gap-2 text-djibouti-primary">
+              <LuClipboardList className="h-5 w-5" />
+              <span className="text-sm font-medium uppercase tracking-wide text-djibouti-primary/80">
+                {t("CHECKLIST")}
+              </span>
+            </div>
+            <h2 className="text-2xl font-semibold leading-snug text-gray-900 break-words">
+              {props.t(props.item.clientId)}
+            </h2>
+          </div>
+        </div>
+
+        <div className="pt-4">
           <button
-            style={{
-              border: "1px solid #22a4d9",
-              width: "100%",
-              backgroundColor: "white",
-              color: "#22a4d9",
-              borderRadius: "10px",
-              padding: "8px",
-              fontSize: "16px",
-              fontWeight: 500,
-            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary bg-djibouti-primary/10 px-4 py-3 text-base font-semibold text-djibouti-primary transition-all duration-200 hover:bg-djibouti-primary hover:text-white"
             onClick={() =>
               history.push(
                 `/${window.contextPath}/${userType}/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&clientId=${props.item.clientId}&state=${props?.state}`,
@@ -140,11 +106,8 @@ const CheckListCard = (props) => {
           >
             {t("FILL_CHECKLIST")}
           </button>
-          {/* )} */}
-        </Card>
-      ) : (
-        <Loader />
-      )}
+        </div>
+      </div>
     </div>
   );
 };
