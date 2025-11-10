@@ -260,6 +260,13 @@ export const getStatusInfo = (status) => {
       icon: LuClock,
       progress: 55
     },
+    "TECHNICAL_REVIEW": {
+      label: "En attente de révision technique",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 50
+    },
     
     // Report statuses
     "AGENT_REPORT_READY": {
@@ -492,6 +499,13 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-amber-50",
       icon: LuClock,
       progress: 75
+    },
+    "CONFORMED": {
+      label: "En attente des avis",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 60
     },
     "AWAITING_ON_SUB_DIRECTOR_REVIEW": {
       label: "En attente de révision du Sous-directeur",
