@@ -1,5 +1,5 @@
 import Loader from "../../../ui-components/src/atoms/Loader";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 import PublicServicesCard from "./components/PublicServicesCard";
@@ -44,10 +44,13 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
     fetchServiceData();
   }, [tenantId]);
 
-  const moduleList = [...new Set(serviceData?.Services?.map((ob) => ob?.module))] || [];
-  let moduleCode = ["sample", "common", "workflow"];
-  moduleList.forEach((ob) => moduleCode.push(`studio-${ob}`));
-  moduleCode.push("studio-newtl-checklist");
+  const moduleCode = useMemo(() => {
+    const moduleList = [...new Set(serviceData?.Services?.map((ob) => ob?.module))] || [];
+    let codes = ["sample", "common", "workflow"];
+    moduleList.forEach((ob) => codes.push(`studio-${ob}`));
+    codes.push("studio-newtl-checklist");
+    return codes;
+  }, [serviceData]);
 
   const { isLoading: storeLoading, data: store } = Digit.Services.useStore({
     stateCode,
