@@ -21,11 +21,13 @@ const ChecklistTab = ({
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Instruction</h3>
       
       <div className="bg-white rounded-xl p-6 border border-gray-200">
-        <ViewCheckListCards
-          applicationId={data?.Application?.[0]?.id}
-          state={data?.Application?.[0]?.processInstance?.[0]?.state?.state}
-          checkListCodes={checkListCodes}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <ViewCheckListCards
+            applicationId={data?.Application?.[0]?.id}
+            state={data?.Application?.[0]?.processInstance?.[0]?.state?.state}
+            checkListCodes={checkListCodes}
+          />
+        </div>
       </div>
     </div>
   );

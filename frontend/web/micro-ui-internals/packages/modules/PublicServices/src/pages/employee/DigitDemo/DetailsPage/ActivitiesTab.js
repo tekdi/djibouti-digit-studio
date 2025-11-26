@@ -41,7 +41,7 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) =>
             
             {!isCitizen && instance?.assignes?.length > 0 && (
               <p className="text-xs text-gray-500">
-                {t("ASSIGNED_TO")}: {instance.assignes.map((assignee) => assignee?.name).join(", ")}
+                {t("ASSIGNED_TO")}: {instance.assignes[0]?.name}
               </p>
             )}
 

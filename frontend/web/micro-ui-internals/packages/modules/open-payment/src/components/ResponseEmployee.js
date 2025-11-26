@@ -70,25 +70,6 @@ const ResponseEmployee = () => {
           {t("CS_COMMON_DOWNLOAD_RECEIPT")}
         </LinkLabel>
       </div>
-      <ActionBar>
-        <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
-          {/* <SubmitBar style={{borderRadius: "10px"}} label={t(`${businessService.toUpperCase()}_GO_TO_HOME`)} /> */}
-          <button
-            style={{
-              borderRadius: "10px",
-              backgroundColor: "#22a4d9",
-              color: "white",
-              padding: "10px 20px",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            {t(`${businessService?.toUpperCase()}_GO_TO_HOME`)}
-          </button>
-        </Link>
-      </ActionBar>
     </div>
   );
 };

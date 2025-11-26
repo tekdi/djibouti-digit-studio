@@ -4,7 +4,7 @@ import TextInput from "../../../../../ui-components/src/atoms/TextInput";
 import Loader from "../../../../../ui-components/src/atoms/Loader";
 import { Toast } from "@egovernments/digit-ui-react-components";
 
-const Calculation = () => {
+const Calculation = ({ isCitizen }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -13,7 +13,7 @@ const Calculation = () => {
   const isHODorAGENT = userDetails?.info?.roles?.some((role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS");
 
   let styleCondition = {};
-  if (!isHODorAGENT && queryStrings?.state !== checklistStatus?.split(".")[1]) {
+  if (!isHODorAGENT && queryStrings?.state !== checklistStatus?.split(".")[1] && isCitizen) {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
   }
 
@@ -523,10 +523,6 @@ const Calculation = () => {
               <div className="fee-rate-card">
                 <span className="fee-rate-card-title">{t("CALCULATION_SURFACE_PARCELLE")}</span>
                 <span className="fee-rate-card-value disabled">{plotInfo?.plotArea}</span>
-              </div>
-              <div className="fee-rate-card">
-                <span className="fee-rate-card-title">{t("CALCULATION_COS")}</span>
-                <span className="fee-rate-card-value disabled">{plotInfo?.cos}</span>
               </div>
               <div className="fee-rate-card">
                 <span className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES_CALCULATED")}</span>

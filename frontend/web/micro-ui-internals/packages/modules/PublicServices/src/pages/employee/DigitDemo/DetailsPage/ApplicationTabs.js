@@ -4,16 +4,44 @@ import {
   LuFolderOpen, 
   LuCreditCard, 
   LuActivity,
-  LuSquareCheck
+  LuSquareCheck,
+  LuFileText
 } from "react-icons/lu";
 
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
+
+  const userDetails = Digit.UserService.getUser();
+  
+  // Check if user is a commissioner
+  const isCommissioner = userDetails?.info?.roles?.some((role) => 
+    role.code === "BPA_SDECC_COMM" || 
+    role.code === "BPA_DGDCF_COMM" || 
+    role.code === "BPA_ONEAD_COMM" || 
+    role.code === "BPA_DNPC_COMM" || 
+    role.code === "BPA_EDD_COMM" || 
+    role.code === "BPA_INSPD_COMM"
+  );
+
+  // Check if user is an agent (should not see observations tab)
+  const isAgent = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS");
+
+  // BPA_ARCHITECT
+  const showPaymentsTab = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT" ||   role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "COUNTER_EMPLOYEE");
+
   const tabs = [
     { id: "project", label: "Informations de la demande", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
-    { id: "payments", label: "Paiements", icon: LuCreditCard },
-    // Only show checklist tab for non-citizens
-    ...(isCitizen ? [] : [{ id: "checklist", label: "Instruction", icon: LuSquareCheck }]),
+    // Show observations tab for everyone except agents
+    // Label changes based on user role: "Observations" for commissioners, "Retour des Avis" for others
+    ...(!isAgent ? [{ id: "observations", label: isCommissioner ? "Observations" : "Retour des Avis", icon: LuFileText }] : []),
+    // Hide payments and checklist tabs for commissioners only
+    ...(isCommissioner 
+      ? []
+      : [
+          ...(showPaymentsTab ? [{ id: "payments", label: "Paiements", icon: LuCreditCard }] : []),
+          ...(isCitizen ? [] : [{ id: "checklist", label: "Instruction", icon: LuSquareCheck }]),
+        ]
+    ),
     { id: "activities", label: "Historique", icon: LuActivity },
   ];
 

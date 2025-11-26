@@ -378,22 +378,23 @@ const DigitDemoComponent = ({ editdata }) => {
     const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
 
     if (landDetails) {
-      // Safely convert to uppercase
-      const definitiveLandTitleCode = landDetails?.definitiveLandTitle?.code?.toUpperCase();
-      const intededUse = landDetails.intededUse?.code?.toUpperCase();
+      // intededUse is now a text field, so get the value directly
+      const intededUseValue = typeof landDetails.intededUse === 'string' 
+        ? landDetails.intededUse.toUpperCase() 
+        : landDetails.intededUse?.code?.toUpperCase() || '';
       const demolitionType = landDetails?.demolitionType?.code?.toUpperCase();
 
       // Only proceed if currentFormConfig and its body exist
       if (currentFormConfig && currentFormConfig.body) {
         // Create a new copy of the body array
         currentFormConfig.body = currentFormConfig.body.map((field) => {
+          // Ensure tfNo is never disabled
           if (field?.populators?.name === "tfNo") {
             return {
               ...field,
               populators: {
                 ...field.populators,
-                disable: !definitiveLandTitleCode || definitiveLandTitleCode === "NO",
-                required: definitiveLandTitleCode && definitiveLandTitleCode !== "NO",
+                disable: false,
               },
             };
           } else if (field?.populators?.name === "otherOnDemolitionType") {
@@ -410,8 +411,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: !intededUse || intededUse !== "HOUSING",
-                required: intededUse && intededUse === "HOUSING",
+                disable: !intededUseValue || intededUseValue !== "HOUSING",
+                required: intededUseValue && intededUseValue === "HOUSING",
               },
             };
           } else if (field?.populators?.name === "detailsOnOtherType") {
@@ -419,8 +420,8 @@ const DigitDemoComponent = ({ editdata }) => {
               ...field,
               populators: {
                 ...field.populators,
-                disable: !intededUse || intededUse !== "OTHERS",
-                required: intededUse && intededUse === "OTHERS",
+                disable: !intededUseValue || intededUseValue !== "OTHERS",
+                required: intededUseValue && intededUseValue === "OTHERS",
               },
             };
           }

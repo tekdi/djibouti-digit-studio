@@ -28,8 +28,8 @@ const UserDropdown = ({ userDetails, userOptions }) => {
     "TOPOGRAPHY_HOD": "Chef Topographie",
     "TOPOGRAPHY_AGENT": "Instructeur technique Topographie",
     "BPA_CAD_DGDCF_SUB_DIRECTOR": "Sous-Directeur DGDCF",
-    "BPA_SRA_SUB_DIRECTOR": "Sous-Directeur SDATUH",
-    "BPA_SUB_DIRECTOR": "Sous-Directeur SDATUH",
+    "BPA_SRA_SUB_DIRECTOR": "Sous-Directeur SDATU",
+    "BPA_SUB_DIRECTOR": "Sous-Directeur SDATU",
     "CHAKSHU": "Équipe Interne",
     "COUNTER_EMPLOYEE": "Agent Trésorier",
     "STUDIO_ADMIN": "Administrateur",
@@ -37,7 +37,7 @@ const UserDropdown = ({ userDetails, userOptions }) => {
     "BPA_EDD_COMM": "Commissaire Électricité",
     "BPA_DNPC_COMM": "Commissaire Protection Civile",
     "BPA_ONEAD_COMM": "Commissaire Eau et Assainissement",
-    "BPA_DGDCF_COMM": "Commissaire Terres et Conservation",
+    "BPA_DGDCF_COMM": "DGDCF - Direction Générale des Domaines et de la Conservation Foncière",
   };
 
   // Get user roles and find the display role

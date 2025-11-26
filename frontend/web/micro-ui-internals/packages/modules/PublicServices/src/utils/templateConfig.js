@@ -148,11 +148,11 @@ export const ApplicantFields = [
           type: "string",
           label: "Numéro de pièce d'identité *",
           placeholder: "Numéro de la pièce",
-          format: "number",
+          format: "text",
           required: true,
           validation: {
-            regex: "^\\d{1,30}$",
-            message: "ID_NUMBER_ERR",
+            regex: "^[a-zA-Z0-9]{1,30}$",
+            message: "ID_ALPHANUMERIC_ERR",
           },
           maxLength: 30,
           minLength: 1,
@@ -417,12 +417,12 @@ export const checklistByService = [
   {
     // p1
     service: "BPA_PCO",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "customSDECCInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p2
     service: "BPA_PCO_SIMPLE",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "customSDECCInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p3

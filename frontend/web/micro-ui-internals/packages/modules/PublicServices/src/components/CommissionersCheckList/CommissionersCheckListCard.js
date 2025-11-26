@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets, LuShield, LuZap, LuHeart, LuRoute } from "react-icons/lu";
+import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets, LuShield, LuZap, LuHeart, LuRoute, LuClipboardCheck, LuPhone } from "react-icons/lu";
 import CommissionersCheckListModal from "./CommissionersCheckListModal";
 import { useCommissionersData } from "./hooks/useCommissionersData";
 
@@ -23,6 +23,15 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
   // Commissioner data
   const commissioners = [
     {
+      id: "SDECC",
+      name: "SDECC",
+      fullName: "Sous-Direction Expertise et Contrôle des Constructions",
+      description: "Expertise technique et contrôle des constructions",
+      icon: LuClipboardCheck,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
+    },
+    {
       id: "DGDCF",
       name: "DGDCF",
       fullName: "Direction Générale des Domaines et de la Conservation Foncière",
@@ -32,13 +41,13 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
       bgColor: "bg-emerald-50"
     },
     {
-      id: "ONEAD",
-      name: "ONEAD", 
-      fullName: "Office National de l'Eau et de l'Assainissement",
-      description: "Vérification des aspects liés à l'eau potable et à l'assainissement",
-      icon: LuDroplets,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      id: "INSPD",
+      name: "INSPD",
+      fullName: "Institut National de la Santé Publique de Djibouti",
+      description: "Évaluation et approbation des critères sanitaires du projet",
+      icon: LuHeart,
+      color: "text-pink-600",
+      bgColor: "bg-pink-50"
     },
     {
       id: "DNPC",
@@ -52,25 +61,34 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
     {
       id: "EDD",
       name: "EDD",
-      fullName: "Électricité de Djibouti",
+      fullName: "Direction Générale de l'Électricité de Djibouti",
       description: "Contrôle et validation des installations électriques",
       icon: LuZap,
       color: "text-yellow-600",
       bgColor: "bg-yellow-50"
     },
     {
-      id: "INSPD",
-      name: "INSPD",
-      fullName: "Institut National de Santé Publique de Djibouti",
-      description: "Évaluation et approbation des critères sanitaires du projet",
-      icon: LuHeart,
-      color: "text-pink-600",
-      bgColor: "bg-pink-50"
+      id: "ONEAD",
+      name: "ONEAD", 
+      fullName: "Office National des Eaux et de l'Assainissement de Djibouti",
+      description: "Vérification des aspects liés à l'eau potable et à l'assainissement",
+      icon: LuDroplets,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      id: "DT",
+      name: "Djibouti Télécom",
+      fullName: "Direction Générale de Djibouti Télécom",
+      description: "Validation des aspects télécommunications",
+      icon: LuPhone,
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50"
     },
     {
       id: "ADR",
       name: "ADR",
-      fullName: "AGENCE DJIBOUTIENNE DES ROUTES",
+      fullName: "Direction Générale de l'Agence Djiboutienne des Routes",
       description: "Validation des aspects routiers et de circulation",
       icon: LuRoute,
       color: "text-gray-600",
@@ -108,48 +126,36 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
   if (isSubmitted && checklistData) {
     return (
       <React.Fragment>
-        <div className="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-primary to-primary/90 px-6 py-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                  <LuUsers className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-1">
-                    Sélection des Commissaires
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 text-emerald-100 text-xs font-medium rounded-full">
-                      <LuCircleCheck className="w-3 h-3" />
-                      Terminé
-                    </span>
-                    <span className="text-white/70 text-sm">
-                      ID: {applicationNumber}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={handleOpenModal}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition-colors duration-200 backdrop-blur-sm"
-              >
-                <LuEye className="w-4 h-4" />
-                Voir la sélection
-              </button>
-            </div>
-          </div>
+        <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark" />
 
-          {/* Content */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              {/* Submission Info */}
-              <div className="p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">
-                  Soumis le
+          <div className="flex flex-col gap-6 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-djibouti-primary/10">
+                <LuUsers className="h-6 w-6 text-djibouti-primary" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                  Sélection des services concernés
+                  </h3>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <LuCircleCheck className="h-4 w-4" />
+                    Terminé
+                  </span>
                 </div>
-                <div className="text-sm font-semibold text-gray-900">
+                <p className="text-sm text-gray-500">
+                  ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Soumis le
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
                   {new Date(checklistData.submittedAt || Date.now()).toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'short',
@@ -157,75 +163,75 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
                     hour: '2-digit',
                     minute: '2-digit'
                   })}
-                </div>
+                </p>
               </div>
 
-              {/* Selected Count */}
-              <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-                <div className="text-xs font-medium text-primary/70 mb-2 uppercase tracking-wide">
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">
                   Commissaires sélectionnés
-                </div>
-                <div className="text-sm font-semibold text-primary">
+                </span>
+                <p className="mt-2 text-sm font-semibold text-emerald-800">
                   {selectedCommissioners.length} sur {commissioners.length}
-                </div>
+                </p>
               </div>
 
-              {/* Created By */}
-              <div className="p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Créé par
-                </div>
-                <div className="text-sm font-semibold text-gray-900">
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
                   {checklistData.submittedByName || "Utilisateur inconnu"}
-                </div>
+                </p>
               </div>
 
-              {/* Last Edited */}
-              <div className="p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-                <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
                   Dernière modification
-                </div>
-                <div className="text-sm font-semibold text-gray-900">
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
                   {checklistData.lastEditedByName || "Utilisateur inconnu"}
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {checklistData.lastEditedAt && new Date(checklistData.lastEditedAt).toLocaleDateString('fr-FR', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
+                </p>
+                {checklistData.lastEditedAt && (
+                  <p className="text-xs text-gray-500">
+                    {new Date(checklistData.lastEditedAt).toLocaleDateString('fr-FR', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Selected Commissioners */}
-            <div className="mb-6">
-              <h4 className="text-sm font-semibold text-gray-900 mb-4">
+            <div>
+              <h4 className="mb-4 text-sm font-semibold text-gray-900">
                 Commissaires sélectionnés
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {selectedCommissioners.map((commissionerId) => {
-                  const commissioner = commissioners.find(c => c.id === commissionerId);
+                  const commissioner = commissioners.find((c) => c.id === commissionerId);
                   if (!commissioner) return null;
-                  
                   const IconComponent = commissioner.icon;
-                  
+
                   return (
-                    <div key={commissionerId} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
-                      <div className={`w-12 h-12 rounded-xl ${commissioner.bgColor} flex items-center justify-center`}>
-                        <IconComponent className={`w-6 h-6 ${commissioner.color}`} />
+                    <div
+                      key={commissionerId}
+                      className="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 transition-colors hover:border-djibouti-primary/40"
+                    >
+                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${commissioner.bgColor}`}>
+                        <IconComponent className={`h-6 w-6 ${commissioner.color}`} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-gray-900 mb-1">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-gray-900">
                           {commissioner.name}
-                        </div>
-                        <div className="text-xs text-gray-600 truncate">
+                        </p>
+                        <p className="truncate text-xs text-gray-600">
                           {commissioner.fullName}
-                        </div>
+                        </p>
                       </div>
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                        <LuCircleCheck className="w-4 h-4 text-white" />
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500">
+                        <LuCircleCheck className="h-4 w-4 text-white" />
                       </div>
                     </div>
                   );
@@ -233,20 +239,19 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 pt-6 border-t border-gray-100">
+            <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6">
               <button
                 onClick={handleOpenModal}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
               >
-                <LuPen className="w-4 h-4" />
+                <LuPen className="h-4 w-4" />
                 Modifier la sélection
               </button>
               <button
                 onClick={handleViewReport}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-djibouti-primary-dark"
               >
-                <LuEye className="w-4 h-4" />
+                <LuEye className="h-4 w-4" />
                 Voir les détails
               </button>
             </div>
@@ -271,127 +276,67 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
 
   return (
     <React.Fragment>
-      <div className="mb-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-primary/10 to-primary/5 px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <LuUsers className="w-6 h-6 text-primary" />
+      <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-djibouti-primary/70 to-djibouti-primary" />
+
+        <div className="flex flex-col gap-6 p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100/70">
+                <LuUsers className="h-6 w-6 text-amber-600" />
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">
-                  Sélection des Commissaires
-                </h3>
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
-                    <LuClock className="w-3 h-3" />
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                  Sélection des services concernés
+                  </h3>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                    <LuClock className="h-4 w-4" />
                     En attente
                   </span>
-                  <span className="text-gray-500 text-sm">
-                    ID: {applicationNumber}
-                  </span>
                 </div>
+                <p className="text-sm text-gray-500">
+                  ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
+                </p>
               </div>
             </div>
+
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-amber-100 bg-amber-50 p-4">
+              <span className="text-xs font-medium uppercase tracking-wide text-amber-700">
+                Statut
+              </span>
+              <p className="mt-2 text-sm font-semibold text-amber-800">
+                En attente de sélection
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+              <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Instructions
+              </span>
+              <p className="mt-2 text-sm font-semibold text-gray-900">
+                Sélectionnez selon les exigences du projet
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-4">
             <button
               onClick={handleOpenModal}
               disabled={isLoading}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                isLoading 
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                  : 'bg-primary hover:bg-primary/90 text-white'
+              className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary px-4 py-3 text-base font-semibold transition-all duration-200 ${
+                isLoading
+                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                  : "bg-djibouti-primary/10 text-djibouti-primary hover:bg-djibouti-primary hover:text-white"
               }`}
             >
-              <LuUsers className="w-4 h-4" />
+              <LuUsers className="h-5 w-5" />
               {isLoading ? "Chargement..." : "Sélectionner"}
             </button>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {/* Status */}
-            <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
-              <div className="text-xs font-medium text-amber-700 mb-2 uppercase tracking-wide">
-                Statut
-              </div>
-              <div className="text-sm font-semibold text-amber-800">
-                En attente de sélection
-              </div>
-            </div>
-
-            {/* Available Commissioners */}
-            <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-              <div className="text-xs font-medium text-primary/70 mb-2 uppercase tracking-wide">
-                Commissaires disponibles
-              </div>
-              <div className="text-sm font-semibold text-primary">
-                {commissioners.length} commissaires
-              </div>
-            </div>
-
-            {/* Instructions */}
-            <div className="p-4 bg-gray-50/50 rounded-xl border border-gray-100">
-              <div className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">
-                Instructions
-              </div>
-              <div className="text-sm font-semibold text-gray-900">
-                Sélectionnez selon les exigences du projet
-              </div>
-            </div>
-          </div>
-
-          {/* Commissioners Preview */}
-          <div className="mb-6">
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">
-              Commissaires disponibles
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {commissioners.slice(0, 4).map((commissioner) => {
-                const IconComponent = commissioner.icon;
-                return (
-                  <div key={commissioner.id} className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
-                    <div className={`w-10 h-10 rounded-lg ${commissioner.bgColor} flex items-center justify-center`}>
-                      <IconComponent className={`w-5 h-5 ${commissioner.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-gray-900 mb-1">
-                        {commissioner.name}
-                      </div>
-                      <div className="text-xs text-gray-600 truncate">
-                        {commissioner.description}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {commissioners.length > 4 && (
-              <div className="text-xs text-gray-500 mt-3 text-center">
-                +{commissioners.length - 4} autres commissaires disponibles
-              </div>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 pt-6 border-t border-gray-100">
-            <button
-              onClick={handleOpenModal}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-            >
-              <LuUsers className="w-4 h-4" />
-              Commencer la sélection
-            </button>
-            <button
-              onClick={handleOpenModal}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200"
-            >
-              <LuEye className="w-4 h-4" />
-              Voir tous les commissaires
-            </button>
-          </div>
         </div>
       </div>
 

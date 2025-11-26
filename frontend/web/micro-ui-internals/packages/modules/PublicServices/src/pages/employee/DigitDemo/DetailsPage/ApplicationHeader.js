@@ -41,7 +41,7 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
           iconBgColor="bg-white/20"
           iconColor="text-white"
           label="Demandeur"
-          value={`${applicant?.name} Téléphone : +253 ${applicant?.mobileNumber}`}
+          value={`Nom et prénom : ${applicant?.name} | Téléphone : +253 ${applicant?.mobileNumber}`}
         />
       </div>
 
