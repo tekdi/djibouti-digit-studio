@@ -4,6 +4,7 @@ import DocumentsTab from "./DocumentsTab";
 import PaymentsTab from "./PaymentsTab";
 import ActivitiesTab from "./ActivitiesTab";
 import ChecklistTab from "./ChecklistTab";
+import ObservationsTab from "./ObservationsTab";
 
 const MainView = ({ 
   activeTab, 
@@ -69,6 +70,13 @@ const MainView = ({
           shouldShowChecklist={shouldShowChecklist}
           checkListCodes={checkListCodes}
           data={data}
+        />
+      )}
+
+      {activeTab === "observations" && (
+        <ObservationsTab 
+          response={response}
+          queryStrings={queryStrings}
         />
       )}
     </div>

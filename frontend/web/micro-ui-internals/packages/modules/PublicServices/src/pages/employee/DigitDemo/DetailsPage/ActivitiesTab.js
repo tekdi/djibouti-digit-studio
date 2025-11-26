@@ -5,7 +5,6 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) =>
   const { t } = useTranslation();
 
   const renderTimeline = (timeline) => {
-    console.log(timeline);
     return [...timeline].reverse().map((instance, index) => {
       const isCurrentState = index === timeline.length - 1;
       
@@ -43,7 +42,6 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) =>
             {!isCitizen && instance?.assignes?.length > 0 && (
               <p className="text-xs text-gray-500">
                 {t("ASSIGNED_TO")}: {instance.assignes[0]?.name}
-                {instance.assignes.length > 1 && ` (+${instance.assignes.length - 1} autre${instance.assignes.length > 2 ? 's' : ''})`}
               </p>
             )}
 
