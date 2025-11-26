@@ -5,6 +5,7 @@ import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
 import { AgentReportCard } from "../../../components/AgentReport";
 import { CommissionersCheckListCard } from "../../../components/CommissionersCheckList";
+import { InstructionSheetCard } from "../../../components/InstructionSheet";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -78,6 +79,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 }
               });
             }
+
+            // Add instruction sheet (SRA) if configured
+            if (allowedCodes.includes("customInstructionSheet")) {
+              items.push({
+                id: "custom-instruction-sheet",
+                code: "customInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_SRA",
+                auditDetails: {
+                  createdTime: Date.now() + 2
+                }
+              });
+            }
           }
 
           setCardItems(items);
@@ -115,6 +128,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customCommissionersChecklist" && showCommunisionersChecklist) {
             return (
               <CommissionersCheckListCard 
+                key={index}
+                service={service} 
+                state={state} 
+                t={t} 
+              />
+            );
+          }
+
+          // Check if this is an instruction sheet (SRA)
+          if (item.code === "customInstructionSheet") {
+            return (
+              <InstructionSheetCard 
                 key={index}
                 service={service} 
                 state={state} 

@@ -525,10 +525,6 @@ const Calculation = ({ isCitizen }) => {
                 <span className="fee-rate-card-value disabled">{plotInfo?.plotArea}</span>
               </div>
               <div className="fee-rate-card">
-                <span className="fee-rate-card-title">{t("CALCULATION_COS")}</span>
-                <span className="fee-rate-card-value disabled">{plotInfo?.cos}</span>
-              </div>
-              <div className="fee-rate-card">
                 <span className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES_CALCULATED")}</span>
                 <span className="fee-rate-card-value disabled">{calculatedFees?.royaltyFee} FDj</span>
               </div>

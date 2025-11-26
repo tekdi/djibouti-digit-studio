@@ -615,10 +615,6 @@ const OpenView = () => {
                     <span className="fee-rate-card-value">{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.area}</span>
                   </div>
                   <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_COS")}</span>
-                    <span className="fee-rate-card-value">{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.projectedCos}</span>
-                  </div>
-                  <div className="fee-rate-card">
                     <span className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES_CALCULATED")}</span>
                     <span className="fee-rate-card-value">{costEstimation?.royaltyFee} FDj</span>
                   </div>

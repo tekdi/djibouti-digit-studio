@@ -71,7 +71,7 @@ const PaymentsTab = ({
           {/* Calculation Fees Checklist Section */}
           {hasCalculationFees && !isCitizen && (
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-gray-900">Calcul des frais</h4>
+              <h4 className="text-lg font-semibold text-gray-900">Estimation de la redevance de la taxe</h4>
               <div className="bg-white rounded-xl p-6 border border-gray-200">
                 <Calculation isCitizen={isCitizen} />
               </div>

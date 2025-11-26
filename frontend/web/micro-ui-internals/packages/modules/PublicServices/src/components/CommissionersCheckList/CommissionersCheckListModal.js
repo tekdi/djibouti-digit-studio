@@ -95,10 +95,10 @@ const CommissionersCheckListModal = ({
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-white mb-1">
-                  {isViewMode ? "Sélection des Commissaires" : "Sélectionner les Commissaires"}
+                  {isViewMode ? "Sélection des services concernés" : "Sélectionner les services concernés"}
                 </h2>
                 <p className="text-white/80 text-sm">
-                  {isViewMode ? "Consultez la sélection des commissaires" : "Sélectionnez les commissaires requis pour ce projet"}
+                  {isViewMode ? "Consultez la sélection des services concernés" : "Sélectionnez les services concernés requis pour ce projet"}
                 </p>
               </div>
             </div>
@@ -116,7 +116,7 @@ const CommissionersCheckListModal = ({
           {/* Commissioners Selection */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">
-              Commissaires Disponibles
+              Services concernés disponibles
             </h3>
             {errors.commissioners && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
@@ -194,7 +194,7 @@ const CommissionersCheckListModal = ({
           {selectedCommissioners.length > 0 && (
             <div className="mb-8 p-5 bg-primary/5 rounded-xl border border-primary/10">
               <h4 className="text-sm font-semibold text-primary mb-3">
-                Commissaires Sélectionnés ({selectedCommissioners.length})
+                Services concernés Sélectionnés ({selectedCommissioners.length})
               </h4>
               <div className="flex flex-wrap gap-2">
                 {selectedCommissioners.map((commissionerId) => {

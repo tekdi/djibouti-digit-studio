@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets, LuShield, LuZap, LuHeart, LuRoute } from "react-icons/lu";
+import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets, LuShield, LuZap, LuHeart, LuRoute, LuClipboardCheck, LuPhone } from "react-icons/lu";
 import CommissionersCheckListModal from "./CommissionersCheckListModal";
 import { useCommissionersData } from "./hooks/useCommissionersData";
 
@@ -23,6 +23,15 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
   // Commissioner data
   const commissioners = [
     {
+      id: "SDECC",
+      name: "SDECC",
+      fullName: "Sous-Direction Expertise et Contrôle des Constructions",
+      description: "Expertise technique et contrôle des constructions",
+      icon: LuClipboardCheck,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
+    },
+    {
       id: "DGDCF",
       name: "DGDCF",
       fullName: "Direction Générale des Domaines et de la Conservation Foncière",
@@ -32,13 +41,13 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
       bgColor: "bg-emerald-50"
     },
     {
-      id: "ONEAD",
-      name: "ONEAD", 
-      fullName: "Office National de l'Eau et de l'Assainissement",
-      description: "Vérification des aspects liés à l'eau potable et à l'assainissement",
-      icon: LuDroplets,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      id: "INSPD",
+      name: "INSPD",
+      fullName: "Institut National de la Santé Publique de Djibouti",
+      description: "Évaluation et approbation des critères sanitaires du projet",
+      icon: LuHeart,
+      color: "text-pink-600",
+      bgColor: "bg-pink-50"
     },
     {
       id: "DNPC",
@@ -52,25 +61,34 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
     {
       id: "EDD",
       name: "EDD",
-      fullName: "Électricité de Djibouti",
+      fullName: "Direction Générale de l'Électricité de Djibouti",
       description: "Contrôle et validation des installations électriques",
       icon: LuZap,
       color: "text-yellow-600",
       bgColor: "bg-yellow-50"
     },
     {
-      id: "INSPD",
-      name: "INSPD",
-      fullName: "Institut National de Santé Publique de Djibouti",
-      description: "Évaluation et approbation des critères sanitaires du projet",
-      icon: LuHeart,
-      color: "text-pink-600",
-      bgColor: "bg-pink-50"
+      id: "ONEAD",
+      name: "ONEAD", 
+      fullName: "Office National des Eaux et de l'Assainissement de Djibouti",
+      description: "Vérification des aspects liés à l'eau potable et à l'assainissement",
+      icon: LuDroplets,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      id: "DT",
+      name: "Djibouti Télécom",
+      fullName: "Direction Générale de Djibouti Télécom",
+      description: "Validation des aspects télécommunications",
+      icon: LuPhone,
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50"
     },
     {
       id: "ADR",
       name: "ADR",
-      fullName: "AGENCE DJIBOUTIENNE DES ROUTES",
+      fullName: "Direction Générale de l'Agence Djiboutienne des Routes",
       description: "Validation des aspects routiers et de circulation",
       icon: LuRoute,
       color: "text-gray-600",
@@ -283,27 +301,6 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleOpenModal}
-                disabled={isLoading}
-                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  isLoading
-                    ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                    : "border border-djibouti-primary bg-djibouti-primary text-white hover:bg-djibouti-primary-dark"
-                }`}
-              >
-                <LuUsers className="h-4 w-4" />
-                {isLoading ? "Chargement..." : "Commencer la sélection"}
-              </button>
-              <button
-                onClick={handleOpenModal}
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
-              >
-                <LuEye className="h-4 w-4" />
-                Voir tous les commissaires
-              </button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -313,14 +310,6 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
               </span>
               <p className="mt-2 text-sm font-semibold text-amber-800">
                 En attente de sélection
-              </p>
-            </div>
-            <div className="rounded-xl border border-primary/10 bg-primary/5 p-4">
-              <span className="text-xs font-medium uppercase tracking-wide text-primary/70">
-                Commissaires disponibles
-              </span>
-              <p className="mt-2 text-sm font-semibold text-primary">
-                {commissioners.length} commissaires
               </p>
             </div>
             <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
@@ -333,39 +322,21 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-sm font-semibold text-gray-900">
-              Commissaires disponibles
-            </h4>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {commissioners.slice(0, 4).map((commissioner) => {
-                const IconComponent = commissioner.icon;
-                return (
-                  <div
-                    key={commissioner.id}
-                    className="flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-4 transition-colors hover:border-djibouti-primary/40"
-                  >
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${commissioner.bgColor}`}>
-                      <IconComponent className={`h-5 w-5 ${commissioner.color}`} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {commissioner.name}
-                      </p>
-                      <p className="truncate text-xs text-gray-600">
-                        {commissioner.description}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            {commissioners.length > 4 && (
-              <p className="mt-3 text-center text-xs text-gray-500">
-                +{commissioners.length - 4} autres commissaires disponibles
-              </p>
-            )}
+          <div className="pt-4">
+            <button
+              onClick={handleOpenModal}
+              disabled={isLoading}
+              className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary px-4 py-3 text-base font-semibold transition-all duration-200 ${
+                isLoading
+                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                  : "bg-djibouti-primary/10 text-djibouti-primary hover:bg-djibouti-primary hover:text-white"
+              }`}
+            >
+              <LuUsers className="h-5 w-5" />
+              {isLoading ? "Chargement..." : "Sélectionner"}
+            </button>
           </div>
+
         </div>
       </div>
 
