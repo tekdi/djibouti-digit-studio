@@ -11,7 +11,7 @@ import {
   LuShield
 } from "react-icons/lu";
 
-const Settings = () => {
+const AdminSettings = () => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +145,7 @@ const Settings = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-djibouti-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#22a4d9]"></div>
       </div>
     );
   }
@@ -155,15 +155,15 @@ const Settings = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="bg-gradient-djibouti-light rounded-3xl p-8 border border-purple-100">
+          <div className="bg-gradient-to-r from-[#22a4d9] to-[#1978a0] rounded-3xl p-8 border border-[#22a4d9]/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="bg-gradient-to-br from-[#22a4d9] to-[#22a4d9] p-3 rounded-2xl shadow-lg">
+                <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl shadow-lg">
                   <LuShield className="w-8 h-8 text-white" />
                 </div>
                 <div>
                   <h1 className="text-4xl font-bold text-white mb-2">Paramètres du Compte</h1>
-                  <p className="text-lg text-gray-200">Gérez vos informations personnelles et vos préférences</p>
+                  <p className="text-lg text-white/90">Gérez vos informations personnelles et vos préférences</p>
                 </div>
               </div>
             </div>
@@ -171,7 +171,7 @@ const Settings = () => {
         </div>
 
         {/* Settings Content */}
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
+        <div className="bg-white rounded-3xl shadow-lg border border-[#22a4d9]/20 p-8">
           {/* Profile Section */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -179,7 +179,7 @@ const Settings = () => {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-djibouti-primary text-white rounded-xl hover:bg-djibouti-primary-dark transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#22a4d9] to-[#1978a0] text-white rounded-xl hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                 >
                   <LuPencil className="w-4 h-4" />
                   Modifier
@@ -202,7 +202,7 @@ const Settings = () => {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-djibouti-primary focus:border-transparent transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] transition-all duration-200"
                       placeholder="Votre nom complet"
                     />
                   </div>
@@ -220,7 +220,7 @@ const Settings = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-djibouti-primary focus:border-transparent transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] transition-all duration-200"
                       placeholder="votre.email@exemple.com"
                     />
                   </div>
@@ -238,7 +238,7 @@ const Settings = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-djibouti-primary focus:border-transparent transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] transition-all duration-200"
                       placeholder="+253 XX XX XX XX"
                     />
                   </div>
@@ -263,7 +263,7 @@ const Settings = () => {
                   <button
                     onClick={handleSave}
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     <LuSave className="w-4 h-4" />
                     {isSubmitting ? "Enregistrement..." : "Enregistrer"}
@@ -271,7 +271,7 @@ const Settings = () => {
                   <button
                     onClick={handleCancel}
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <LuX className="w-4 h-4" />
                     Annuler
@@ -282,9 +282,9 @@ const Settings = () => {
               /* Display Mode */
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Full Name */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="p-2 bg-djibouti-primary/10 rounded-lg">
-                    <LuUser className="w-5 h-5 text-djibouti-primary" />
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl border border-[#22a4d9]/20">
+                  <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                    <LuUser className="w-5 h-5 text-[#22a4d9]" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Nom Complet</p>
@@ -293,9 +293,9 @@ const Settings = () => {
                 </div>
 
                 {/* Email */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="p-2 bg-djibouti-primary/10 rounded-lg">
-                    <LuMail className="w-5 h-5 text-djibouti-primary" />
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl border border-[#22a4d9]/20">
+                  <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                    <LuMail className="w-5 h-5 text-[#22a4d9]" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Adresse Email</p>
@@ -304,9 +304,9 @@ const Settings = () => {
                 </div>
 
                 {/* Phone */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="p-2 bg-djibouti-primary/10 rounded-lg">
-                    <LuPhone className="w-5 h-5 text-djibouti-primary" />
+                <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl border border-[#22a4d9]/20">
+                  <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                    <LuPhone className="w-5 h-5 text-[#22a4d9]" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Numéro de Téléphone</p>
@@ -322,4 +322,5 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default AdminSettings;
+

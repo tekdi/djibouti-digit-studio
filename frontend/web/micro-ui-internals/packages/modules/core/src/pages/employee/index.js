@@ -35,6 +35,7 @@ const EmployeeApp = ({
   const location = useLocation();
   const showLanguageChange = location?.pathname?.includes("language-selection");
   const isUserProfile = userScreensExempted.some((url) => location?.pathname?.includes(url));
+  const isAdminDashboard = location?.pathname?.includes("admin-dashboard");
 
   // Fetch link data for the TopBarSideBar
   const { isLoading: islinkDataLoading, data: linkData, isFetched: isLinkDataFetched } = Digit.Hooks.useCustomMDMS(
@@ -122,39 +123,43 @@ const EmployeeApp = ({
           </div>
         </Route>
         <Route>
-          <TopBarSideBar
-            t={t}
-            stateInfo={stateInfo}
-            userDetails={userDetails}
-            CITIZEN={CITIZEN}
-            cityDetails={cityDetails}
-            mobileView={mobileView}
-            handleUserDropdownSelection={handleUserDropdownSelection}
-            logoUrl={logoUrl}
-            modules={modules}
-            linkData={linkData}
-            islinkDataLoading={islinkDataLoading}
-          />
+          {!isAdminDashboard && (
+            <TopBarSideBar
+              t={t}
+              stateInfo={stateInfo}
+              userDetails={userDetails}
+              CITIZEN={CITIZEN}
+              cityDetails={cityDetails}
+              mobileView={mobileView}
+              handleUserDropdownSelection={handleUserDropdownSelection}
+              logoUrl={logoUrl}
+              modules={modules}
+              linkData={linkData}
+              islinkDataLoading={islinkDataLoading}
+            />
+          )}
           <div className={`${DSO ? "m-auto" : ""}`}>
             <div>
               <ErrorBoundary initData={initData}>
                 <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
               </ErrorBoundary>
             </div>
-            <div className="employee-home-footer">
-              <img
-                alt="Powered by DIGIT"
-                src={
-                  i18n.language === "en_IN"
-                    ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")
-                    : "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"
-                }
-                style={{ height: "1.1em", cursor: "pointer" }}
-                onClick={() => {
-                  window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
-                }}
-              />
-            </div>
+            {!isAdminDashboard && (
+              <div className="employee-home-footer">
+                <img
+                  alt="Powered by DIGIT"
+                  src={
+                    i18n.language === "en_IN"
+                      ? window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")
+                      : "https://egov-bucket.s3.af-south-1.amazonaws.com/new/Powered+by+DIGIT+French+(1).png"
+                  }
+                  style={{ height: "1.1em", cursor: "pointer" }}
+                  onClick={() => {
+                    window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
+                  }}
+                />
+              </div>
+            )}
           </div>
         </Route>
         <Route>
