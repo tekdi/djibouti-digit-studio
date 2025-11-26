@@ -33,6 +33,7 @@ import EmployeeApplications from "./applications";
 import InProgressApplications from "./applications/InProgressApplications";
 import NewApplications from "./applications/NewApplications";
 import EmployeeSearch from "./search";
+import AdminDashboard from "./Admin/AdminDashboard";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -62,8 +63,7 @@ const SampleBreadCrumbs = ({ location }) => {
   return <BreadCrumb crumbs={crumbs} />;
 };
 
-const App = ({ path, stateCode, userType, tenants }) => {
-  const location = window.location;
+const App = ({ path }) => {
 
   return (
     <Switch>
@@ -84,6 +84,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
 
           {/* employee */}
           <PrivateRoute exact path={`${path}/dashboard-employee`} component={() => <EmployeeDashboard />} />
+          <PrivateRoute exact path={`${path}/admin-dashboard`} component={() => <AdminDashboard />} />
           <PrivateRoute exact path={`${path}/applications-employee/all`} component={() => <EmployeeApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/in-progress`} component={() => <InProgressApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/new`} component={() => <NewApplications />} />
