@@ -137,7 +137,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-xl font-semibold text-gray-900">
-                  Sélectionnez les services concernés
+                  Sélection des services concernés
                   </h3>
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
                     <LuCircleCheck className="h-4 w-4" />
@@ -288,7 +288,7 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-xl font-semibold text-gray-900">
-                  Sélectionnez les services concernés
+                  Sélection des services concernés
                   </h3>
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
                     <LuClock className="h-4 w-4" />

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
-import InstructionSheetModal from "./InstructionSheetModal";
-import { useInstructionSheetData } from "./hooks/useInstructionSheetData";
+import SDECCInstructionSheetModal from "./SDECCInstructionSheetModal";
+import { useSDECCInstructionSheetData } from "./hooks/useSDECCInstructionSheetData";
 
-const InstructionSheetCard = ({ service, state, t }) => {
+const SDECCInstructionSheetCard = ({ service, state, t }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -19,7 +19,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
     isSubmitted,
     isLoading,
     checkExistingInstructionSheet
-  } = useInstructionSheetData(applicationNumber, serviceCode);
+  } = useSDECCInstructionSheetData(applicationNumber, serviceCode);
 
   useEffect(() => {
     if (applicationNumber && serviceCode) {
@@ -65,7 +65,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-xl font-semibold text-gray-900">
-                    Fiche d'instruction (par le SRA)
+                    Fiche d'instruction SDECC (Structure)
                   </h3>
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
                     <LuCircleCheck className="h-4 w-4" />
@@ -121,34 +121,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
                   </p>
                 )}
               </div>
-
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
-                <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">
-                  Pétitionnaire
-                </span>
-                <p className="mt-2 text-sm font-semibold text-emerald-800">
-                  {instructionData.applicantName || "Non renseigné"}
-                </p>
-              </div>
             </div>
-
-            {/* Final Opinion */}
-            {instructionData.finalOpinion && (
-              <div className="border-t border-gray-100 pt-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-700">Avis final :</span>
-                  <span
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold ${
-                      instructionData.finalOpinion === "FAVORABLE"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {instructionData.finalOpinion === "FAVORABLE" ? "Favorable" : "Défavorable"}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {/* History */}
             {instructionData.history && instructionData.history.length > 0 && (
@@ -196,20 +169,6 @@ const InstructionSheetCard = ({ service, state, t }) => {
                                 })}
                               </span>
                             </div>
-                            {entry.changes?.finalOpinion && (
-                              <div className="text-xs text-gray-600">
-                                Avis :{" "}
-                                <span
-                                  className={`font-semibold ${
-                                    entry.changes.finalOpinion === "FAVORABLE"
-                                      ? "text-emerald-700"
-                                      : "text-red-700"
-                                  }`}
-                                >
-                                  {entry.changes.finalOpinion === "FAVORABLE" ? "Favorable" : "Défavorable"}
-                                </span>
-                              </div>
-                            )}
                           </div>
                         </div>
                       ))}
@@ -237,7 +196,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
           </div>
         </div>
 
-        <InstructionSheetModal
+        <SDECCInstructionSheetModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           applicationNumber={applicationNumber}
@@ -265,7 +224,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Fiche d'instruction (par le SRA)
+                  Fiche d'instruction SDECC (Structure)
                 </h3>
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
                   <LuClock className="h-4 w-4" />
@@ -289,10 +248,10 @@ const InstructionSheetCard = ({ service, state, t }) => {
             </div>
             <div className="rounded-xl border border-primary/10 bg-primary/5 p-4">
               <span className="text-xs font-medium uppercase tracking-wide text-primary/70">
-                Documents à vérifier
+                Points de contrôle
               </span>
               <p className="mt-2 text-sm font-semibold text-primary">
-                20 documents
+                8 points de contrôle
               </p>
             </div>
           </div>
@@ -314,7 +273,7 @@ const InstructionSheetCard = ({ service, state, t }) => {
         </div>
       </div>
 
-      <InstructionSheetModal
+      <SDECCInstructionSheetModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         applicationNumber={applicationNumber}
@@ -329,11 +288,11 @@ const InstructionSheetCard = ({ service, state, t }) => {
   );
 };
 
-InstructionSheetCard.propTypes = {
+SDECCInstructionSheetCard.propTypes = {
   service: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
   t: PropTypes.func.isRequired
 };
 
-export default InstructionSheetCard;
+export default SDECCInstructionSheetCard;
 

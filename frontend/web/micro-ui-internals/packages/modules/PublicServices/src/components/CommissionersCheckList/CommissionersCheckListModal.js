@@ -98,7 +98,7 @@ const CommissionersCheckListModal = ({
                   {isViewMode ? "Sélection des services concernés" : "Sélectionner les services concernés"}
                 </h2>
                 <p className="text-white/80 text-sm">
-                  {isViewMode ? "Consultez la sélection des services concernés" : "Sélectionnez les services concernés requis pour ce projet"}
+                  {isViewMode ? "Consultez la sélection des services concernés" : "Sélectionnez les services concernés requis pour ce projet."}
                 </p>
               </div>
             </div>

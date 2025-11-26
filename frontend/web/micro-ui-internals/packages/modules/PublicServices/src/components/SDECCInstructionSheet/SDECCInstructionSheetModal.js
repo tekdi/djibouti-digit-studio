@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Toast } from "@egovernments/digit-ui-components";
-import { useInstructionSheetAPI } from "./hooks/useInstructionSheetAPI";
-import { DOCUMENTS_LIST, CONFORMITY_LIST } from "./documentsData";
+import { useSDECCInstructionSheetAPI } from "./hooks/useSDECCInstructionSheetAPI";
+import { DOCUMENTS_LIST } from "./documentsData";
 import {
   ModalHeader,
-  TopFieldsSection,
   DocumentsTable,
-  ConformityTable,
-  FinalCommentsAndOpinion,
 } from "./components";
 
-const InstructionSheetModal = ({
+const SDECCInstructionSheetModal = ({
   isOpen,
   onClose,
   applicationNumber,
@@ -23,25 +20,12 @@ const InstructionSheetModal = ({
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
-    applicantName: "",
-    projectType: "",
-    plotLocation: "",
     documents: DOCUMENTS_LIST.map((doc) => ({
       id: doc.id,
       observations: [],
       comments: "",
       modifiedFiles: "",
     })),
-    conformity: CONFORMITY_LIST.map((item) => ({
-      id: item.id,
-      technicalPrescription: "",
-      regulatoryPrescription: "",
-      projectPrescription: "",
-      observation: "",
-      textInput: "",
-    })),
-    finalComments: "",
-    finalOpinion: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -51,7 +35,19 @@ const InstructionSheetModal = ({
   const [applicationDocuments, setApplicationDocuments] = useState([]);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading, submitInstructionSheet, getFileUrl, downloadFile } = useInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
+  const { isLoading, submitInstructionSheet, getFileUrl, downloadFile } = useSDECCInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
+
+  // Helper function for color classes
+  const getColorClass = (color) => {
+    const colorMap = {
+      emerald: "text-emerald-700",
+      red: "text-red-700",
+      amber: "text-amber-700",
+      gray: "text-gray-700",
+      blue: "text-blue-700",
+    };
+    return colorMap[color] || "text-gray-700";
+  };
 
   // Fetch application documents
   useEffect(() => {
@@ -90,53 +86,18 @@ const InstructionSheetModal = ({
     }
   }, [isOpen, applicationNumber, serviceCode, tenantId]);
 
-  // Helper function for color classes
-  const getColorClass = (color) => {
-    const colorMap = {
-      emerald: "text-emerald-700",
-      red: "text-red-700",
-      amber: "text-amber-700",
-      gray: "text-gray-700",
-      blue: "text-blue-700",
-    };
-    return colorMap[color] || "text-gray-700";
-  };
-
   useEffect(() => {
     if (existingData) {
       setFormData({
-        applicantName: existingData.applicantName || "",
-        projectType: existingData.projectType || "",
-        plotLocation: existingData.plotLocation || "",
         documents: existingData.documents || DOCUMENTS_LIST.map((doc) => ({
           id: doc.id,
           observations: [],
           comments: "",
           modifiedFiles: "",
         })),
-        conformity: existingData.conformity || CONFORMITY_LIST.map((item) => ({
-          id: item.id,
-          technicalPrescription: "",
-          regulatoryPrescription: "",
-          projectPrescription: "",
-          observation: "",
-          textInput: "",
-        })),
-        finalComments: existingData.finalComments || "",
-        finalOpinion: existingData.finalOpinion || "",
       });
     }
   }, [existingData]);
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
-    }
-  };
 
   const handleDocumentChange = (docId, field, value) => {
     setFormData((prev) => ({
@@ -164,15 +125,6 @@ const InstructionSheetModal = ({
         }
         return doc;
       }),
-    }));
-  };
-
-  const handleConformityChange = (conformityId, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      conformity: prev.conformity.map((item) =>
-        item.id === conformityId ? { ...item, [field]: value } : item
-      ),
     }));
   };
 
@@ -235,18 +187,12 @@ const InstructionSheetModal = ({
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.applicantName?.trim()) {
-      newErrors.applicantName = "Le nom du pétitionnaire est obligatoire";
-    }
-    if (!formData.projectType?.trim()) {
-      newErrors.projectType = "Le type de projet est obligatoire";
-    }
-    if (!formData.plotLocation?.trim()) {
-      newErrors.plotLocation = "La localisation de la parcelle est obligatoire";
-    }
-    if (!formData.finalOpinion) {
-      newErrors.finalOpinion = "L'avis final est obligatoire";
-    }
+    // Check if at least one observation is selected for each document
+    formData.documents.forEach((doc) => {
+      if (!doc.observations || doc.observations.length === 0) {
+        newErrors[`doc_${doc.id}`] = "Veuillez sélectionner au moins une observation";
+      }
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -262,22 +208,23 @@ const InstructionSheetModal = ({
     }
 
     try {
-      const isEdit = Boolean(existingData);
-      await submitInstructionSheet(formData, service, state, isEdit, existingData);
+      await submitInstructionSheet(
+        formData,
+        service,
+        state,
+        !!existingData,
+        existingData
+      );
 
-      if (Digit.Toast) {
-        Digit.Toast.success(
-          isEdit 
-            ? "Fiche d'instruction mise à jour avec succès" 
-            : "Fiche d'instruction créée avec succès"
-        );
-      }
+      setShowToast({
+        label: existingData ? "Fiche mise à jour avec succès" : "Fiche enregistrée avec succès",
+        isError: false,
+      });
 
       setTimeout(() => {
         onSuccess();
         onClose();
-      }, 1000);
-
+      }, 1500);
     } catch (error) {
       console.error("Error submitting instruction sheet:", error);
       
@@ -297,14 +244,13 @@ const InstructionSheetModal = ({
       {showToast && (
         <Toast
           label={showToast.label}
-          isDleteBtn={true}
-          error={showToast.isError}
+          isError={showToast.isError}
           onClose={() => setShowToast(null)}
         />
       )}
 
       <div
-        className="bg-white w-full h-full overflow-hidden flex flex-col"
+        className="flex flex-col h-full bg-white"
         onClick={(e) => e.stopPropagation()}
       >
         <ModalHeader
@@ -320,14 +266,6 @@ const InstructionSheetModal = ({
 
         {/* Content */}
         <div className="p-6 lg:p-8 bg-white overflow-y-auto flex-1">
-          <TopFieldsSection
-            formData={formData}
-            errors={errors}
-            isViewMode={isViewMode}
-            isEditMode={isEditMode}
-            handleInputChange={handleInputChange}
-          />
-
           <DocumentsTable
             formData={formData}
             isViewMode={isViewMode}
@@ -343,29 +281,13 @@ const InstructionSheetModal = ({
             tenantId={tenantId}
             applicationDocuments={applicationDocuments}
           />
-
-          <ConformityTable
-            formData={formData}
-            isViewMode={isViewMode}
-            isEditMode={isEditMode}
-            handleConformityChange={handleConformityChange}
-            getColorClass={getColorClass}
-          />
-
-          <FinalCommentsAndOpinion
-            formData={formData}
-            errors={errors}
-            isViewMode={isViewMode}
-            isEditMode={isEditMode}
-            handleInputChange={handleInputChange}
-          />
         </div>
       </div>
     </div>
   );
 };
 
-InstructionSheetModal.propTypes = {
+SDECCInstructionSheetModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   applicationNumber: PropTypes.string.isRequired,
@@ -377,4 +299,5 @@ InstructionSheetModal.propTypes = {
   existingData: PropTypes.object,
 };
 
-export default InstructionSheetModal;
+export default SDECCInstructionSheetModal;
+

@@ -417,12 +417,12 @@ export const checklistByService = [
   {
     // p1
     service: "BPA_PCO",
-    checklist: ["customInstructionSheet", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "customSDECCInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p2
     service: "BPA_PCO_SIMPLE",
-    checklist: ["customInstructionSheet", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "customSDECCInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     // p3

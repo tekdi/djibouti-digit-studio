@@ -83,33 +83,13 @@ const DocumentsTable = ({
     handleFileUpload(docId, files);
   };
 
-  // Find application document by index (for first 19 documents only)
-  const getApplicationDocument = (docId) => {
-    // Only show application documents for first 19 documents (not the 20th - AutoCAD file)
-    if (docId > 19) return null;
-    
-    // Map document index to application document index (assuming they are in the same order)
-    // We'll use the document index (docId - 1) to find the corresponding application document
-    const appDocIndex = docId - 1;
-    if (applicationDocuments && applicationDocuments[appDocIndex]) {
-      return applicationDocuments[appDocIndex];
-    }
-    return null;
-  };
-
-  // Check if file is PDF
-  const isPdfFile = (fileStoreId) => {
-    // We'll assume all files can be previewed, but we'll check the file extension if available
-    // For now, we'll try to preview all files and handle errors gracefully
-    return true;
-  };
 
   return (
     <div>
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Contenu du dossier</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Contrôle sur la partie Structure (SDECC)</h3>
         <p className="text-sm text-gray-500">
-          Vérifiez chaque document et indiquez son état
+          Vérifiez chaque point de contrôle et indiquez son état
         </p>
       </div>
 
@@ -142,21 +122,22 @@ const DocumentsTable = ({
                 modifiedFiles: "",
               };
 
-              // Get application document for first 19 documents only
-              const appDoc = doc.id <= 19 ? getApplicationDocument(doc.id) : null;
-              const hasAppFile = appDoc && appDoc.fileStoreId;
+              // Filter observation options based on document
+              const availableOptions = doc.hasNonConcerned
+                ? OBSERVATION_OPTIONS
+                : OBSERVATION_OPTIONS.filter(opt => opt.value !== "NON_CONCERNE");
 
               return (
                 <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
                   <td className="border border-gray-200 p-3 text-center text-sm font-medium text-gray-600">
                     {doc.id}
                   </td>
-                  <td className="border border-gray-200 p-3 text-sm text-gray-700">
+                  <td className="border border-gray-200 p-3 text-sm text-gray-700 font-medium">
                     {doc.label}
                   </td>
                   <td className="border border-gray-200 p-3">
-                    <div className="flex items-center justify-center gap-4">
-                      {OBSERVATION_OPTIONS.map((option) => {
+                    <div className="flex items-center justify-center gap-4 flex-wrap">
+                      {availableOptions.map((option) => {
                         const isChecked = docData.observations.includes(option.value);
                         const isDisabled = isViewMode && !isEditMode;
 
@@ -203,53 +184,6 @@ const DocumentsTable = ({
                   </td>
                   <td className="border border-gray-200 p-3">
                     <div className="flex flex-col gap-3">
-                      {/* Application uploaded files (for first 19 documents only) */}
-                      {hasAppFile && (
-                        <div className="flex flex-col gap-2 p-2 bg-blue-50 rounded-lg border border-blue-200">
-                          <span className="text-xs font-semibold text-blue-700 mb-1">
-                            Fichier du dossier
-                          </span>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {isPdfFile(appDoc.fileStoreId) && (
-                              <button
-                                onClick={() => handlePreviewFile(appDoc.fileStoreId)}
-                                disabled={loadingFiles[`preview_${appDoc.fileStoreId}`]}
-                                className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium hover:bg-blue-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                {loadingFiles[`preview_${appDoc.fileStoreId}`] ? (
-                                  <span className="inline-flex items-center gap-1">
-                                    <div className="h-3 w-3 border-2 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
-                                    Chargement...
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1">
-                                    <LuEye className="h-3 w-3" />
-                                    Prévisualiser
-                                  </span>
-                                )}
-                              </button>
-                            )}
-                            <button
-                              onClick={() => handleDownloadFile(appDoc.fileStoreId)}
-                              disabled={loadingFiles[`download_${appDoc.fileStoreId}`]}
-                              className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {loadingFiles[`download_${appDoc.fileStoreId}`] ? (
-                                <span className="inline-flex items-center gap-1">
-                                  <div className="h-3 w-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
-                                  Téléchargement...
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1">
-                                  <LuDownload className="h-3 w-3" />
-                                  Télécharger
-                                </span>
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
                       {/* Modified files section */}
                       {isViewMode && !isEditMode ? (
                         docData.modifiedFiles ? (
