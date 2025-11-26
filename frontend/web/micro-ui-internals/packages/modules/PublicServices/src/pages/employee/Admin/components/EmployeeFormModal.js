@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { LuX, LuLoader, LuX as LuXIcon } from "react-icons/lu";
 import axios from "axios";
+import RoleSelect from "./RoleSelect";
 
 const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
   // Store the original employee object to preserve all fields
@@ -84,7 +86,36 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
             tenantId: currentTenantId,
           }));
 
-        setAvailableRoles(roles);
+        // Add the 3 specific roles
+        const additionalRoles = [
+          {
+            code: "HRMS_ADMIN",
+            name: "HRMS Admin",
+            description: "HRMS Admin",
+            tenantId: currentTenantId,
+          },
+          {
+            code: "MDMS_ADMIN",
+            name: "MDMS ADMIN",
+            description: "MDMS ADMIN",
+            tenantId: currentTenantId,
+          },
+          {
+            code: "LOC_ADMIN",
+            name: "LOC ADMIN",
+            description: "LOC ADMIN",
+            tenantId: currentTenantId,
+          },
+        ];
+
+        // Merge and remove duplicates
+        const allRoles = [...roles, ...additionalRoles];
+        const uniqueRoles = allRoles.filter(
+          (role, index, self) =>
+            index === self.findIndex((r) => r.code === role.code)
+        );
+
+        setAvailableRoles(uniqueRoles);
       } catch (error) {
         console.error("Error fetching roles:", error);
         if (isMounted) {
@@ -149,7 +180,12 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
         setError(null);
         return {
           ...prev,
-          roles: [...prev.roles, { code: role.code, name: role.name, tenantId: tenantId }],
+          roles: [...prev.roles, { 
+            code: role.code, 
+            name: role.name, 
+            description: role.description,
+            tenantId: tenantId 
+          }],
         };
       }
     });
@@ -310,31 +346,31 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden transform transition-all animate-scaleIn">
+        <div className="sticky top-0 bg-gradient-to-r from-[#22a4d9] to-[#1978a0] px-6 py-5 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-black text-white">
             {isEdit ? "Modifier l'employé" : "Ajouter un employé"}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-white/80 hover:text-white transition-colors hover:scale-110 transform duration-200"
           >
             <LuX className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-80px)]">
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            <div className="mb-6 p-4 bg-[#22a4d9]/10 border-2 border-[#22a4d9]/30 rounded-xl text-[#1978a0] backdrop-blur-sm animate-fadeIn">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Code / Username *
               </label>
               <input
@@ -343,64 +379,64 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
                 value={formData.code}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
+                className="w-full px-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] bg-white/50 backdrop-blur-sm transition-all duration-300"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nom complet *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Nom complet *</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
+                className="w-full px-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] bg-white/50 backdrop-blur-sm transition-all duration-300"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
               <input
                 type="email"
                 name="emailId"
                 value={formData.emailId}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
+                className="w-full px-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] bg-white/50 backdrop-blur-sm transition-all duration-300"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Téléphone *</label>
               <input
                 type="tel"
                 name="mobileNumber"
                 value={formData.mobileNumber}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
+                className="w-full px-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] bg-white/50 backdrop-blur-sm transition-all duration-300"
               />
             </div>
 
             {!isEdit && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mot de passe *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Mot de passe *</label>
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   required={!isEdit}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
+                  className="w-full px-4 py-3 border-2 border-[#22a4d9]/30 rounded-xl focus:ring-2 focus:ring-[#22a4d9] focus:border-[#22a4d9] bg-white/50 backdrop-blur-sm transition-all duration-300"
                 />
               </div>
             )}
           </div>
 
           {/* Roles Multi-Select */}
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mt-8">
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
               Rôles {isEdit && `(Maximum 5)`}
             </label>
             {rolesLoading ? (
@@ -412,17 +448,17 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
               <div className="space-y-3">
                 {/* Selected Roles */}
                 {formData.roles.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-3">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {formData.roles.map((role) => (
                       <span
                         key={role.code}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-djibouti-primary/10 text-djibouti-primary rounded-lg text-sm font-medium"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#22a4d9]/10 text-[#1978a0] rounded-xl text-sm font-semibold border-2 border-[#22a4d9]/20 shadow-sm"
                       >
                         {role.name}
                         <button
                           type="button"
                           onClick={() => removeRole(role.code)}
-                          className="hover:text-red-600 transition-colors"
+                          className="hover:text-[#22a4d9] transition-colors hover:scale-110 transform duration-200"
                         >
                           <LuXIcon className="w-4 h-4" />
                         </button>
@@ -431,35 +467,14 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
                   </div>
                 )}
 
-                {/* Available Roles Dropdown */}
-                <div className="relative">
-                  <select
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        const selectedRole = availableRoles.find((r) => r.code === e.target.value);
-                        if (selectedRole) {
-                          handleRoleToggle(selectedRole);
-                          e.target.value = ""; // Reset select
-                        }
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djibouti-primary focus:border-djibouti-primary"
-                    disabled={isEdit && formData.roles.length >= 5}
-                  >
-                    <option value="">
-                      {isEdit && formData.roles.length >= 5
-                        ? "Maximum 5 rôles atteint"
-                        : "Sélectionner un rôle à ajouter"}
-                    </option>
-                    {availableRoles
-                      .filter((role) => !formData.roles.some((r) => r.code === role.code))
-                      .map((role) => (
-                        <option key={role.code} value={role.code}>
-                          {role.name} ({role.code})
-                        </option>
-                      ))}
-                  </select>
-                </div>
+                {/* Role Select Component with Search */}
+                <RoleSelect
+                  availableRoles={availableRoles}
+                  selectedRoles={formData.roles}
+                  onRoleToggle={handleRoleToggle}
+                  disabled={isEdit && formData.roles.length >= 5}
+                  maxRoles={isEdit ? 5 : null}
+                />
 
                 {isEdit && formData.roles.length >= 5 && (
                   <p className="text-xs text-gray-500 mt-1">
@@ -470,22 +485,22 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
             )}
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-4">
+          <div className="mt-8 flex items-center justify-end gap-4 pt-6 border-t border-[#22a4d9]/20">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-300 font-semibold hover:scale-105 transform"
             >
               Annuler
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-djibouti-primary text-white rounded-lg hover:bg-djibouti-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-8 py-3 bg-gradient-to-r from-[#22a4d9] to-[#1978a0] text-white rounded-xl hover:shadow-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2 font-semibold hover:scale-105 transform disabled:transform-none"
             >
               {isSubmitting ? (
                 <React.Fragment>
-                  <LuLoader className="w-4 h-4 animate-spin" />
+                  <LuLoader className="w-5 h-5 animate-spin" />
                   Enregistrement...
                 </React.Fragment>
               ) : (
@@ -495,8 +510,32 @@ const EmployeeFormModal = ({ employee, isEdit, onClose, onSuccess }) => {
           </div>
         </form>
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+        .animate-scaleIn {
+          animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+      `}</style>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default EmployeeFormModal;

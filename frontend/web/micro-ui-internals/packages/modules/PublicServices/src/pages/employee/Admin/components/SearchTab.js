@@ -171,7 +171,7 @@ const SearchTab = () => {
   return (
     <div>
       {/* Search Bar */}
-      <div className="mb-6">
+      <div>
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -224,7 +224,7 @@ const SearchTab = () => {
 
       {/* Search Results */}
       {hasSearched && (
-        <div>
+        <div className="mt-6">
           <div className="mb-4">
             <h2 className="text-xl font-semibold text-gray-900">
               Résultats de recherche

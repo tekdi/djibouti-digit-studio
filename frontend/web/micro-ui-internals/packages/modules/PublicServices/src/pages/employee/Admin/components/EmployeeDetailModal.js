@@ -1,5 +1,6 @@
 import React from "react";
-import { LuX, LuUser, LuMail, LuPhone, LuBuilding, LuShield } from "react-icons/lu";
+import { createPortal } from "react-dom";
+import { LuX, LuUser, LuMail, LuPhone, LuShield } from "react-icons/lu";
 
 const EmployeeDetailModal = ({ employee, onClose }) => {
   if (!employee) return null;
@@ -17,139 +18,112 @@ const EmployeeDetailModal = ({ employee, onClose }) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Détails de l'employé</h2>
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all animate-scaleIn">
+        <div className="sticky top-0 bg-gradient-to-r from-[#22a4d9] to-[#1978a0] px-6 py-5 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-black text-white">Détails de l'employé</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-white/80 hover:text-white transition-colors hover:scale-110 transform duration-200"
           >
             <LuX className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 sm:p-8 overflow-y-auto max-h-[calc(90vh-80px)]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
-                  <LuUser className="w-4 h-4" />
-                  Nom complet
+            <div className="bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl p-4 border border-[#22a4d9]/20">
+              <div className="flex items-center gap-3 text-sm font-semibold text-[#22a4d9] mb-2">
+                <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                  <LuUser className="w-5 h-5" />
                 </div>
-                <p className="text-gray-900">{employee.user?.name || "N/A"}</p>
+                Nom complet
               </div>
-
-              <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
-                  <LuMail className="w-4 h-4" />
-                  Email
-                </div>
-                <p className="text-gray-900">{employee.user?.emailId || "N/A"}</p>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
-                  <LuPhone className="w-4 h-4" />
-                  Téléphone
-                </div>
-                <p className="text-gray-900">{employee.user?.mobileNumber || "N/A"}</p>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-1">
-                  <LuBuilding className="w-4 h-4" />
-                  Code
-                </div>
-                <p className="text-gray-900">{employee.code || "N/A"}</p>
-              </div>
-
-              <div>
-                <div className="text-sm font-medium text-gray-500 mb-1">Date de naissance</div>
-                <p className="text-gray-900">{formatDate(employee.user?.dob)}</p>
-              </div>
-
-              <div>
-                <div className="text-sm font-medium text-gray-500 mb-1">Statut</div>
-                <span
-                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    employee.isActive && employee.user?.active
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {employee.isActive && employee.user?.active ? "Actif" : "Inactif"}
-                </span>
-              </div>
+              <p className="text-gray-900 font-medium text-lg">{employee.user?.name || "N/A"}</p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <div className="text-sm font-medium text-gray-500 mb-1">Statut employé</div>
-                <p className="text-gray-900">{employee.employeeStatus || "N/A"}</p>
-              </div>
-
-              <div>
-                <div className="text-sm font-medium text-gray-500 mb-1">Type d'employé</div>
-                <p className="text-gray-900">{employee.employeeType || "N/A"}</p>
-              </div>
-
-              {employee.assignments?.[0] && (
-                <React.Fragment>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500 mb-1">Département</div>
-                    <p className="text-gray-900">{employee.assignments[0].department || "N/A"}</p>
-                  </div>
-
-                  <div>
-                    <div className="text-sm font-medium text-gray-500 mb-1">Désignation</div>
-                    <p className="text-gray-900">{employee.assignments[0].designation || "N/A"}</p>
-                  </div>
-                </React.Fragment>
-              )}
-
-              <div>
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-2">
-                  <LuShield className="w-4 h-4" />
-                  Rôles
+            <div className="bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl p-4 border border-[#22a4d9]/20">
+              <div className="flex items-center gap-3 text-sm font-semibold text-[#22a4d9] mb-2">
+                <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                  <LuMail className="w-5 h-5" />
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {employee.user?.roles?.map((role, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-lg"
-                    >
-                      {role.name}
-                    </span>
-                  ))}
-                </div>
+                Email
               </div>
+              <p className="text-gray-900 font-medium">{employee.user?.emailId || "N/A"}</p>
+            </div>
 
-              {employee.user?.permanentAddress && (
-                <div>
-                  <div className="text-sm font-medium text-gray-500 mb-1">Adresse permanente</div>
-                  <p className="text-gray-900">{employee.user.permanentAddress}</p>
-                  <p className="text-sm text-gray-600">
-                    {employee.user.permanentCity} {employee.user.permanentPinCode}
-                  </p>
+            <div className="bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl p-4 border border-[#22a4d9]/20">
+              <div className="flex items-center gap-3 text-sm font-semibold text-[#22a4d9] mb-2">
+                <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                  <LuPhone className="w-5 h-5" />
                 </div>
-              )}
+                Téléphone
+              </div>
+              <p className="text-gray-900 font-medium">{employee.user?.mobileNumber || "N/A"}</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl p-4 border border-[#22a4d9]/20">
+              <div className="text-sm font-semibold text-[#22a4d9] mb-2">Code / Username</div>
+              <p className="text-gray-900 font-medium">{employee.code || "N/A"}</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-[#22a4d9]/5 to-transparent rounded-xl p-4 border border-[#22a4d9]/20 md:col-span-2">
+              <div className="flex items-center gap-3 text-sm font-semibold text-[#22a4d9] mb-3">
+                <div className="p-2 bg-[#22a4d9]/10 rounded-lg">
+                  <LuShield className="w-5 h-5" />
+                </div>
+                Rôles
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {employee.user?.roles?.map((role, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex px-3 py-1.5 text-xs font-semibold bg-[#22a4d9]/10 text-[#1978a0] rounded-lg border border-[#22a4d9]/20"
+                  >
+                    {role.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end">
+          <div className="mt-8 flex justify-end pt-6 border-t border-[#22a4d9]/20">
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-djibouti-primary text-white rounded-lg hover:bg-djibouti-primary-dark transition-colors"
+              className="px-8 py-3 bg-gradient-to-r from-[#22a4d9] to-[#1978a0] text-white rounded-xl hover:shadow-xl transition-all duration-300 font-semibold hover:scale-105 transform"
             >
               Fermer
             </button>
           </div>
         </div>
       </div>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+        .animate-scaleIn {
+          animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+      `}</style>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default EmployeeDetailModal;
