@@ -35,33 +35,6 @@ import NewApplications from "./applications/NewApplications";
 import EmployeeSearch from "./search";
 import AdminDashboard from "./Admin/AdminDashboard";
 
-const SampleBreadCrumbs = ({ location }) => {
-  const { t } = useTranslation();
-  const userDetails = Digit.UserService.getUser();
-  const userType = userDetails?.info?.type?.toLowerCase();
-  const pathname = location.pathname.replace(/\/$/, "").split("/").pop();
-
-  const homeLink =
-    userType === "citizen"
-      ? `/${window?.contextPath}/${userType}/publicservices/apply`
-      : `/${window?.contextPath}/${userType}/publicservices/dashboard-employee`;
-
-  const crumbs = [
-    {
-      internalLink: homeLink,
-      content: t("HOME"),
-      show: true,
-    },
-  ];
-
-  if (pathname && pathname !== "modules" && pathname !== "apply") {
-    crumbs.push({
-      content: t(pathname.toUpperCase()),
-      show: true,
-    });
-  }
-  return <BreadCrumb crumbs={crumbs} />;
-};
 
 const App = ({ path }) => {
 
@@ -85,6 +58,9 @@ const App = ({ path }) => {
           {/* employee */}
           <PrivateRoute exact path={`${path}/dashboard-employee`} component={() => <EmployeeDashboard />} />
           <PrivateRoute exact path={`${path}/admin-dashboard`} component={() => <AdminDashboard />} />
+          <PrivateRoute exact path={`${path}/admin-dashboard/employees`} component={() => <AdminDashboard />} />
+          <PrivateRoute exact path={`${path}/admin-dashboard/architects`} component={() => <AdminDashboard />} />
+          <PrivateRoute exact path={`${path}/admin-dashboard/settings`} component={() => <AdminDashboard />} />
           <PrivateRoute exact path={`${path}/applications-employee/all`} component={() => <EmployeeApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/in-progress`} component={() => <InProgressApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/new`} component={() => <NewApplications />} />
@@ -109,3 +85,5 @@ const App = ({ path }) => {
 };
 
 export default App;
+
+

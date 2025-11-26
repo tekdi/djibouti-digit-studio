@@ -4,6 +4,9 @@ import { LuX, LuLoader } from "react-icons/lu";
 import axios from "axios";
 
 const ArchitectFormModal = ({ architect, isEdit, onClose, onSuccess }) => {
+  // Store the original architect object to preserve all fields
+  const [originalArchitect, setOriginalArchitect] = useState(null);
+  
   const [formData, setFormData] = useState({
     name: "",
     mobileNumber: "",
@@ -23,6 +26,8 @@ const ArchitectFormModal = ({ architect, isEdit, onClose, onSuccess }) => {
 
   useEffect(() => {
     if (isEdit && architect) {
+      // Store the original architect object to preserve all fields
+      setOriginalArchitect(architect);
       const licenseId = architect.identifiers?.[0]?.identifierId || "";
       const companyName =
         architect.additionalFields?.fields?.find((f) => f.key === "companyName")?.value || "";
@@ -158,14 +163,12 @@ const ArchitectFormModal = ({ architect, isEdit, onClose, onSuccess }) => {
         },
       };
 
+      // Use axios.post with params like ArchitectListTab.js (which works fine)
       const endpoint = isEdit
         ? "/health-individual/v1/_update"
         : "/health-individual/v1/_create";
 
-      const requestConfig = {
-        url: endpoint,
-        method: "POST",
-        body: requestBody,
+      await axios.post(endpoint, requestBody, {
         params: {
           tenantId: tenantId,
         },
@@ -173,9 +176,7 @@ const ArchitectFormModal = ({ architect, isEdit, onClose, onSuccess }) => {
           "X-Tenant-Id": tenantId,
           "auth-token": userInfo?.access_token,
         },
-      };
-
-      const response = await Digit.CustomService.getResponse(requestConfig);
+      });
 
       onSuccess();
       onClose();
