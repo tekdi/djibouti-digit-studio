@@ -21,3 +21,9 @@ const ObservationsDisplay = ({ observations }) => {
 
 export default ObservationsDisplay;
 
+
+
+
+
+
+

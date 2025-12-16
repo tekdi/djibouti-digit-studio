@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { SVG } from "./SVG";
 import StringManipulator from "./StringManipulator";
 import { getUserType } from "../utils/digitUtils";
+import { sanitizeTextInput } from "../utils/inputValidation";
 
 const TextArea = (props) => {
   const user_type = getUserType();
@@ -32,6 +33,8 @@ const TextArea = (props) => {
         id={props.id}
         value={props.value}
         onChange={(event) => {
+          // Apply security validation for all text areas
+          event.target.value = sanitizeTextInput(event.target.value);
           if (props?.onChange) {
             props?.onChange(event);
           }

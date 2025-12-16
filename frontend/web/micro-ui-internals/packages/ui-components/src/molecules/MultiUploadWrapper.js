@@ -14,12 +14,18 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
   const status = { valid: true, name: file?.name?.substring(0, 15), error: "" };
   if (!file) return;
 
-  if (!regex.test(file.type) && file.size / 1024 / 1024 > maxSize) {
+  // Extract file extension
+  const fileExtension = file.name?.split('.').pop()?.toLowerCase() || '';
+  
+  // Check if file type OR extension matches the regex (more flexible validation)
+  const isValidType = regex.test(file.type) || regex.test(fileExtension) || regex.test(`.${fileExtension}`);
+
+  if (!isValidType && file.size / 1024 / 1024 > maxSize) {
     status.valid = false;
     status.error = t(`NOT_SUPPORTED_FILE_TYPE_AND_FILE_SIZE_EXCEEDED_5MB`);
   }
 
-  if (!regex.test(file.type)) {
+  if (!isValidType) {
     status.valid = false;
     status.error = t(`NOT_SUPPORTED_FILE_TYPE`);
   }
@@ -81,7 +87,15 @@ const MultiUploadWrapper = ({
   const uploadMultipleFiles = (state, payload) => {
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
-    const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
+    
+    // Get existing file names
+    const existingFileNames = state.map(([fileName]) => fileName);
+    
+    // Filter out duplicate file names and create new uploads
+    const newUploads = filesData
+      ?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }])
+      .filter(([fileName]) => !existingFileNames.includes(fileName));
+    
     if(state?.length >= 0 && name) {
       newUploads[0][0] = `${name}`;
     }
