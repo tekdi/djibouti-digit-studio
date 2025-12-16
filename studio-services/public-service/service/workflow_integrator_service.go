@@ -58,7 +58,6 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 		log.Println("MDMS data missing or invalid")
 		return nil
 	}
-	log.Println("mdmsData:", mdmsData)
 	firstEntry, _ := mdmsList[0].(map[string]interface{})
 	data, _ := firstEntry["data"].(map[string]interface{})
 	workflowData, ok := data["workflow"].(map[string]interface{})

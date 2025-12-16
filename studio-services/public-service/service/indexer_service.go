@@ -42,7 +42,6 @@ func (i *IndexerService) SendRequestToIndexerForParallelWorkflow(req model.Appli
 		return nil
 	}
 
-	log.Println("mdmsData:", mdmsData)
 	firstEntry, _ := mdmsList[0].(map[string]interface{})
 	data, _ := firstEntry["data"].(map[string]interface{})
 	workflowData, ok := data["workflow"].(map[string]interface{})
@@ -104,7 +103,7 @@ func (i *IndexerService) SendRequestToIndexerForParallelWorkflow(req model.Appli
 
 				if i.kafkaProducer != nil {
 					log.Printf("Sending Kafka message for workflow %s: %s\n", workflow, string(kafkaPayload))
-					err = i.kafkaProducer.Push(context.Background(),topic, kafkaPayload)
+					err = i.kafkaProducer.Push(context.Background(), topic, kafkaPayload)
 					if err != nil {
 						log.Printf("Failed to push Kafka message for workflow %s: %v\n", workflow, err)
 					}

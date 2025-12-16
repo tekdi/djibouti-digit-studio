@@ -656,10 +656,35 @@ func createPropertySchema(propMap map[string]interface{}) map[string]interface{}
 		}
 	}
 
+	// Check if custom validation exists
+	hasCustomValidation := false
 	// Set pattern from validation.regex if available
 	if validation, ok := propMap["validation"].(map[string]interface{}); ok {
-		if regex, ok := validation["regex"].(string); ok {
+		if regex, ok := validation["regex"].(string); ok && regex != "" {
+			// Use custom regex if provided
 			propSchema["pattern"] = regex
+			hasCustomValidation = true
+		}
+	}
+
+	// Add default validation for text input fields if no custom validation exists
+	if !hasCustomValidation {
+		// Check if this is a text input field
+		if format, ok := propMap["format"].(string); ok {
+			if format == "text" {
+				// Get the type to ensure it's a string type
+				if propType, typeOk := propMap["type"].(string); typeOk && propType == "string" {
+					defaultPattern := os.Getenv("DEFAULT_TEXT_INPUT_PATTERN")
+					if defaultPattern == "" {
+						// Fallback pattern: allows alphanumeric characters, spaces, and special chars: _ . ' ,
+						defaultPattern = "^[a-zA-Z0-9 _.',]*$"
+					}
+					propSchema["pattern"] = defaultPattern
+
+					// Optional: Add a log to verify the default validation is being applied
+					log.Printf("Applied default text validation pattern for field: %s", propMap["name"])
+				}
+			}
 		}
 	}
 
