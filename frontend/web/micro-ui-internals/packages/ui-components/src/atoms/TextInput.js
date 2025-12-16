@@ -5,6 +5,7 @@ import StringManipulator from "./StringManipulator";
 import { Colors } from "../constants/colors/colorconstants";
 import { getUserType } from "../utils/digitUtils";
 import { useTranslation } from "react-i18next";
+import { sanitizeTextInput } from "../utils/inputValidation";
 
 const TextInput = (props) => {
   const user_type = getUserType();
@@ -205,6 +206,9 @@ const TextInput = (props) => {
                 }
                 if (props?.type === "numeric") {
                   event.target.value = event.target.value.replace(/[^0-9]/g, "");
+                } else if (props?.type === "text") {
+                  // Apply security validation for all text inputs
+                  event.target.value = sanitizeTextInput(event.target.value);
                 }
                 if (props?.onChange) {
                   props?.onChange(event);
@@ -276,6 +280,9 @@ const TextInput = (props) => {
                 }
                 if (props?.type === "numeric") {
                   event.target.value = event.target.value.replace(/[^0-9]/g, "");
+                } else if (props?.type === "text") {
+                  // Apply security validation for all text inputs
+                  event.target.value = sanitizeTextInput(event.target.value);
                 }
                 if (props?.onChange) {
                   props?.onChange(event);
