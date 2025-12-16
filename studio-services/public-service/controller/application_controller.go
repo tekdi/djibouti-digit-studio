@@ -75,7 +75,7 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 		utils.WriteErrorResponse(w, http.StatusBadRequest, "Enrichment failed: "+err.Error())
 		return
 	}
-	log.Println(req)
+
 	for i := range req.Application.Applicants {
 		applicant := req.Application.Applicants[i]
 		mobile := strconv.FormatInt(applicant.MobileNumber, 10)
