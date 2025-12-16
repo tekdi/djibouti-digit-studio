@@ -52,8 +52,6 @@ func (s *MDMSV2Service) SearchMDMS(tenantId, schemaCode, serviceName, module str
 		log.Printf("Error calling MDMS service: %v", err)
 		return nil, err
 	}
-	respJSON, _ := json.MarshalIndent(resp, "", "  ")
-	log.Println("MDMS Response:\n", string(respJSON))
 	return resp, nil
 }
 
