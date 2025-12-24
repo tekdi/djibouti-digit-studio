@@ -1,21 +1,13 @@
-import React, { useEffect } from "react";
-import { Switch, useLocation,Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { PrivateRoute, AppContainer, BreadCrumb,BackButton } from "@egovernments/digit-ui-react-components";
-import OpenSearch from "../../components/OpenSearch";
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 import OpenView from "../../components/OpenView";
-import { SuccessfulPayment,FailedPayment } from "../../components/Response";
 import ResponseEmployee from "../../components/ResponseEmployee";
 
 
 const EmployeeApp = ({ path }) => {
-  const { t } = useTranslation();
-  const location = useLocation();
-  //const commonProps = { stateCode:"pb", cityCode:"pb.abianakhurd", moduleCode:"WS" };
   return (
     <React.Fragment>
-      <div className="">
-      {!location.pathname.includes("response") && <BackButton>{t("CS_COMMON_BACK")}</BackButton>}
+      <div style={{ background: "rgba(26, 154, 141, 0.06)" }}>
       <Switch>
           <Route path={`${path}/open-view`} render={()=><OpenView />} />
           <Route path={`${path}/success/:businessService/:consumerCode/:tenantId`}>

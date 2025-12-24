@@ -1,16 +1,86 @@
-import { Loader, StatusTable, Row, Card, Header, SubmitBar, ActionBar, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomisedHooks } from "../hooks";
 import { useHistory, useLocation } from "react-router-dom";
 import TextInput from "../../../../ui-components/src/atoms/TextInput";
 import MultiUploadWrapper from "../../../../ui-components/src/molecules/MultiUploadWrapper";
+import { 
+  LuCreditCard, 
+  LuReceipt, 
+  LuCalendar, 
+  LuUpload, 
+  LuUser, 
+  LuMapPin, 
+  LuPhone,
+  LuBanknote,
+  LuArrowRight,
+  LuCircleCheck,
+  LuFileText
+} from "react-icons/lu";
+import CostEstimationCard from "./CostEstimationCard";
+
+// Beautiful Loading Overlay Component
+const PaymentLoadingOverlay = ({ isVisible }) => {
+  if (!isVisible) return null;
+  
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-3xl p-8 shadow-2xl flex flex-col items-center gap-6 animate-scaleIn max-w-sm mx-4">
+        {/* Animated Payment Icon */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+          <div className="relative bg-primary rounded-full p-6">
+            <LuCreditCard className="w-12 h-12 text-white animate-pulse" />
+          </div>
+        </div>
+        
+        {/* Loading Text */}
+        <div className="text-center">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Traitement du paiement</h3>
+          <p className="text-gray-500">Veuillez patienter...</p>
+        </div>
+        
+        {/* Animated Progress Bar */}
+        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-full bg-primary rounded-full animate-progressBar" />
+        </div>
+        
+        {/* Security Badge */}
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <LuCircleCheck className="w-4 h-4" />
+          <span>Transaction sécurisée</span>
+        </div>
+      </div>
+      
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from { transform: scale(0.9); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes progressBar {
+          0% { width: 0%; }
+          50% { width: 70%; }
+          100% { width: 100%; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .animate-scaleIn { animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .animate-progressBar { animation: progressBar 2s ease-in-out infinite; }
+      `}</style>
+    </div>
+  );
+};
 
 const OpenView = () => {
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(null);
   const [paymentMode, setPaymentMode] = useState("CASH");
   const [paymentGateway, setPaymentGateway] = useState("D-MONEY");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     receiptNo: "",
     receiptDate: "",
@@ -67,14 +137,6 @@ const OpenView = () => {
   const costEstimation = calculation?.Application[0]?.additionalDetails?.costEstimation;
   const applicationData = calculation?.Application[0];
 
-  const calculateTotalPercentage = () => {
-    return costEstimation?.totalCostBreakdown?.reduce((total, item) => total + item.percentage, 0);
-  };
-
-  const calculateTotalCost = () => {
-    return costEstimation?.totalCostBreakdown?.reduce((total, item) => total + item.amount, 0);
-  };
-
   const arrears =
     bill?.billDetails
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
@@ -82,18 +144,19 @@ const OpenView = () => {
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    
     if (userType === "employee") {
       const mandatoryFields = [
         { value: formData.receiptNo, name: "receiptNo" },
         { value: formData.receiptDate, name: "receiptDate" },
-        { value: formData.fileStoreId, name: "fileStoreId" }, // Must not be empty string
+        { value: formData.fileStoreId, name: "fileStoreId" },
       ];
 
       if (paymentMode === "CHEQUE") {
         mandatoryFields.push({ value: formData.chequeNo, name: "chequeNo" }, { value: formData.chequeDate, name: "chequeDate" });
       }
 
-      // Check for empty fields
       const emptyFields = mandatoryFields.filter((field) => field.value === "" || field.value === null || field.value === undefined);
 
       if (emptyFields.length > 0) {
@@ -101,27 +164,12 @@ const OpenView = () => {
           key: true,
           label: t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"),
         });
-
+        setIsSubmitting(false);
         return;
       }
 
       const body = {
         Payment: {
-          // mobileNumber: paymentData.mobileNumber,
-          // paymentDetails: [
-          //   {
-          //     businessService: queryParams?.businessService,
-          //     billId: "7ff19cf8-7abe-48e0-b249-a1e1d2d4ec8f",
-          //     totalDue: 784,
-          //     totalAmountPaid: 784,
-          //   },
-          // ],
-          // tenantId: paymentData.tenantId,
-          // totalDue: paymentData.totalDue,
-          // totalAmountPaid: paymentData.totalAmountPaid,
-          // paymentMode: paymentData.paymentMode,
-          // payerName: paymentData.payerName,
-          // paidBy: paymentData.paidBy,
           mobileNumber: bill?.mobileNumber,
           paymentDetails: [
             {
@@ -165,14 +213,15 @@ const OpenView = () => {
                 `/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}?serviceCode=${queryParams?.serviceCode}`,
                 { iSuccess: true, applicationNumber: data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode, ...state }
               );
-              //setHasRedirected(true);  // Mark that redirection has happened
             } else {
               history.push(`/${window.contextPath}/employee/openpayment/failure`, { iSuccess: false, ...state });
               console.error("Missing redirect data in payment response");
             }
+            setIsSubmitting(false);
           },
           onError: (error) => {
             console.error("Payment creation failed:", error.message);
+            setIsSubmitting(false);
           },
         }
       );
@@ -199,8 +248,6 @@ const OpenView = () => {
             tenantId: bill?.tenantId,
             emailId: bill?.payerEmail,
           },
-          // success
-          // callbackUrl: `${window.location.protocol}//${window.location.host}/${window.contextPath}/citizen/openpayment/success?consumerCode=${queryParams.consumerCode}&tenantId=${queryParams.tenantId}&businessService=${queryParams.businessService}`,
           callbackUrl: `${window.location.protocol}//${window.location.host}/${window.contextPath}/citizen/openpayment/success/${queryParams.businessService}/${queryParams.consumerCode}/${queryParams.tenantId}`,
           additionalDetails: {
             isWhatsapp: false,
@@ -235,6 +282,7 @@ const OpenView = () => {
                 messageToShow = error.message;
               }
               setShowToast({ key: true, label: t(messageToShow) });
+              setIsSubmitting(false);
             },
           }
         );
@@ -245,6 +293,7 @@ const OpenView = () => {
           messageToShow = code;
         }
         setShowToast({ key: true, label: t(messageToShow) });
+        setIsSubmitting(false);
       }
     }
   };
@@ -256,7 +305,6 @@ const OpenView = () => {
 
   const handleFileStoreId = (files) => {
     if (files.length > 0) {
-      // Extract just the fileStoreId string from the object
       const fileStoreId = files[0][1]?.fileStoreId?.fileStoreId || "";
       setFormData((prev) => ({ ...prev, fileStoreId }));
     } else {
@@ -265,426 +313,381 @@ const OpenView = () => {
   };
 
   if (isLoading || isLoadingCalc) {
-    return <Loader />;
-  }
-  return (
-    <form className="cards-container" id="payment-form" onSubmit={handlePaymentSubmit} noValidate>
-      <div style={{ width: "100%", display: "flex", justifyContent: "end" }}>
-        <SubmitBar
-          style={{
-            // width: "100%",
-            marginRight: "55px",
-            marginBottom: "0px",
-            borderRadius: "10px",
-          }}
-          disabled={Number(bill?.totalAmount) === 0}
-          label={t("OP_PROCEED_TO_PAY")}
-          form="payment-form"
-          submit={true}
-        />
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white rounded-3xl p-8 shadow-xl flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" />
+            <div className="relative bg-primary rounded-full p-4">
+              <LuCreditCard className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <p className="text-gray-600 font-medium">Chargement des détails...</p>
+        </div>
       </div>
+    );
+  }
 
-      <div className="digit-results-payment-mode-wrapper">
-        <div className="payment-mode-card">
-          <Header className="header">{t("MODE_OF_PAYMENT")}</Header>
-          <div className="payment-mode-wrapper">
-            {userType === "employee" && (
-              <div className="form">
-                <div className="radio-wrapper">
-                  <label className="input-label">{t("SELECT_PAYMENT_METHOD")}</label>
-                  <div className="radio-label-wrapper">
-                    <label className="radio-label">
-                      <input
-                        type="radio"
-                        name="paymentMode"
-                        value="CASH"
-                        checked={paymentMode === "CASH"}
-                        onChange={() => setPaymentMode("CASH")}
-                        className="custom-radio"
-                      />
-                      {t("PAYMENT_CASH")}
-                    </label>
-                    <label className="radio-label">
-                      <input
-                        type="radio"
-                        name="paymentMode"
-                        value="CHEQUE"
-                        checked={paymentMode === "CHEQUE"}
-                        onChange={() => setPaymentMode("CHEQUE")}
-                        className="custom-radio"
-                      />
-                      {t("PAYMENT_CHEQUE")}
-                    </label>
+  return (
+    <div className="pt-8">
+      <PaymentLoadingOverlay isVisible={isSubmitting} />
+      
+      <div>
+        <form id="payment-form" onSubmit={handlePaymentSubmit} noValidate className="max-w-6xl mx-auto space-y-6">
+          
+          {/* Header Section */}
+          <div className="bg-primary rounded-2xl p-6 md:p-8 shadow-xl">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
+                <LuCreditCard className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white">{t("MODE_OF_PAYMENT")}</h1>
+                <p className="text-white/80 mt-1">Procédez au paiement de votre demande</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Left Column - Payment Method */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="bg-primary/10 px-6 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary p-2 rounded-lg">
+                    <LuBanknote className="w-5 h-5 text-white" />
                   </div>
-                </div>
-
-                <div className="input-wrapper">
-                  <label className="input-label">
-                    {t("RECEIPT_NO")}
-                    <span className="star">*</span>
-                  </label>
-                  <TextInput
-                    t={t}
-                    style={{ width: "100%" }}
-                    type={"text"}
-                    required={true}
-                    optionKey="i18nKey"
-                    name="receiptNo"
-                    value={formData.receiptNo}
-                    onChange={handleChange}
-                    placeholder={"ENTER_RECEIPT_NUMBER"}
-                  />
-                </div>
-
-                <div className="input-wrapper">
-                  <label className="input-label">
-                    {t("RECEIPT_DATE")}
-                    <span className="star">*</span>
-                  </label>
-                  <TextInput
-                    t={t}
-                    style={{ width: "100%" }}
-                    type={"date"}
-                    required={true}
-                    optionKey="i18nKey"
-                    name="receiptDate"
-                    value={formData.receiptDate}
-                    onChange={handleChange}
-                    placeholder={"ENTER_RECEIPT_DATE"}
-                  />
-                </div>
-
-                {paymentMode === "CHEQUE" && (
-                  <>
-                    <div className="input-wrapper">
-                      <label className="input-label">
-                        {t("CHEQUE_NO")}
-                        <span className="star">*</span>
-                      </label>
-
-                      <TextInput
-                        t={t}
-                        style={{ width: "100%" }}
-                        type={"text"}
-                        required={paymentMode === "CHEQUE"}
-                        optionKey="i18nKey"
-                        name="chequeNo"
-                        value={formData.chequeNo}
-                        onChange={handleChange}
-                        placeholder={"ENTER_CHEQUE_NUMBER"}
-                        populators={{
-                          minLength: 6,
-                          maxLength: 6,
-                        }}
-                      />
-                    </div>
-
-                    <div className="input-wrapper">
-                      <label className="input-label">
-                        {t("CHEQUE_DATE")}
-                        <span className="star">*</span>
-                      </label>
-
-                      <TextInput
-                        t={t}
-                        style={{ width: "100%" }}
-                        type={"date"}
-                        required={paymentMode === "CHEQUE"}
-                        optionKey="i18nKey"
-                        name="chequeDate"
-                        value={formData.chequeDate}
-                        onChange={handleChange}
-                        placeholder={"ENTER_CHEQUE_DATE"}
-                      />
-                    </div>
-                  </>
-                )}
-
-                <div className="input-wrapper">
-                  <label className="input-label">
-                    {t("UPLOAD_PAYMENT_RECEIPT")}
-                    <span className="star">*</span>
-                  </label>
-
-                  <MultiUploadWrapper
-                    t={t}
-                    module="works"
-                    tenantId={Digit.ULBService.getCurrentTenantId()}
-                    getFormState={handleFileStoreId}
-                    allowedFileTypesRegex={/pdf|jpg|jpeg|png|heic/}
-                    allowedMaxSizeInMB={10}
-                    maxFilesAllowed={5}
-                    containerStyles={{ width: "100%" }}
-                    acceptFiles=".pdf, .jpg, .jpeg, .png, .heic"
-                    required={true}
-                  />
+                  <h2 className="text-lg font-semibold text-gray-900">{t("SELECT_PAYMENT_METHOD")}</h2>
                 </div>
               </div>
-            )}
-            {userType === "citizen" && (
-              <div className="form">
-                <div className="radio-wrapper radio-wrapper-citizen">
-                  <label className="input-label">{t("SELECT_PAYMENT_GATEWAY")}</label>
-                  <div className="radio-label-wrapper">
-                    <label className="radio-label">
+              
+              <div className="p-6">
+                {userType === "employee" && (
+                  <div className="space-y-6">
+                    {/* Payment Mode Selection */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <label 
+                        className={`relative flex items-center justify-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                          paymentMode === "CASH" 
+                            ? "border-primary bg-primary/10 shadow-md" 
+                            : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMode"
+                          value="CASH"
+                          checked={paymentMode === "CASH"}
+                          onChange={() => setPaymentMode("CASH")}
+                          className="sr-only"
+                        />
+                        <LuBanknote className={`w-6 h-6 ${paymentMode === "CASH" ? "text-primary" : "text-gray-400"}`} />
+                        <span className={`font-semibold ${paymentMode === "CASH" ? "text-primary" : "text-gray-600"}`}>
+                          {t("PAYMENT_CASH")}
+                        </span>
+                        {paymentMode === "CASH" && (
+                          <div className="absolute top-2 right-2">
+                            <LuCircleCheck className="w-5 h-5 text-primary" />
+                          </div>
+                        )}
+                      </label>
+                      
+                      <label 
+                        className={`relative flex items-center justify-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+                          paymentMode === "CHEQUE" 
+                            ? "border-primary bg-primary/10 shadow-md" 
+                            : "border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentMode"
+                          value="CHEQUE"
+                          checked={paymentMode === "CHEQUE"}
+                          onChange={() => setPaymentMode("CHEQUE")}
+                          className="sr-only"
+                        />
+                        <LuReceipt className={`w-6 h-6 ${paymentMode === "CHEQUE" ? "text-primary" : "text-gray-400"}`} />
+                        <span className={`font-semibold ${paymentMode === "CHEQUE" ? "text-primary" : "text-gray-600"}`}>
+                          {t("PAYMENT_CHEQUE")}
+                        </span>
+                        {paymentMode === "CHEQUE" && (
+                          <div className="absolute top-2 right-2">
+                            <LuCircleCheck className="w-5 h-5 text-primary" />
+                          </div>
+                        )}
+                      </label>
+                    </div>
+
+                    {/* Receipt Number */}
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                        <LuReceipt className="w-4 h-4 text-primary" />
+                        {t("RECEIPT_NO")}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="receiptNo"
+                        value={formData.receiptNo}
+                        onChange={handleChange}
+                        placeholder={t("ENTER_RECEIPT_NUMBER")}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                      />
+                    </div>
+
+                    {/* Receipt Date */}
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                        <LuCalendar className="w-4 h-4 text-primary" />
+                        {t("RECEIPT_DATE")}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        name="receiptDate"
+                        value={formData.receiptDate}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
+                      />
+                    </div>
+
+                    {/* Cheque Fields */}
+                    {paymentMode === "CHEQUE" && (
+                      <div className="space-y-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                        <div>
+                          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                            <LuReceipt className="w-4 h-4 text-amber-600" />
+                            {t("CHEQUE_NO")}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="chequeNo"
+                            value={formData.chequeNo}
+                            onChange={handleChange}
+                            placeholder={t("ENTER_CHEQUE_NUMBER")}
+                            maxLength={6}
+                            className="w-full px-4 py-3 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                            <LuCalendar className="w-4 h-4 text-amber-600" />
+                            {t("CHEQUE_DATE")}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            name="chequeDate"
+                            value={formData.chequeDate}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* File Upload */}
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                        <LuUpload className="w-4 h-4 text-primary" />
+                        {t("UPLOAD_PAYMENT_RECEIPT")}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-primary transition-colors duration-200 bg-gray-50">
+                        <MultiUploadWrapper
+                          t={t}
+                          module="works"
+                          tenantId={Digit.ULBService.getCurrentTenantId()}
+                          getFormState={handleFileStoreId}
+                          allowedFileTypesRegex={/pdf|jpg|jpeg|png|heic/}
+                          allowedMaxSizeInMB={10}
+                          maxFilesAllowed={5}
+                          containerStyles={{ width: "100%" }}
+                          acceptFiles=".pdf, .jpg, .jpeg, .png, .heic"
+                          required={true}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {userType === "citizen" && (
+                  <div className="space-y-6">
+                    {/* Payment Gateway Selection */}
+                    <label 
+                      className="relative flex items-center gap-4 p-5 rounded-xl border-2 border-primary bg-primary/10 cursor-pointer shadow-md"
+                    >
                       <input
                         type="radio"
                         name="paymentGateway"
                         value="D-MONEY"
                         checked={true}
-                        className="custom-radio"
                         onChange={() => setPaymentGateway("D-MONEY")}
+                        className="sr-only"
                       />
-                      {t("PAYMENT_DMONEY")}
+                      <div className="bg-primary p-3 rounded-xl">
+                        <LuCreditCard className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="font-bold text-lg text-primary">{t("PAYMENT_DMONEY")}</span>
+                        <p className="text-sm text-gray-500 mt-1">Paiement mobile sécurisé</p>
+                      </div>
+                      <LuCircleCheck className="w-6 h-6 text-primary" />
                     </label>
-                  </div>
-                </div>
-                <div style={{ margin: "20px 0", padding: "16px", background: "#FAFAFA", borderRadius: "4px", border: "1px solid #D6D5D4" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <div style={{ color: "#505A5F", fontSize: "16px" }}>
-                      {t("PAYMENT_OFFLINE_NOTE")}
+                    
+                    {/* Offline Payment Note */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-blue-100 p-2 rounded-lg mt-0.5">
+                          <LuFileText className="w-5 h-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-blue-800 font-medium">{t("PAYMENT_OFFLINE_NOTE")}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column - Payment Details */}
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden self-start">
+              <div className="bg-primary/10 px-6 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary p-2 rounded-lg">
+                    <LuReceipt className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-900">{t("OP_PAYMENT_DETAILS")}</h2>
                 </div>
               </div>
-            )}
+              
+              <div className="p-6 space-y-6">
+                {/* Consumer Info */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                      <LuUser className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500">{t("OP_CONSUMER_NAME")}</p>
+                      <p className="font-semibold text-gray-900 truncate">{bill?.payerName || "-"}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                      <LuPhone className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500">{t("OP_CONSUMER_PHNO")}</p>
+                      <p className="font-semibold text-gray-900">{bill?.mobileNumber || "-"}</p>
+                    </div>
+                  </div>
+                  
+                  {bill?.payerAddress && (
+                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                      <div className="bg-primary/10 p-2 rounded-lg">
+                        <LuMapPin className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs text-gray-500">{t("OP_CONSUMER_ADDRESS")}</p>
+                        <p className="font-semibold text-gray-900 truncate">{bill?.payerAddress}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Fee Breakdown */}
+                <div className="border-t border-gray-100 pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-semibold text-gray-700">{t("ES_PAYMENT_TAXHEADS")}</span>
+                    <span className="font-semibold text-gray-700">{t("ES_PAYMENT_AMOUNT")}</span>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {bill?.billDetails?.[0]?.billAccountDetails
+                      ?.sort((a, b) => a.order - b.order)
+                      .map((amountDetails, index) => (
+                        <div key={index + "taxheads"} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                          <span className="text-gray-600">{t(amountDetails.taxHeadCode)}</span>
+                          <span className="font-semibold text-gray-900">FDj {amountDetails.amount?.toFixed(0)}</span>
+                        </div>
+                      ))}
+                    
+                    {arrears > 0 && (
+                      <div className="flex items-center justify-between py-2 px-3 bg-orange-50 rounded-lg border border-orange-200">
+                        <span className="text-orange-700">{t("COMMON_ARREARS")}</span>
+                        <span className="font-semibold text-orange-700">FDj {arrears?.toFixed?.(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Total Amount */}
+                <div className="bg-primary rounded-xl p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium text-lg">{t("CS_PAYMENT_TOTAL_AMOUNT")}</span>
+                    <span className="text-white font-bold text-2xl">FDj {Number(bill?.totalAmount).toFixed(0)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
-        <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
-          <Header>{t("OP_PAYMENT_DETAILS")}</Header>
-          <StatusTable>
-            <div style={{ marginTop: "16px" }}>
-              <Row
-                label={t("OP_CONSUMER_NAME")}
-                text={bill?.payerName || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_EMAIL")}
-                text={bill?.payerEmail || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_ADDRESS")}
-                text={bill?.payerAddress || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-              <Row
-                label={t("OP_CONSUMER_PHNO")}
-                text={bill?.mobileNumber || t("ES_COMMON_NA")}
-                textStyle={{ paddingLeft: "12px", textAlign: "right" }}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-              />
-            </div>
+          {/* Cost Estimation Section */}
+          {costEstimation && (
+            <CostEstimationCard 
+              costEstimation={costEstimation} 
+              applicationData={applicationData} 
+            />
+          )}
 
-            <div style={{ margin: "24px 0" }}>
-              <Row
-                label={t("ES_PAYMENT_TAXHEADS")}
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                textStyle={{ fontWeight: "bold", fontSize: "16px", textAlign: "right" }}
-                text={t("ES_PAYMENT_AMOUNT")}
-              />
-              <div style={{ margin: "16px 0" }}>
-                {bill?.billDetails?.[0]?.billAccountDetails
-                  ?.sort((a, b) => a.order - b.order)
-                  .map((amountDetails, index) => (
-                    <Row
-                      key={index + "taxheads"}
-                      labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                      textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                      label={t(amountDetails.taxHeadCode)}
-                      text={"FDj " + amountDetails.amount?.toFixed(0)}
-                    />
-                  ))}
-              </div>
+          {/* Submit Button */}
+          <div className="flex justify-center pb-6">
+            <button
+              type="submit"
+              disabled={Number(bill?.totalAmount) === 0 || isSubmitting}
+              className={`
+                group flex items-center gap-3 px-10 py-4 rounded-2xl font-bold text-lg shadow-xl transition-all duration-300 transform
+                ${Number(bill?.totalAmount) === 0 || isSubmitting
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-primary text-white hover:bg-primary/90 hover:shadow-2xl hover:scale-105 active:scale-95"
+                }
+              `}
+            >
+              <LuCreditCard className="w-6 h-6" />
+              <span>{t("OP_PROCEED_TO_PAY")}</span>
+              <LuArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
 
-              {arrears?.toFixed?.(2) ? (
-                <div style={{ margin: "16px 0", paddingTop: "16px" }}>
-                  <Row
-                    labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                    textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                    label={t("COMMON_ARREARS")}
-                    text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
-                  />
-                </div>
-              ) : null}
+        </form>
 
-              <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
-                <Row
-                  label={t("CS_PAYMENT_TOTAL_AMOUNT")}
-                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                  textStyle={{ fontWeight: "bold", fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                  text={"FDj " + Number(bill?.totalAmount).toFixed(0)}
-                />
-              </div>
-            </div>
-          </StatusTable>
-        </div>
+        {/* Toast Notification */}
         {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
-      </div>
-
-      {costEstimation ? (
-        <div className="digit-results-calculation-wrapper">
-          <div>
-            <Header className="calculation-header">{t("CALCULATION_TITLE")}</Header>
-          </div>
-          <div className="calculation-wrapper">
-            <div className="fee-rates">
-              <div className="fee-rate-card">
-                <h3 className="fee-rate-card-title">{t("CALCULATION_COST_RESIDENTIAL")}</h3>
-                <p className="fee-rate-card-value">FDj {costEstimation?.costPerSqmLivingSpace?.toLocaleString()}</p>
-              </div>
-
-              <div className="fee-rate-card">
-                <h3 className="fee-rate-card-title">{t("CALCULATION_COST_COMMERCIAL")}</h3>
-                <p className="fee-rate-card-value">FDj {costEstimation?.costPerSqmCommercialSpace?.toLocaleString()}</p>
-              </div>
-
-              <div className="fee-rate-card">
-                <h3 className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES")}</h3>
-                <p className="fee-rate-card-value">{`${costEstimation?.royaltyPer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
-              </div>
-
-              <div className="fee-rate-card">
-                <h3 className="fee-rate-card-title">{t("CALCULATION_SEISMIC_FEES")}</h3>
-                <p className="fee-rate-card-value">{`${costEstimation?.eqResistancePer} % ${t("OF_ESTIMATED_QUOTE")}`}</p>
-              </div>
-
-              <div className="fee-rate-card">
-                <h3 className="fee-rate-card-title">{t("CALCULATION_REGISTRY_SERVICE_FEE")}</h3>
-                <p className="fee-rate-card-value">FDj {costEstimation?.registryServiceFee?.toLocaleString()}</p>
-              </div>
-            </div>
-
-            <div className="floor-table">
-              <div className="table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="niveau-col">{t("CALCULATION_NIVEAU")}</th>
-                      <th className="area-col">{t("CALCULATION_SURFACE_HABITATION")}</th>
-                      <th className="area-col">{t("CALCULATION_SURFACE_COMMERCIALE")}</th>
-                      <th className="area-col">{t("CALCULATION_TOTAL_SUPERFICIE")}</th>
-                      <th className="area-col">{t("CALCULATION_ESTIMATION_COUTS")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {costEstimation?.floors?.map((floor, index) => (
-                      <tr key={index}>
-                        <td className="niveau-col floor-col">
-                          {index === 0 ? t("CALCULATION_RDC") : ""}
-                          {index === costEstimation?.floors.length - 1 ? t("CALCULATION_TERRASSE") : ""}
-                          {index !== 0 && index !== costEstimation?.floors.length - 1 && t(`CALCULATION_${index}ER_ETAGE`)}
-                        </td>
-
-                        <td className="area-col">
-                          <div className="input-with-unit">{floor?.builtUpAreaLiving === 0 ? "" : floor?.builtUpAreaLiving} m²</div>
-                        </td>
-                        <td className="area-col">
-                          <div className="input-with-unit">{floor?.builtupAreaCommercial === 0 ? "" : floor?.builtupAreaCommercial} m²</div>
-                        </td>
-                        <td className="total-col">{floor?.totalAreaPerLevel > 0 ? `${floor?.totalAreaPerLevel} m²` : "0 m²"}</td>
-                        <td className="cost-col">{floor?.floorCost ? floor?.floorCost?.toLocaleString() : 0}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="calculations-section">
-              <div className="plot-info">
-                <h3 className="plot-info-title">{t("CALCULATION_COEFFICIENTS_SOL")}</h3>
-                <div className="info-content">
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_SURFACE_PARCELLE")}</span>
-                    <span className="fee-rate-card-value">{applicationData?.serviceDetails?.landandProjectDesignDetails?.[0]?.area}</span>
-                  </div>
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_ROYALTY_FEES_CALCULATED")}</span>
-                    <span className="fee-rate-card-value">{costEstimation?.royaltyFee} FDj</span>
-                  </div>
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_SEISMIC_FEES_CALCULATED")}</span>
-                    <span className="fee-rate-card-value">{costEstimation?.eqResistanceCost?.toLocaleString()} FDj</span>
-                  </div>
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_TOTAL_TAXES")}</span>
-                    <span className="fee-rate-card-value">{costEstimation?.totalTax?.toLocaleString()} FDj</span>
-                  </div>
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_TOTAL_TAXES_WITH_SERVICE")}</span>
-                    <span className="fee-rate-card-value">{costEstimation?.totalTaxWithServiceCharge?.toLocaleString()} FDj</span>
-                  </div>
-                  <div className="fee-rate-card">
-                    <span className="fee-rate-card-title">{t("CALCULATION_PROJECT_TOTAL_VALUE")}</span>
-                    <span className="fee-rate-card-value">{costEstimation?.totalBuildingCost?.toLocaleString()} FDj</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="cost-breakdown">
-              <div className="table-wrapper cost-table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th className="work-col">{t("CALCULATION_WORK_DESIGNATION")}</th>
-                      <th className="percentage-col">{t("CALCULATION_WORK_PERCENTAGES")}</th>
-                      <th className="amount-col">{t("CALCULATION_AMOUNT")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {costEstimation?.totalCostBreakdown?.map((item, index) => (
-                      <tr key={index} className="cost-breakdown-row-wrapper">
-                        <td className="work-col">{t(item?.designationOfWorks)}</td>
-                        <td className="percentage-col">{item?.percentage}%</td>
-                        <td className="amount-col">{item?.amount === 0 ? "0 FDj" : `${item?.amount?.toLocaleString()} FDj`}</td>
-                      </tr>
-                    ))}
-                    <tr className="total-row">
-                      <td className="work-col">{t("CALCULATION_TOTAL")}</td>
-                      <td className="percentage-col">{calculateTotalPercentage()}%</td>
-                      <td className="amount-col">{calculateTotalCost() === 0 ? "0 FDj" : `${calculateTotalCost()?.toLocaleString()} FDj`}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
-            <SubmitBar
-              style={{
-                // width: "100%",
-                marginRight: "55px",
-                marginBottom: "0px",
-                borderRadius: "10px",
-              }}
-              disabled={Number(bill?.totalAmount) === 0}
-              label={t("OP_PROCEED_TO_PAY")}
-              form="payment-form"
-              submit={true}
+          <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+            <Toast
+              error={showToast.key}
+              label={t(showToast.label)}
+              onClose={() => setShowToast(null)}
             />
           </div>
-        </div>
-      ) : (
-        ""
-      )}
-    </form>
+        )}
+
+        <style>{`
+          @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+          .animate-slideUp { animation: slideUp 0.3s ease-out; }
+        `}</style>
+      </div>
+    </div>
   );
 };
 
