@@ -7,7 +7,6 @@ import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaU
 import { transformToApplicationPayload } from "../../../utils";
 import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
-import { assigneeMapping } from "../../../utils/templateConfig";
 import { getServiceInfo } from "../../citizen/apply/utils";
 
 // Add styles for disabled inputs
@@ -59,7 +58,7 @@ const DigitDemoComponent = ({ editdata }) => {
   // Get persisted state from localStorage
   const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
   const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
-  
+
   // Clear personType from saved form data to start fresh
   if (savedFormData.applicantDetails && savedFormData.applicantDetails[0]) {
     delete savedFormData.applicantDetails[0].personType;
@@ -71,16 +70,6 @@ const DigitDemoComponent = ({ editdata }) => {
   const [responseData, setResponseData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const permit = assigneeMapping?.find((item) => item.permit === service);
-  const role = permit?.role || null;
-
-  let { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
-    { roles: role, isActive: true },
-    tenantId,
-    null,
-    null,
-    { enabled: role != null }
-  );
 
   useEffect(() => {
     //useEffect to set the prevfilled data
@@ -138,8 +127,8 @@ const DigitDemoComponent = ({ editdata }) => {
   if (currentFormConfig && currentFormConfig?.name === "applicantDetails") {
     const applicantDetails = formData.applicantDetails && formData.applicantDetails[0];
     const personTypeValue = applicantDetails?.personType;
-    const personType = typeof personTypeValue === 'string' 
-      ? personTypeValue.toUpperCase() 
+    const personType = typeof personTypeValue === 'string'
+      ? personTypeValue.toUpperCase()
       : personTypeValue?.code?.toUpperCase() || '';
 
     // Create a copy of the form config to avoid mutating the original
@@ -150,15 +139,15 @@ const DigitDemoComponent = ({ editdata }) => {
 
     // Filter fields based on personType
     if (currentFormConfig.body) {
-      
+
       currentFormConfig.body = currentFormConfig.body.filter(field => {
         const fieldName = field?.populators?.name; // Use the populators name from config
-        
+
         // Always show personType field
         if (fieldName === 'personType') {
           return true;
         }
-        
+
         // If no personType selected, hide all fields including section headers
         if (!personType) {
           return false;
@@ -211,7 +200,7 @@ const DigitDemoComponent = ({ editdata }) => {
             // 'taxCalculationAgreement',
             // 'checkValidation'
           ];
-          
+
           // Show otherCompanyType only when companyType is OTHER
           if (fieldName === 'otherCompanyType') {
             const companyTypeValue = applicantDetails?.companyType;
@@ -220,7 +209,7 @@ const DigitDemoComponent = ({ editdata }) => {
               : companyTypeValue?.code?.toUpperCase() || '';
             return companyType === "OTHER";
           }
-          
+
           return legalEntityFields.includes(fieldName);
         }
 
@@ -253,7 +242,7 @@ const DigitDemoComponent = ({ editdata }) => {
       };
     }
     // Even if the condition is false, return a cleanup function (no-op)
-    return () => {};
+    return () => { };
   }, [currentFormConfig]);
 
   //this to maintain the current state of the application entered by user
@@ -293,17 +282,16 @@ const DigitDemoComponent = ({ editdata }) => {
           body:
             isLastStep || applicationNumber
               ? transformToApplicationPayload(
-                  updatedFormData,
-                  Updatedconfig,
-                  service,
-                  tenantId,
-                  config,
-                  workflowDetails,
-                  isLastStep,
-                  applicationNumber,
-                  queryStrings?.action,
-                  assigneeOptions?.Employees
-                )
+                updatedFormData,
+                Updatedconfig,
+                service,
+                tenantId,
+                config,
+                workflowDetails,
+                isLastStep,
+                applicationNumber,
+                queryStrings?.action
+              )
               : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
         {
@@ -379,8 +367,8 @@ const DigitDemoComponent = ({ editdata }) => {
 
     if (landDetails) {
       // intededUse is now a text field, so get the value directly
-      const intededUseValue = typeof landDetails.intededUse === 'string' 
-        ? landDetails.intededUse.toUpperCase() 
+      const intededUseValue = typeof landDetails.intededUse === 'string'
+        ? landDetails.intededUse.toUpperCase()
         : landDetails.intededUse?.code?.toUpperCase() || '';
       const demolitionType = landDetails?.demolitionType?.code?.toUpperCase();
 
@@ -452,7 +440,7 @@ const DigitDemoComponent = ({ editdata }) => {
     history.push(`/${window.contextPath}/${userType}/publicservices/service/${service}`);
   };
 
-  if (moduleListLoading || workflowDetailsLoading || isLoadingHrmsSearch) return <Loader />;
+  if (moduleListLoading || workflowDetailsLoading) return <Loader />;
 
   if (isLoading) return <Loader />;
 
@@ -478,9 +466,9 @@ const DigitDemoComponent = ({ editdata }) => {
               </button>
             </div>
             <div className="flex items-center">
-          
-            <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl"> {serviceRef || cleanServiceCode} - {getServiceTitle()}</p>
-              </div>
+
+              <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl"> {serviceRef || cleanServiceCode} - {getServiceTitle()}</p>
+            </div>
           </div>
         </div>
 

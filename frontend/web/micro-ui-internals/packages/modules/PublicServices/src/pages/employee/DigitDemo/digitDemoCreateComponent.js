@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Loader } from "@egovernments/digit-ui-react-components";
-import { assigneeMapping } from "../../../utils/templateConfig";
 
 const DigitDemoCreateComponent = () => {
   const history = useHistory();
@@ -33,21 +32,9 @@ const DigitDemoCreateComponent = () => {
     headers: { "x-tenant-id": tenantId },
   });
 
-  // Get assignees
-  const permit = assigneeMapping?.find((item) => item.permit === service);
-  const role = permit?.role || null;
-
-  const { isLoading: isLoadingHrmsSearch, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch(
-    { roles: role, isActive: true },
-    tenantId,
-    null,
-    null,
-    { enabled: role != null }
-  );
-
   useEffect(() => {
     const submitApplication = async () => {
-      if (isLoading || isLoadingHrmsSearch) return;
+      if (isLoading) return;
 
       const application = response?.Application?.[0];
 
@@ -60,7 +47,7 @@ const DigitDemoCreateComponent = () => {
           module: application?.module || null,
           businessService: application?.businessService || null,
           status: "ACTIVE",
-          channel: application?.channel || "counter",
+          channel: application?.channel || Digit.UserService.getUser()?.info?.type || "counter",
           reference: application?.reference || null,
           workflowStatus: application?.workflowStatus || "applied",
           serviceDetails: application?.serviceDetails || {},
@@ -95,7 +82,6 @@ const DigitDemoCreateComponent = () => {
           Workflow: {
             action: "CREATE",
             comment: "",
-            assignees: assigneeOptions?.Employees?.map((emp) => emp?.user).filter(Boolean) || [],
             businessService: application?.workflow?.businessService || application?.businessService,
           },
           auditDetails: {
@@ -142,7 +128,7 @@ const DigitDemoCreateComponent = () => {
     };
 
     submitApplication();
-  }, [isLoading, isLoadingHrmsSearch]);
+  }, [isLoading]);
 
   return <Loader />;
 };

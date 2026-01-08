@@ -24,7 +24,7 @@ const getServiceDetails = (formData) => {
     }
     return acc;
   }, {});
-  
+
   // Handle legal entity details from applicant details
   if (formData.applicantDetails && formData.applicantDetails[0]?.personType === "LEGAL_ENTITY") {
     const applicant = formData.applicantDetails[0];
@@ -37,7 +37,7 @@ const getServiceDetails = (formData) => {
       }];
     }
   }
-  
+
   const flattenValues = (obj) => {
     const flat = {};
     for (const [key, val] of Object.entries(obj)) {
@@ -161,8 +161,7 @@ export const transformToApplicationPayload = (
   workflowDetails,
   isLastStep,
   applicationNumber,
-  action,
-  assignees
+  action
 ) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
@@ -204,7 +203,7 @@ export const transformToApplicationPayload = (
       module: currentConfig?.module,
       businessService: currentConfig?.service,
       status: "ACTIVE",
-      channel: "counter",
+      channel: Digit.UserService.getUser()?.info?.type || "counter",
       reference: null,
       workflowStatus: "applied",
       serviceDetails: {
@@ -237,7 +236,6 @@ export const transformToApplicationPayload = (
           action
         ),
         comment: "",
-        assignees: isLastStep ? assignees.map((emp) => emp?.user).filter(Boolean) : [],
         businessService: config?.data?.workflow?.businessService,
       },
       auditDetails: {
