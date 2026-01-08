@@ -13,10 +13,13 @@
  * - Apostrophe (')
  * - Period (.)
  * - Comma (,)
+ * - At sign (@)
+ * - Forward slash (/)
+ * - Hyphen (-)
  * 
  * This pattern helps prevent XSS and injection attacks by blocking dangerous characters
  */
-const SECURITY_VALIDATION_PATTERN = /[^A-Za-z0-9 _.',]/g;
+const SECURITY_VALIDATION_PATTERN = /[^A-Za-z0-9 _.',@\/-]/g;
 
 /**
  * Sanitizes text input by removing unsafe characters
