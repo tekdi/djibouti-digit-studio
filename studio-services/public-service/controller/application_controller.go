@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"public-service/config"
 	"public-service/model"
 	"public-service/service"
 	"public-service/utils"
@@ -15,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/google/uuid"
 )
 
 type ApplicationController struct {
@@ -24,10 +26,11 @@ type ApplicationController struct {
 	enrichmentService  *service.EnrichmentService
 	smsService         *service.SMSService
 	indexerService     *service.IndexerService
+	employeeService    *service.EmployeeService
 }
 
-func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService, indexerService *service.IndexerService) *ApplicationController {
-	return &ApplicationController{service: service, workflowIntegrator: workflowIntegrator, individualService: individualService, enrichmentService: enrichmentService, smsService: smsService, indexerService: indexerService}
+func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService, indexerService *service.IndexerService, employeeService *service.EmployeeService) *ApplicationController {
+	return &ApplicationController{service: service, workflowIntegrator: workflowIntegrator, individualService: individualService, enrichmentService: enrichmentService, smsService: smsService, indexerService: indexerService, employeeService: employeeService}
 }
 
 func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, r *http.Request) {
@@ -277,6 +280,11 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		return
 	}
 	if req.Application.Workflow.Action != "" {
+		// Assignee mapping logic for CREATE/EDIT action and CITIZEN channel
+		if (req.Application.Workflow.Action == "CREATE" || req.Application.Workflow.Action == "EDIT") && req.Application.Channel == "CITIZEN" {
+			c.assignEmployeesBasedOnPermit(&req)
+		}
+
 		// Call workflow integrator on success
 		err = c.workflowIntegrator.CallWorkflow(&req)
 		if err != nil {
@@ -399,4 +407,29 @@ func (c *ApplicationController) CalculateHandler(w http.ResponseWriter, r *http.
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
+}
+
+func (c *ApplicationController) assignEmployeesBasedOnPermit(req *model.ApplicationRequest) {
+	if role, ok := config.GetRoleByPermitType(req.Application.BusinessService); ok {
+		
+		resp := c.employeeService.SearchEmployeesByRole(role, req.Application.TenantId, req.RequestInfo)
+		if data, _ := json.MarshalIndent(resp, "", "  "); true {
+			log.Println("SearchEmployeesByRole response:", string(data))
+		}
+		
+		employees := resp.Employees
+		
+		if len(employees) > 0 {
+			var users []model.User
+			for _, emp := range employees {
+				if emp.User.Uuid != uuid.Nil {
+					users = append(users, emp.User)
+				}
+			}
+			req.Application.Workflow.Assignees = users
+			log.Printf("Assigned %d employees with role %s to application", len(users), role)
+		} else {
+			log.Printf("No employees found for role %s", role)
+		}
+	}
 }
