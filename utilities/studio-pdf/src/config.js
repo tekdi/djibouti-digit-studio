@@ -40,9 +40,10 @@ module.exports = {
     pdf_create: "/pdf-service/v1/_createnosave",
     user_search: "/user/_search",
     mdms_search: "/egov-mdms-service/v1/_search",
+    mdms_search_v2: "/egov-mdms-service/v2/_search",
     workflow_search: "/egov-workflow-v2/egov-wf/process/_search",
     mdms_get: "/egov-mdms-service/v1/_get",
     localization_search: "/localization/messages/v1/_search",
-    publicService_search :"/public-service/v1/application"
+    publicService_search: "/public-service/v1/application"
   }
 };

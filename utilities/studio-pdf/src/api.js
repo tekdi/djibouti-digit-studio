@@ -55,6 +55,13 @@ async function search_mdms(request) {
   });
 }
 
+async function search_mdms_v2(request) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mdms, config.paths.mdms_search_v2),
+    data: request
+  });
+}
 
 
 
@@ -74,7 +81,7 @@ async function search_localization(request, lang, module, tenantId) {
 async function create_pdf(tenantId, key, data, requestInfo) {
   logger.info(`creating a pdf for key ${key}`);
   logger.debug(JSON.stringify(data))
-  const respone =  await axios({
+  const respone = await axios({
     responseType: "stream",
     method: "post",
     url: url.resolve(config.host.pdf, config.paths.pdf_create),
@@ -140,11 +147,11 @@ async function upload_file_using_filestore(filename, tenantId, fileData) {
     return get(response.data, "files[0].fileStoreId");
   } catch (error) {
     console.log(error);
-    throw(error)
+    throw (error)
   }
 };
 
-async function getPublicServiceApplicationDetails(tenantId, serviceCode, applicationNumber) {
+async function getPublicServiceApplicationDetails(tenantId, serviceCode, applicationNumber, requestInfo) {
   const params = { applicationNumber };
   const searchEndpoint = `${config.paths.publicService_search}/${serviceCode}`;
   const requestUrl = url.resolve(config.host.publicService, searchEndpoint);
@@ -159,6 +166,7 @@ async function getPublicServiceApplicationDetails(tenantId, serviceCode, applica
       params,
       headers: {
         "X-Tenant-Id": tenantId,
+        "auth-token": requestInfo?.authToken
       },
     });
 
@@ -168,8 +176,18 @@ async function getPublicServiceApplicationDetails(tenantId, serviceCode, applica
     };
   } catch (error) {
     logger.error(`Error fetching application details for App no ${applicationNumber} of service ${serviceCode}`);
+
+    // Log the actual error response from the API
+    if (error.response) {
+      logger.error(`API returned status: ${error.response.status}`);
+      logger.error(`API error response: ${JSON.stringify(error.response.data)}`);
+    }
+
     logger.error(error.stack || error);
-    return [];
+
+    return {
+      Application: []
+    };
   }
 }
 const getBaseMDMSData = async (tenantId) => {
@@ -190,8 +208,8 @@ const getBaseMDMSData = async (tenantId) => {
         ],
       },
     };
-    logger.debug(`getBaseData request ${JSON.stringify(request )}`);
-    const response = await search_mdms(request);    
+    logger.debug(`getBaseData request ${JSON.stringify(request)}`);
+    const response = await search_mdms(request);
 
     return {
       MdmsRes: get(response, "data.MdmsRes", {})
@@ -210,7 +228,7 @@ module.exports = {
   search_mdms,
   search_user,
   search_workflow,
-  search_mdms,
+  search_mdms_v2,
   search_localization,
   search_payment_details,
   upload_file_using_filestore,
