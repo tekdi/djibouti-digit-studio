@@ -27,10 +27,11 @@ type ApplicationController struct {
 	smsService         *service.SMSService
 	indexerService     *service.IndexerService
 	employeeService    *service.EmployeeService
+	permissionService  *service.PermissionService
 }
 
-func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService, indexerService *service.IndexerService, employeeService *service.EmployeeService) *ApplicationController {
-	return &ApplicationController{service: service, workflowIntegrator: workflowIntegrator, individualService: individualService, enrichmentService: enrichmentService, smsService: smsService, indexerService: indexerService, employeeService: employeeService}
+func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService, indexerService *service.IndexerService, employeeService *service.EmployeeService, permissionService *service.PermissionService) *ApplicationController {
+	return &ApplicationController{service: service, workflowIntegrator: workflowIntegrator, individualService: individualService, enrichmentService: enrichmentService, smsService: smsService, indexerService: indexerService, employeeService: employeeService, permissionService: permissionService}
 }
 
 func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, r *http.Request) {
@@ -272,7 +273,34 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 	if req.Application.ServiceCode == "" {
 		req.Application.ServiceCode = serviceCode
 	}
+
+	// Fetch existing application to get current state
 	ctx := context.Background()
+	searchCriteria := model.SearchCriteria{
+		TenantId:          req.Application.TenantId,
+		ApplicationNumber: req.Application.ApplicationNumber,
+		ServiceCode:       serviceCode,
+	}
+	
+	searchRes, err := c.service.SearchApplication(ctx, searchCriteria, AuthToken)
+	if err != nil {
+		log.Printf("Failed to fetch existing application: %v", err)
+	}
+
+	var currentApp *model.Application
+	if len(searchRes.Application) > 0 {
+		currentApp = &searchRes.Application[0]
+	}
+
+	// Validate CITIZEN update permission
+	if err := c.permissionService.ValidateCitizenUpdate(&req, currentApp); err != nil {
+		utils.WriteErrorResponse(w, http.StatusForbidden, err.Error())
+		return
+	}
+
+	// Protect costEstimation field
+	c.permissionService.ProtectCostEstimation(&req, currentApp)
+
 	req, err = c.enrichmentService.EnrichApplicationsWithDemand(req)
 	if err != nil {
 		log.Printf("Deamnd Creation failed: %v", err)

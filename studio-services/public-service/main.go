@@ -71,6 +71,7 @@ func main() {
 	appSvc := service.NewApplicationService(appRepo, enrichSvc,workflowIntegrator)
 	indexSvc := service.NewIndexerService(restRepo,kafkaProducer,workflowIntegrator,mdmsv2sSvc)
 	employeeSvc := service.NewEmployeeService(restRepo)
+	permissionSvc := service.NewPermissionService()
 
 	
 
@@ -82,7 +83,7 @@ func main() {
 	}
 
 	// Initialize controllers
-	appCtrl := controller.NewApplicationController(appSvc, workflowIntegrator, individualSvc, enrichSvc, smsService,indexSvc, employeeSvc)
+	appCtrl := controller.NewApplicationController(appSvc, workflowIntegrator, individualSvc, enrichSvc, smsService,indexSvc, employeeSvc, permissionSvc)
 	serviceCtrl := controller.NewServiceController(serviceSvc,enrichSvc)
 
 	// Setup router
