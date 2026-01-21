@@ -299,7 +299,10 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 	}
 
 	// Protect costEstimation field
-	c.permissionService.ProtectCostEstimation(&req, currentApp)
+	if err := c.permissionService.ProtectCostEstimation(&req, currentApp); err != nil {
+		utils.WriteErrorResponse(w, http.StatusForbidden, err.Error())
+		return
+	}
 
 	req, err = c.enrichmentService.EnrichApplicationsWithDemand(req)
 	if err != nil {

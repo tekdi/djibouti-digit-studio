@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"public-service/config"
 	"public-service/model"
 )
@@ -36,7 +37,7 @@ func (s *PermissionService) ValidateCitizenUpdate(req *model.ApplicationRequest,
 }
 
 // ProtectCostEstimation ensures that costEstimation field is handled correctly based on user role and state
-func (s *PermissionService) ProtectCostEstimation(req *model.ApplicationRequest, currentApp *model.Application) {
+func (s *PermissionService) ProtectCostEstimation(req *model.ApplicationRequest, currentApp *model.Application) error {
 	log.Println("Starting ProtectCostEstimation")
 
 	isCitizen := config.IsCitizen(req.RequestInfo.UserInfo)
@@ -70,22 +71,37 @@ func (s *PermissionService) ProtectCostEstimation(req *model.ApplicationRequest,
 			req.Application.AdditionalDetails = make(map[string]interface{})
 		}
 
+		var existingCost interface{}
+		var dbHasCost bool
 		if currentApp != nil && currentApp.AdditionalDetails != nil {
-			if existingCost, ok := currentApp.AdditionalDetails["costEstimation"]; ok {
-				// Case 1: Exists in DB -> Force it into Request (Prevents Update AND Prevents Deletion)
+			existingCost, dbHasCost = currentApp.AdditionalDetails["costEstimation"]
+		}
+
+		incomingCost, reqHasCost := req.Application.AdditionalDetails["costEstimation"]
+
+		if reqHasCost {
+			if !dbHasCost {
+				// Trying to add new cost
+				log.Println("ProtectCostEstimation: User attempted to add costEstimation")
+				return fmt.Errorf("User is not authorized to add costEstimation")
+			}
+			// Both have it. Compare.
+			if !reflect.DeepEqual(existingCost, incomingCost) {
+				log.Println("ProtectCostEstimation: User attempted to modify costEstimation")
+				return fmt.Errorf("User is not authorized to update costEstimation")
+			}
+			// They are equal. Do nothing (allow).
+			log.Println("ProtectCostEstimation: costEstimation matches DB, allowing")
+		} else {
+			// Req doesn't have it.
+			if dbHasCost {
+				// Restore it.
 				req.Application.AdditionalDetails["costEstimation"] = existingCost
 				log.Println("ProtectCostEstimation: Restored costEstimation from DB")
-			} else {
-				// Case 2: Not in DB -> Remove from Request (Prevents Creation)
-				delete(req.Application.AdditionalDetails, "costEstimation")
-				log.Println("ProtectCostEstimation: Removed costEstimation from request (not in DB)")
 			}
-		} else {
-			// Case 3: No App/Details in DB -> Remove from Request (Prevents Creation)
-			delete(req.Application.AdditionalDetails, "costEstimation")
-			log.Println("ProtectCostEstimation: Removed costEstimation from request (no DB record)")
 		}
 	} else {
 		log.Println("ProtectCostEstimation: User allowed to modify costEstimation")
 	}
+	return nil
 }
