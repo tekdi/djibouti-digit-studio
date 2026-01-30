@@ -8,6 +8,7 @@ import { transformToApplicationPayload } from "../../../utils";
 import Loader from "../../../../../../ui-components/src/atoms/Loader";
 import SummaryView from "../../../components/SummaryView";
 import { getServiceInfo } from "../../citizen/apply/utils";
+import SurfaceAreaWarningModal from "../../../components/SurfaceAreaWarningModal";
 
 // Add styles for disabled inputs
 const disabledInputStyles = `
@@ -69,6 +70,8 @@ const DigitDemoComponent = ({ editdata }) => {
   const [sessionData, setSessionData] = useState(savedFormData);
   const [responseData, setResponseData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSurfaceWarningModal, setShowSurfaceWarningModal] = useState(false);
+  const [warningCoveredArea, setWarningCoveredArea] = useState(0);
 
 
   useEffect(() => {
@@ -260,6 +263,23 @@ const DigitDemoComponent = ({ editdata }) => {
 
     const docStep = rawConfig.findIndex((item) => item.type === "documents");
     const beforeDocStep = currentStep === docStep;
+
+    // Validation for BPA_PCO_SIMPLE: coveredProjectArea must not exceed 200m²
+    if (cleanServiceCode === "BPA_PCO_SIMPLE") {
+      // Check in the current form data being submitted
+      const landDetails = data?.landandProjectDesignDetails?.[0] || 
+                          updatedFormData?.landandProjectDesignDetails?.[0];
+      
+      if (landDetails) {
+        const coveredArea = parseFloat(landDetails.coveredProjectArea) || 0;
+        
+        if (coveredArea > 200) {
+          setWarningCoveredArea(coveredArea);
+          setShowSurfaceWarningModal(true);
+          return; // Stop submission
+        }
+      }
+    }
 
     setFormData(updatedFormData);
     persistData(updatedFormData, currentStep);
@@ -504,6 +524,13 @@ const DigitDemoComponent = ({ editdata }) => {
           <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
         )}
       </div>
+
+      {/* Surface Area Warning Modal for BPA_PCO_SIMPLE */}
+      <SurfaceAreaWarningModal 
+        isOpen={showSurfaceWarningModal}
+        onClose={() => setShowSurfaceWarningModal(false)}
+        coveredArea={warningCoveredArea}
+      />
     </React.Fragment>
   );
 };
