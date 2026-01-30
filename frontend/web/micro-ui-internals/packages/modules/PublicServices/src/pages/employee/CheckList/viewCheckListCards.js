@@ -38,6 +38,12 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
   // Architects can view but not edit the instruction tab
   const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");
   const isViewOnly = isArchitect;
+
+  // Check if user is SRA (BPA_AGENTS or BPA_HOD)
+  const isSRA = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
+  
+  // Check if user is SDECC (role code includes "SDECC")
+  const isSDECC = userDetails?.info?.roles?.some((role) => role.code?.includes("SDECC"));
  
   const getcarditems = async (code) => {
     await mutation.mutate(
@@ -143,7 +149,12 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           }
 
           // Check if this is a commissioners checklist
-          if (item.code === "customCommissionersChecklist" && showCommunisionersChecklist) {
+          // Only show for: BPA_HOD, BPA_AGENTS, BPA_DIRECTOR, BPA_SUB_DIRECTOR, BPA_SRA_SUB_DIRECTOR
+          // Skip completely for all other roles (architects, citizens, etc.)
+          if (item.code === "customCommissionersChecklist") {
+            if (!showCommunisionersChecklist) {
+              return null; // Don't render anything for unauthorized users
+            }
             return (
               <CommissionersCheckListCard 
                 key={index}
@@ -156,29 +167,39 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           }
 
           // Check if this is an instruction sheet (SRA)
+          // Only SRA users (BPA_AGENTS, BPA_HOD) can edit, everyone else (SDECC, architects, etc.) can only view
           if (item.code === "customInstructionSheet") {
+            const isSRAInstructionViewOnly = !isSRA;
             return (
               <InstructionSheetCard 
                 key={index}
                 service={service} 
                 state={state} 
                 t={t}
-                isViewOnly={isViewOnly}
+                isViewOnly={isSRAInstructionViewOnly}
               />
             );
           }
 
           // Check if this is a SDECC instruction sheet
+          // Only SDECC users can edit, everyone else (SRA, architects, etc.) can only view
           if (item.code === "customSDECCInstructionSheet") {
+            const isSDECCInstructionViewOnly = !isSDECC;
             return (
               <SDECCInstructionSheetCard 
                 key={index}
                 service={service} 
                 state={state} 
                 t={t}
-                isViewOnly={isViewOnly}
+                isViewOnly={isSDECCInstructionViewOnly}
               />
             );
+          }
+          
+          // Skip any custom checklist items that weren't handled above
+          // (safety check to prevent rendering with CheckListCard)
+          if (item.code?.startsWith("custom")) {
+            return null;
           }
           
           // Regular checklist

@@ -9,6 +9,10 @@ const PaymentsTab = ({
   isCitizen,
   service 
 }) => {
+  // Check if user is SRA (BPA_AGENTS or BPA_HOD) - only they can edit payment
+  const userDetails = Digit.UserService.getUser();
+  const isSRA = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
+  const isPaymentViewOnly = !isSRA;
 
   // Services that are free (no payment required) - all others except the ones that require payment
   const paidServices = ['BPA_PCO', 'BPA_PCO_SIMPLE', 'BPA_PL', 'BPA_PCS', 'BPA_PF', 'BPA_PS', 'BPA_ATARR'];
@@ -73,7 +77,7 @@ const PaymentsTab = ({
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-900">Estimation de la redevance de la taxe</h4>
               <div className="bg-white rounded-xl p-6 border border-gray-200">
-                <Calculation isCitizen={isCitizen} />
+                <Calculation isCitizen={isCitizen} isViewOnly={isPaymentViewOnly} />
               </div>
             </div>
           )}

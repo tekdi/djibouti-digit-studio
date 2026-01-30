@@ -4,7 +4,7 @@ import TextInput from "../../../../../ui-components/src/atoms/TextInput";
 import Loader from "../../../../../ui-components/src/atoms/Loader";
 import { Toast } from "@egovernments/digit-ui-react-components";
 
-const Calculation = ({ isCitizen }) => {
+const Calculation = ({ isCitizen, isViewOnly = false }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -12,10 +12,14 @@ const Calculation = ({ isCitizen }) => {
   const checklistStatus = localStorage.getItem("checklistStatus");
   const isHODorAGENT = userDetails?.info?.roles?.some((role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS");
 
+  // If isViewOnly is passed, use it; otherwise fall back to existing logic
   let styleCondition = {};
-  if (!isHODorAGENT && queryStrings?.state !== checklistStatus?.split(".")[1] && isCitizen) {
+  if (isViewOnly || (!isHODorAGENT && queryStrings?.state !== checklistStatus?.split(".")[1] && isCitizen)) {
     styleCondition = { pointerEvents: "none", opacity: 0.7 };
   }
+  
+  // Determine if buttons should be disabled
+  const isEditDisabled = isViewOnly || !isHODorAGENT;
 
   const [floorData, setFloorData] = useState([
     { name: t("CALCULATION_RDC"), residentialArea: 0, commercialArea: 0, totalArea: 0, cost: 0, floorNo: 0 },
@@ -498,22 +502,26 @@ const Calculation = ({ isCitizen }) => {
                     <td className="cost-col">{floor.cost ? floor?.cost?.toLocaleString() : 0}</td>
                   </tr>
                 ))}
-                <tr className="button-row">
-                  <td colSpan="5">
-                    <div className="button-container">
-                      <button className={`add-floor-button ${floorData?.length >= 10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
-                        <h1 className="add-floor-button-title">{t("CALCULATION_AJOUTER_ETAGE")}</h1>
-                        <span className="add-floor-button-icon">+</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {!isEditDisabled && (
+                  <tr className="button-row">
+                    <td colSpan="5">
+                      <div className="button-container">
+                        <button className={`add-floor-button ${floorData?.length >= 10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
+                          <h1 className="add-floor-button-title">{t("CALCULATION_AJOUTER_ETAGE")}</h1>
+                          <span className="add-floor-button-icon">+</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
-          <button className="action-button" onClick={calculateFees}>
-            {t("CALCULATION_CALCULER_REDEVANCE")}
-          </button>
+          {!isEditDisabled && (
+            <button className="action-button" onClick={calculateFees}>
+              {t("CALCULATION_CALCULER_REDEVANCE")}
+            </button>
+          )}
         </div>
 
         <div className="calculations-section" style={styleCondition}>
@@ -613,9 +621,11 @@ const Calculation = ({ isCitizen }) => {
             </table>
           </div>
         </div>
-        <button className={`action-button ${isSaveBtnDisable && !isTotalTaxEditable ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
-          {t("CALCULATION_SAVE")}
-        </button>
+        {!isEditDisabled && (
+          <button className={`action-button ${isSaveBtnDisable && !isTotalTaxEditable ? "disabled-btn" : ""}`} onClick={calculationSubmit}>
+            {t("CALCULATION_SAVE")}
+          </button>
+        )}
 
         {onSubmitLoading && (
           <div className="loader">
