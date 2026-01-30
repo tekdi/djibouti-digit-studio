@@ -33,17 +33,24 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
   const mutation = Digit.Hooks.useCustomAPIMutationHook(request);
 
   const userDetails = Digit.UserService.getUser();
-  const showCommunisionersChecklist =  userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR");
+  const userRoles = userDetails?.info?.roles || [];
+  const showCommunisionersChecklist = userRoles.some((role) => 
+    role.code === "BPA_AGENTS" || 
+    role.code === "BPA_HOD" || 
+    role.code === "BPA_DIRECTOR" || 
+    role.code === "BPA_SRA_SUB_DIRECTOR" || 
+    role.code === "BPA_SUB_DIRECTOR"
+  );
   
   // Architects can view but not edit the instruction tab
-  const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const isArchitect = userRoles.some((role) => role.code === "BPA_ARCHITECT");
   const isViewOnly = isArchitect;
 
   // Check if user is SRA (BPA_AGENTS or BPA_HOD)
-  const isSRA = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
+  const isSRA = userRoles.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
   
   // Check if user is SDECC (role code includes "SDECC")
-  const isSDECC = userDetails?.info?.roles?.some((role) => role.code?.includes("SDECC"));
+  const isSDECC = userRoles.some((role) => role.code?.includes("SDECC"));
  
   const getcarditems = async (code) => {
     await mutation.mutate(
@@ -162,6 +169,7 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 state={state} 
                 t={t}
                 isViewOnly={isViewOnly}
+                applicationId={accountID}
               />
             );
           }

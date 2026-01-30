@@ -4,14 +4,17 @@ import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets
 import CommissionersCheckListModal from "./CommissionersCheckListModal";
 import { useCommissionersData } from "./hooks/useCommissionersData";
 
-const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false }) => {
+const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, applicationId: propApplicationId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
 
   const {
     serviceCode,
-    applicationNumber,
+    applicationNumber: queryApplicationNumber,
   } = Digit.Hooks.useQueryParams();
+  
+  // Use applicationNumber from props or query params
+  const applicationNumber = propApplicationId || queryApplicationNumber;
 
   const {
     checklistData,
@@ -367,7 +370,9 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false }) =
 CommissionersCheckListCard.propTypes = {
   service: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
+  isViewOnly: PropTypes.bool,
+  applicationId: PropTypes.string
 };
 
 export default CommissionersCheckListCard;
