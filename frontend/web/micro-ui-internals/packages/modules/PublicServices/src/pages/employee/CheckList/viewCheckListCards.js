@@ -34,6 +34,10 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
 
   const userDetails = Digit.UserService.getUser();
   const showCommunisionersChecklist =  userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR");
+  
+  // Architects can view but not edit the instruction tab
+  const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");
+  const isViewOnly = isArchitect;
  
   const getcarditems = async (code) => {
     await mutation.mutate(
@@ -132,7 +136,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 key={index}
                 service={service} 
                 state={state} 
-                t={t} 
+                t={t}
+                isViewOnly={isViewOnly}
               />
             );
           }
@@ -144,7 +149,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 key={index}
                 service={service} 
                 state={state} 
-                t={t} 
+                t={t}
+                isViewOnly={isViewOnly}
               />
             );
           }
@@ -156,7 +162,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 key={index}
                 service={service} 
                 state={state} 
-                t={t} 
+                t={t}
+                isViewOnly={isViewOnly}
               />
             );
           }
@@ -168,7 +175,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 key={index}
                 service={service} 
                 state={state} 
-                t={t} 
+                t={t}
+                isViewOnly={isViewOnly}
               />
             );
           }
@@ -180,7 +188,8 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
               item={item} 
               t={t} 
               accid={accountID} 
-              state={state} 
+              state={state}
+              isViewOnly={isViewOnly}
             />
           );
         })}

@@ -33,25 +33,34 @@ const ApplicationHeader = ({
     });
   };
 
-  // Localisation de la parcelle: support multiple application types (terrainDetails for BPA_PR, or address for others)
+  // Localisation de la parcelle: support multiple application types
+  // - terrainDetails.terrainLocation for BPA_PR
+  // - landandProjectDesignDetails.siteLocation for PCO_SIMPLE
+  // - additionalDetails.applicants.address for others
   const terrainDetailsFirst = response && response.serviceDetails && response.serviceDetails.terrainDetails && response.serviceDetails.terrainDetails[0];
+  const landProjectDetailsFirst = response && response.serviceDetails && response.serviceDetails.landandProjectDesignDetails && response.serviceDetails.landandProjectDesignDetails[0];
   const terrainLocationRaw =
     (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
+    (landProjectDetailsFirst && landProjectDetailsFirst.siteLocation) ||
     (response && response.additionalDetails && response.additionalDetails.applicants && response.additionalDetails.applicants.address);
   const terrainLocation =
     typeof terrainLocationRaw === "string"
-      ? terrainLocationRaw
+      ? (terrainLocationRaw || "N/A")
       : terrainLocationRaw && typeof terrainLocationRaw === "object"
         ? [terrainLocationRaw.addressLine1, terrainLocationRaw.detail, terrainLocationRaw.city].filter(Boolean).join(", ") || "N/A"
         : "N/A";
 
-  // Région: support multiple application types (terrainDetails.region for BPA_PR, or projectDetails.region for others)
+  // Région: support multiple application types
+  // - terrainDetails.region for BPA_PR
+  // - landandProjectDesignDetails.region for PCO_SIMPLE
+  // - projectDetails.region for others
   const regionRaw =
     (terrainDetailsFirst && terrainDetailsFirst.region) ||
+    (landProjectDetailsFirst && landProjectDetailsFirst.region) ||
     (projectDetails && projectDetails.region);
   const region =
     typeof regionRaw === "string"
-      ? regionRaw
+      ? (regionRaw || "N/A")
       : regionRaw && typeof regionRaw === "object"
         ? regionRaw.name || regionRaw.code || "N/A"
         : "N/A";

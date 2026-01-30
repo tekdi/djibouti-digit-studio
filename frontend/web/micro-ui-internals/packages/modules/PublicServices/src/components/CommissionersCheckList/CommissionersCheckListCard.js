@@ -4,7 +4,7 @@ import { LuUsers, LuCircleCheck , LuClock, LuPen, LuEye, LuBuilding2, LuDroplets
 import CommissionersCheckListModal from "./CommissionersCheckListModal";
 import { useCommissionersData } from "./hooks/useCommissionersData";
 
-const CommissionersCheckListCard = ({ service, state, t }) => {
+const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
 
@@ -240,13 +240,15 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
             </div>
 
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6">
-              <button
-                onClick={handleOpenModal}
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
-              >
-                <LuPen className="h-4 w-4" />
-                Modifier la sélection
-              </button>
+              {!isViewOnly && (
+                <button
+                  onClick={handleOpenModal}
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
+                >
+                  <LuPen className="h-4 w-4" />
+                  Modifier la sélection
+                </button>
+              )}
               <button
                 onClick={handleViewReport}
                 className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-djibouti-primary-dark"
@@ -323,18 +325,24 @@ const CommissionersCheckListCard = ({ service, state, t }) => {
           </div>
 
           <div className="pt-4">
-            <button
-              onClick={handleOpenModal}
-              disabled={isLoading}
-              className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary px-4 py-3 text-base font-semibold transition-all duration-200 ${
-                isLoading
-                  ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                  : "bg-djibouti-primary/10 text-djibouti-primary hover:bg-djibouti-primary hover:text-white"
-              }`}
-            >
-              <LuUsers className="h-5 w-5" />
-              {isLoading ? "Chargement..." : "Sélectionner"}
-            </button>
+            {!isViewOnly ? (
+              <button
+                onClick={handleOpenModal}
+                disabled={isLoading}
+                className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary px-4 py-3 text-base font-semibold transition-all duration-200 ${
+                  isLoading
+                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                    : "bg-djibouti-primary/10 text-djibouti-primary hover:bg-djibouti-primary hover:text-white"
+                }`}
+              >
+                <LuUsers className="h-5 w-5" />
+                {isLoading ? "Chargement..." : "Sélectionner"}
+              </button>
+            ) : (
+              <span className="text-sm text-gray-500 italic block text-center py-2">
+                Sélection non encore effectuée
+              </span>
+            )}
           </div>
 
         </div>

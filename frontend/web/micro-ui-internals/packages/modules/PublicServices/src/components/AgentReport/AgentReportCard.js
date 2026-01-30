@@ -4,7 +4,7 @@ import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye, LuChevronDown, LuChev
 import AgentReportModal from "./AgentReportModal";
 import { useAgentReportData } from "./hooks/useAgentReportData";
 
-const AgentReportCard = ({ service, state, t }) => {
+const AgentReportCard = ({ service, state, t, isViewOnly = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -207,13 +207,15 @@ const AgentReportCard = ({ service, state, t }) => {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6 mt-auto">
-              <button
-                onClick={handleOpenModal}
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
-              >
-                <LuPen className="h-4 w-4" />
-                Modifier le rapport
-              </button>
+              {!isViewOnly && (
+                <button
+                  onClick={handleOpenModal}
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
+                >
+                  <LuPen className="h-4 w-4" />
+                  Modifier le rapport
+                </button>
+              )}
               <button
                 onClick={handleViewReport}
                 className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-djibouti-primary-dark"
@@ -311,18 +313,24 @@ const AgentReportCard = ({ service, state, t }) => {
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3 mt-auto">
-            <button
-              onClick={handleOpenModal}
-              disabled={isLoading}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                isLoading
-                  ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
-                  : "border border-djibouti-primary bg-djibouti-primary text-white hover:bg-djibouti-primary-dark"
-              }`}
-            >
-              <LuFileText className="h-4 w-4" />
-              {isLoading ? "Chargement..." : "Créer le rapport"}
-            </button>
+            {!isViewOnly ? (
+              <button
+                onClick={handleOpenModal}
+                disabled={isLoading}
+                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                  isLoading
+                    ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
+                    : "border border-djibouti-primary bg-djibouti-primary text-white hover:bg-djibouti-primary-dark"
+                }`}
+              >
+                <LuFileText className="h-4 w-4" />
+                {isLoading ? "Chargement..." : "Créer le rapport"}
+              </button>
+            ) : (
+              <span className="text-sm text-gray-500 italic">
+                Rapport non encore soumis
+              </span>
+            )}
           </div>
         </div>
       </div>
