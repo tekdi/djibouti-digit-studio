@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp, LuDownload, LuCamera, LuClipboardList } from "react-icons/lu";
 import AgentReportModal from "./AgentReportModal";
 import { useAgentReportData } from "./hooks/useAgentReportData";
 
 const AgentReportCard = ({ service, state, t }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewMode, setIsViewMode] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
   const {
     serviceCode,
     applicationNumber,
@@ -17,7 +21,6 @@ const AgentReportCard = ({ service, state, t }) => {
     checkExistingChecklist
   } = useAgentReportData(applicationNumber, serviceCode);
 
-  // Check if checklist is already submitted
   useEffect(() => {
     if (applicationNumber && serviceCode) {
       checkExistingChecklist();
@@ -25,6 +28,7 @@ const AgentReportCard = ({ service, state, t }) => {
   }, [applicationNumber, serviceCode, checkExistingChecklist]);
 
   const handleOpenModal = () => {
+    setIsViewMode(false);
     setIsModalOpen(true);
   };
 
@@ -33,10 +37,11 @@ const AgentReportCard = ({ service, state, t }) => {
   };
 
   const handleSuccess = () => {
-    checkExistingChecklist(); // Refresh data
+    checkExistingChecklist();
   };
 
   const handleViewReport = () => {
+    setIsViewMode(true);
     setIsModalOpen(true);
   };
 
@@ -45,126 +50,175 @@ const AgentReportCard = ({ service, state, t }) => {
     return null;
   }
 
+  // Calculate files count
+  const filesCount = checklistData 
+    ? ((checklistData.report && checklistData.report.length) || 0) + 
+      ((checklistData.photos && checklistData.photos.length) || 0)
+    : 0;
+
   if (isSubmitted && checklistData) {
     return (
-      <React.Fragment>
-        <div className="p-0 mb-5 border border-gray-200 rounded-xl overflow-hidden shadow-lg bg-white">
-          {/* Report Header */}
-          <div className="bg-gradient-to-br from-[#0f6769] to-[#73836a] p-5 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="white"/>
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">
-                    Rapport d'inspection sur site
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-400/20 px-2 py-1 rounded-md flex items-center gap-1">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
-                      </svg>
-                      TERMINÉ
-                    </span>
-                    <span className="text-xs opacity-80">
-                      ID Rapport: {applicationNumber}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <button
-                onClick={handleViewReport}
-                className="bg-white/20 text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold cursor-pointer transition-all duration-200 hover:bg-white/30"
-              >
-                Voir le rapport complet
-              </button>
-            </div>
-          </div>
+      <div>
+        <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark" />
 
-          {/* Report Content */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
-              {/* Submission Info */}
-              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="text-xs font-semibold text-slate-500 mb-1">
-                  SOUMIS LE
+          <div className="flex flex-col gap-6 p-6 min-h-full">
+            {/* Header */}
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-djibouti-primary/10">
+                <LuClipboardList className="h-6 w-6 text-djibouti-primary" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Rapport d'inspection sur site
+                  </h3>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <LuCircleCheck className="h-4 w-4" />
+                    Terminé
+                  </span>
                 </div>
-                <div className="text-sm font-medium text-gray-800">
+                <p className="text-sm text-gray-500">
+                  ID Rapport : <span className="font-medium text-gray-900">{applicationNumber}</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Metadata Grid */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Soumis le
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
                   {new Date(checklistData.submittedAt).toLocaleDateString('fr-FR', {
                     year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
-              </div>
-
-              {/* Created By */}
-              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="text-xs font-semibold text-slate-500 mb-1">
-                  CRÉÉ PAR
-                </div>
-                <div className="text-sm font-medium text-gray-800">
-                  {checklistData.submittedByName || "Utilisateur inconnu"}
-                </div>
-              </div>
-
-              {/* Files Count */}
-              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="text-xs font-semibold text-slate-500 mb-1">
-                  FICHIERS JOINTS
-                </div>
-                <div className="text-sm font-medium text-gray-800">
-                  {((checklistData.report && checklistData.report.length) || 0) + 
-                   ((checklistData.photos && checklistData.photos.length) || 0)} fichiers
-                </div>
-              </div>
-
-              {/* Last Edited */}
-              <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="text-xs font-semibold text-slate-500 mb-1">
-                  DERNIÈRE MODIFICATION
-                </div>
-                <div className="text-sm font-medium text-gray-800">
-                  {checklistData.lastEditedByName || "Utilisateur inconnu"}
-                </div>
-                <div className="text-xs text-gray-500 mt-0.5">
-                  {checklistData.lastEditedAt && new Date(checklistData.lastEditedAt).toLocaleDateString('fr-FR', {
                     month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
                   })}
-                </div>
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Créé par
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
+                  {checklistData.submittedByName || "Utilisateur inconnu"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Fichiers joints
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
+                  {filesCount} fichier{filesCount !== 1 ? 's' : ''}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Dernière modification
+                </span>
+                <p className="mt-2 text-sm font-semibold text-gray-900">
+                  {checklistData.lastEditedByName || "Utilisateur inconnu"}
+                </p>
+                {checklistData.lastEditedAt && (
+                  <p className="text-xs text-gray-500">
+                    {new Date(checklistData.lastEditedAt).toLocaleDateString('fr-FR', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Notes Section - Full Width */}
-            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 mb-5">
-              <div className="text-xs font-semibold text-slate-500 mb-2">
-                NOTES D'INSPECTION
+            {/* Notes Section */}
+            {checklistData.notes && (
+              <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  Notes d'inspection
+                </span>
+                <p className="mt-2 text-sm text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
+                  {checklistData.notes}
+                </p>
               </div>
-              <div className="text-sm font-medium text-gray-800 leading-relaxed whitespace-pre-wrap break-words">
-                {checklistData.notes ? checklistData.notes : "— Aucune note fournie"}
-              </div>
-            </div>
+            )}
 
-            {/* Quick Actions */}
-            <div className="flex gap-3 pt-4 border-t border-gray-200">
+            {/* History */}
+            {checklistData.history && checklistData.history.length > 0 && (
+              <div className="border-t border-gray-100 pt-6">
+                <button
+                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                  className="flex items-center justify-between w-full text-left mb-4 group"
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 group-hover:text-djibouti-primary transition-colors">
+                    Historique des modifications
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">
+                      ({checklistData.history.length} {checklistData.history.length === 1 ? "modification" : "modifications"})
+                    </span>
+                    {isHistoryOpen ? (
+                      <LuChevronUp className="h-4 w-4 text-gray-500 group-hover:text-djibouti-primary transition-colors" />
+                    ) : (
+                      <LuChevronDown className="h-4 w-4 text-gray-500 group-hover:text-djibouti-primary transition-colors" />
+                    )}
+                  </div>
+                </button>
+                {isHistoryOpen && (
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    {checklistData.history
+                      .slice()
+                      .reverse()
+                      .map((entry, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold text-gray-900">
+                                {entry.editedByName || "Utilisateur inconnu"}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {new Date(entry.timestamp).toLocaleDateString("fr-FR", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6 mt-auto">
               <button
-                onClick={handleViewReport}
-                className="bg-gray-100 text-gray-700 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium cursor-pointer hover:bg-gray-200"
+                onClick={handleOpenModal}
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
               >
-                Télécharger le rapport
+                <LuPen className="h-4 w-4" />
+                Modifier le rapport
               </button>
               <button
                 onClick={handleViewReport}
-                className="bg-[#0f6769] text-white border-none rounded-md px-4 py-2 text-sm font-medium cursor-pointer hover:bg-[#0a4f51]"
+                className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-djibouti-primary-dark"
               >
+                <LuEye className="h-4 w-4" />
                 Voir les détails
               </button>
             </div>
@@ -179,103 +233,95 @@ const AgentReportCard = ({ service, state, t }) => {
           serviceCode={serviceCode}
           state={state}
           onSuccess={handleSuccess}
-          isViewMode={isSubmitted}
+          isViewMode={isViewMode}
           existingChecklistData={checklistData}
         />
-      </React.Fragment>
+      </div>
     );
   }
 
+  // Pending state - not yet submitted
   return (
-    <React.Fragment>
-      <div className="p-0 mb-5 border border-gray-200 rounded-xl overflow-hidden shadow-lg bg-white">
-        {/* Report Header */}
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-5 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9ZM19 21H5V3H13V9H19V21Z" fill="white"/>
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-1">
-                  Rapport d'inspection sur site
-                </h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-amber-300 bg-amber-300/20 px-2 py-1 rounded-md flex items-center gap-1">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9ZM19 21H5V3H13V9H19V21Z" fill="currentColor"/>
-                    </svg>
-                    EN ATTENTE
-                  </span>
-                  <span className="text-xs opacity-80">
-                    ID Rapport: {applicationNumber}
-                  </span>
-                </div>
-              </div>
+    <div>
+      <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 to-amber-500" />
+
+        <div className="flex flex-col gap-6 p-6 min-h-full">
+          {/* Header */}
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100/70">
+              <LuClipboardList className="h-6 w-6 text-amber-600" />
             </div>
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Rapport d'inspection sur site
+                </h3>
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                  <LuClock className="h-4 w-4" />
+                  En attente
+                </span>
+              </div>
+              <p className="text-sm text-gray-500">
+                ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Info Grid */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-amber-100 bg-amber-50 p-4">
+              <span className="text-xs font-medium uppercase tracking-wide text-amber-700">
+                Statut
+              </span>
+              <p className="mt-2 text-sm font-semibold text-amber-800">
+                En attente de remplissage
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-djibouti-primary/10 bg-djibouti-primary/5 p-4">
+              <span className="text-xs font-medium uppercase tracking-wide text-djibouti-primary/70">
+                Éléments requis
+              </span>
+              <p className="mt-2 text-sm font-semibold text-djibouti-primary">
+                Fiche de terrain, Photos du site
+              </p>
+            </div>
+          </div>
+
+          {/* Requirements Card */}
+          <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+            <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Instructions
+            </span>
+            <p className="mt-2 text-sm text-gray-700 leading-relaxed">
+              Téléchargez vos documents d'inspection sur site et fournissez des notes détaillées sur vos constatations.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1 rounded-lg bg-white border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600">
+                <LuFileText className="h-3.5 w-3.5" />
+                Fiche de terrain
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-lg bg-white border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600">
+                <LuCamera className="h-3.5 w-3.5" />
+                Photos du site
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap gap-3 mt-auto">
             <button
               onClick={handleOpenModal}
               disabled={isLoading}
-              className={`bg-white/20 text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold transition-all duration-200 ${
-                isLoading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer hover:bg-white/30'
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                isLoading
+                  ? "cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400"
+                  : "border border-djibouti-primary bg-djibouti-primary text-white hover:bg-djibouti-primary-dark"
               }`}
             >
+              <LuFileText className="h-4 w-4" />
               {isLoading ? "Chargement..." : "Créer le rapport"}
-            </button>
-          </div>
-        </div>
-
-        {/* Report Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-5">
-            {/* Status */}
-            <div className="p-4 bg-amber-50 rounded-lg border border-amber-500">
-              <div className="text-xs font-semibold text-amber-800 mb-1">
-                STATUT
-              </div>
-              <div className="text-sm font-medium text-amber-800">
-                ⏳ En attente de soumission
-              </div>
-            </div>
-
-            {/* Required Fields */}
-            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="text-xs font-semibold text-slate-500 mb-1">
-                CHAMPS REQUIS
-              </div>
-              <div className="text-sm font-medium text-gray-800">
-                • Fichiers de rapport sur site<br/>
-                • Notes d'inspection<br/>
-                • Photos sur site (Optionnel)
-              </div>
-            </div>
-
-            {/* Instructions */}
-            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="text-xs font-semibold text-slate-500 mb-1">
-                INSTRUCTIONS
-              </div>
-              <div className="text-sm font-medium text-gray-800">
-                Téléchargez vos documents d'inspection sur site et fournissez des notes détaillées sur vos constatations
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
-            <button
-              onClick={handleOpenModal}
-              className="bg-amber-500 text-white border-none rounded-md px-5 py-2.5 text-sm font-semibold cursor-pointer hover:bg-amber-600"
-            >
-              Commencer le rapport
-            </button>
-            <button
-              onClick={handleOpenModal}
-              className="bg-gray-100 text-gray-700 border border-gray-300 rounded-md px-4 py-2 text-sm font-medium cursor-pointer hover:bg-gray-200"
-            >
-              Voir les exigences
             </button>
           </div>
         </div>
@@ -292,7 +338,7 @@ const AgentReportCard = ({ service, state, t }) => {
         isViewMode={isSubmitted}
         existingChecklistData={checklistData}
       />
-    </React.Fragment>
+    </div>
   );
 };
 
@@ -302,4 +348,4 @@ AgentReportCard.propTypes = {
   t: PropTypes.func.isRequired
 };
 
-export default AgentReportCard; 
+export default AgentReportCard;

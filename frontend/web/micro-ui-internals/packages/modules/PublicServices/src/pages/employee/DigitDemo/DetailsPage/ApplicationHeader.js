@@ -2,9 +2,26 @@ import React from "react";
 import { LuUser, LuMapPin, LuCalendar, LuClock } from "react-icons/lu";
 import StatusBadge from "./StatusBadge";
 import InfoCard from "./InfoCard";
+import ActionButtons from "./ActionButtons";
 import { useTranslation } from "react-i18next";
 
-const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, isCitizen = false }) => {
+const ApplicationHeader = ({ 
+  response, 
+  serviceInfo, 
+  projectDetails, 
+  applicant, 
+  isCitizen = false,
+  // Action button props
+  selectedBusinessService,
+  matchedBusinessServices,
+  setSelectedBusinessService,
+  queryStrings,
+  tenantId,
+  serviceConfig,
+  processInstanceState,
+  isDownloadButtonEnable,
+  service
+}) => {
   const { t } = useTranslation();
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
@@ -53,6 +70,23 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
             </h2>
           </div>
         </div>
+
+        {/* Action Buttons - Top Right */}
+        {!isCitizen && (
+          <ActionButtons
+            isCitizen={isCitizen}
+            selectedBusinessService={selectedBusinessService}
+            matchedBusinessServices={matchedBusinessServices}
+            setSelectedBusinessService={setSelectedBusinessService}
+            response={response}
+            queryStrings={queryStrings}
+            tenantId={tenantId}
+            serviceConfig={serviceConfig}
+            processInstanceState={processInstanceState}
+            isDownloadButtonEnable={isDownloadButtonEnable}
+            service={service}
+          />
+        )}
       </div>
 
       <div className="my-3">

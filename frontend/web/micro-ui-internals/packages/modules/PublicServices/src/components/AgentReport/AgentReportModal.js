@@ -140,7 +140,7 @@ const AgentReportModal = ({
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 w-10 h-10 rounded-full border-none bg-white/90 backdrop-blur-[10px] cursor-pointer flex items-center justify-center z-10 transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-white hover:scale-110"
+            className="absolute top-5 right-5 w-10 h-10 rounded-full border-none bg-white/90 backdrop-blur-[10px] cursor-pointer flex items-center justify-center z-50 transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:bg-white hover:scale-110"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
