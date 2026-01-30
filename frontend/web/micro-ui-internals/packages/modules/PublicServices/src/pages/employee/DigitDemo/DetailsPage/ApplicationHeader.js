@@ -16,8 +16,28 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
     });
   };
 
-  // Get address from additionalDetails
-  const address = response?.additionalDetails?.applicants?.address || "N/A";
+  // Localisation de la parcelle: support multiple application types (terrainDetails for BPA_PR, or address for others)
+  const terrainDetailsFirst = response && response.serviceDetails && response.serviceDetails.terrainDetails && response.serviceDetails.terrainDetails[0];
+  const terrainLocationRaw =
+    (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
+    (response && response.additionalDetails && response.additionalDetails.applicants && response.additionalDetails.applicants.address);
+  const terrainLocation =
+    typeof terrainLocationRaw === "string"
+      ? terrainLocationRaw
+      : terrainLocationRaw && typeof terrainLocationRaw === "object"
+        ? [terrainLocationRaw.addressLine1, terrainLocationRaw.detail, terrainLocationRaw.city].filter(Boolean).join(", ") || "N/A"
+        : "N/A";
+
+  // Région: support multiple application types (terrainDetails.region for BPA_PR, or projectDetails.region for others)
+  const regionRaw =
+    (terrainDetailsFirst && terrainDetailsFirst.region) ||
+    (projectDetails && projectDetails.region);
+  const region =
+    typeof regionRaw === "string"
+      ? regionRaw
+      : regionRaw && typeof regionRaw === "object"
+        ? regionRaw.name || regionRaw.code || "N/A"
+        : "N/A";
 
   return (
     <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl shadow-lg shadow-primary/25 p-6 border border-primary/20 hover:shadow-xl transition-all duration-300 text-white">
@@ -47,9 +67,9 @@ const ApplicationHeader = ({ response, serviceInfo, projectDetails, applicant, i
 
       {/* Key Details Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/20 pt-3">
-        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Localisation de la parcelle" value={address} />
+        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Localisation de la parcelle" value={terrainLocation} />
 
-        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(projectDetails?.region)} />
+        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(region)} />
 
         <InfoCard
           icon={LuCalendar}
