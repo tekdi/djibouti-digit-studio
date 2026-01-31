@@ -147,10 +147,6 @@ const ServiceDetailPage = () => {
             >
               Nouvelle demande
             </button>
-            <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
-              <LuDownload className="w-4 h-4 inline mr-2" />
-              Télécharger le guide
-            </button>
           </div>
         </div>
       </div>
