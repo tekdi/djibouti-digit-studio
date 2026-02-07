@@ -14,6 +14,9 @@ const HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES = [
   "BPA_PV", "BPA_APE", "BPA_CCE", "BPA_CCP", "BPA_CCG"
 ];
 
+// Business services that must NOT show the Instruction tab (e.g. P14–CCP)
+const HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES = ["BPA_CCP"];
+
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }) => {
 
   const userDetails = Digit.UserService.getUser();
@@ -34,8 +37,9 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }
   // BPA_ARCHITECT
   const showPaymentsTab = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT" ||   role.code === "BPA_AGENTS" ||  role.code === "BPA_HOD" ||  role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "BPA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "COUNTER_EMPLOYEE");
 
-  // Show instruction tab for architects and other employees (not citizens, not commissioners)
-  const showInstructionTab = isArchitect || (!isCitizen && !isCommissioner);
+  // Show instruction tab for architects and other employees (not citizens, not commissioners), except for listed business services
+  const hideInstructionTab = HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES.includes(businessService);
+  const showInstructionTab = !hideInstructionTab && (isArchitect || (!isCitizen && !isCommissioner));
 
   // Hide "Retour des Avis" / "Observations" for specific permit types
   const hideObservationsTab = HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES.includes(businessService);
