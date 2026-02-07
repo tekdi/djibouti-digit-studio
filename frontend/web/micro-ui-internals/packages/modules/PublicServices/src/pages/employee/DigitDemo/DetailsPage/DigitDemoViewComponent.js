@@ -173,6 +173,7 @@ const DigitDemoViewComponent = () => {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             isCitizen={isCitizen}
+            businessService={response?.businessService}
           />
 
           {/* Content Area */}

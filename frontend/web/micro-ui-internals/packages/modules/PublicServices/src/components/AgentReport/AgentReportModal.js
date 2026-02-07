@@ -163,7 +163,7 @@ const AgentReportModal = ({
           <div className="p-10 bg-white rounded-b-[20px] max-h-[60vh] overflow-y-auto">
             {/* Report Upload */}
             <FileUploadSection
-              title="Fichiers de rapport sur site"
+              title="Fiche de terrain"
               fieldName="report"
               accept=".pdf,.doc,.docx,.xlsx,.xls"
               maxFiles={5}
@@ -183,7 +183,7 @@ const AgentReportModal = ({
             {/* Notes */}
             <div className="mb-8">
               <label className="block mb-3 font-semibold text-base text-gray-800">
-                Notes supplémentaires {!isViewMode && "(Optionnel)"}
+                  Notes d’inspection  {!isViewMode && "(Optionnel)"}
               </label>
               {isViewMode && !isEditMode ? (
                 <div className="w-full min-h-[120px] p-4 border-2 border-gray-200 rounded-xl text-sm font-inherit bg-gray-50 text-gray-700 leading-relaxed">

@@ -8,7 +8,13 @@ import {
   LuFileText
 } from "react-icons/lu";
 
-const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
+// Business services that must NOT show "Retour des Avis" (P1–PR, P2–CCR, P7–PCS, P8–Clôture, P9–Démolir, P10–ATARR, P11–PV, P12–APE, P13–ACE/CCE, P14–CCP, P15–CCG)
+const HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES = [
+  "BPA_PR", "BPA_CCR", "BPA_PCS", "BPA_PF", "BPA_PD", "BPA_ATARR",
+  "BPA_PV", "BPA_APE", "BPA_CCE", "BPA_CCP", "BPA_CCG"
+];
+
+const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }) => {
 
   const userDetails = Digit.UserService.getUser();
   
@@ -22,9 +28,6 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
     role.code === "BPA_INSPD_COMM"
   );
 
-  // Check if user is an agent (should not see observations tab)
-  const isAgent = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS");
-
   // Check if user is an architect (should see instruction tab in view-only mode)
   const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");
 
@@ -34,12 +37,15 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen }) => {
   // Show instruction tab for architects and other employees (not citizens, not commissioners)
   const showInstructionTab = isArchitect || (!isCitizen && !isCommissioner);
 
+  // Hide "Retour des Avis" / "Observations" for specific permit types
+  const hideObservationsTab = HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES.includes(businessService);
+
   const tabs = [
     { id: "project", label: "Informations de la demande", icon: LuBuilding },
     { id: "documents", label: "Documents", icon: LuFolderOpen },
-    // Show observations tab for everyone except agents
-    // Label changes based on user role: "Observations" for commissioners, "Retour des Avis" for others
-    ...(!isAgent ? [{ id: "observations", label: isCommissioner ? "Observations" : "Retour des Avis", icon: LuFileText }] : []),
+    // Show observations tab for all roles (including agents) except for listed business services
+    // Label: "Observations" for commissioners, "Retour des Avis" for others
+    ...(!hideObservationsTab ? [{ id: "observations", label: isCommissioner ? "Observations" : "Retour des Avis", icon: LuFileText }] : []),
     // Hide payments and checklist tabs for commissioners only
     ...(isCommissioner 
       ? []
