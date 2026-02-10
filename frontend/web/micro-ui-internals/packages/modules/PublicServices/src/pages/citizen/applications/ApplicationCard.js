@@ -6,14 +6,19 @@ import {
   LuUser,
   LuEye
 } from "react-icons/lu";
-import { getStatusInfo, getServiceInfo, formatDate } from "./utils";
+import { getStatusInfo, getServiceInfo, getSimplifiedStatus, formatDate } from "./utils";
 import { useTranslation } from "react-i18next";
 
 const ApplicationCard = ({ app }) => {
   const { t } = useTranslation();
-  const statusInfo = getStatusInfo(app.processInstance?.[0]?.state?.applicationStatus);
+  const applicationStatus = app.processInstance?.[0]?.state?.applicationStatus;
+  const statusInfo = getStatusInfo(applicationStatus, app.businessService);
   const StatusIcon = statusInfo.icon;
   const serviceInfo = getServiceInfo(app.businessService);
+  const simplifiedStatus = getSimplifiedStatus(applicationStatus);
+  const isCompleted = simplifiedStatus === "granted" || simplifiedStatus === "rejected";
+  const displayDate = isCompleted ? app.auditDetails?.lastModifiedTime : app.auditDetails?.createdTime;
+  const dateLabel = simplifiedStatus === "granted" ? "Date de délivrance" : simplifiedStatus === "rejected" ? "Date de clôture" : "Date de création";
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
@@ -54,25 +59,22 @@ const ApplicationCard = ({ app }) => {
                 Étape actuelle
               </p>
               <p className="text-xs text-gray-600">
-                {statusInfo.label === "Brouillon" ? "Saisie des informations" :
-                 statusInfo.label === "En cours d'examen" ? "Vérification des documents" :
-                 statusInfo.label === "Permis Accordé" ? "Permis délivré" :
-                 statusInfo.label === "Permis Rejeté" ? "Demande rejetée" : "Traitement en cours"}
+                {statusInfo.stepSubtext != null ? statusInfo.stepSubtext : statusInfo.label}
               </p>
             </div>
           </div>
 
-          {/* Created Date */}
+          {/* Date (creation or closure depending on status) */}
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gray-50 rounded-lg">
               <LuCalendar className="w-4 h-4 text-gray-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900">
-                Date de création
+                {dateLabel}
               </p>
               <p className="text-xs text-gray-600">
-                {formatDate(app.auditDetails?.createdTime)}
+                {formatDate(displayDate)}
               </p>
             </div>
           </div>
@@ -86,7 +88,7 @@ const ApplicationCard = ({ app }) => {
               <div>
                 <p className="text-sm font-medium text-gray-900">
                   Nom du demandeur
-                </p>
+                </p> 
                 <p className="text-xs text-gray-600">
                   {app.applicants[0].name}
                 </p>

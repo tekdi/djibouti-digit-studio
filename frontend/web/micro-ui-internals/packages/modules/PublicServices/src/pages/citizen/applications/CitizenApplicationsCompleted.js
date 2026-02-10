@@ -16,11 +16,11 @@ const CitizenApplicationsCompleted = () => {
 
 
 
-  // Filter applications to show only completed ones (PERMIT_GRANTED and CERTIFICATE_GRANTED)
+  // Filter applications to show only completed ones (PERMIT_GRANTED, CERTIFICATE_ISSUED, CERTIFICATE_GRANTED)
   const completedApplications = useMemo(() => {
     return applications.filter(app => {
       const applicationStatus = app.processInstance?.[0]?.state?.applicationStatus;
-      return applicationStatus === "PERMIT_GRANTED" || applicationStatus === "CERTIFICATE_GRANTED";
+      return applicationStatus === "PERMIT_GRANTED" || applicationStatus === "CERTIFICATE_GRANTED" || applicationStatus === "CERTIFICATE_ISSUED";
     });
   }, [applications]);
 
