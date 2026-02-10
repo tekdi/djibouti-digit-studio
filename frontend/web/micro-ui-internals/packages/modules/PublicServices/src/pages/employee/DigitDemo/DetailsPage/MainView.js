@@ -48,6 +48,7 @@ const MainView = ({
           data={data}
           isCitizen={isCitizen}
           service={service}
+          applicationNumber={response?.applicationNumber}
         />
       )}
 

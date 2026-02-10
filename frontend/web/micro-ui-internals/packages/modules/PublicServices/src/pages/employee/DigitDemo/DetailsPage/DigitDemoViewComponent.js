@@ -9,7 +9,6 @@ import { checklistByService } from "../../../../utils/templateConfig.js";
 import ApplicationHeader from "./ApplicationHeader";
 import ApplicationTabs from "./ApplicationTabs";
 import MainView from "./MainView";
-import ActionButtons from "./ActionButtons";
 
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
@@ -150,13 +149,23 @@ const DigitDemoViewComponent = () => {
     <React.Fragment>
       <div className="max-w-7xl mx-auto p-10 pt-5">
         <div className="mt-4 flex flex-col gap-4">
-          {/* Header Card */}
+          {/* Header Card with Action Buttons */}
           <ApplicationHeader 
             response={response}
             serviceInfo={serviceInfo}
             projectDetails={projectDetails}
             applicant={applicant}
             isCitizen={isCitizen}
+            // Action button props
+            selectedBusinessService={selectedBusinessService}
+            matchedBusinessServices={matchedBusinessServices}
+            setSelectedBusinessService={setSelectedBusinessService}
+            queryStrings={queryStrings}
+            tenantId={tenantId}
+            serviceConfig={serviceConfig}
+            processInstanceState={processInstanceState}
+            isDownloadButtonEnable={isDownloadButtonEnable}
+            service={service}
           />
 
           {/* Tabs */}
@@ -164,6 +173,7 @@ const DigitDemoViewComponent = () => {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             isCitizen={isCitizen}
+            businessService={response?.businessService}
           />
 
           {/* Content Area */}
@@ -187,21 +197,6 @@ const DigitDemoViewComponent = () => {
             selectedBusinessService={selectedBusinessService}
           />
         </div>
-
-        {/* Floating Action Buttons */}
-        <ActionButtons
-          isCitizen={isCitizen}
-          selectedBusinessService={selectedBusinessService}
-          matchedBusinessServices={matchedBusinessServices}
-          setSelectedBusinessService={setSelectedBusinessService}
-          response={response}
-          queryStrings={queryStrings}
-          tenantId={tenantId}
-          serviceConfig={serviceConfig}
-          processInstanceState={processInstanceState}
-          isDownloadButtonEnable={isDownloadButtonEnable}
-          service={service}
-        />
       </div>
     </React.Fragment>
   );

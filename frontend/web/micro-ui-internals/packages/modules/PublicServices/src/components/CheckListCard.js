@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { LuClipboardList, LuCircleCheck } from "react-icons/lu";
 
 const CheckListCard = (props) => {
+  const { isViewOnly = false } = props;
   const [filled, setFilled] = useState(false);
   const [loading, setLoading] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -95,17 +96,37 @@ const CheckListCard = (props) => {
         </div>
 
         <div className="pt-4">
-          <button
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary bg-djibouti-primary/10 px-4 py-3 text-base font-semibold text-djibouti-primary transition-all duration-200 hover:bg-djibouti-primary hover:text-white"
-            onClick={() =>
-              history.push(
-                `/${window.contextPath}/${userType}/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&clientId=${props.item.clientId}&state=${props?.state}`,
-                { redirectionUrl: `${window.location.href}` }
-              )
-            }
-          >
-            {t("FILL_CHECKLIST")}
-          </button>
+          {!isViewOnly ? (
+            <button
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary bg-djibouti-primary/10 px-4 py-3 text-base font-semibold text-djibouti-primary transition-all duration-200 hover:bg-djibouti-primary hover:text-white"
+              onClick={() =>
+                history.push(
+                  `/${window.contextPath}/${userType}/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&clientId=${props.item.clientId}&state=${props?.state}`,
+                  { redirectionUrl: `${window.location.href}` }
+                )
+              }
+            >
+              {filled ? t("VIEW_CHECKLIST") : t("FILL_CHECKLIST")}
+            </button>
+          ) : (
+            filled ? (
+              <button
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-djibouti-primary bg-djibouti-primary/10 px-4 py-3 text-base font-semibold text-djibouti-primary transition-all duration-200 hover:bg-djibouti-primary hover:text-white"
+                onClick={() =>
+                  history.push(
+                    `/${window.contextPath}/${userType}/publicservices/checklist?accid=${props.accid}&id=${props.item.id}&code=${props.item.code}&clientId=${props.item.clientId}&state=${props?.state}&viewOnly=true`,
+                    { redirectionUrl: `${window.location.href}` }
+                  )
+                }
+              >
+                {t("VIEW_CHECKLIST")}
+              </button>
+            ) : (
+              <span className="text-sm text-gray-500 italic block text-center py-2">
+                {t("CHECKLIST_NOT_SUBMITTED")}
+              </span>
+            )
+          )}
         </div>
       </div>
     </div>

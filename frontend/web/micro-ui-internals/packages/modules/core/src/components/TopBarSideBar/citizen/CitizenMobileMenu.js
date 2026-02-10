@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
   LuLayoutDashboard,
@@ -57,7 +57,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
   if (!mobileView) return null;
 
   return (
-    <>
+    <Fragment>
       {/* Mobile menu button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -97,7 +97,7 @@ const CitizenMobileMenu = ({ mobileView }) => {
           </div>
         </div>
       )}
-    </>
+    </Fragment>
   );
 };
 

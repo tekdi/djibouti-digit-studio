@@ -16,6 +16,7 @@ const useApplications = () => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userDetails = Digit.UserService.getUser();
+  console.log("userDetails", userDetails);
   const uuid = userDetails?.info?.uuid;
   const indId = individualDetails && individualDetails?.Individual?.[0]?.individualId;
 
@@ -26,7 +27,7 @@ const useApplications = () => {
 
   // Load cached data from localStorage
   const loadCachedData = () => {
-    try {
+    try { 
       const cachedApplications = localStorage.getItem(CACHE_KEY);
       const cachedTimestamp = localStorage.getItem(TIMESTAMP_KEY);
       
@@ -117,14 +118,6 @@ const useApplications = () => {
     }
 
     try {
-      console.log("Fetching applications with params:", {
-        tenantId,
-        userId: indId,
-        status: "ACTIVE",
-        createdBy: uuid,
-        forceRefresh
-      });
-
       const response = await axios.get(`/public-service/v1/application`, {
         params: {
           tenantId: tenantId,
