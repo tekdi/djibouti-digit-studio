@@ -181,22 +181,12 @@ const TopBar = ({
 
   if (CITIZEN) {
     return (
-      <div>
-        <TopBarComponent
-          img={stateInfo?.logoUrlWhite}
-          isMobile={true}
-          toggleSidebar={updateSidebar}
-          logoUrl={stateInfo?.logoUrlWhite}
-          onLogout={handleLogout}
-          userDetails={userDetails}
-          notificationCount={unreadNotificationCount < 99 ? unreadNotificationCount : 99}
-          notificationCountLoaded={notificationCountLoaded}
-          cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
-          onNotificationIconClick={onNotificationIconClick}
-          hideNotificationIconOnSomeUrlsWhenNotLoggedIn={urlsToDisableNotificationIcon(pathname)}
-          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
-        />
-      </div>
+      <CitizenTopBar
+        t={t}
+        userDetails={userDetails}
+        userOptions={userOptions}
+        mobileView={mobileView}
+      />
     );
   }
   

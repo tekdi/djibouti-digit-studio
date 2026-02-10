@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 import ProfileSelection from "./pages/ProfileSelection";
 import SelectMobileID from "./pages/employee/Login/SelectMobileID";
 
+const MOBILE_BREAKPOINT = 768;
+
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, defaultLanding = "citizen" }) => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const innerWidth = window.innerWidth;
+  const [mobileView, setMobileView] = useState(typeof window !== "undefined" && window.innerWidth <= MOBILE_BREAKPOINT);
   const cityDetails = Digit.ULBService.getCurrentUlb();
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -17,6 +19,12 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
   let CITIZEN = userDetails?.info?.type === "CITIZEN" || !window.location.pathname.split("/").includes("employee") ? true : false;
 
   if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
+
+  useEffect(() => {
+    const onResize = () => setMobileView(window.innerWidth <= MOBILE_BREAKPOINT);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     if (!pathname?.includes("application-details")) {
@@ -47,7 +55,6 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData, de
     option.func();
   };
 
-  const mobileView = innerWidth <= 640;
   let sourceUrl = `${window.location.origin}/citizen`;
   const commonProps = {
     stateInfo,
