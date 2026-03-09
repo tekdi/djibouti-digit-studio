@@ -12,6 +12,7 @@ import { p10Data } from './p10';
 import { p11Data } from './p11';
 import { p12Data } from './p12';
 import { p13Data } from './p13';
+import { p13CceData } from './p13Cce';
 import { p14Data } from './p14';
 import { p15Data } from './p15';
 
@@ -27,7 +28,7 @@ export const serviceData = {
   'BPA_PS': p8Data,            // Elevation Permit
   'BPA_ATARR': p9Data,         // Extension Construction Permit
   'BPA_CCR': p10Data,          // Backfill Verification Certificate
-  'BPA_CCE': p11Data,          // Construction Completion Certificate
+  'BPA_CCE': p13CceData,       // P13 - Certificat de Conformité Electrique (CCE)
   'BPA_CCP': p12Data,          // Construction Progress Certificate
   'BPA_CCG': p13Data,          // Certificate of Conformity
   'BPA_PV': p14Data,           // Project Validation

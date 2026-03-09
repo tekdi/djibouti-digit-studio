@@ -396,7 +396,7 @@ export const getStatusInfo = (status) => {
       progress: 50
     },
     "BPA_SRA_SUB_DIRECTOR_REVIEW": {
-      label: "Révision par le Sous-directeur SRA",
+      label: "Révision par le Sous-directeur SDATU",
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       icon: LuClock,
@@ -473,7 +473,7 @@ export const getStatusInfo = (status) => {
       progress: 45
     },
     "BPA_SRA_SUB_DIRECTOR_APPROVAL": {
-      label: "En attente d'approbation du Sous-directeur SRA",
+      label: "En attente d'approbation du Sous-directeur SDATU",
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       icon: LuClock,

@@ -103,11 +103,17 @@ const EmployeeDashboard = () => {
     ];
   }, [applications]);
 
-  // Get recent applications from API data
+  // Get recent applications from API data, sorted by most recent first
   const recentApplications = useMemo(() => {
     if (!applications || applications.length === 0) return [];
 
-    return applications
+    const sortedByDate = [...applications].sort((a, b) => {
+      const timeA = a.businessObject?.auditDetails?.lastModifiedTime || a.businessObject?.auditDetails?.createdTime || 0;
+      const timeB = b.businessObject?.auditDetails?.lastModifiedTime || b.businessObject?.auditDetails?.createdTime || 0;
+      return timeB - timeA; // Descending: most recent first
+    });
+
+    return sortedByDate
       .slice(0, 4) // Get first 4 applications
       .map((app) => {
         const businessObject = app.businessObject;

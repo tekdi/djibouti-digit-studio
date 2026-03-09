@@ -58,8 +58,13 @@ const useApplications = () => {
 
         // Check if cache is still valid (less than 1 hour old)
         if (now - timestamp < CACHE_DURATION) {
-          console.log("Loading cached employee applications data from localStorage");
-          setApplications(JSON.parse(cachedApplications));
+          const cached = JSON.parse(cachedApplications);
+          const normalized = cached.map((item) => ({
+            ...item,
+            businessObject: item.businessObject || item.Data,
+            ProcessInstance: item.ProcessInstance || item.processInstance,
+          }));
+          setApplications(normalized);
           setLastFetchTime(timestamp);
           setIsLoading(false);
           return true; // Cache is valid
@@ -131,7 +136,7 @@ const useApplications = () => {
             plainAccessRequest: {},
           },
           inbox: {
-            limit: 10,
+            limit: 300,
             offset: 0,
             tenantId: tenantId,
             processSearchCriteria: {
@@ -154,16 +159,22 @@ const useApplications = () => {
         }
       );
 
-             console.log("Inbox API Response:", response?.data);
-       const applicationsData = response?.data?.items || [];
-       
-       // Remove duplicates based on applicationNumber (from Data object)
-       const uniqueApplications = applicationsData.filter((item, index, self) => 
-         index === self.findIndex(a => a.Data?.applicationNumber === item.Data?.applicationNumber)
-       );
-       
-       console.log(`Filtered ${applicationsData.length - uniqueApplications.length} duplicate applications`);
-       setApplications(uniqueApplications);
+      const applicationsData = response?.data?.items || [];
+      
+      // Normalize inbox structure: Digit inbox may return Data, components expect businessObject
+      const normalizedData = applicationsData.map((item) => ({
+        ...item,
+        businessObject: item.businessObject || item.Data,
+        ProcessInstance: item.ProcessInstance || item.processInstance,
+      }));
+      
+      // Remove duplicates based on applicationNumber
+      const uniqueApplications = normalizedData.filter((item, index, self) => {
+        const appNumber = item.businessObject?.applicationNumber || item.Data?.applicationNumber;
+        return index === self.findIndex((a) => (a.businessObject?.applicationNumber || a.Data?.applicationNumber) === appNumber);
+      });
+      
+      setApplications(uniqueApplications);
       setLastFetchTime(Date.now());
       setError(null);
 
