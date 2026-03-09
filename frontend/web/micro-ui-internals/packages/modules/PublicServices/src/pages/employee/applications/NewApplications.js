@@ -54,8 +54,14 @@ const NewApplications = () => {
   const newApplications = useMemo(() => {
     return applications.filter((app) => {
       const status = app.ProcessInstance?.state?.applicationStatus;
+      const assignes = app.ProcessInstance?.assignes || [];
+      const assignees = app.ProcessInstance?.assignees || [];
+      const workflowAssignees = app.businessObject?.workflow?.assignees || app.Data?.workflow?.assignees || [];
+      const hasAssignees =
+        (assignes?.length > 0) || (assignees?.length > 0) || (workflowAssignees?.length > 0);
       // Show only applications that are not assigned to any agent
-      return status === "AGENT_NOT_ASSIGNED";
+      // Exclude applications with assignees (e.g. under director review)
+      return status === "AGENT_NOT_ASSIGNED" && !hasAssignees;
     });
   }, [applications]);
 

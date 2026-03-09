@@ -128,8 +128,6 @@ const DigitDemoViewComponent = () => {
 
   // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
-  console.log("response", workflowDetails);
-  console.log("checkListCodes", checkListCodes);
 
   if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
     return <Loader />;
@@ -141,7 +139,13 @@ const DigitDemoViewComponent = () => {
     name: t(response?.businessService) || "Service",
     description: "Service administratif en ligne"
   };
-  const applicant = response?.applicants?.[0];
+  // Applicant: prefer responseData.Application.applicants when root applicants is empty (e.g. BPA_CCE)
+  const rootApplicant = response?.applicants?.[0];
+  const responseDataApplicant = response?.serviceDetails?.responseData?.Application?.applicants?.[0];
+  const applicant =
+    rootApplicant?.name || rootApplicant?.mobileNumber
+      ? rootApplicant
+      : responseDataApplicant || rootApplicant;
   const projectDetails = response?.serviceDetails?.landandProjectDesignDetails?.[0];
   const designOffice = response?.serviceDetails?.designOfficeDetailing?.[0];
 

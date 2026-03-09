@@ -36,12 +36,15 @@ const ApplicationHeader = ({
   // Localisation de la parcelle: support multiple application types
   // - terrainDetails.terrainLocation for BPA_PR
   // - landandProjectDesignDetails.siteLocation for PCO_SIMPLE
+  // - propertyDetails.constructionLocation for BPA_CCE (P13)
   // - additionalDetails.applicants.address for others
   const terrainDetailsFirst = response && response.serviceDetails && response.serviceDetails.terrainDetails && response.serviceDetails.terrainDetails[0];
   const landProjectDetailsFirst = response && response.serviceDetails && response.serviceDetails.landandProjectDesignDetails && response.serviceDetails.landandProjectDesignDetails[0];
+  const propertyDetailsFirst = response && response.serviceDetails && response.serviceDetails.propertyDetails && response.serviceDetails.propertyDetails[0];
   const terrainLocationRaw =
     (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.siteLocation) ||
+    (propertyDetailsFirst && propertyDetailsFirst.constructionLocation) ||
     (response && response.additionalDetails && response.additionalDetails.applicants && response.additionalDetails.applicants.address);
   const terrainLocation =
     typeof terrainLocationRaw === "string"
@@ -53,10 +56,13 @@ const ApplicationHeader = ({
   // Région: support multiple application types
   // - terrainDetails.region for BPA_PR
   // - landandProjectDesignDetails.region for PCO_SIMPLE
+  // - address.city or address.boundarycode for BPA_CCE
   // - projectDetails.region for others
   const regionRaw =
     (terrainDetailsFirst && terrainDetailsFirst.region) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.region) ||
+    (response?.address?.city) ||
+    (response?.address?.boundarycode) ||
     (projectDetails && projectDetails.region);
   const region =
     typeof regionRaw === "string"
@@ -104,7 +110,7 @@ const ApplicationHeader = ({
           iconBgColor="bg-white/20"
           iconColor="text-white"
           label="Demandeur"
-          value={`Nom et prénom : ${applicant?.name} | Téléphone : +253 ${applicant?.mobileNumber}`}
+          value={`Nom et prénom : ${applicant?.name || "N/A"} | Téléphone : ${applicant?.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant?.mobileNumber || "N/A"}`}
         />
       </div>
 

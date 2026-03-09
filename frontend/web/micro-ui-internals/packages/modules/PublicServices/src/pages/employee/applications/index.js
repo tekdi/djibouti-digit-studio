@@ -52,9 +52,9 @@ const EmployeeApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  // Filter applications based on search and filters (like citizen applications)
+  // Filter applications based on search and filters (like citizen applications), sorted by most recent first
   const filteredApplications = useMemo(() => {
-    return applications.filter((app) => {
+    const filtered = applications.filter((app) => {
       // Extract data from inbox API structure
       const businessObject = app.businessObject;
       const processInstance = app.ProcessInstance;
@@ -89,6 +89,12 @@ const EmployeeApplications = () => {
       }
 
       return matchesSearch && matchesBusinessService && matchesDate;
+    });
+    // Sort by most recent first (lastModifiedTime or createdTime descending)
+    return filtered.sort((a, b) => {
+      const timeA = a.businessObject?.auditDetails?.lastModifiedTime || a.businessObject?.auditDetails?.createdTime || 0;
+      const timeB = b.businessObject?.auditDetails?.lastModifiedTime || b.businessObject?.auditDetails?.createdTime || 0;
+      return timeB - timeA;
     });
   }, [applications, searchTerm, selectedBusinessService, dateRange]);
 
