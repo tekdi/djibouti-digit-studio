@@ -6,6 +6,12 @@ import (
 	"public-service/model"
 )
 
+const (
+	RoleStudioAdmin  = "STUDIO_ADMIN"
+	RoleCitizen      = "CITIZEN"
+	RoleBPAArchitect = "BPA_ARCHITECT"
+)
+
 // GetAllowedStatesForCitizen returns the list of states where CITIZEN users can update applications
 func GetAllowedStatesForCitizen() []string {
 	states := os.Getenv("CITIZEN_ALLOWED_STATES")
@@ -24,17 +30,32 @@ func GetAllowedStatesForCostEstimationUpdate() []string {
 	return strings.Split(states, ",")
 }
 
-// IsCitizen checks if the user has only CITIZEN role
-func IsCitizen(userInfo *model.User) bool {
+// HasRole checks if the user has a specific role code.
+func HasRole(userInfo *model.User, roleCode string) bool {
 	if userInfo == nil || len(userInfo.Roles) == 0 {
 		return false
 	}
 	for _, role := range userInfo.Roles {
-		if role.Code == "CITIZEN" {
+		if role.Code == roleCode {
 			return true
 		}
 	}
 	return false
+}
+
+// IsStudioAdmin checks if the user has the STUDIO_ADMIN role.
+func IsStudioAdmin(userInfo *model.User) bool {
+	return HasRole(userInfo, RoleStudioAdmin)
+}
+
+// IsCitizen checks if the user has the CITIZEN role.
+func IsCitizen(userInfo *model.User) bool {
+	return HasRole(userInfo, RoleCitizen)
+}
+
+// IsBPAArchitect checks if the user has the BPA_ARCHITECT role.
+func IsBPAArchitect(userInfo *model.User) bool {
+	return HasRole(userInfo, RoleBPAArchitect)
 }
 
 // IsStateAllowed checks if a state is in the allowed list

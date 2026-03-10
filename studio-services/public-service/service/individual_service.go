@@ -70,11 +70,13 @@ func (s *IndividualService) GetIndividual(requestInfo model.RequestInfo, criteri
 	ind := individual.IndividualSearch{}
 
 	if uuid := getString(criteria["uuid"]); uuid != "" {
-
 		ind.IndividualId = []string{uuid}
 	}
 	if mobile := getString(criteria["mobileNumber"]); mobile != "" {
 		ind.MobileNumber = []string{mobile}
+	}
+	if userUuid := getString(criteria["userUuid"]); userUuid != "" {
+		ind.UserUuid = []string{userUuid}
 	}
 
 	searchReq := individual.IndividualSearchRequest{
