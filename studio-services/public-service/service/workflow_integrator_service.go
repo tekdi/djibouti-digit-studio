@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"public-service/config"
 	"public-service/model"
@@ -149,6 +150,62 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	log.Printf("Successfully decoded workflow response: %+v\n", wfResponse)
 
 	return nil
+}
+
+// SearchProcessInstancesByAssignee calls process/_search filtered by assignee UUID and
+// returns a set of BusinessIDs (application numbers) the assignee is associated with.
+// businessService is optional — pass empty string to omit it from the query.
+func (wi *WorkflowIntegrator) SearchProcessInstancesByAssignee(tenantId, businessIds, businessService, assigneeUUID, authToken string) (map[string]bool, error) {
+	config.LoadEnv()
+	wfHost := config.GetEnv("WORKFLOW_HOST")
+	wfPath := config.GetEnv("WORKFLOW_SEARCH_PATH")
+	if wfHost == "" || wfPath == "" {
+		return nil, errors.New("workflow host or search path is not set in environment variables")
+	}
+
+	searchURL := fmt.Sprintf("%s%s?tenantId=%s&businessIds=%s&assignee=%s&history=true", wfHost, wfPath, tenantId, businessIds, assigneeUUID)
+	if businessService != "" {
+		searchURL += "&businessService=" + url.QueryEscape(businessService)
+	}
+	log.Printf("SearchProcessInstancesByAssignee url=%s", searchURL)
+
+	requestInfo := model.RequestInfo{
+		AuthToken: authToken,
+		UserInfo:  &model.User{},
+	}
+	requestPayload := map[string]any{
+		REQUEST_INFO_KEY: requestInfo,
+	}
+	payloadBytes, err := json.Marshal(requestPayload)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling request: %w", err)
+	}
+
+	resp, err := wi.HttpClient.Post(searchURL, "application/json", bytes.NewReader(payloadBytes))
+	if err != nil {
+		return nil, fmt.Errorf("failed to call workflow: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		var errResp map[string]interface{}
+		_ = json.NewDecoder(resp.Body).Decode(&errResp)
+		return nil, fmt.Errorf("workflow service returned status %d: %v", resp.StatusCode, errResp)
+	}
+
+	var wfResponse model.ProcessInstanceResponse
+	if err := json.NewDecoder(resp.Body).Decode(&wfResponse); err != nil {
+		return nil, fmt.Errorf("error decoding workflow response: %w", err)
+	}
+
+	accessible := make(map[string]bool)
+	for _, pi := range wfResponse.ProcessInstances {
+		if pi.BusinessID != "" {
+			accessible[pi.BusinessID] = true
+		}
+	}
+	log.Printf("SearchProcessInstancesByAssignee found %d accessible businessIds", len(accessible))
+	return accessible, nil
 }
 
 func (wi *WorkflowIntegrator) SearchWorkflow(applicationResponse *model.Application, req model.RequestInfo) error {

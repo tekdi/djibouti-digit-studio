@@ -112,14 +112,7 @@ func ConsumePayments(workflowIntegrator *service.WorkflowIntegrator, application
 			filteredAssignees := make([]model.User, 0)
 
 			for _, user := range application.Workflow.Assignees {
-				hasCounterEmployeeRole := false
-				for _, role := range user.Roles {
-					if role.Code == "COUNTER_EMPLOYEE" {
-						hasCounterEmployeeRole = true
-						break
-					}
-				}
-				if !hasCounterEmployeeRole {
+				if !config.HasRole(&user, "COUNTER_EMPLOYEE") {
 					filteredAssignees = append(filteredAssignees, user)
 				}
 			}

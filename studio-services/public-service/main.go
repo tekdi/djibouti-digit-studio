@@ -72,8 +72,7 @@ func main() {
 	indexSvc := service.NewIndexerService(restRepo,kafkaProducer,workflowIntegrator,mdmsv2sSvc)
 	employeeSvc := service.NewEmployeeService(restRepo)
 	permissionSvc := service.NewPermissionService()
-
-	
+	userSvc := service.NewUserService(restRepo)
 
 
 	// Start Kafka consumer in a separate goroutine if enabled
@@ -83,7 +82,7 @@ func main() {
 	}
 
 	// Initialize controllers
-	appCtrl := controller.NewApplicationController(appSvc, workflowIntegrator, individualSvc, enrichSvc, smsService,indexSvc, employeeSvc, permissionSvc)
+	appCtrl := controller.NewApplicationController(appSvc, workflowIntegrator, individualSvc, enrichSvc, smsService, indexSvc, employeeSvc, permissionSvc, userSvc)
 	serviceCtrl := controller.NewServiceController(serviceSvc,enrichSvc)
 
 	// Setup router
