@@ -6,6 +6,7 @@ type ProcessInstance struct {
 	TenantID           string       `json:"tenantId" validate:"required,max=128"`
 	BusinessService    string       `json:"businessService" validate:"required,max=128"`
 	BusinessID         string       `json:"businessId" validate:"required,max=128"`
+	ApplicantUuid      string       `json:"applicantUuid,omitempty" validate:"max=64"`
 	Action             string       `json:"action" validate:"required,max=128"`
 	ModuleName         string       `json:"moduleName" validate:"required,max=64"`
 	State              *State       `json:"state,omitempty"`

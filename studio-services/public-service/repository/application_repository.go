@@ -141,14 +141,15 @@ func (r *ApplicationRepository) Create(ctx context.Context, req model.Applicatio
 		applicantID := uuid.New()
 		applicantQuery := `
 			INSERT INTO applicant (
-				id, type, application_id, user_id, name, mobile_number, email_id, prefix, active
-			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+				id, type, application_id, user_id, user_uuid, name, mobile_number, email_id, prefix, active
+			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		`
 		_, err := r.db.ExecContext(ctx, applicantQuery,
 			applicantID,
 			applicant.Type,
 			appID,
 			applicant.UserId,
+			applicant.UserUuid,
 			applicant.Name,
 			applicant.MobileNumber,
 			applicant.EmailId,
@@ -217,7 +218,7 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 			a.workflow_status, a.service_code, a.service_details, a.additional_details, a.address, a.workflow,
 			a.createdby, a.last_modifiedby, a.created_at, a.updated_at,
 			r.id, r.reference_type, r.module, r.tenant_id, r.reference_no, r.active,
-			ap.id, ap.type, ap.user_id, ap.name, ap.mobile_number, ap.email_id, ap.prefix, ap.active
+			ap.id, ap.type, ap.user_id, ap.user_uuid, ap.name, ap.mobile_number, ap.email_id, ap.prefix, ap.active
 		FROM application a
 		LEFT JOIN reference r ON a.id = r.application_id
 		LEFT JOIN applicant ap ON a.id = ap.application_id
@@ -290,8 +291,8 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 			refId, refType, refModule, refTenantId, refNo sql.NullString
 			refActive                                     sql.NullBool
 
-			applicantId, applicantType, applicantUserId, applicantName, applicantMobile, applicantEmail, applicantPrefix sql.NullString
-			applicantActive                                                                                              sql.NullBool
+			applicantId, applicantType, applicantUserId, applicantUserUuid, applicantName, applicantMobile, applicantEmail, applicantPrefix sql.NullString
+			applicantActive                                                                                                               sql.NullBool
 		)
 
 		err := rows.Scan(
@@ -321,6 +322,7 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 			&applicantId,
 			&applicantType,
 			&applicantUserId,
+			&applicantUserUuid,
 			&applicantName,
 			&applicantMobile,
 			&applicantEmail,
@@ -373,10 +375,11 @@ func (r *ApplicationRepository) Search(ctx context.Context, criteria model.Searc
 
 		if applicantId.Valid {
 			applicant := model.Applicant{
-				Id:     uuid.MustParse(applicantId.String),
-				Type:   applicantType.String,
-				UserId: applicantUserId.String,
-				Name:   applicantName.String,
+				Id:       uuid.MustParse(applicantId.String),
+				Type:     applicantType.String,
+				UserId:   applicantUserId.String,
+				UserUuid: applicantUserUuid.String,
+				Name:     applicantName.String,
 				MobileNumber: func() int64 {
 					if applicantMobile.Valid {
 						num, err := strconv.ParseInt(applicantMobile.String, 10, 64)
@@ -513,16 +516,18 @@ func (r *ApplicationRepository) Update(ctx context.Context, req model.Applicatio
 			UPDATE applicant
 			SET type = $1,
 			    user_id = $2,
-			    name = $3,
-			    mobile_number = $4,
-			    email_id = $5,
-			    prefix = $6,
-			    active = $7
-			WHERE id = $8
+			    user_uuid = $3,
+			    name = $4,
+			    mobile_number = $5,
+			    email_id = $6,
+			    prefix = $7,
+			    active = $8
+			WHERE id = $9
 		`
 		_, err := r.db.ExecContext(ctx, applicantQuery,
 			applicant.Type,
 			applicant.UserId,
+			applicant.UserUuid,
 			applicant.Name,
 			applicant.MobileNumber,
 			applicant.EmailId,
@@ -590,7 +595,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 			a.workflow_status, a.service_code, a.service_details, a.additional_details, a.address, a.workflow,
 			a.createdby, a.last_modifiedby, a.created_at, a.updated_at,
 			r.id, r.reference_type, r.module, r.tenant_id, r.reference_no, r.active,
-			ap.id, ap.type, ap.user_id, ap.active,
+			ap.id, ap.type, ap.user_id, ap.user_uuid, ap.active,
 			ad.id, ad.document_type, ad.file_store_id, ad.document_uid, ad.additional_details,
 			ad.createdby, ad.last_modifiedby, ad.created_at, ad.updated_at
 		FROM application a
@@ -697,8 +702,8 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 			refId, refType, refModule, refTenantId, refNo sql.NullString
 			refActive                                     sql.NullBool
 
-			applicantId, applicantType, applicantUserId sql.NullString
-			applicantActive                             sql.NullBool
+			applicantId, applicantType, applicantUserId, applicantUserUuid sql.NullString
+			applicantActive                                               sql.NullBool
 
 			// document
 			docId                           uuid.UUID
@@ -713,7 +718,7 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 			&workflowStatus, &serviceCode, &serviceDetailsJSON, &additionalDetailsJSON, &addressJSON, &workflowJSON,
 			&createdBy, &lastModifiedBy, &createdAt, &updatedAt,
 			&refId, &refType, &refModule, &refTenantId, &refNo, &refActive,
-			&applicantId, &applicantType, &applicantUserId, &applicantActive,
+			&applicantId, &applicantType, &applicantUserId, &applicantUserUuid, &applicantActive,
 			&docId, &docType, &fileStoreId, &docUid, &docAdditionalDetailsJSON,
 			&docCreatedBy, &docLastModifiedBy, &docCreatedAt, &docUpdatedAt,
 		)
@@ -764,10 +769,11 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 
 		if applicantId.Valid {
 			applicant := model.Applicant{
-				Id:     uuid.MustParse(applicantId.String),
-				Type:   applicantType.String,
-				UserId: applicantUserId.String,
-				Active: applicantActive.Bool,
+				Id:       uuid.MustParse(applicantId.String),
+				Type:     applicantType.String,
+				UserId:   applicantUserId.String,
+				UserUuid: applicantUserUuid.String,
+				Active:   applicantActive.Bool,
 			}
 			app.Applicants = append(app.Applicants, applicant)
 		}

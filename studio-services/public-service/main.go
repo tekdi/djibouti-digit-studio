@@ -12,7 +12,8 @@ import (
 	db "public-service/scripts"
 	"public-service/service"
 	"public-service/utils"
-    "strings"
+	"strings"
+
 	"github.com/Priyansuvaish/digit_client/configdigit"
 
 	"github.com/gorilla/mux"
@@ -52,28 +53,27 @@ func main() {
 	kafkaProducer := producer.NewPublicServiceProducer(writerFunc)
 
 	// Initialize repositories
-	publicRepo := repository.NewPublicRepository(dbConn,kafkaProducer)
+	publicRepo := repository.NewPublicRepository(dbConn, kafkaProducer)
 	appRepo := repository.NewApplicationRepository(dbConn, publicRepo, kafkaProducer)
 	restRepo := repository.NewRestCallRepository()
 
 	// Initialize services
-	
+
 	individualSvc := service.NewIndividualService(restRepo)
 	mdmsSvc := service.NewMDMSService(restRepo)
-	mdmsv2sSvc := service.NewMDMSV2Service(restRepo,dbConn)
+	mdmsv2sSvc := service.NewMDMSV2Service(restRepo, dbConn)
 	idgenSvc := service.NewIdGenService(restRepo)
-	demandSvc := service.NewDemandService(restRepo,mdmsv2sSvc)
+	demandSvc := service.NewDemandService(restRepo, mdmsv2sSvc)
 	localizationService := service.NewLocalizationService(restRepo)
 	serviceSvc := service.NewPublicService(publicRepo)
 	workflowIntegrator := service.NewWorkflowIntegrator(mdmsv2sSvc)
-	smsService := service.NewSMSService(restRepo, localizationService, kafkaProducer, demandSvc,workflowIntegrator,mdmsv2sSvc)
+	smsService := service.NewSMSService(restRepo, localizationService, kafkaProducer, demandSvc, workflowIntegrator, mdmsv2sSvc)
 	enrichSvc := service.NewEnrichmentService(individualSvc, demandSvc, mdmsSvc, mdmsv2sSvc, idgenSvc, smsService)
-	appSvc := service.NewApplicationService(appRepo, enrichSvc,workflowIntegrator)
-	indexSvc := service.NewIndexerService(restRepo,kafkaProducer,workflowIntegrator,mdmsv2sSvc)
+	appSvc := service.NewApplicationService(appRepo, enrichSvc, workflowIntegrator)
+	indexSvc := service.NewIndexerService(restRepo, kafkaProducer, workflowIntegrator, mdmsv2sSvc)
 	employeeSvc := service.NewEmployeeService(restRepo)
 	permissionSvc := service.NewPermissionService()
 	userSvc := service.NewUserService(restRepo)
-
 
 	// Start Kafka consumer in a separate goroutine if enabled
 	if os.Getenv("KAFKA_PAYMENT_CONSUMER_ENABLED") == "true" {
@@ -83,7 +83,7 @@ func main() {
 
 	// Initialize controllers
 	appCtrl := controller.NewApplicationController(appSvc, workflowIntegrator, individualSvc, enrichSvc, smsService, indexSvc, employeeSvc, permissionSvc, userSvc)
-	serviceCtrl := controller.NewServiceController(serviceSvc,enrichSvc)
+	serviceCtrl := controller.NewServiceController(serviceSvc, enrichSvc)
 
 	// Setup router
 	router := mux.NewRouter()
@@ -97,7 +97,7 @@ func main() {
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.CreateApplicationHandler).Methods("POST")
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.SearchApplicationHandler).Methods("GET")
 	router.HandleFunc("/public-service/v1/application/{serviceCode}", appCtrl.UpdateApplicationHandler).Methods("PUT")
-	router.HandleFunc("/public-service/v1/application",appCtrl.SearchMyApplicationHandler).Methods("GET")
+	router.HandleFunc("/public-service/v1/application", appCtrl.SearchMyApplicationHandler).Methods("GET")
 
 	router.HandleFunc("/public-service/_calculate", appCtrl.CalculateHandler).Methods("POST")
 

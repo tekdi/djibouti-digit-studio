@@ -6,6 +6,7 @@ type Applicant struct {
 	Id           uuid.UUID `json:"id"`
 	Type         string    `json:"type"`
 	UserId       string    `json:"userId"`
+	UserUuid     string    `json:"userUuid"`
 	Name         string    `json:"name"`
 	MobileNumber int64     `json:"mobileNumber"`
 	EmailId      string    `json:"emailId"`
