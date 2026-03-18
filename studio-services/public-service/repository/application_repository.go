@@ -640,6 +640,11 @@ func (r *ApplicationRepository) SearchWithIndividual(ctx context.Context, criter
 		args = append(args, criteria.Status)
 		argPos++
 	}
+	if len(criteria.ApplicationNumbers) > 0 {
+		conditions = append(conditions, fmt.Sprintf("a.application_number = ANY($%d)", argPos))
+		args = append(args, pq.Array(criteria.ApplicationNumbers))
+		argPos++
+	}
 	if criteria.UserId != "" || criteria.CreatedBy != "" {
 		var orConditions []string
 

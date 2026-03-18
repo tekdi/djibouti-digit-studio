@@ -487,34 +487,46 @@ func (c *ApplicationController) SearchMyApplicationHandler(w http.ResponseWriter
 		userId := r.URL.Query().Get("userId")
 
 		if createdBy == "" && userId == "" {
-			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(model.SearchResponse{
-				Application: []model.Application{},
-			})
-			return
-		}
-
-		atLeastOneValid := false
-		// Validate createdBy against the authenticated user's UUID.
-		if createdBy != "" {
-			if createdBy == callerUser.Uuid.String() {
-				criteria.SearchCriteria.CreatedBy = createdBy
-				atLeastOneValid = true
+			// No explicit filters - fetch all applications associated via workflow history.
+			appNumberMap, err := c.workflowIntegrator.SearchProcessInstancesByAssignee(
+				tenantID, "", "", callerUser.Uuid.String(), AuthToken,
+			)
+			if err != nil {
+				log.Printf("workflow assignee search failed: %v", err)
 			}
-		}
-
-		// Validate userId against the authenticated user's individual ID.
-		if userId != "" {
-			callerIndividualId := c.resolveCallerIndividualId(callerUser.Uuid.String(), tenantID, AuthToken, callerUser)
-			if userId == callerIndividualId {
-				criteria.SearchCriteria.UserId = userId
-				atLeastOneValid = true
+			if len(appNumberMap) == 0 {
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(model.SearchResponse{Application: []model.Application{}})
+				return
 			}
-		}
+			appNumbers := make([]string, 0, len(appNumberMap))
+			for appNum := range appNumberMap {
+				appNumbers = append(appNumbers, appNum)
+			}
+			criteria.SearchCriteria.ApplicationNumbers = appNumbers
+		} else {
+			atLeastOneValid := false
+			// Validate createdBy against the authenticated user's UUID.
+			if createdBy != "" {
+				if createdBy == callerUser.Uuid.String() {
+					criteria.SearchCriteria.CreatedBy = createdBy
+					atLeastOneValid = true
+				}
+			}
 
-		if !atLeastOneValid {
-			utils.WriteErrorResponse(w, http.StatusForbidden, "Access denied")
-			return
+			// Validate userId against the authenticated user's individual ID.
+			if userId != "" {
+				callerIndividualId := c.resolveCallerIndividualId(callerUser.Uuid.String(), tenantID, AuthToken, callerUser)
+				if userId == callerIndividualId {
+					criteria.SearchCriteria.UserId = userId
+					atLeastOneValid = true
+				}
+			}
+
+			if !atLeastOneValid {
+				utils.WriteErrorResponse(w, http.StatusForbidden, "Access denied")
+				return
+			}
 		}
 	}
 
