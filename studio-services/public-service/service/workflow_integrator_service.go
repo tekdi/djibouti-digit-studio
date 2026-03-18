@@ -83,6 +83,12 @@ func (wi *WorkflowIntegrator) CallWorkflow(req *model.ApplicationRequest) error 
 	processInstance[ACTION_KEY] = app.Workflow.Action
 	processInstance[COMMENT_KEY] = app.Workflow.Comment
 
+	// Get applicant UUID directly from applicant
+	if len(app.Applicants) > 0 && app.Applicants[0].UserUuid != "" {
+		processInstance["applicantUuid"] = app.Applicants[0].UserUuid
+		log.Printf("Set applicantUuid from applicant: %s", app.Applicants[0].UserUuid)
+	}
+
 	if len(app.Workflow.Assignees) > 0 {
 		var uuidMaps []map[string]string
 		for _, assignee := range app.Workflow.Assignees {

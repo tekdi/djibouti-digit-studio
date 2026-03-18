@@ -110,17 +110,20 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 
 			if createdResp.Individual.IndividualId != "" {
 				req.Application.Applicants[i].UserId = createdResp.Individual.IndividualId
+				req.Application.Applicants[i].UserUuid = createdResp.Individual.UserUuid
 			} else {
 				log.Println("Failed to create individual for applicant:", applicant.Name)
 				utils.WriteErrorResponse(w, http.StatusInternalServerError, "Failed to create individual")
 				return
 			}
 		} else {
-			// Individual exists, update applicant UserId
+			// Individual exists, update applicant UserId and UserUuid
 			req.Application.Applicants[i].UserId = resp.Individual[0].IndividualId
+			req.Application.Applicants[i].UserUuid = resp.Individual[0].UserUuid
 			result := map[string]string{
 				"applicant": applicant.Name,
 				"userId":    resp.Individual[0].IndividualId,
+				"userUuid":  resp.Individual[0].UserUuid,
 			}
 			if data, _ := json.MarshalIndent(result, "", "  "); true {
 				log.Println("Existing individual found:", string(data))
@@ -314,22 +317,28 @@ func isApplicationAccessible(app model.Application, callerUUID uuid.UUID, caller
 		return true
 	}
 
-	// Applicant check (individual ID)
-	if callerIndividualId != "" {
-		for _, applicant := range app.Applicants {
-			if applicant.UserId == callerIndividualId {
-				return true
-			}
+	// Applicant check — match by individual ID or by user UUID directly
+	callerUUIDStr := callerUUID.String()
+	for _, applicant := range app.Applicants {
+		if applicant.UserUuid == callerUUIDStr {
+			return true
+		}
+		if callerIndividualId != "" && applicant.UserId == callerIndividualId {
+			return true
 		}
 	}
 
-	// Workflow history check (assignee / assigner across all process instances)
+	// Workflow history check (assignee, assigner, or applicant across all process instances)
 	if app.ProcessInstance != nil {
+		callerUUIDStr := callerUUID.String()
 		for _, pi := range *app.ProcessInstance {
 			if pi.Assignee != nil && pi.Assignee.Uuid == callerUUID {
 				return true
 			}
 			if pi.Assigner != nil && pi.Assigner.Uuid == callerUUID {
+				return true
+			}
+			if pi.ApplicantUuid == callerUUIDStr {
 				return true
 			}
 		}
