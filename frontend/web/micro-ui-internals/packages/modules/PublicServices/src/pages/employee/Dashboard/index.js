@@ -1,25 +1,34 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useApplications from "../applications/useApplications";
 import { getStatusInfo, formatDate, getServiceInfo } from "../applications/utils";
-import { 
-  LuFileText, 
-  LuUsers, 
-  LuUserCheck, 
+import {
+  LuFileText,
+  LuClock,
+  LuCircleCheck,
   LuArrowRight,
-  LuArrowUpRight
+  LuArrowUpRight,
+  LuCalendar,
+  LuUser,
+  LuRefreshCw,
+  LuFolderOpen,
+  LuSparkles
 } from "react-icons/lu";
+
+// Truncate long names
+const truncateName = (name, maxLen = 20) => {
+  if (!name || name === "N/A") return "N/A";
+  return name.length > maxLen ? name.slice(0, maxLen) + "..." : name;
+};
 
 const EmployeeDashboard = () => {
   const { t } = useTranslation();
   const userDetails = Digit.UserService.getUser();
   const userName = userDetails?.info?.name || "Employé";
-  const userRoles = userDetails?.info?.roles?.map((roleData) => roleData?.code) || [];
 
   const { applications, isLoading, isRefreshing, refreshApplications, lastFetchTime } = useApplications();
 
-  // Function to get greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Bonjour";
@@ -27,244 +36,226 @@ const EmployeeDashboard = () => {
     return "Bonsoir";
   };
 
-  // Extract first name only from full name
   const getFirstName = (fullName) => {
     if (!fullName) return "Employé";
-    const nameParts = fullName.trim().split(' ');
-    return nameParts[0];
+    return fullName.trim().split(" ")[0];
   };
 
   const firstName = getFirstName(userName);
   const greeting = getGreeting();
 
-  // Calculate real statistics from API data
-  const stats = useMemo(() => {
-    if (!applications || applications.length === 0) {
-      return [
-        {
-          title: "Nouveaux dossiers",
-          value: 0,
-          icon: LuFileText,
-          gradient: "from-primary to-primary-dark"
-        },
-        {
-          title: "Dossiers assignés",
-          value: 0,
-          icon: LuUserCheck,
-          gradient: "from-green-500 to-emerald-600"
-        },
-        {
-          title: "En cours de traitement",
-          value: 0,
-          icon: LuUsers,
-          gradient: "from-blue-500 to-indigo-600"
-        }
-      ];
-    }
+  // Calculate statistics
+  const counts = useMemo(() => {
+    const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED"];
+    const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
-    const newApplicationsCount = applications.filter(
-      (app) => app.ProcessInstance?.state?.applicationStatus === "AGENT_NOT_ASSIGNED"
-    ).length;
+    let total = applications.length;
+    let newCount = 0;
+    let inProgress = 0;
+    let completed = 0;
 
-    const assignedApplicationsCount = applications.filter(
-      (app) => app.ProcessInstance?.state?.applicationStatus !== "AGENT_NOT_ASSIGNED" &&
-               app.ProcessInstance?.state?.applicationStatus !== "PERMIT_GRANTED" &&
-               app.ProcessInstance?.state?.applicationStatus !== "CERTIFICATE_GRANTED"
-    ).length;
+    applications.forEach((app) => {
+      const status = app.ProcessInstance?.state?.applicationStatus;
+      if (newStatuses.includes(status)) newCount++;
+      else if (completedStatuses.includes(status)) completed++;
+      else inProgress++;
+    });
 
-    const inProgressCount = applications.filter(
-      (app) => {
-        const status = app.ProcessInstance?.state?.applicationStatus;
-        return status !== "AGENT_NOT_ASSIGNED" && 
-               status !== "PERMIT_GRANTED" && 
-               status !== "CERTIFICATE_GRANTED";
-      }
-    ).length;
-
-    return [
-      {
-        title: "Nouveaux dossiers",
-        value: newApplicationsCount,
-        icon: LuFileText,
-        gradient: "from-primary to-primary-dark"
-      },
-      {
-        title: "Dossiers assignés",
-        value: assignedApplicationsCount,
-        icon: LuUserCheck,
-        gradient: "from-green-500 to-emerald-600"
-      },
-      {
-        title: "En cours de traitement",
-        value: inProgressCount,
-        icon: LuUsers,
-        gradient: "from-blue-500 to-indigo-600"
-      }
-    ];
+    return { total, newCount, inProgress, completed };
   }, [applications]);
 
-  // Get recent applications from API data, sorted by most recent first
+  // Recent applications sorted by most recent
   const recentApplications = useMemo(() => {
     if (!applications || applications.length === 0) return [];
 
-    const sortedByDate = [...applications].sort((a, b) => {
-      const timeA = a.businessObject?.auditDetails?.lastModifiedTime || a.businessObject?.auditDetails?.createdTime || 0;
-      const timeB = b.businessObject?.auditDetails?.lastModifiedTime || b.businessObject?.auditDetails?.createdTime || 0;
-      return timeB - timeA; // Descending: most recent first
-    });
-
-    return sortedByDate
-      .slice(0, 4) // Get first 4 applications
+    return [...applications]
+      .sort((a, b) => {
+        const timeA = a.businessObject?.auditDetails?.lastModifiedTime || a.businessObject?.auditDetails?.createdTime || 0;
+        const timeB = b.businessObject?.auditDetails?.lastModifiedTime || b.businessObject?.auditDetails?.createdTime || 0;
+        return timeB - timeA;
+      })
+      .slice(0, 6)
       .map((app) => {
-        const businessObject = app.businessObject;
-        const processInstance = app.ProcessInstance;
-        const status = processInstance?.state?.applicationStatus;
+        const bo = app.businessObject;
+        const pi = app.ProcessInstance;
+        const status = pi?.state?.applicationStatus;
         const statusInfo = getStatusInfo(status);
-        const serviceInfo = getServiceInfo(businessObject?.businessService);
-        const applicant = businessObject?.applicants?.[0];
-        const currentBusinessService = processInstance?.businessService || businessObject?.businessService;
+        const serviceInfo = getServiceInfo(bo?.businessService);
+        const applicant = bo?.applicants?.[0];
 
         return {
-          id: businessObject?.applicationNumber,
-          title: serviceInfo?.name || businessObject?.businessService,
+          id: bo?.applicationNumber,
+          title: serviceInfo?.name || bo?.businessService,
+          shortName: serviceInfo?.shortName || bo?.businessService,
+          ref: serviceInfo?.ref,
           client: applicant?.name || "N/A",
+          clientPhone: applicant?.mobileNumber || "",
           status: statusInfo?.label || status,
-          statusColor: statusInfo?.bgColor + " " + statusInfo?.color,
-          submittedDate: formatDate(businessObject?.auditDetails?.createdTime),
-          businessService: businessObject?.businessService,
-          currentBusinessService,
-          serviceCode: businessObject?.serviceCode,
-          module: businessObject?.module
+          statusBg: statusInfo?.bgColor,
+          statusColor: statusInfo?.color,
+          statusIcon: statusInfo?.icon,
+          submittedDate: formatDate(bo?.auditDetails?.createdTime),
+          businessService: bo?.businessService,
+          currentBusinessService: pi?.businessService || bo?.businessService,
+          serviceCode: bo?.serviceCode,
+          module: bo?.module,
         };
       });
   }, [applications]);
 
+  const basePath = `/${window?.contextPath}/employee/publicservices`;
+
   return (
-    <div className="max-w-7xl mx-auto space-y-5 pt-4">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-xl shadow-sm p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{greeting}, {firstName}</h1>
-            <p className="mt-1 opacity-90">Gestion et traitement des demandes</p>
+    <div className="mx-auto w-full max-w-7xl space-y-6 px-3 py-4 sm:px-5 sm:py-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 pt-[100px] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
+            <LuFolderOpen className="h-5 w-5 text-primary" />
           </div>
-          <div className="text-right">
-            <p className="text-sm opacity-75">Dernière mise à jour</p>
-            <p className="font-medium">
-              {lastFetchTime ? formatDate(lastFetchTime) : "Aujourd'hui, 14:30"}
-            </p>
+          <div>
+            <h1 className="text-lg font-bold text-gray-900 sm:text-xl">{greeting}, {firstName}</h1>
+            <p className="text-xs text-gray-400">Gestion et traitement des demandes</p>
           </div>
         </div>
+        <button
+          onClick={refreshApplications}
+          disabled={isRefreshing}
+          className="inline-flex items-center gap-1.5 self-start rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600 transition-all hover:border-primary/30 hover:text-primary disabled:opacity-50 sm:self-auto"
+        >
+          <LuRefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+          {isRefreshing ? "Actualisation..." : "Actualiser"}
+        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-        {stats.map((stat, index) => (
-          <div key={index} className="rounded-xl shadow-sm overflow-hidden transition duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-            <div className={`bg-gradient-to-r ${stat.gradient} p-4`}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-white/80">{stat.title}</p>
-                  <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
-                </div>
-                <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10">
-                  <stat.icon className="h-6 w-6 text-white" />
-                </div>
-              </div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <Link to={`${basePath}/applications-employee/all`} className="group">
+          <div className="rounded-2xl border border-gray-200/80 bg-gray-50 p-4 transition-all hover:border-primary/30 hover:shadow-md sm:p-5">
+            <div className="mb-3 inline-flex rounded-xl bg-gray-200/60 p-2.5 text-gray-500 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+              <LuFolderOpen className="h-5 w-5" />
             </div>
+            <p className="text-2xl font-bold text-gray-900">{counts.total}</p>
+            <p className="mt-0.5 text-xs text-gray-500">Total dossiers</p>
           </div>
-        ))}
+        </Link>
+        <Link to={`${basePath}/applications-employee/new`} className="group">
+          <div className="rounded-2xl border border-blue-200/60 bg-blue-50 p-4 transition-all hover:border-blue-300 hover:shadow-md sm:p-5">
+            <div className="mb-3 inline-flex rounded-xl bg-blue-100 p-2.5 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
+              <LuFileText className="h-5 w-5" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{counts.newCount}</p>
+            <p className="mt-0.5 text-xs text-gray-500">Nouveaux</p>
+          </div>
+        </Link>
+        <Link to={`${basePath}/applications-employee/in-progress`} className="group">
+          <div className="rounded-2xl border border-amber-200/60 bg-amber-50 p-4 transition-all hover:border-amber-300 hover:shadow-md sm:p-5">
+            <div className="mb-3 inline-flex rounded-xl bg-amber-100 p-2.5 text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+              <LuClock className="h-5 w-5" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{counts.inProgress}</p>
+            <p className="mt-0.5 text-xs text-gray-500">En cours</p>
+          </div>
+        </Link>
+        <Link to={`${basePath}/applications-employee/all`} className="group">
+          <div className="rounded-2xl border border-emerald-200/60 bg-emerald-50 p-4 transition-all hover:border-emerald-300 hover:shadow-md sm:p-5">
+            <div className="mb-3 inline-flex rounded-xl bg-emerald-100 p-2.5 text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
+              <LuCircleCheck className="h-5 w-5" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{counts.completed}</p>
+            <p className="mt-0.5 text-xs text-gray-500">Terminés</p>
+          </div>
+        </Link>
       </div>
 
       {/* Recent Applications */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-800">Dossiers récents</h2>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={refreshApplications}
-                disabled={isRefreshing}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary text-sm font-medium rounded-lg transition-colors disabled:opacity-60"
-              >
-                {isRefreshing ? (
-                  <span className="inline-flex items-center gap-2">
-                    <span className="inline-block w-3 h-3 border-2 border-primary/70 border-t-transparent rounded-full animate-spin" />
-                    Actualisation...
-                  </span>
-                ) : (
-                  'Actualiser'
-                )}
-              </button>
-              <Link to={`/${window?.contextPath}/employee/publicservices/applications-employee/all`} className="text-sm text-primary font-medium hover:text-primary-dark flex items-center">
-                Voir tout <LuArrowRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
+      <div>
+        <div className="mb-3 flex items-center justify-between sm:mb-4">
+          <h2 className="text-sm font-bold text-gray-900 sm:text-base">Dossiers récents</h2>
+          <Link
+            to={`${basePath}/applications-employee/all`}
+            className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary-dark"
+          >
+            Voir tout <LuArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="h-4 w-2/3 rounded-lg bg-gray-100" />
+                    <div className="h-5 w-12 rounded-full bg-gray-50" />
+                  </div>
+                  <div className="h-3 w-full rounded-lg bg-gray-50" />
+                  <div className="h-5 w-24 rounded-full bg-gray-50" />
+                  <div className="flex gap-3">
+                    <div className="h-3 w-20 rounded-lg bg-gray-50" />
+                    <div className="h-3 w-16 rounded-lg bg-gray-50" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dossier</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Demandeur</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {isLoading ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center">
-                    <div className="flex items-center justify-center">
-                      <LuArrowRight className="animate-spin h-6 w-6 text-primary" />
-                      <span className="ml-2">Chargement...</span>
+        ) : recentApplications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white py-16 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50">
+              <LuSparkles className="h-7 w-7 text-emerald-500" />
+            </div>
+            <h3 className="mb-1 text-base font-bold text-gray-900">Aucun dossier</h3>
+            <p className="text-sm text-gray-400">Aucun dossier récent à afficher</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+            {recentApplications.map((app) => (
+              <Link
+                key={app.id}
+                to={`${basePath}/${app.module}/${app.businessService}/ViewScreen?applicationNumber=${app.id}&serviceCode=${app.serviceCode}&businessService=${app.currentBusinessService}`}
+                className="group block"
+              >
+                <div className="flex h-full flex-col rounded-2xl border border-gray-100 bg-white p-4 transition-all hover:border-primary/20 hover:shadow-sm sm:p-5">
+                  {/* Header: ID + ref badge + arrow */}
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.id}</span>
+                      {app.ref && (
+                        <span className="ml-1.5 inline-flex rounded-lg bg-primary/8 px-1.5 py-0.5 text-[10px] font-bold text-primary align-middle">
+                          {app.ref}
+                        </span>
+                      )}
                     </div>
-                  </td>
-                </tr>
-              ) : recentApplications.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                    Aucun dossier récent
-                  </td>
-                </tr>
-              ) : (
-                recentApplications.map((app) => (
-                  <tr key={app.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{app.id}</div>
-                        <div className="text-sm text-gray-500">{app.title}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${app.statusColor}`}>
-                        {app.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {app.client}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <LuArrowUpRight className="h-4 w-4 shrink-0 text-gray-200 transition-colors group-hover:text-primary" />
+                  </div>
+
+                  {/* Service name */}
+                  <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-gray-400">{app.shortName}</p>
+
+                  {/* Status badge */}
+                  <div className="mb-3">
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${app.statusBg} ${app.statusColor}`}>
+                      {app.statusIcon && <app.statusIcon className="h-3 w-3" />}
+                      {app.status}
+                    </span>
+                  </div>
+
+                  {/* Spacer to push meta to bottom */}
+                  <div className="mt-auto flex items-center gap-3 border-t border-gray-50 pt-3">
+                    <span className="flex items-center gap-1 text-[11px] text-gray-400 truncate">
+                      <LuUser className="h-3 w-3 shrink-0" />
+                      {truncateName(app.client)}
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] text-gray-400 shrink-0">
+                      <LuCalendar className="h-3 w-3" />
                       {app.submittedDate}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link
-                        to={`/${window?.contextPath}/employee/publicservices/${app.module}/${app.businessService}/ViewScreen?applicationNumber=${app.id}&serviceCode=${app.serviceCode}&businessService=${app.currentBusinessService}`}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
-                      >
-                        <span>Détails</span>
-                        <LuArrowUpRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

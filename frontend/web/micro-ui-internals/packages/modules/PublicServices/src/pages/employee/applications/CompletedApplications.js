@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useApplications from "./useApplications";
+import { getServiceInfo } from "./utils";
 import axios from "axios";
-import { LuClipboardList, LuRefreshCw } from "react-icons/lu";
 
 import Filters from "./components/Filters";
 import ErrorDisplay from "./components/ErrorDisplay";
 import ApplicationsTable from "./components/ApplicationsTable";
+import { LuCircleCheck, LuRefreshCw } from "react-icons/lu";
 
-const NewApplications = () => {
+const CompletedApplications = () => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBusinessService, setSelectedBusinessService] = useState("");
@@ -17,7 +18,7 @@ const NewApplications = () => {
   const [pageSize, setPageSize] = useState(10);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { applications, isLoading, isRefreshing, error, refreshApplications } = useApplications();
+  const { applications, isLoading, isRefreshing, error, refreshApplications, lastFetchTime } = useApplications();
 
   const [businessServices, setBusinessServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
@@ -28,11 +29,16 @@ const NewApplications = () => {
       try {
         const tenantId = Digit.ULBService.getCurrentTenantId();
         const response = await axios.get("/public-service/v1/service", {
-          params: { tenantId },
-          headers: { "X-Tenant-Id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
+          params: { tenantId: tenantId },
+          headers: {
+            "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
+          },
         });
-        setBusinessServices(response?.data?.Services || []);
-      } catch (e) {
+        const services = response?.data?.Services || [];
+        setBusinessServices(services);
+      } catch (error) {
+        console.error("Error fetching business services:", error);
         setBusinessServices([]);
       } finally {
         setServicesLoading(false);
@@ -41,49 +47,58 @@ const NewApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED"];
+  const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
-  const newApplications = useMemo(() => {
+  const completedApplications = useMemo(() => {
     return applications.filter((app) => {
       const status = app.ProcessInstance?.state?.applicationStatus;
-      return newStatuses.includes(status);
+      return completedStatuses.includes(status);
     });
   }, [applications]);
 
   const filteredApplications = useMemo(() => {
-    return newApplications.filter((app) => {
-      const bo = app.businessObject;
-      const appNum = bo?.applicationNumber;
-      const bs = bo?.businessService;
-      const name = bo?.applicants?.[0]?.name;
-      const time = bo?.auditDetails?.createdTime;
+    return completedApplications.filter((app) => {
+      const businessObject = app.businessObject;
+      const applicationNumber = businessObject?.applicationNumber;
+      const businessService = businessObject?.businessService;
+      const applicantName = businessObject?.applicants?.[0]?.name;
+      const createdTime = businessObject?.auditDetails?.createdTime;
 
-      const matchSearch = searchTerm === "" ||
-        appNum?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        bs?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        name?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchBs = selectedBusinessService === "" || bs === selectedBusinessService;
-      let matchDate = true;
+      const matchesSearch =
+        searchTerm === "" ||
+        applicationNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        businessService?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        applicantName?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesBusinessService = selectedBusinessService === "" || businessService === selectedBusinessService;
+
+      let matchesDate = true;
       if (dateRange?.[0] || dateRange?.[1]) {
-        const d = new Date(time || Date.now());
-        const s = dateRange?.[0] ? new Date(dateRange[0]) : null;
-        const e = dateRange?.[1] ? new Date(dateRange[1]) : null;
-        if (s && e) matchDate = d >= s && d <= e;
-        else if (s) matchDate = d >= s;
-        else if (e) matchDate = d <= e;
+        const applicationDate = new Date(createdTime || Date.now());
+        const start = dateRange?.[0] ? new Date(dateRange[0]) : null;
+        const end = dateRange?.[1] ? new Date(dateRange[1]) : null;
+        if (start && end) {
+          matchesDate = applicationDate >= start && applicationDate <= end;
+        } else if (start) {
+          matchesDate = applicationDate >= start;
+        } else if (end) {
+          matchesDate = applicationDate <= end;
+        }
       }
-      return matchSearch && matchBs && matchDate;
+
+      return matchesSearch && matchesBusinessService && matchesDate;
     });
-  }, [newApplications, searchTerm, selectedBusinessService, dateRange]);
+  }, [completedApplications, searchTerm, selectedBusinessService, dateRange]);
 
   const availableBusinessServices = useMemo(() => {
-    return [...new Set(newApplications.map((a) => a.businessObject?.businessService))].filter(Boolean);
-  }, [newApplications]);
+    const services = [...new Set(completedApplications.map((app) => app.businessObject?.businessService))];
+    return services.filter(Boolean);
+  }, [completedApplications]);
 
-  const handleSearch = (v) => { setSearchTerm(v); setCurrentPage(1); };
-  const handleBusinessServiceChange = (v) => { setSelectedBusinessService(v); setCurrentPage(1); };
-  const handleDateRangeChange = (s, e) => { setDateRange([s, e]); setCurrentPage(1); setShowDatePicker(false); };
-  const handlePageChange = (p) => setCurrentPage(p);
+  const handleSearch = (value) => { setSearchTerm(value); setCurrentPage(1); };
+  const handleBusinessServiceChange = (value) => { setSelectedBusinessService(value); setCurrentPage(1); };
+  const handleDateRangeChange = (startDate, endDate) => { setDateRange([startDate, endDate]); setCurrentPage(1); setShowDatePicker(false); };
+  const handlePageChange = (newPage) => { setCurrentPage(newPage); };
   const clearFilters = () => { setSearchTerm(""); setSelectedBusinessService(""); setDateRange(null); setCurrentPage(1); };
 
   const totalCount = filteredApplications.length;
@@ -93,23 +108,23 @@ const NewApplications = () => {
   const paginatedApplications = filteredApplications.slice(startIndex - 1, endIndex);
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-5 px-3 py-4 sm:px-5 sm:py-6">
+    <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="pt-[100px]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50">
-              <LuClipboardList className="h-5 w-5 text-blue-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50">
+              <LuCircleCheck className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 sm:text-xl">Nouveaux dossiers</h1>
-              <p className="text-xs text-gray-400">Dossiers en attente d'assignation</p>
+              <h1 className="text-lg font-bold text-gray-900 sm:text-xl">Dossiers terminés</h1>
+              <p className="text-xs text-gray-400">Dossiers approuvés et complétés</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="rounded-2xl border border-blue-200/60 bg-blue-50 px-4 py-2">
-              <p className="text-2xl font-bold text-gray-900">{newApplications.length}</p>
-              <p className="text-[10px] text-gray-500">Nouveaux</p>
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl border border-emerald-200/60 bg-emerald-50 px-4 py-2">
+              <p className="text-2xl font-bold text-gray-900">{completedApplications.length}</p>
+              <p className="text-[10px] text-gray-500">Terminés</p>
             </div>
             <button
               onClick={refreshApplications}
@@ -123,8 +138,7 @@ const NewApplications = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-5">
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
         <Filters
           searchTerm={searchTerm}
           onSearchChange={handleSearch}
@@ -141,8 +155,7 @@ const NewApplications = () => {
 
       <ErrorDisplay error={error} onRetry={refreshApplications} />
 
-      {/* Table */}
-      <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <ApplicationsTable
           isLoading={isLoading}
           filteredApplications={filteredApplications}
@@ -159,4 +172,4 @@ const NewApplications = () => {
   );
 };
 
-export default NewApplications;
+export default CompletedApplications;

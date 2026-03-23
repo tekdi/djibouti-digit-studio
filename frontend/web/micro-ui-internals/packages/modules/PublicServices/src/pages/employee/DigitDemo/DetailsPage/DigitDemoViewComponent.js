@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useWorkflowDetails, processBusinessServices } from "../../../../utils";
 import { checklistByService } from "../../../../utils/templateConfig.js";
 
-// Import refactored components
 import ApplicationHeader from "./ApplicationHeader";
 import ApplicationTabs from "./ApplicationTabs";
 import MainView from "./MainView";
@@ -29,7 +28,6 @@ const DigitDemoViewComponent = () => {
     (role) => role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "BPA_ARCHITECT"
   );
 
-  //to get the fetched application details
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
     headers: {
@@ -43,14 +41,13 @@ const DigitDemoViewComponent = () => {
     },
     config: {
       cacheTime: 0,
-      refetchInterval: 30000, // Auto-refetch every 30 seconds
+      refetchInterval: 30000,
     },
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
 
-  //To fetch the service config for the module and service
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
     body: {
@@ -60,15 +57,13 @@ const DigitDemoViewComponent = () => {
       },
     },
     config: {
-      refetchInterval: 30000, // Auto-refetch every 30 seconds
+      refetchInterval: 30000,
     },
   };
 
   const { isLoading: ServiceConfigLoading, data: serviceConfigData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
-
   const serviceConfig = serviceConfigData?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
 
-  //To fetch the workflow details for the application to handle parallel workflow
   let { data: workflowDetails, isLoading: workflowLoading } = useWorkflowDetails({
     tenantId: tenantId,
     id: queryStrings?.applicationNumber,
@@ -76,7 +71,7 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
-      refetchInterval: 180000, // Auto-refetch every 3 minutes
+      refetchInterval: 180000,
     },
   });
 
@@ -86,21 +81,17 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
-      refetchInterval: 180000, // Auto-refetch every 3 minutes
+      refetchInterval: 180000,
     },
   });
 
   useEffect(() => {
-    // Guard clause to avoid calling with missing inputs
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
-
-    //To get the eligible business service for the current state of the application
     processBusinessServices(serviceConfig, tenantId, queryStrings?.applicationNumber, workflowDetails, userRoles, t).then((matched) => {
       setMatchedBusinessServices(matched);
     });
   }, [workflowDetails]);
 
-  // Auto select business service if there's only one match
   useEffect(() => {
     if (matchedBusinessServices.length === 1 && !selectedBusinessService) {
       setSelectedBusinessService(matchedBusinessServices[0]);
@@ -117,29 +108,22 @@ const DigitDemoViewComponent = () => {
       userRoles.includes("BPA_SRA_SUB_DIRECTOR")
     )
       return;
-
-    const loggedUser = userInfo?.info?.uuid;
-    const latestProcessInstance = workflowDetails?.processInstances?.[0]; //extracting the latest process instance object
-    const assigneeUuids = latestProcessInstance?.assignes?.map((assignee) => assignee.uuid) || [];
-
-    // Allow users to view applications even if they don't have actions available
-    // No redirect - users can view the application details
   }, [userInfo, workflowDetails]);
 
-  // To get the checklist codes for the application
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances?.[0].state?.state}`] : [];
 
   if (isLoading || workflowLoading || timelineWorkflowLoading || ServiceConfigLoading) {
-    return <Loader />;
+    return (
+      <div className="flex items-center justify-center" style={{ minHeight: "80vh", paddingTop: "100px" }}>
+        <Loader />
+      </div>
+    );
   }
 
-
- 
   const serviceInfo = {
     name: t(response?.businessService) || "Service",
-    description: "Service administratif en ligne"
+    description: "Service administratif en ligne",
   };
-  // Applicant: prefer responseData.Application.applicants when root applicants is empty (e.g. BPA_CCE)
   const rootApplicant = response?.applicants?.[0];
   const responseDataApplicant = response?.serviceDetails?.responseData?.Application?.applicants?.[0];
   const applicant =
@@ -151,16 +135,14 @@ const DigitDemoViewComponent = () => {
 
   return (
     <React.Fragment>
-      <div className="max-w-7xl mx-auto p-10 pt-5">
-        <div className="mt-4 flex flex-col gap-4">
-          {/* Header Card with Action Buttons */}
-          <ApplicationHeader 
+      <div className="mx-auto w-full max-w-7xl space-y-5 px-3 py-4 sm:px-5 sm:py-6">
+        <div className="pt-[100px]">
+          <ApplicationHeader
             response={response}
             serviceInfo={serviceInfo}
             projectDetails={projectDetails}
             applicant={applicant}
             isCitizen={isCitizen}
-            // Action button props
             selectedBusinessService={selectedBusinessService}
             matchedBusinessServices={matchedBusinessServices}
             setSelectedBusinessService={setSelectedBusinessService}
@@ -171,17 +153,17 @@ const DigitDemoViewComponent = () => {
             isDownloadButtonEnable={isDownloadButtonEnable}
             service={service}
           />
+        </div>
 
-          {/* Tabs */}
-          <ApplicationTabs 
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            isCitizen={isCitizen}
-            businessService={response?.businessService}
-          />
+        <ApplicationTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isCitizen={isCitizen}
+          businessService={response?.businessService}
+        />
 
-          {/* Content Area */}
-          <MainView 
+        <div className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+          <MainView
             activeTab={activeTab}
             response={response}
             applicant={applicant}

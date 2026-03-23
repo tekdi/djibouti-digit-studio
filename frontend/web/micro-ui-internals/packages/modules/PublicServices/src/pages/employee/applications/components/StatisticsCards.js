@@ -2,21 +2,22 @@ import React from "react";
 import { LuFolder, LuCircle, LuClock, LuCircleCheck } from "react-icons/lu";
 
 const StatisticsCards = ({ applications, totalCount }) => {
+  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED"];
+  const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
+
   const newApplicationsCount = applications.filter(
-    (app) => app.ProcessInstance?.state?.applicationStatus === "AGENT_NOT_ASSIGNED"
+    (app) => newStatuses.includes(app.ProcessInstance?.state?.applicationStatus)
   ).length;
 
   const inProgressCount = applications.filter(
-    (app) =>
-      app.ProcessInstance?.state?.applicationStatus !== "AGENT_NOT_ASSIGNED" &&
-      app.ProcessInstance?.state?.applicationStatus !== "PERMIT_GRANTED" &&
-      app.ProcessInstance?.state?.applicationStatus !== "CERTIFICATE_GRANTED"
+    (app) => {
+      const status = app.ProcessInstance?.state?.applicationStatus;
+      return !newStatuses.includes(status) && !completedStatuses.includes(status);
+    }
   ).length;
 
   const approvedCount = applications.filter(
-    (app) =>
-      app.ProcessInstance?.state?.applicationStatus === "PERMIT_GRANTED" ||
-      app.ProcessInstance?.state?.applicationStatus === "CERTIFICATE_GRANTED"
+    (app) => completedStatuses.includes(app.ProcessInstance?.state?.applicationStatus)
   ).length;
 
   return (
