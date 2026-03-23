@@ -15,36 +15,55 @@ const useApplications = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userDetails = Digit.UserService.getUser();
 
-  // Hardcoded business services array to avoid API issues
-  const businessServicesList = [
-    "BPA_PD",
-    "BPA_ATARR",
-    "BPA_PCO",
-    "BPA_PCO_SDECC",
-    "BPA_PCO_DGDCF",
-    "BPA_PCO_ONEAD",
-    "BPA_PCO_DNPC",
-    "BPA_PCO_EDD",
-    "BPA_PCO_INSPD",
-    "BPA_PR",
-    "BPA_CCP",
-    "BPA_APE",
-    "BPA_PF",
-    "BPA_PL_ADR",
-    "BPA_PCO_SIMPLE",
-    "BPA_PCS",
-    "BPA_PV",
-    "BPA_CCE",
-    "BPA_CCG",
-    "BPA_PS",
-    "BPA_CCR",
-    "BPA_PL",
-  ];
-
   // Cache keys for localStorage
   const CACHE_KEY = `employee_applications_cache`;
   const TIMESTAMP_KEY = `employee_applications_timestamp`;
   const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+
+  // Normalize application from the new /public-service/v1/application endpoint
+  // into the shape components expect (businessObject + ProcessInstance)
+  const normalizeApplication = (app) => {
+    // processInstance is an array - take the last entry for current state
+    const processInstances = app.processInstance || [];
+    const latestProcessInstance = processInstances.length > 0
+      ? processInstances[processInstances.length - 1]
+      : null;
+
+    // Top-level applicants may have empty name/mobileNumber;
+    // the real applicant data lives in serviceDetails.responseData.Application.applicants
+    const responseApplicants = app.serviceDetails?.responseData?.Application?.applicants || [];
+    const topApplicants = app.applicants || [];
+    // Prefer responseData applicants if they have a name, otherwise fall back to top-level
+    const applicants = responseApplicants.length > 0 && responseApplicants[0]?.name
+      ? responseApplicants
+      : topApplicants;
+
+    return {
+      businessObject: {
+        applicationNumber: app.applicationNumber,
+        businessService: app.businessService,
+        module: app.module,
+        serviceCode: app.serviceCode,
+        status: app.status,
+        channel: app.channel,
+        applicants: applicants,
+        auditDetails: app.auditDetails || {},
+        workflow: app.workflow || {},
+        additionalDetails: app.additionalDetails || {},
+        address: app.address || {},
+        documents: app.documents || [],
+        serviceDetails: app.serviceDetails || {},
+      },
+      ProcessInstance: latestProcessInstance
+        ? {
+            ...latestProcessInstance,
+            state: latestProcessInstance.state || {},
+            assignes: latestProcessInstance.assignes || [],
+            assignees: latestProcessInstance.assignees || [],
+          }
+        : { state: { applicationStatus: app.workflowStatus }, assignes: [], assignees: [] },
+    };
+  };
 
   // Load cached data from localStorage
   const loadCachedData = () => {
@@ -59,12 +78,7 @@ const useApplications = () => {
         // Check if cache is still valid (less than 1 hour old)
         if (now - timestamp < CACHE_DURATION) {
           const cached = JSON.parse(cachedApplications);
-          const normalized = cached.map((item) => ({
-            ...item,
-            businessObject: item.businessObject || item.Data,
-            ProcessInstance: item.ProcessInstance || item.processInstance,
-          }));
-          setApplications(normalized);
+          setApplications(cached);
           setLastFetchTime(timestamp);
           setIsLoading(false);
           return true; // Cache is valid
@@ -95,7 +109,7 @@ const useApplications = () => {
     }
   };
 
-  // Fetch applications - using the inbox endpoint like in modulePageComponent.js
+  // Fetch applications using the public-service application endpoint
   const fetchApplications = async (forceRefresh = false) => {
     if (isFetching.current) {
       console.log("Already fetching applications");
@@ -119,39 +133,12 @@ const useApplications = () => {
     }
 
     try {
-      console.log("Fetching employee applications with inbox endpoint");
+      console.log("Fetching employee applications from /public-service/v1/application");
 
-      // Use hardcoded business services list
-      const servicesList = businessServicesList;
-
-      // Use the inbox endpoint with correct structure - only RequestInfo and inbox
-      const response = await axios.post(
-        `/inbox/v2/_search`,
+      const response = await axios.get(
+        `/public-service/v1/application`,
         {
-          RequestInfo: {
-            apiId: "Rainmaker",
-            authToken: userDetails?.access_token,
-            userInfo: userDetails?.info,
-            msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
-            plainAccessRequest: {},
-          },
-          inbox: {
-            limit: 300,
-            offset: 0,
-            tenantId: tenantId,
-            processSearchCriteria: {
-              businessService: servicesList,
-              moduleName: "public-services",
-              tenantId: tenantId,
-            },
-            moduleSearchCriteria: {
-              businessService: servicesList,
-              module: "BPA",
-              sortOrder: "DESC",
-            },
-          },
-        },
-        {
+          params: { tenantId: tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
             "auth-token": userDetails?.access_token,
@@ -159,21 +146,17 @@ const useApplications = () => {
         }
       );
 
-      const applicationsData = response?.data?.items || [];
-      
-      // Normalize inbox structure: Digit inbox may return Data, components expect businessObject
-      const normalizedData = applicationsData.map((item) => ({
-        ...item,
-        businessObject: item.businessObject || item.Data,
-        ProcessInstance: item.ProcessInstance || item.processInstance,
-      }));
-      
+      const applicationsData = response?.data?.Application || [];
+
+      // Normalize into the shape components expect
+      const normalizedData = applicationsData.map(normalizeApplication);
+
       // Remove duplicates based on applicationNumber
       const uniqueApplications = normalizedData.filter((item, index, self) => {
-        const appNumber = item.businessObject?.applicationNumber || item.Data?.applicationNumber;
-        return index === self.findIndex((a) => (a.businessObject?.applicationNumber || a.Data?.applicationNumber) === appNumber);
+        const appNumber = item.businessObject?.applicationNumber;
+        return index === self.findIndex((a) => a.businessObject?.applicationNumber === appNumber);
       });
-      
+
       setApplications(uniqueApplications);
       setLastFetchTime(Date.now());
       setError(null);

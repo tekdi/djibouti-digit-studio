@@ -65,7 +65,7 @@ const EmployeeApp = ({
   }, []);
 
   return (
-    <div className="employee">
+    <div className="employee" style={{ backgroundColor: "rgba(26, 154, 141, 0.06)", minHeight: "100vh" }}>
       <Switch>
         <Route path={`${path}/user`}>
           {!location?.pathname?.includes('login') && (

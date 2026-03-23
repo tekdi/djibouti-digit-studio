@@ -6,6 +6,7 @@ import {
   LuChevronDown,
   LuClipboardList,
   LuClock,
+  LuCircleCheck,
   LuFolderOpen,
   LuSearch,
 } from "react-icons/lu";
@@ -33,15 +34,21 @@ const EmployeeNavigation = ({ mobileView }) => {
       dropdownItems: [
         {
           id: "new-dossiers",
-          label: "Nouveaux dossiers",
+          label: "Nouveaux",
           path: `/${window?.contextPath}/employee/publicservices/applications-employee/new`,
           icon: LuClipboardList,
         },
         {
           id: "in-progress",
-          label: "En cours d’instruction",
+          label: "En cours",
           path: `/${window?.contextPath}/employee/publicservices/applications-employee/in-progress`,
           icon: LuClock,
+        },
+        {
+          id: "completed",
+          label: "Terminés",
+          path: `/${window?.contextPath}/employee/publicservices/applications-employee/completed`,
+          icon: LuCircleCheck,
         },
         {
           id: "all-dossiers",

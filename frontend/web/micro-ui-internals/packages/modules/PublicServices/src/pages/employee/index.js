@@ -32,6 +32,7 @@ import EmployeeDashboard from "./Dashboard";
 import EmployeeApplications from "./applications";
 import InProgressApplications from "./applications/InProgressApplications";
 import NewApplications from "./applications/NewApplications";
+import CompletedApplications from "./applications/CompletedApplications";
 import EmployeeSearch from "./search";
 import AdminDashboard from "./Admin/AdminDashboard";
 
@@ -44,7 +45,7 @@ const App = ({ path }) => {
         {/* <React.Fragment>
           <SampleBreadCrumbs location={location} />
         </React.Fragment> */}
-        <div style={{ background: "#1a9a8d0f" }} className="pb-10">
+        <div style={{ background: "#1a9a8d0f" }}>
           {/* citizen */}
           <PrivateRoute exact path={`${path}/dashboard`} component={() => <CitizenDashboard />} />
           <PrivateRoute exact path={`${path}/apply`} component={() => <Apply />} />
@@ -64,6 +65,7 @@ const App = ({ path }) => {
           <PrivateRoute exact path={`${path}/applications-employee/all`} component={() => <EmployeeApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/in-progress`} component={() => <InProgressApplications />} />
           <PrivateRoute exact path={`${path}/applications-employee/new`} component={() => <NewApplications />} />
+          <PrivateRoute exact path={`${path}/applications-employee/completed`} component={() => <CompletedApplications />} />
           <PrivateRoute exact path={`${path}/search`} component={() => <EmployeeSearch />} />
           <PrivateRoute path={`${path}/:module/:service/apply`} component={() => <DigitDemoComponent />} />
           <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
