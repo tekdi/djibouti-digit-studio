@@ -24,7 +24,10 @@ const useApplications = () => {
   // into the shape components expect (businessObject + ProcessInstance)
   const normalizeApplication = (app) => {
     // processInstance is an array - take the last entry for current state
-    const processInstances = app.processInstance || [];
+    // Fall back to nested responseData processInstance if top-level is null
+    const processInstances = app.processInstance
+      || app.serviceDetails?.responseData?.Application?.processInstance
+      || [];
     const latestProcessInstance = processInstances.length > 0
       ? processInstances[processInstances.length - 1]
       : null;

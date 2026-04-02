@@ -551,8 +551,29 @@ export const getStatusInfo = (status) => {
       icon: LuCircleCheck,
       progress: 100
     },
+    "APPROVED": {
+      label: "Approuvé",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 100
+    },
     "REJECTED": {
       label: "Rejeté",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleX,
+      progress: 0
+    },
+    "PERMIT_REJECTED": {
+      label: "Permis rejeté",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleX,
+      progress: 0
+    },
+    "CERTIFICATE_REJECTED": {
+      label: "Certificat rejeté",
       color: "text-red-600",
       bgColor: "bg-red-50",
       icon: LuCircleX,
