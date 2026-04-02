@@ -1,9 +1,10 @@
-import React from "react";
-import { LuUser, LuMapPin, LuCalendar, LuClock } from "react-icons/lu";
+import React, { useRef, useState } from "react";
+import { LuUser, LuMapPin, LuCalendar, LuClock, LuDownload } from "react-icons/lu";
 import StatusBadge from "./StatusBadge";
 import InfoCard from "./InfoCard";
 import ActionButtons from "./ActionButtons";
 import { useTranslation } from "react-i18next";
+import { PermitPDFTemplate, generatePermitPDF } from "../../../../components/PermitPDF";
 
 const ApplicationHeader = ({ 
   response, 
@@ -23,6 +24,19 @@ const ApplicationHeader = ({
   service
 }) => {
   const { t } = useTranslation();
+  const pdfRef = useRef(null);
+  const [showPdfTemplate, setShowPdfTemplate] = useState(false);
+
+  const isPermitGranted = processInstanceState === "PERMIT_GRANTED" || processInstanceState === "CERTIFICATE_GRANTED" || processInstanceState === "CERTIFICATE_ISSUED" || processInstanceState === "APPROVED";
+
+  const handleCitizenPdfDownload = async () => {
+    setShowPdfTemplate(true);
+    setTimeout(async () => {
+      await generatePermitPDF(pdfRef, `permis-${response?.applicationNumber || "document"}.pdf`);
+      setShowPdfTemplate(false);
+    }, 500);
+  };
+
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
     const date = new Date(timestamp);
@@ -87,7 +101,7 @@ const ApplicationHeader = ({
         </div>
 
         {/* Action Buttons - Top Right */}
-        {!isCitizen && (
+        {!isCitizen ? (
           <ActionButtons
             isCitizen={isCitizen}
             selectedBusinessService={selectedBusinessService}
@@ -101,6 +115,16 @@ const ApplicationHeader = ({
             isDownloadButtonEnable={isDownloadButtonEnable}
             service={service}
           />
+        ) : (
+          isPermitGranted && (
+            <button
+              onClick={handleCitizenPdfDownload}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/30"
+            >
+              <LuDownload className="h-4 w-4" />
+              Télécharger le permis
+            </button>
+          )
         )}
       </div>
 
@@ -128,6 +152,17 @@ const ApplicationHeader = ({
           value={formatDate(response?.auditDetails?.createdTime)}
         />
       </div>
+
+      {/* Hidden PDF Template for citizen download */}
+      {showPdfTemplate && (
+        <div style={{ position: "fixed", left: "-9999px", top: 0 }}>
+          <PermitPDFTemplate
+            ref={pdfRef}
+            response={response}
+            businessService={response?.businessService}
+          />
+        </div>
+      )}
     </div>
   );
 };

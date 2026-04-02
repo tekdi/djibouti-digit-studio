@@ -11,7 +11,9 @@ import { useTranslation } from "react-i18next";
 
 const ApplicationCard = ({ app }) => {
   const { t } = useTranslation();
-  const applicationStatus = app.processInstance?.[0]?.state?.applicationStatus;
+  const applicationStatus = app.processInstance?.[0]?.state?.applicationStatus
+    || app.serviceDetails?.responseData?.Application?.processInstance?.[0]?.state?.applicationStatus
+    || null;
   const statusInfo = getStatusInfo(applicationStatus, app.businessService);
   const StatusIcon = statusInfo.icon;
   const serviceInfo = getServiceInfo(app.businessService);
@@ -19,6 +21,11 @@ const ApplicationCard = ({ app }) => {
   const isCompleted = simplifiedStatus === "granted" || simplifiedStatus === "rejected";
   const displayDate = isCompleted ? app.auditDetails?.lastModifiedTime : app.auditDetails?.createdTime;
   const dateLabel = simplifiedStatus === "granted" ? "Date de délivrance" : simplifiedStatus === "rejected" ? "Date de clôture" : "Date de création";
+
+  // Get applicant name - prefer responseData applicants (top-level may have empty name)
+  const responseApplicant = app.serviceDetails?.responseData?.Application?.applicants?.[0];
+  const topApplicant = app.applicants?.[0];
+  const applicantName = (responseApplicant?.name || topApplicant?.name) || null;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full">
@@ -80,17 +87,17 @@ const ApplicationCard = ({ app }) => {
           </div>
 
           {/* Applicant Name */}
-          {app.applicants?.[0]?.name && (
+          {applicantName && (
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gray-50 rounded-lg">
                 <LuUser className="w-4 h-4 text-gray-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  Nom du demandeur
-                </p> 
+                  Demandeur
+                </p>
                 <p className="text-xs text-gray-600">
-                  {app.applicants[0].name}
+                  {applicantName.length > 25 ? applicantName.slice(0, 25) + "..." : applicantName}
                 </p>
               </div>
             </div>

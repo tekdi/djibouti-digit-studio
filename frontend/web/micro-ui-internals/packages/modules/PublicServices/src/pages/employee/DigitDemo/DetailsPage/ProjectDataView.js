@@ -14,12 +14,13 @@ import {
 } from "react-icons/lu";
 import { getServiceData } from "./dataValues";
 
-const ProjectDataView = ({ 
-  serviceCode, 
-  data, 
-  status, 
-  applicationNumber, 
-  businessService 
+const ProjectDataView = ({
+  serviceCode,
+  data,
+  status,
+  applicationNumber,
+  businessService,
+  singleColumn = false
 }) => {
   const { t } = useTranslation();
 
@@ -191,7 +192,7 @@ const ProjectDataView = ({
   // }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className={`grid grid-cols-1 ${singleColumn ? "" : "lg:grid-cols-2"} gap-6`}>
       {blocks}
     </div>
   );
