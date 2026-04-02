@@ -155,14 +155,9 @@ export const useAgentReportForm = () => {
 
   const validateForm = useCallback(() => {
     const newErrors = {};
-
-    if (!formData.report || formData.report.length === 0) {
-      newErrors.report = "Les fichiers de rapport sont requis";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData.report]);
+  }, []);
 
   return {
     formData,
