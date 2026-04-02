@@ -48,8 +48,9 @@ const HeaderCompleted = ({
           {businessServices.map(s => <option key={s} value={s}>{getServiceInfo(s)?.name || s}</option>)}
         </select>
         <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-gray-500">Du</span>
           <input type="date" value={startDate} onChange={(e) => setStartDate?.(e.target.value)} className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10" />
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs font-medium text-gray-500">au</span>
           <input type="date" value={endDate} onChange={(e) => setEndDate?.(e.target.value)} className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10" />
         </div>
         {hasFilters && <button onClick={clearAll} className="flex items-center gap-1 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-xs font-medium text-red-500 hover:bg-red-100"><LuX className="h-3.5 w-3.5" />Réinitialiser</button>}

@@ -141,25 +141,6 @@ const AgentReportModal = ({
             handleTechnicalInfoChange={handleTechnicalInfoChange}
           />
 
-          {/* Report Upload */}
-          <FileUploadSection
-            title="Fiche de terrain"
-            fieldName="report"
-            accept=".pdf,.doc,.docx,.xlsx,.xls"
-            maxFiles={5}
-            maxSizeMB={10}
-            required={true}
-            formData={formData}
-            errors={errors}
-            uploadingFiles={uploadingFiles}
-            isViewMode={isViewMode}
-            isEditMode={isEditMode}
-            handleFileUpload={handleFileUpload}
-            removeFile={removeFile}
-            downloadFile={downloadFile}
-            getFileUrl={getFileUrl}
-          />
-
           {/* Notes */}
           <div className="mb-8">
             <label className="block mb-3 font-semibold text-base text-gray-800">

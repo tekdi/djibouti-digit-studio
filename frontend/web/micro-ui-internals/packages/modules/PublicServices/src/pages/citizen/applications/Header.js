@@ -92,13 +92,14 @@ const Header = ({
 
         {/* Date range */}
         <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-gray-500">Du</span>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate && setStartDate(e.target.value)}
             className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
           />
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs font-medium text-gray-500">au</span>
           <input
             type="date"
             value={endDate}
