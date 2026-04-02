@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(yarn add:*)",
+      "Bash(yarn build:*)",
+      "Bash(yarn remove:*)",
+      "Bash(kubectl config current-context:*)",
+      "Bash(kubectl config get-contexts:*)",
+      "Bash(kubectl get nodes:*)",
+      "Bash(kubectl get pods:*)",
+      "Bash(aws eks update-nodegroup-config:*)",
+      "Bash(kubectl get certificate:*)",
+      "Bash(kubectl get ingress:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl get:*)",
+      "Bash(openssl x509:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(kubectl patch configmap:*)",
+      "Bash(kubectl rollout restart:*)",
+      "Bash(kubectl rollout status:*)"
+    ]
+  }
+}

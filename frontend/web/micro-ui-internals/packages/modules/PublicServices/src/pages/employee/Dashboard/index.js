@@ -135,7 +135,7 @@ const EmployeeDashboard = () => {
             <div className="mb-3 inline-flex rounded-xl bg-gray-200/60 p-2.5 text-gray-500 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
               <LuFolderOpen className="h-5 w-5" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{counts.total}</p>
+            {isLoading ? <div className="h-7 w-10 animate-pulse rounded-lg bg-gray-200 mt-1" /> : <p className="text-2xl font-bold text-gray-900">{counts.total}</p>}
             <p className="mt-0.5 text-xs text-gray-500">Total dossiers</p>
           </div>
         </Link>
@@ -144,7 +144,7 @@ const EmployeeDashboard = () => {
             <div className="mb-3 inline-flex rounded-xl bg-blue-100 p-2.5 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white">
               <LuFileText className="h-5 w-5" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{counts.newCount}</p>
+            {isLoading ? <div className="h-7 w-10 animate-pulse rounded-lg bg-blue-200 mt-1" /> : <p className="text-2xl font-bold text-gray-900">{counts.newCount}</p>}
             <p className="mt-0.5 text-xs text-gray-500">Nouveaux</p>
           </div>
         </Link>
@@ -153,7 +153,7 @@ const EmployeeDashboard = () => {
             <div className="mb-3 inline-flex rounded-xl bg-amber-100 p-2.5 text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
               <LuClock className="h-5 w-5" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{counts.inProgress}</p>
+            {isLoading ? <div className="h-7 w-10 animate-pulse rounded-lg bg-amber-200 mt-1" /> : <p className="text-2xl font-bold text-gray-900">{counts.inProgress}</p>}
             <p className="mt-0.5 text-xs text-gray-500">En cours</p>
           </div>
         </Link>
@@ -162,7 +162,7 @@ const EmployeeDashboard = () => {
             <div className="mb-3 inline-flex rounded-xl bg-emerald-100 p-2.5 text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
               <LuCircleCheck className="h-5 w-5" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{counts.completed}</p>
+            {isLoading ? <div className="h-7 w-10 animate-pulse rounded-lg bg-emerald-200 mt-1" /> : <p className="text-2xl font-bold text-gray-900">{counts.completed}</p>}
             <p className="mt-0.5 text-xs text-gray-500">Terminés</p>
           </div>
         </Link>

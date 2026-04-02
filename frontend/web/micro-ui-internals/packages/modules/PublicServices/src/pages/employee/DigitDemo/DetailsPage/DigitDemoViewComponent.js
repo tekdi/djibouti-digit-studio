@@ -24,9 +24,7 @@ const DigitDemoViewComponent = () => {
   const checklistConfig = checklistByService.find((list) => list.service === service);
   const shouldShowChecklist = checklistConfig && checklistConfig.checklist && checklistConfig.checklist.length > 0;
 
-  const isDownloadButtonEnable = userInfo?.info?.roles?.some(
-    (role) => role.code === "BPA_DIRECTOR" || role.code === "BPA_SRA_SUB_DIRECTOR" || role.code === "CITIZEN" || role.code === "BPA_ARCHITECT"
-  );
+  const isDownloadButtonEnable = true;
 
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
