@@ -1,17 +1,32 @@
 import React from "react";
-import { LuBuilding2, LuClock } from "react-icons/lu";
+import { LuBuilding2, LuClock, LuCircleCheck, LuCircleX } from "react-icons/lu";
 import ObservationsDisplay from "./ObservationsDisplay";
 import FileList from "./FileList";
 
+const VERDICT_STYLES = {
+  CONFORME: {
+    badge: "bg-emerald-100 text-emerald-700 border-emerald-200",
+    icon: LuCircleCheck,
+  },
+  NON_CONFORME: {
+    badge: "bg-red-100 text-red-700 border-red-200",
+    icon: LuCircleX,
+  },
+};
+
 const ObservationCard = ({
   observationData,
+  verdict,
   onPreview,
   onDownload,
   loadingFiles,
 }) => {
-  const commissionerName = observationData.updatedByOrganization 
-    ? observationData.updatedByOrganization.fullName 
+  const commissionerName = observationData.updatedByOrganization
+    ? observationData.updatedByOrganization.fullName
     : observationData.updatedByName || "Commissaire inconnu";
+
+  const verdictStyle = verdict ? VERDICT_STYLES[verdict.verdict] : null;
+  const VerdictIcon = verdictStyle?.icon;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden flex flex-col">
@@ -21,9 +36,19 @@ const ObservationCard = ({
             <LuBuilding2 className="h-6 w-6 text-djibouti-primary" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-bold mb-2 text-gray-900">
-              {commissionerName}
-            </h2>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h2 className="text-xl font-bold text-gray-900">
+                {commissionerName}
+              </h2>
+              {verdict && verdictStyle && (
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${verdictStyle.badge}`}
+                >
+                  {VerdictIcon && <VerdictIcon className="h-3.5 w-3.5" />}
+                  {verdict.label}
+                </span>
+              )}
+            </div>
             {observationData.updatedByOrganization && (
               <p className="text-xs text-gray-600">
                 ({observationData.updatedByOrganization.name})
@@ -70,4 +95,3 @@ const ObservationCard = ({
 };
 
 export default ObservationCard;
-

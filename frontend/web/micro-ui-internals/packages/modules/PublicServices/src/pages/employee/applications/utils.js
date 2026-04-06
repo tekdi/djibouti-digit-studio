@@ -165,6 +165,7 @@ export const getSimplifiedStatus = (status) => {
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
     "FIELD_VERIFICATION_PENDING": "pending",
+    "VERIFICATION_COMPLETED": "completed",
     "APPROVED": "approved",
     "REJECTED": "rejected",
     "PERMIT_REJECTED": "rejected",
@@ -624,6 +625,13 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-blue-50",
       icon: LuMapPin,
       progress: 35
+    },
+    "VERIFICATION_COMPLETED": {
+      label: "Vérification terminée",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 90
     },
     
     // Commissioner status

@@ -1,7 +1,4 @@
 import React, { useRef, useState } from "react";
-import { Button } from "@egovernments/digit-ui-components";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { LuDownload } from "react-icons/lu";
 import WorkflowActions from "../../../../components/WorkflowActions";
 import { PermitPDFTemplate, generatePermitPDF } from "../../../../components/PermitPDF";
@@ -19,8 +16,6 @@ const ActionButtons = ({
   isDownloadButtonEnable,
   service
 }) => {
-  const { t } = useTranslation();
-  const history = useHistory();
   const pdfRef = useRef(null);
   const [showPdfTemplate, setShowPdfTemplate] = useState(false);
 
@@ -65,7 +60,14 @@ const ActionButtons = ({
         </div>
       )}
 
-      {/* Workflow Actions */}
+      {/* Workflow Actions —
+          Note: we intentionally do NOT render a "Business Service" selector here
+          even when multiple parallel branches exist. The ViewScreen URL is already
+          resolved to the correct branch for the logged-in user via
+          resolveBusinessServiceForUser() in the applications list / dashboard / search,
+          so a manual branch switcher would only let users land on a branch where they
+          cannot act (and fail the WorkflowService access check). Keep this as a single
+          Action button matching the rest of the app. */}
       <WorkflowActions
         forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
         businessService={effectiveBusinessService}
@@ -92,25 +94,6 @@ const ActionButtons = ({
           right: 0,
           left: "auto",
         }}
-        {...(matchedBusinessServices.length > 1 && {
-          actionFields: [
-            <Button
-              key="business-service-selector"
-              t={t}
-              type={"actionButton"}
-              options={matchedBusinessServices}
-              label={"Business Service"}
-              variation={"primary"}
-              optionsKey={"displayname"}
-              isSearchable={false}
-              onOptionSelect={(value) => setSelectedBusinessService(value)}
-              menuStyle={{
-                top: "100%",
-                bottom: "unset",
-              }}
-            />,
-          ],
-        })}
       />
     </div>
   );

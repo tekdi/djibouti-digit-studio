@@ -13,7 +13,80 @@ import FileUploadZone from "./components/FileUploadZone";
 import EmptyState from "./components/EmptyState";
 import ToastNotification from "./components/ToastNotification";
 
-const ObservationsTab = ({ response, queryStrings }) => {
+// Map of workflow actions to verdict labels.
+// These are the actions a commissioner can perform in a parallel workflow.
+const VERDICT_ACTIONS = {
+  CONFORM_APPLICATION: { verdict: "CONFORME", label: "Avis Favorable", color: "emerald" },
+  APPROVE: { verdict: "CONFORME", label: "Avis Favorable", color: "emerald" },
+  APPROVE_APPLICATION: { verdict: "CONFORME", label: "Avis Favorable", color: "emerald" },
+  NON_CONFORM: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
+  REJECT_APPLICATION: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
+  REJECT: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
+};
+
+// Commissioner role → the action's enclosing business service (used as a secondary hint)
+const COMMISSIONER_ROLE_CODES = new Set([
+  "BPA_DGDCF_COMM",
+  "BPA_SDECC_COMM",
+  "BPA_INSPD_COMM",
+  "BPA_ONEAD_COMM",
+  "BPA_EDD_COMM",
+  "BPA_DCT_COMM",
+]);
+
+/**
+ * Given the two workflow detail objects, build a map:
+ *   { [roleCode]: { verdict, label, color, timestamp, comment } }
+ * by scanning all known process instance / timeline entries.
+ */
+const buildVerdictsByRole = (timelineWorkflowDetails, workflowDetails, responseProcessInstance) => {
+  const verdicts = {};
+
+  const collect = (entry) => {
+    if (!entry) return;
+    const action = entry.performedAction || entry.action;
+    const verdictDef = VERDICT_ACTIONS[action];
+    if (!verdictDef) return;
+
+    const assignerRoles = entry?.assigner?.roles || [];
+    const commissionerRole = assignerRoles.find((r) => COMMISSIONER_ROLE_CODES.has(r?.code));
+    if (!commissionerRole) return;
+
+    const existing = verdicts[commissionerRole.code];
+    const timestamp =
+      entry?.auditDetails?.lastModifiedEpoch ||
+      entry?.auditDetails?.lastModifiedTime ||
+      entry?.auditDetails?.createdTime ||
+      0;
+
+    // Keep the most recent verdict for each role
+    if (!existing || timestamp >= (existing.timestamp || 0)) {
+      verdicts[commissionerRole.code] = {
+        verdict: verdictDef.verdict,
+        label: verdictDef.label,
+        color: verdictDef.color,
+        timestamp,
+        comment: entry?.comment || "",
+      };
+    }
+  };
+
+  const sources = [
+    timelineWorkflowDetails?.timeline,
+    timelineWorkflowDetails?.processInstances,
+    workflowDetails?.timeline,
+    workflowDetails?.processInstances,
+    Array.isArray(responseProcessInstance) ? responseProcessInstance : null,
+  ];
+
+  sources.forEach((list) => {
+    if (Array.isArray(list)) list.forEach(collect);
+  });
+
+  return verdicts;
+};
+
+const ObservationsTab = ({ response, queryStrings, timelineWorkflowDetails, workflowDetails }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const serviceCode = queryStrings?.serviceCode;
   const applicationNumber = queryStrings?.applicationNumber;
@@ -112,6 +185,13 @@ const ObservationsTab = ({ response, queryStrings }) => {
     (obs) => obs.observations || (obs.files && obs.files.length > 0)
   );
 
+  // Build commissioner verdict map (CONFORME / NON_CONFORME) from workflow history
+  const verdictsByRole = buildVerdictsByRole(
+    timelineWorkflowDetails,
+    workflowDetails,
+    response?.processInstance
+  );
+
   // For non-commissioners, show only read-only view
   if (!isCommissioner) {
     return (
@@ -122,6 +202,7 @@ const ObservationsTab = ({ response, queryStrings }) => {
               <ObservationCard
                 key={index}
                 observationData={observationData}
+                verdict={verdictsByRole[observationData.updatedByRoleCode]}
                 onPreview={handlePreviewFile}
                 onDownload={handleDownloadFile}
                 loadingFiles={loadingFiles}
@@ -154,7 +235,11 @@ const ObservationsTab = ({ response, queryStrings }) => {
       <ToastNotification toast={showToast} onClose={() => setShowToast(null)} />
 
       {currentUserObservation && (
-        <CommissionerInfoCard observationData={currentUserObservation} isCurrentUser={true} />
+        <CommissionerInfoCard
+          observationData={currentUserObservation}
+          verdict={verdictsByRole[currentUserObservation.updatedByRoleCode]}
+          isCurrentUser={true}
+        />
       )}
 
       <div className="space-y-2">
