@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { LuSearch, LuFileText, LuUser, LuCalendar, LuMapPin, LuEye, LuLoader, LuCircleAlert } from "react-icons/lu";
 import axios from "axios";
 import { getServiceInfo, getStatusInfo as getStatusInfoFromUtils } from "../../../citizen/applications/utils";
+import { resolveBusinessServiceForUser } from "../../applications/utils";
 
 const SearchTab = () => {
   const { t } = useTranslation();
@@ -142,14 +143,10 @@ const SearchTab = () => {
     const businessObject = app;
     const applicationNumber = businessObject?.applicationNumber;
     const baseBusinessService = businessObject?.businessService;
-    const currentBusinessService =
-      app?.processInstance?.[0]?.businessService ||
-      app?.processInstance?.businessService ||
-      app?.ProcessInstance?.businessService ||
-      baseBusinessService;
+    const currentBusinessService = resolveBusinessServiceForUser(baseBusinessService);
     const serviceCode = businessObject?.serviceCode;
     const userType = Digit.UserService.getType()?.toLowerCase();
-    
+
     history.push(
       `/${window.contextPath}/${userType}/publicservices/${businessObject?.module}/${baseBusinessService}/ViewScreen?applicationNumber=${applicationNumber}&serviceCode=${serviceCode}&businessService=${currentBusinessService}`
     );

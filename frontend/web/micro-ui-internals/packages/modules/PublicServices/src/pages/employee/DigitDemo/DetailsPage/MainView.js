@@ -75,9 +75,11 @@ const MainView = ({
       )}
 
       {activeTab === "observations" && (
-        <ObservationsTab 
+        <ObservationsTab
           response={response}
           queryStrings={queryStrings}
+          timelineWorkflowDetails={timelineWorkflowDetails}
+          workflowDetails={workflowDetails}
         />
       )}
     </div>

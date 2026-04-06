@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { LuRefreshCw, LuArrowUpRight, LuChevronLeft, LuChevronRight, LuChevronsLeft, LuChevronsRight, LuInbox, LuFileText, LuUser, LuCalendar } from "react-icons/lu";
-import { getStatusInfo, formatDate, getServiceInfo } from "../utils";
+import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser } from "../utils";
 
 const truncateName = (name, max = 20) => {
   if (!name) return "—";
@@ -24,7 +24,7 @@ const ApplicationsTable = ({
   const handleViewDetails = (app) => {
     const bo = app.businessObject;
     const bs = bo?.businessService;
-    const cbs = app?.ProcessInstance?.businessService || bs;
+    const cbs = resolveBusinessServiceForUser(bs);
     const userType = Digit.UserService.getType()?.toLowerCase();
     history.push(
       `/${window.contextPath}/${userType}/publicservices/${bo?.module}/${bs}/ViewScreen?applicationNumber=${bo?.applicationNumber}&serviceCode=${bo?.serviceCode}&businessService=${cbs}`

@@ -165,6 +165,7 @@ export const getSimplifiedStatus = (status) => {
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
     "FIELD_VERIFICATION_PENDING": "pending",
+    "VERIFICATION_COMPLETED": "completed",
     "APPROVED": "approved",
     "REJECTED": "rejected",
     "PERMIT_REJECTED": "rejected",
@@ -625,6 +626,13 @@ export const getStatusInfo = (status) => {
       icon: LuMapPin,
       progress: 35
     },
+    "VERIFICATION_COMPLETED": {
+      label: "Vérification terminée",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
+      icon: LuCircleCheck,
+      progress: 90
+    },
     
     // Commissioner status
     "AWAITING_ON_COMMISSIONER": {
@@ -698,6 +706,60 @@ export const formatDateTime = (dateString) => {
   } catch (error) {
     return "N/A";
   }
+};
+
+// Map commissioner role codes to the parallel workflow business service they work on.
+// When a user opens an application, the ViewScreen should render the branch that belongs
+// to the user's role — not the latest process instance on the application. Otherwise, every
+// user ends up viewing whichever branch was most recently acted on (e.g. BPA_PCO_DGDCF),
+// which breaks parallel workflows for SDECC / DNPC / EDD / INSPD / ONEAD commissioners.
+const COMMISSIONER_ROLE_TO_BRANCH = {
+  // SDECC
+  BPA_SDECC_COMM: "BPA_PCO_SDECC",
+  BPA_SDECC_HOD: "BPA_PCO_SDECC",
+  BPA_SDECC_AGENT: "BPA_PCO_SDECC",
+  BPA_SDECC_SUB_DIRECTOR: "BPA_PCO_SDECC",
+  // DGDCF
+  BPA_DGDCF_COMM: "BPA_PCO_DGDCF",
+  BPA_DGDCF: "BPA_PCO_DGDCF",
+  // DNPC
+  BPA_DNPC_COMM: "BPA_PCO_DNPC",
+  // EDD
+  BPA_EDD_COMM: "BPA_PCO_EDD",
+  // INSPD
+  BPA_INSPD_COMM: "BPA_PCO_INSPD",
+  // ONEAD
+  BPA_ONEAD_COMM: "BPA_PCO_ONEAD",
+};
+
+/**
+ * Resolve which business service branch a user should land on when opening an application.
+ *
+ * Priority:
+ *   1. If the logged-in user has a commissioner role, navigate to that commissioner's
+ *      parallel workflow branch (even if the branch hasn't been spawned yet — the
+ *      ViewScreen will fall back gracefully).
+ *   2. Otherwise, use the application's base businessService (typically BPA_PCO_SIMPLE)
+ *      so agents / HODs / directors see the main workflow with the full history.
+ *
+ * The old behavior of using `ProcessInstance.businessService` is intentionally NOT used,
+ * because that returns whichever branch was most recently touched — wrong for everyone
+ * except the user who triggered that branch.
+ *
+ * @param {string} baseBusinessService - The application's primary businessService (e.g. "BPA_PCO_SIMPLE").
+ * @returns {string} The businessService to put in the ViewScreen URL.
+ */
+export const resolveBusinessServiceForUser = (baseBusinessService) => {
+  try {
+    const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
+    for (const role of userRoles) {
+      const branch = COMMISSIONER_ROLE_TO_BRANCH[role?.code];
+      if (branch) return branch;
+    }
+  } catch (e) {
+    // fall through to base
+  }
+  return baseBusinessService;
 };
 
 // Get short service name for filter dropdown
