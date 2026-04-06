@@ -31,6 +31,19 @@ const ProjectDataView = ({
   // Get hardcoded data based on business service
   const hardcodedData = getServiceData(businessService);
 
+  // Normalize Djibouti-style "BPA_<SERVICE>_LEGALSTATUS_<human text>" values
+  // into the clean French label that follows the _LEGALSTATUS_ segment.
+  const normalizeLegalStatus = (value) => {
+    if (typeof value !== "string") return value;
+    const match = value.match(/_LEGALSTATUS_(.+)$/i);
+    if (!match) return value;
+    const raw = match[1].trim();
+    // Title case the result so "CERTIFICAT D'INSCRIPTION" -> "Certificat d'Inscription"
+    return raw
+      .toLocaleLowerCase("fr-FR")
+      .replace(/(^|[\s'’\-])(\p{L})/gu, (_, sep, ch) => sep + ch.toLocaleUpperCase("fr-FR"));
+  };
+
   const renderValue = (value) => {
     if (!value) return "N/A";
 
@@ -43,6 +56,12 @@ const ProjectDataView = ({
         return t(value.name);
       }
       return value.code || "N/A";
+    }
+
+    // Special case: legal status keys contain embedded French text with spaces/apostrophes,
+    // so normal i18n lookup won't work. Strip the prefix and title-case the French value.
+    if (typeof value === "string" && /_LEGALSTATUS_/i.test(value)) {
+      return normalizeLegalStatus(value);
     }
 
     // Handle BPA_ translation keys
@@ -102,17 +121,22 @@ const ProjectDataView = ({
     return colors[color] || colors.purple;
   };
 
+  // Blocks that are now shown in the "Informations du demandeur" card in ProjectTab,
+  // so we should not duplicate them here.
+  const EXCLUDED_BLOCKS = new Set(["designOfficeDetailing", "legalEntityDetails"]);
+
   // Render blocks based on service configuration
   if (hardcodedData && hardcodedData.blocks) {
     Object.entries(hardcodedData.blocks).forEach(([blockKey, blockConfig]) => {
+      if (EXCLUDED_BLOCKS.has(blockKey)) return;
+
       const data = serviceDetails[blockKey];
-      
+
       // Check if data exists and has any non-empty values
       const hasValidData = data && (Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0);
       let hasAnyValues = false;
-      
+
       if (hasValidData) {
-        // Check if any field has non-empty values
         (Array.isArray(data) ? data : [data]).forEach((item) => {
           blockConfig.fields.forEach((field) => {
             const value = item[field.key];
@@ -122,10 +146,13 @@ const ProjectDataView = ({
           });
         });
       }
-      
+
+      // Skip rendering entirely when there is no data to show
+      if (!hasAnyValues) return;
+
       const colorClasses = getColorClasses(blockConfig.color);
       const IconComponent = getIconComponent(blockConfig.icon);
-      
+
       blocks.push(
         <div key={blockKey} className={`bg-gradient-to-r ${colorClasses.split(' ')[0]} ${colorClasses.split(' ')[1]} rounded-2xl p-6 border ${colorClasses.split(' ')[2]}`}>
           <div className="flex items-center gap-3 mb-4">
@@ -134,36 +161,24 @@ const ProjectDataView = ({
             </div>
             <h3 className="text-lg font-semibold text-gray-900">{blockConfig.title}</h3>
           </div>
-          
-          {hasAnyValues ? (
-            // Render fields with data
-            (Array.isArray(data) ? data : [data]).map((item, index) => (
-              <div key={index} className="space-y-1">
-                {blockConfig.fields.map((field, fieldIndex) => {
-                  const value = item[field.key];
-                  if (value !== undefined && value !== null && value !== '') {
-                    const FieldIcon = getIconComponent(field.icon);
-                    let displayValue = value;
-                    
-                    if (field.prefix) displayValue = field.prefix + value;
-                    if (field.suffix) displayValue = value + field.suffix;
-                    
-                    return renderField(field.label, displayValue, <FieldIcon className="w-4 h-4" />);
-                  }
-                  return null;
-                })}
-              </div>
-            ))
-          ) : (
-            // Show "Not filled" message
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className={`w-16 h-16 ${colorClasses.split(' ')[3]} rounded-full flex items-center justify-center mb-4`}>
-                <IconComponent className={`w-8 h-8 ${colorClasses.split(' ')[4]}`} />
-              </div>
-              <h4 className="text-lg font-medium text-gray-700 mb-2">Non rempli</h4>
-              <p className="text-sm text-gray-500">Aucune information disponible pour cette section</p>
+
+          {(Array.isArray(data) ? data : [data]).map((item, index) => (
+            <div key={index} className="space-y-1">
+              {blockConfig.fields.map((field, fieldIndex) => {
+                const value = item[field.key];
+                if (value !== undefined && value !== null && value !== '') {
+                  const FieldIcon = getIconComponent(field.icon);
+                  let displayValue = value;
+
+                  if (field.prefix) displayValue = field.prefix + value;
+                  if (field.suffix) displayValue = value + field.suffix;
+
+                  return renderField(field.label, displayValue, <FieldIcon className="w-4 h-4" />);
+                }
+                return null;
+              })}
             </div>
-          )}
+          ))}
         </div>
       );
     });

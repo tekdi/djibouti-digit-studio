@@ -82,6 +82,7 @@ const ActionButtons = ({
           backgroundColor: "transparent",
           padding: 0,
           margin: 0,
+          zIndex: "auto",
         }}
         MenuStyle={{
           top: "100%",
