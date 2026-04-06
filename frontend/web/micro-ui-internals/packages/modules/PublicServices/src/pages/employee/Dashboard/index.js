@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useApplications from "../applications/useApplications";
-import { getStatusInfo, formatDate, getServiceInfo } from "../applications/utils";
+import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser } from "../applications/utils";
 import {
   LuFileText,
   LuClock,
@@ -96,7 +96,7 @@ const EmployeeDashboard = () => {
           statusIcon: statusInfo?.icon,
           submittedDate: formatDate(bo?.auditDetails?.createdTime),
           businessService: bo?.businessService,
-          currentBusinessService: pi?.businessService || bo?.businessService,
+          currentBusinessService: resolveBusinessServiceForUser(bo?.businessService),
           serviceCode: bo?.serviceCode,
           module: bo?.module,
         };

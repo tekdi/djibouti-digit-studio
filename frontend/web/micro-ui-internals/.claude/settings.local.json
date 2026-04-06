@@ -18,7 +18,9 @@
       "Bash(kubectl logs:*)",
       "Bash(kubectl patch configmap:*)",
       "Bash(kubectl rollout restart:*)",
-      "Bash(kubectl rollout status:*)"
+      "Bash(kubectl rollout status:*)",
+      "Bash(kubectl set resources:*)",
+      "Bash(kubectl exec:*)"
     ]
   }
 }

@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { LuSearch, LuFileText, LuUser, LuCalendar, LuArrowUpRight, LuLoader, LuCircleAlert, LuSparkles } from "react-icons/lu";
 import axios from "axios";
 import { getServiceInfo, getStatusInfo as getStatusInfoFromUtils } from "../citizen/applications/utils";
+import { resolveBusinessServiceForUser } from "./applications/utils";
 
 const truncateName = (name, max = 25) => {
   if (!name) return "—";
@@ -95,7 +96,7 @@ const EmployeeSearch = () => {
 
   const viewDetails = (app) => {
     const bs = app?.businessService;
-    const cbs = app?.processInstance?.[0]?.businessService || app?.ProcessInstance?.businessService || bs;
+    const cbs = resolveBusinessServiceForUser(bs);
     const userType = Digit.UserService.getType()?.toLowerCase();
     history.push(
       `/${window.contextPath}/${userType}/publicservices/${app?.module}/${bs}/ViewScreen?applicationNumber=${app?.applicationNumber}&serviceCode=${app?.serviceCode}&businessService=${cbs}`
