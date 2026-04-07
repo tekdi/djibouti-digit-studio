@@ -67,6 +67,7 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             applicationNumber,
@@ -145,6 +146,7 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             applicationNumber,
@@ -181,6 +183,7 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             tenantId: tenantId,

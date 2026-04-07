@@ -44,11 +44,19 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
         }
 
         // First, get the current application data
+        console.log("[useCommissionersAPI] submit params:", { tenantId, serviceCode, applicationNumber });
+        if (!serviceCode || !applicationNumber || !tenantId) {
+          throw new Error(
+            `Missing params for commissioner checklist save — serviceCode=${serviceCode}, applicationNumber=${applicationNumber}, tenantId=${tenantId}`
+          );
+        }
+
         const getApplicationRequest = {
           url: `/public-service/v1/application/${serviceCode}`,
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             applicationNumber,
@@ -56,13 +64,20 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
           },
         };
 
+        console.log("[useCommissionersAPI] GET request:", getApplicationRequest);
         const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
+        console.log("[useCommissionersAPI] GET response:", applicationResponse);
+
         const currentApplication = Array.isArray(applicationResponse?.Application)
           ? applicationResponse?.Application?.[0]
           : applicationResponse?.Application;
 
         if (!currentApplication) {
-          throw new Error("Application not found");
+          throw new Error(
+            `Application not found — response keys=${Object.keys(applicationResponse || {}).join(",")}, ` +
+            `Application type=${typeof applicationResponse?.Application}, ` +
+            `Application length=${Array.isArray(applicationResponse?.Application) ? applicationResponse.Application.length : "n/a"}`
+          );
         }
 
         // Update application with commissioners checklist data
@@ -127,6 +142,7 @@ export const useCommissionersAPI = (tenantId, serviceCode, applicationNumber) =>
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             applicationNumber,
