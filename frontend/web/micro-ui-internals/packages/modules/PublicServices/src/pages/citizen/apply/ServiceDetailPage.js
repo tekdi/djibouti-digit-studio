@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory, useLocation } from "react-router-dom";
-import { LuClock, LuDollarSign, LuUsers, LuDownload, LuCircleCheck, LuArrowLeft } from "react-icons/lu";
+import { LuClock, LuBanknote, LuUsers, LuDownload, LuCircleCheck, LuArrowLeft } from "react-icons/lu";
 import { servicesData } from "./servicesData";
 import { getServiceInfo } from "./utils";
 import axios from "axios";
@@ -134,7 +134,7 @@ const ServiceDetailPage = () => {
                 <span className="text-blue-800 font-medium">{service.delaiTraitement}</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-lg">
-                <LuDollarSign className="w-4 h-4 text-green-600" />
+                <LuBanknote className="w-4 h-4 text-green-600" />
                 <span className="text-green-800 font-medium">{service.frais}</span>
               </div>
             </div>

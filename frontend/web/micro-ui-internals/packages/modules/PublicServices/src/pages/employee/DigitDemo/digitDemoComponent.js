@@ -468,7 +468,7 @@ const DigitDemoComponent = ({ editdata }) => {
 
   return (
     <React.Fragment>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pt-[110px] min-h-screen">
         {/* Beautiful Modern Header */}
         <div className="bg-gradient-djibouti-light rounded-2xl p-4 mb-8 shadow-lg">
           <div>

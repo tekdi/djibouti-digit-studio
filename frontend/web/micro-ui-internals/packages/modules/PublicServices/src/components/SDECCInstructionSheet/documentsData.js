@@ -53,6 +53,14 @@ export const OBSERVATION_OPTIONS = [
   { value: "NON_CONCERNE", label: "Non concerné", color: "gray" },
 ];
 
+/**
+ * Options pour l'avis final de la fiche SDECC
+ */
+export const FINAL_OPINION_OPTIONS = [
+  { value: "FAVORABLE", label: "Favorable", color: "emerald" },
+  { value: "DEFAVORABLE", label: "Défavorable", color: "red" },
+];
+
 
 
 

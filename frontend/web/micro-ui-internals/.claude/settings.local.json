@@ -20,7 +20,8 @@
       "Bash(kubectl rollout restart:*)",
       "Bash(kubectl rollout status:*)",
       "Bash(kubectl set resources:*)",
-      "Bash(kubectl exec:*)"
+      "Bash(kubectl exec:*)",
+      "Read(//tmp/**)"
     ]
   }
 }

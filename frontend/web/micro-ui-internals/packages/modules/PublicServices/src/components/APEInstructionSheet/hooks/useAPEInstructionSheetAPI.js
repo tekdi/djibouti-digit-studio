@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNumber) => {
+export const useAPEInstructionSheetAPI = (tenantId, serviceCode, applicationNumber) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const submitInstructionSheet = useCallback(
@@ -8,14 +8,11 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
       setIsLoading(true);
 
       try {
-        // Get current user info
         const currentUser = Digit.UserService.getUser();
         const currentTimestamp = new Date().toISOString();
 
-        // Prepare the instruction sheet data
         let instructionSheetData;
 
-        // Create history entry
         const historyEntry = {
           timestamp: currentTimestamp,
           editedBy: currentUser?.info?.uuid,
@@ -28,7 +25,6 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
         };
 
         if (isEdit && existingData) {
-          // Update existing sheet - preserve original submission info and add to history
           const existingHistory = existingData.history || [];
           instructionSheetData = {
             ...existingData,
@@ -43,7 +39,6 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
             history: [...existingHistory, historyEntry],
           };
         } else {
-          // Create new sheet
           instructionSheetData = {
             documents: formData.documents,
             finalComments: formData.finalComments,
@@ -61,17 +56,11 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
           };
         }
 
-        // First, get the current application data
         const getApplicationRequest = {
           url: `/public-service/v1/application/${serviceCode}`,
           method: "GET",
-          headers: {
-            "X-Tenant-Id": tenantId,
-          },
-          params: {
-            applicationNumber,
-            tenantId: tenantId,
-          },
+          headers: { "X-Tenant-Id": tenantId },
+          params: { applicationNumber, tenantId },
         };
 
         const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
@@ -83,13 +72,10 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
           throw new Error("Application not found");
         }
 
-        // Update application with instruction sheet data
         const updateRequest = {
           url: `/public-service/v1/application/${serviceCode}`,
           method: "PUT",
-          headers: {
-            "X-Tenant-Id": tenantId,
-          },
+          headers: { "X-Tenant-Id": tenantId },
           body: {
             RequestInfo: {
               apiId: "Rainmaker",
@@ -109,26 +95,24 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
               })(),
               additionalDetails: {
                 ...currentApplication.additionalDetails,
-                sdeccInstructionSheet: instructionSheetData,
+                apeInstructionSheet: instructionSheetData,
               },
             },
           },
         };
 
         const response = await Digit.CustomService.getResponse(updateRequest);
-
         const updatedApplication = Array.isArray(response?.Application)
           ? response?.Application?.[0]
           : response?.Application;
 
         if (updatedApplication) {
-          // prefer echo from backend if it returns additionalDetails
-          const echoed = updatedApplication?.additionalDetails?.sdeccInstructionSheet;
+          const echoed = updatedApplication?.additionalDetails?.apeInstructionSheet;
           return echoed || instructionSheetData;
         }
-        throw new Error("Failed to update application with instruction sheet");
+        throw new Error("Failed to update application with APE instruction sheet");
       } catch (error) {
-        console.error("Error submitting instruction sheet:", error);
+        console.error("Error submitting APE instruction sheet:", error);
         throw error;
       } finally {
         setIsLoading(false);
@@ -137,88 +121,53 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
     [tenantId, serviceCode, applicationNumber]
   );
 
-  const getInstructionSheet = useCallback(
-    async () => {
-      try {
-        const getApplicationRequest = {
-          url: `/public-service/v1/application/${serviceCode}`,
-          method: "GET",
-          headers: {
-            "X-Tenant-Id": tenantId,
-          },
-          params: {
-            applicationNumber,
-            tenantId: tenantId,
-          },
-        };
+  const getInstructionSheet = useCallback(async () => {
+    try {
+      const getApplicationRequest = {
+        url: `/public-service/v1/application/${serviceCode}`,
+        method: "GET",
+        headers: { "X-Tenant-Id": tenantId },
+        params: { applicationNumber, tenantId },
+      };
 
-        const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
-        const currentApplication = Array.isArray(applicationResponse?.Application)
-          ? applicationResponse?.Application?.[0]
-          : applicationResponse?.Application;
+      const applicationResponse = await Digit.CustomService.getResponse(getApplicationRequest);
+      const currentApplication = Array.isArray(applicationResponse?.Application)
+        ? applicationResponse?.Application?.[0]
+        : applicationResponse?.Application;
 
-        if (currentApplication && currentApplication.additionalDetails?.sdeccInstructionSheet) {
-          return currentApplication.additionalDetails.sdeccInstructionSheet;
-        }
-
-        return null;
-      } catch (error) {
-        console.error("Error getting instruction sheet:", error);
-        return null;
+      if (currentApplication && currentApplication.additionalDetails?.apeInstructionSheet) {
+        return currentApplication.additionalDetails.apeInstructionSheet;
       }
-    },
-    [tenantId, serviceCode, applicationNumber]
-  );
+      return null;
+    } catch (error) {
+      console.error("Error getting APE instruction sheet:", error);
+      return null;
+    }
+  }, [tenantId, serviceCode, applicationNumber]);
 
   const getFileUrl = useCallback(
     async (fileStoreId) => {
       if (!fileStoreId) return null;
-
       try {
-        // Get the file URL from filestore service
         const response = await Digit.CustomService.getResponse({
           url: `/filestore/v1/files/url`,
           method: "GET",
-          headers: {
-            "X-Tenant-Id": tenantId,
-          },
-          params: {
-            tenantId: tenantId,
-            fileStoreIds: fileStoreId,
-          },
+          headers: { "X-Tenant-Id": tenantId },
+          params: { tenantId, fileStoreIds: fileStoreId },
         });
 
-        console.log("File URL response:", response);
-
-        // The response can be either:
-        // 1. Direct map: { fileStoreId: "url" }
-        // 2. Or wrapped in fileStoreIds array: { fileStoreIds: [{ id: "fileStoreId", url: "url" }] }
-        
         let urlString = null;
-
-        // Try direct access first
         if (response && response[fileStoreId]) {
           urlString = response[fileStoreId];
-        }
-        // Try fileStoreIds array
-        else if (response && response.fileStoreIds && Array.isArray(response.fileStoreIds)) {
+        } else if (response && Array.isArray(response.fileStoreIds)) {
           const fileInfo = response.fileStoreIds.find((item) => item.id === fileStoreId);
-          if (fileInfo && fileInfo.url) {
-            urlString = fileInfo.url;
-          }
+          if (fileInfo && fileInfo.url) urlString = fileInfo.url;
         }
 
         if (urlString) {
-          // If the response contains multiple URLs separated by commas, take the first one
-          if (urlString.includes(",")) {
-            const urls = urlString.split(",");
-            return urls[0].trim(); // Return the first URL (original file)
-          }
-
-          return urlString; // Return the single URL
+          if (urlString.includes(",")) return urlString.split(",")[0].trim();
+          return urlString;
         }
-
-        console.warn("File URL not found in response for fileStoreId:", fileStoreId);
         return null;
       } catch (error) {
         console.error("Error getting file URL:", error);
@@ -231,15 +180,12 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
   const downloadFile = useCallback(
     async (fileStoreId) => {
       if (!fileStoreId) return;
-
       try {
         const fileUrl = await getFileUrl(fileStoreId);
         if (fileUrl) {
           window.open(fileUrl, "_blank");
-        } else {
-          if (Digit.Toast) {
-            Digit.Toast.error("Impossible de télécharger le fichier");
-          }
+        } else if (Digit.Toast) {
+          Digit.Toast.error("Impossible de télécharger le fichier");
         }
       } catch (error) {
         console.error("Error downloading file:", error);
@@ -259,11 +205,3 @@ export const useSDECCInstructionSheetAPI = (tenantId, serviceCode, applicationNu
     downloadFile,
   };
 };
-
-
-
-
-
-
-
-
