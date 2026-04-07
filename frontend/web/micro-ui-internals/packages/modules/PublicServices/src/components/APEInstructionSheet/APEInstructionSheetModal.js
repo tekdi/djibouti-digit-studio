@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Toast } from "@egovernments/digit-ui-components";
-import { useSDECCInstructionSheetAPI } from "./hooks/useSDECCInstructionSheetAPI";
+import { useAPEInstructionSheetAPI } from "./hooks/useAPEInstructionSheetAPI";
 import { DOCUMENTS_LIST } from "./documentsData";
 import {
   ModalHeader,
@@ -9,7 +9,15 @@ import {
   FinalCommentsAndOpinion,
 } from "./components";
 
-const SDECCInstructionSheetModal = ({
+const buildEmptyDocuments = () =>
+  DOCUMENTS_LIST.map((doc) => ({
+    id: doc.id,
+    observations: [],
+    comments: "",
+    modifiedFiles: "",
+  }));
+
+const APEInstructionSheetModal = ({
   isOpen,
   onClose,
   applicationNumber,
@@ -21,12 +29,7 @@ const SDECCInstructionSheetModal = ({
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
-    documents: DOCUMENTS_LIST.map((doc) => ({
-      id: doc.id,
-      observations: [],
-      comments: "",
-      modifiedFiles: "",
-    })),
+    documents: buildEmptyDocuments(),
     finalComments: "",
     finalOpinion: "",
   });
@@ -35,10 +38,13 @@ const SDECCInstructionSheetModal = ({
   const [uploadingFiles, setUploadingFiles] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  const [applicationDocuments, setApplicationDocuments] = useState([]);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading, submitInstructionSheet, getFileUrl, downloadFile } = useSDECCInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
+  const { isLoading, submitInstructionSheet, getFileUrl, downloadFile } = useAPEInstructionSheetAPI(
+    tenantId,
+    serviceCode,
+    applicationNumber
+  );
 
   // Helper function for color classes
   const getColorClass = (color) => {
@@ -52,52 +58,10 @@ const SDECCInstructionSheetModal = ({
     return colorMap[color] || "text-gray-700";
   };
 
-  // Fetch application documents
-  useEffect(() => {
-    const fetchApplicationDocuments = async () => {
-      if (!applicationNumber || !serviceCode) return;
-
-      try {
-        const request = {
-          url: `/public-service/v1/application/${serviceCode}`,
-          headers: {
-            "X-Tenant-Id": tenantId,
-            "auth-token": Digit.UserService.getUser()?.access_token,
-          },
-          method: "GET",
-          params: {
-            applicationNumber: applicationNumber,
-            tenantId: tenantId,
-          },
-        };
-
-        const response = await Digit.CustomService.getResponse(request);
-        const application = Array.isArray(response?.Application)
-          ? response?.Application?.[0]
-          : response?.Application;
-
-        if (application?.documents) {
-          setApplicationDocuments(application.documents || []);
-        }
-      } catch (error) {
-        console.error("Error fetching application documents:", error);
-      }
-    };
-
-    if (isOpen) {
-      fetchApplicationDocuments();
-    }
-  }, [isOpen, applicationNumber, serviceCode, tenantId]);
-
   useEffect(() => {
     if (existingData) {
       setFormData({
-        documents: existingData.documents || DOCUMENTS_LIST.map((doc) => ({
-          id: doc.id,
-          observations: [],
-          comments: "",
-          modifiedFiles: "",
-        })),
+        documents: existingData.documents || buildEmptyDocuments(),
         finalComments: existingData.finalComments || "",
         finalOpinion: existingData.finalOpinion || "",
       });
@@ -115,7 +79,7 @@ const SDECCInstructionSheetModal = ({
     setFormData((prev) => ({
       ...prev,
       documents: prev.documents.map((doc) =>
-        doc.id === docId ? { ...doc, [field]: value } : doc
+        String(doc.id) === String(docId) ? { ...doc, [field]: value } : doc
       ),
     }));
   };
@@ -124,10 +88,9 @@ const SDECCInstructionSheetModal = ({
     setFormData((prev) => ({
       ...prev,
       documents: prev.documents.map((doc) => {
-        if (doc.id === docId) {
+        if (String(doc.id) === String(docId)) {
           const currentObservations = doc.observations || [];
           const isSelected = currentObservations.includes(observationValue);
-          
           return {
             ...doc,
             observations: isSelected
@@ -142,16 +105,11 @@ const SDECCInstructionSheetModal = ({
 
   const handleFileUpload = async (docId, files) => {
     if (!files || files.length === 0) return;
-
     const file = files[0];
     const maxSizeMB = 10;
 
-    // Vérifier que c'est un PDF
     if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-      setShowToast({
-        label: "Seuls les fichiers PDF sont acceptés",
-        isError: true,
-      });
+      setShowToast({ label: "Seuls les fichiers PDF sont acceptés", isError: true });
       return;
     }
 
@@ -175,18 +133,11 @@ const SDECCInstructionSheetModal = ({
       if (uploadResponse?.data?.files?.[0]?.fileStoreId) {
         const fileStoreId = uploadResponse.data.files[0].fileStoreId;
         handleDocumentChange(docId, "modifiedFiles", fileStoreId);
-        
-        setShowToast({
-          label: "Fichier téléchargé avec succès",
-          isError: false,
-        });
+        setShowToast({ label: "Fichier téléchargé avec succès", isError: false });
       }
     } catch (error) {
       console.error("Error uploading file:", error);
-      setShowToast({
-        label: "Erreur lors du téléchargement du fichier",
-        isError: true,
-      });
+      setShowToast({ label: "Erreur lors du téléchargement du fichier", isError: true });
     } finally {
       setUploadingFiles((prev) => ({ ...prev, [docId]: false }));
     }
@@ -199,15 +150,8 @@ const SDECCInstructionSheetModal = ({
   const validateForm = () => {
     const newErrors = {};
 
-    // Check if at least one observation is selected for each document
-    formData.documents.forEach((doc) => {
-      if (!doc.observations || doc.observations.length === 0) {
-        newErrors[`doc_${doc.id}`] = "Veuillez sélectionner au moins une observation";
-      }
-    });
-
     if (!formData.finalOpinion) {
-      newErrors.finalOpinion = "L'avis final est obligatoire";
+      newErrors.finalOpinion = "L'approbation est obligatoire";
     }
 
     setErrors(newErrors);
@@ -242,8 +186,7 @@ const SDECCInstructionSheetModal = ({
         onClose();
       }, 1500);
     } catch (error) {
-      console.error("Error submitting instruction sheet:", error);
-      
+      console.error("Error submitting APE instruction sheet:", error);
       if (Digit.Toast) {
         Digit.Toast.error("Erreur lors de la soumission de la fiche");
       }
@@ -294,8 +237,6 @@ const SDECCInstructionSheetModal = ({
             downloadFile={downloadFile}
             getColorClass={getColorClass}
             getFileUrl={getFileUrl}
-            tenantId={tenantId}
-            applicationDocuments={applicationDocuments}
           />
 
           <FinalCommentsAndOpinion
@@ -311,7 +252,7 @@ const SDECCInstructionSheetModal = ({
   );
 };
 
-SDECCInstructionSheetModal.propTypes = {
+APEInstructionSheetModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   applicationNumber: PropTypes.string.isRequired,
@@ -323,12 +264,4 @@ SDECCInstructionSheetModal.propTypes = {
   existingData: PropTypes.object,
 };
 
-export default SDECCInstructionSheetModal;
-
-
-
-
-
-
-
-
+export default APEInstructionSheetModal;

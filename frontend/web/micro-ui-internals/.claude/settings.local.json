@@ -23,7 +23,8 @@
       "Bash(kubectl exec:*)",
       "Bash(kubectl top nodes:*)",
       "Bash(aws eks describe-nodegroup:*)",
-      "Bash(kubectl delete pod:*)"
+      "Bash(kubectl delete pod:*)",
+      "Read(//tmp/**)"
     ]
   }
 }
