@@ -55,6 +55,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             applicationNumber,
@@ -122,6 +123,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             tenantId: tenantId,
@@ -176,6 +178,7 @@ export const useAgentReportAPI = (tenantId, serviceCode, applicationNumber) => {
           method: "GET",
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
           params: {
             tenantId: tenantId,

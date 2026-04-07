@@ -19,6 +19,10 @@ export const useAgentReportData = (applicationNumber, serviceCode) => {
       const request = {
         url: `/public-service/v1/application/${serviceCode}`,
         method: "GET",
+        headers: {
+          "X-Tenant-Id": tenantId,
+          "auth-token": Digit.UserService.getUser()?.access_token,
+        },
         params: {
           applicationNumber,
           tenantId: tenantId,
