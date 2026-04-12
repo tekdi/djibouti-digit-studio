@@ -1,7 +1,7 @@
 export const servicesData = {
   BPA_PCO: {
     id: "permis-construire-ordinaire-public",
-    title: "Permis de Construire Ordinaire (PCO) - Établissements Recevant du Public",
+    title: "Permis de Construire Ordinaire par CA/BE (PCO)",
     description: "Pour les constructions accueillant du public (hôtels, hôpitaux, écoles, etc.)",
     delaiTraitement: "15 jours",
     frais: "Tax applicable",
@@ -10,156 +10,156 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Instructeur Technique - Autorité décisionnaire",
         description: "Analyse technique et réglementaire du projet par les services compétents (SRA, SDECC)",
-        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)"
+        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "SDECC - DGDCF",
         description: "Vérification technique avancée et avis institutionnels (si applicable pour grands projets)",
-        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels"
+        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "Commission complète",
         description: "Validation par la commission d'urbanisme compétente, en ligne",
-        systeme: "Traçabilité des décisions et gestion des retours institutionnels"
+        systeme: "Traçabilité des décisions et gestion des retours institutionnels",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes en ligne, signature électronique qualifiée et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur"
-      }
+        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Construire",
         description: "Formulaire soigneusement complété, récupérable au service réglementation et autorisation",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier ou délibération de concession provisoire",
         description: "Délivré par la Direction des Domaines et de la Conservation Foncière",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Établi et certifié par la Direction des Domaines et de la Conservation Foncière avec orientation et voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de masse cadastral",
         description: "Établi et certifié par la Direction des Domaines et de la Conservation Foncière, avec orientation et voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Plan de masse du projet",
         description: "Indiquant les constructions à édifier ou modifier, ainsi que les reculs / plan de toiture",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Plans de distribution intérieure",
         description: "Tous les niveaux à l'échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "7",
         nom: "Plans de façade",
         description: "Indiquant les dispositions constructives et niveaux du sol par rapport au terrain naturel",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "8",
         nom: "Plans de coupe",
         description: "Présentant les niveaux du sol par rapport au terrain naturel et les dispositions constructives",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "9",
         nom: "Plan de fondations",
         description: "Échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "10",
         nom: "Plans d'électricité",
         description: "Schémas complets de l'installation électrique",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "11",
         nom: "Plans d'assainissement",
         description: "Indiquant l'emplacement du dispositif d'épuration",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "12",
         nom: "Devis descriptif",
         description: "Description des travaux, dimensions et qualité des matériaux",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "13",
         nom: "Devis estimatif",
         description: "Coût estimatif du projet",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire du Permis de Construire",
-        role: "Signature finale du permis et transmission des documents"
+        role: "Signature finale du permis et transmission des documents",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique des projets et approbation des plans"
+        role: "Vérification technique des projets et approbation des plans",
       },
       {
         nom: "DGDCF",
-        role: "Gestion des Domaines et Conservation Foncière"
+        role: "Gestion des Domaines et Conservation Foncière",
       },
       {
         nom: "ADR",
-        role: "Gestion et entretien des routes"
+        role: "Gestion et entretien des routes",
       },
       {
         nom: "ONEAD",
-        role: "Gestion du service public de l'eau et de l'assainissement"
+        role: "Gestion du service public de l'eau et de l'assainissement",
       },
       {
         nom: "Djibouti Télécom",
-        role: "Opérateur de télécommunications"
+        role: "Opérateur de télécommunications",
       },
       {
         nom: "DNPC",
-        role: "Prévention des risques et sécurité"
+        role: "Prévention des risques et sécurité",
       },
       {
         nom: "EDD",
-        role: "Alimentation en énergie électrique"
+        role: "Alimentation en énergie électrique",
       },
       {
         nom: "INSPD",
-        role: "Surveillance sanitaire et contrôle de la santé environnementale"
-      }
+        role: "Surveillance sanitaire et contrôle de la santé environnementale",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes",
       "Permis de construire Ordinaire officiel signé électroniquement",
-      "Lettre d'autorisation finale accompagnant le permis"
-    ]
+      "Lettre d'autorisation finale accompagnant le permis",
+    ],
   },
   BPA_PCO_SIMPLE: {
     id: "permis-construire-ordinaire-simple",
@@ -172,132 +172,132 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Agent",
         description: "Analyse technique et réglementaire du projet par les services compétents (SRA, SDECC)",
-        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)"
+        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "SDECC - DGDCF",
         description: "Vérification technique avancée et avis institutionnels (si applicable pour grands projets)",
-        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels"
+        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "DATUH - SDECC - DGDCF",
         description: "Validation par la commission d'urbanisme compétente, en ligne",
-        systeme: "Traçabilité des décisions et gestion des retours institutionnels"
+        systeme: "Traçabilité des décisions et gestion des retours institutionnels",
       },
       {
         titre: "Délivrance du permis",
         acteur: "D-money - DATUH",
         description: "Paiement des taxes en ligne, signature électronique qualifiée et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur"
-      }
+        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Construire",
         description: "Formulaire soigneusement complété, récupérable au service réglementation et autorisation",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier ou délibération de concession provisoire",
         description: "Délivré par la Direction des Domaines et de la Conservation Foncière",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Établi et certifié par la Direction des Domaines et de la Conservation Foncière avec orientation et voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de masse cadastral",
         description: "Établi et certifié par la Direction des Domaines et de la Conservation Foncière, avec orientation et voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Plan de masse du projet",
         description: "Indiquant les constructions à édifier ou modifier, ainsi que les reculs / plan de toiture",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Plans de distribution intérieure",
         description: "Tous les niveaux à l'échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "7",
         nom: "Plans de façade",
         description: "Indiquant les dispositions constructives et niveaux du sol par rapport au terrain naturel",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "8",
         nom: "Plans de coupe",
         description: "Présentant les niveaux du sol par rapport au terrain naturel et les dispositions constructives",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "9",
         nom: "Plan de fondations",
         description: "Échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "10",
         nom: "Plans d'électricité",
         description: "Schémas complets de l'installation électrique",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "11",
         nom: "Plans d'assainissement",
         description: "Indiquant l'emplacement du dispositif d'épuration",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "12",
         nom: "Devis descriptif",
         description: "Description des travaux, dimensions et qualité des matériaux",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "13",
         nom: "Devis estimatif",
         description: "Coût estimatif du projet",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire du Permis de Construire",
-        role: "Signature finale du permis et transmission des documents"
+        role: "Signature finale du permis et transmission des documents",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique des projets et approbation des plans"
+        role: "Vérification technique des projets et approbation des plans",
       },
       {
         nom: "DGDCF",
-        role: "Gestion des Domaines et Conservation Foncière"
-      }
+        role: "Gestion des Domaines et Conservation Foncière",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes",
       "Permis de construire Ordinaire officiel signé électroniquement",
-      "Lettre d'autorisation finale accompagnant le permis"
-    ]
+      "Lettre d'autorisation finale accompagnant le permis",
+    ],
   },
   BPA_PCS: {
     id: "permis-construire-simplifie",
@@ -310,132 +310,132 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire du projet par les services compétents (SRA, SDECC)",
-        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)"
+        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "Services techniques",
         description: "Vérification technique avancée et avis institutionnels (si applicable pour grands projets)",
-        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels"
+        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "Commission",
         description: "Validation par la commission d'urbanisme compétente, en ligne",
-        systeme: "Traçabilité des décisions et gestion des retours institutionnels"
+        systeme: "Traçabilité des décisions et gestion des retours institutionnels",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes en ligne, signature électronique qualifiée et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur"
-      }
+        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Construire",
         description: "Formulaire soigneusement complété, récupérable au service réglementation et autorisation",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier ou délibération de concession provisoire",
         description: "Délivré par la Direction des Domaines et de la Conservation Foncière",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Certifié par la DGDCF, indiquant l'orientation et les voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de masse cadastral",
         description: "Certifié par la DGDCF, comportant orientation, voies de desserte et dénomination",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Plan de masse du projet",
         description: "Indiquant les constructions à édifier/modifier, ainsi que les reculs / plan de toiture",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Plans de distribution intérieure",
         description: "Tous les niveaux à l'échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "7",
         nom: "Plans de façade",
         description: "Indiquant les dispositions constructives et niveaux du sol par rapport au terrain naturel",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "8",
         nom: "Plans de coupe",
         description: "Présentant les niveaux du sol et les dispositions constructives",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "9",
         nom: "Plan de fondations",
         description: "Échelle 1/50ème",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "10",
         nom: "Plans d'électricité",
         description: "Schémas complets de l'installation électrique",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "11",
         nom: "Plans d'assainissement",
         description: "Indiquant l'emplacement du dispositif d'épuration",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "12",
         nom: "Devis descriptif",
         description: "Description des travaux, dimensions et qualité des matériaux employés",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "13",
         nom: "Devis estimatif",
         description: "Coût estimatif du projet",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire du Permis de Construire",
-        role: "Signature finale du permis et transmission des documents"
+        role: "Signature finale du permis et transmission des documents",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique des projets et approbation des plans"
+        role: "Vérification technique des projets et approbation des plans",
       },
       {
         nom: "DGDCF",
-        role: "Gestion des Domaines et Conservation Foncière"
-      }
+        role: "Gestion des Domaines et Conservation Foncière",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes",
       "Permis de Construire Simplifié officiel signé électroniquement",
-      "Lettre d'autorisation finale accompagnant le permis"
-    ]
+      "Lettre d'autorisation finale accompagnant le permis",
+    ],
   },
   BPA_PL: {
     id: "permis-lotir",
@@ -448,96 +448,96 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire du projet par les services compétents (SRA, SDECC)",
-        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)"
+        systeme: "Retours des remarques en ligne avec statuts (validé/rejeté/requiert révision)",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "Services techniques",
         description: "Vérification technique avancée et avis institutionnels",
-        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels"
+        systeme: "Gestion automatisée des partages sécurisés et intégration des avis institutionnels",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "Commission",
         description: "Validation par la commission d'urbanisme compétente, en ligne",
-        systeme: "Traçabilité des décisions et gestion des retours institutionnels"
+        systeme: "Traçabilité des décisions et gestion des retours institutionnels",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes en ligne, signature électronique qualifiée et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur"
-      }
+        systeme: "Notification automatique de disponibilité du permis et téléchargement sécurisé par le demandeur",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Lotir",
         description: "Formulaire soigneusement complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier",
         description: "Délivré par la Direction des Domaines et de la Conservation Foncière",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Certifié par la DGDCF, indiquant l'orientation et les voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de masse cadastral",
         description: "Certifié par la DGDCF, comportant orientation, voies de desserte et dénomination",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Plan de lotissement",
         description: "Indiquant la division en lots et les voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Devis descriptif",
         description: "Description des travaux de viabilisation",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "7",
         nom: "Devis estimatif",
         description: "Coût estimatif des travaux de viabilisation",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire du Permis de Lotir",
-        role: "Signature finale du permis et transmission des documents"
+        role: "Signature finale du permis et transmission des documents",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique des projets et approbation des plans"
+        role: "Vérification technique des projets et approbation des plans",
       },
       {
         nom: "DGDCF",
-        role: "Gestion des Domaines et Conservation Foncière"
-      }
+        role: "Gestion des Domaines et Conservation Foncière",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes",
       "Permis de Lotir officiel signé électroniquement",
-      "Lettre d'autorisation finale accompagnant le permis"
-    ]
+      "Lettre d'autorisation finale accompagnant le permis",
+    ],
   },
   BPA_PD: {
     id: "permis-demolir",
@@ -550,62 +550,62 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire du projet",
-        systeme: "Retours des remarques en ligne avec statuts"
+        systeme: "Retours des remarques en ligne avec statuts",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes en ligne et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis"
-      }
+        systeme: "Notification automatique de disponibilité du permis",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Démolir",
         description: "Formulaire soigneusement complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier",
         description: "Délivré par la Direction des Domaines",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Certifié par la DGDCF",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de démolition",
         description: "Indiquant les parties à démolir",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire du Permis de Démolir",
-        role: "Signature finale du permis"
+        role: "Signature finale du permis",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique"
-      }
+        role: "Vérification technique",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes",
       "Permis de Démolir officiel signé électroniquement",
-      "Lettre d'autorisation finale"
-    ]
+      "Lettre d'autorisation finale",
+    ],
   },
   BPA_PF: {
     id: "permis-fonctionner",
@@ -618,50 +618,46 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire",
-        systeme: "Retours des remarques en ligne"
+        systeme: "Retours des remarques en ligne",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes et remise du permis",
-        systeme: "Notification automatique"
-      }
+        systeme: "Notification automatique",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Fonctionner",
         description: "Formulaire complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Plan de sécurité",
         description: "Plan d'évacuation et sécurité",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire",
-        role: "Signature finale"
+        role: "Signature finale",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique"
-      }
+        role: "Vérification technique",
+      },
     ],
-    documentsDelivres: [
-      "Reçu électronique du paiement",
-      "Permis de Fonctionner officiel",
-      "Lettre d'autorisation finale"
-    ]
+    documentsDelivres: ["Reçu électronique du paiement", "Permis de Fonctionner officiel", "Lettre d'autorisation finale"],
   },
   BPA_ATARR: {
     id: "autorisation-travaux-arrondissement",
@@ -674,50 +670,46 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire",
-        systeme: "Retours des remarques en ligne"
+        systeme: "Retours des remarques en ligne",
       },
       {
         titre: "Délivrance de l'autorisation",
         acteur: "DATUH",
         description: "Paiement des taxes et remise de l'autorisation",
-        systeme: "Notification automatique"
-      }
+        systeme: "Notification automatique",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande d'Autorisation",
         description: "Formulaire complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Plan des travaux",
         description: "Plan détaillé des travaux prévus",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire",
-        role: "Signature finale"
+        role: "Signature finale",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique"
-      }
+        role: "Vérification technique",
+      },
     ],
-    documentsDelivres: [
-      "Reçu électronique du paiement",
-      "Autorisation officielle signée électroniquement",
-      "Lettre d'autorisation finale"
-    ]
+    documentsDelivres: ["Reçu électronique du paiement", "Autorisation officielle signée électroniquement", "Lettre d'autorisation finale"],
   },
   BPA_PR: {
     id: "permis-remblai",
@@ -730,70 +722,70 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Brigade Topographie",
         description: "Analyse technique et réglementaire du projet par les services compétents",
-        systeme: "Retours des remarques en ligne avec statuts"
+        systeme: "Retours des remarques en ligne avec statuts",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "DATUH",
         description: "Vérification technique avancée et avis institutionnels",
-        systeme: "Gestion automatisée des partages sécurisés"
+        systeme: "Gestion automatisée des partages sécurisés",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "DATUH",
         description: "Validation par la commission d'urbanisme compétente, en ligne",
-        systeme: "Traçabilité des décisions et gestion des retours"
+        systeme: "Traçabilité des décisions et gestion des retours",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Signature électronique qualifiée et remise numérique du permis",
-        systeme: "Notification automatique de disponibilité du permis"
-      }
+        systeme: "Notification automatique de disponibilité du permis",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Remblai",
         description: "Formulaire soigneusement complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier ou délibération de concession provisoire",
         description: "À retirer auprès de la Direction des Domaines et de la Conservation Foncière",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Établi et certifié par les services compétents de la DGDCF",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDATU/Brigade Topographie",
-        role: "Traitement des autorisations liées à l'aménagement"
-      }
+        role: "Traitement des autorisations liées à l'aménagement",
+      },
     ],
     documentsDelivres: [
       "Reçu électronique du paiement des taxes à l'ADR",
       "Permis de Remblais officiel signé électroniquement à la DATUH",
-      "Lettre d'autorisation finale accompagnant le Permis"
-    ]
+      "Lettre d'autorisation finale accompagnant le Permis",
+    ],
   },
   BPA_APE: {
     id: "approbation-plan-execution",
@@ -806,107 +798,107 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet sur la plateforme numérique dédiée",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "SDECC",
         description: "Analyse technique et réglementaire initiale du dossier par la SDECC",
-        systeme: "Retours des remarques en ligne avec statuts"
+        systeme: "Retours des remarques en ligne avec statuts",
       },
       {
         titre: "Attribution des tâches",
         acteur: "SDECC",
         description: "Le SDECC attribue les tâches aux agents compétents selon la zone du projet",
-        systeme: "Notification automatisée aux agents désignés"
+        systeme: "Notification automatisée aux agents désignés",
       },
       {
         titre: "Analyse technique avancée",
         acteur: "Ingénieurs",
         description: "Les ingénieurs analysent les plans d'exécution selon les normes",
-        systeme: "Commentaires techniques intégrés dans le rapport numérique"
+        systeme: "Commentaires techniques intégrés dans le rapport numérique",
       },
       {
         titre: "Approbation du Plan d'Exécution",
         acteur: "SDECC",
         description: "Signature électronique qualifiée du Sous-Directeur et remise numérique",
-        systeme: "Notification automatique de disponibilité"
-      }
+        systeme: "Notification automatique de disponibilité",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Demande d'Approbation de Plan d'Exécution (APE)",
         description: "Formulaire complété et signé électroniquement",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Permis de Construire délivré par la DATUH",
         description: "Document officiel validant le droit de construire",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "PV d'implantation émis par la Brigade Topographique",
         description: "Document certifiant la conformité du positionnement",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plan de fondation et ferraillage",
         description: "Plans détaillant les fondations et leur ferraillage",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Plan de coffrage et ferraillage",
         description: "Zone Presqu'île: Plan radie obligatoire. Autres zones: Plan semelle obligatoire",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Plan de coffrage du plancher haut RDC et ferraillage",
         description: "Plan précisant le coffrage et le ferraillage du plancher haut du RDC",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "7",
         nom: "Plan de coffrage du plancher haut étage courant et ferraillage",
         description: "Plan détaillant le coffrage et le ferraillage des étages courants",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "8",
         nom: "Plan de coffrage et ferraillage des escaliers",
         description: "Plans détaillant la structure des escaliers",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "9",
         nom: "Détails structurels",
         description: "Détails techniques sur les poteaux, poutres, charges",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "10",
         nom: "Autres documents",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDECC/Brigade Topographie",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "Plan d'Exécution Approuvé, signé électroniquement par le Sous-Directeur de la SDECC",
       "PV d'implantation validé",
       "Rapport numérique des vérifications techniques",
-      "Certificat numérique de conformité structurelle"
-    ]
+      "Certificat numérique de conformité structurelle",
+    ],
   },
   BPA_PV: {
     id: "pv-implantation",
@@ -919,82 +911,82 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique dédiée",
-        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique"
+        systeme: "Génération automatique d'un numéro de suivi et accusé de réception électronique",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "SDECC",
         description: "Analyse technique et réglementaire du dossier par la SDECC",
-        systeme: "Retours des remarques en ligne avec statuts"
+        systeme: "Retours des remarques en ligne avec statuts",
       },
       {
         titre: "Attribution des tâches",
         acteur: "SDECC",
         description: "Le SDECC attribue les tâches aux agents compétents selon la zone du projet",
-        systeme: "Notification automatisée aux agents désignés"
+        systeme: "Notification automatisée aux agents désignés",
       },
       {
         titre: "Transmission de la notice d'implantation",
         acteur: "SDECC",
         description: "Transmission numérique de la notice d'implantation à la Brigade Topographie",
-        systeme: "Gestion automatisée du transfert sécurisé"
+        systeme: "Gestion automatisée du transfert sécurisé",
       },
       {
         titre: "Vérification sur terrain et élaboration du PV",
         acteur: "Brigade Topographie",
         description: "Visite technique et élaboration numérique du PV d'implantation",
-        systeme: "Rapport digitalisé avec photos géolocalisées"
+        systeme: "Rapport digitalisé avec photos géolocalisées",
       },
       {
         titre: "Transmission du PV pour validation",
         acteur: "Brigade Topographie",
         description: "Envoi numérique du PV d'implantation finalisé au Secrétariat de la SDECC",
-        systeme: "Traçabilité numérique des décisions"
+        systeme: "Traçabilité numérique des décisions",
       },
       {
         titre: "Notification et remise numérique du PV",
         acteur: "Système",
         description: "Notification automatique de la disponibilité du PV",
-        systeme: "Accès sécurisé avec authentification multi-facteurs"
-      }
+        systeme: "Accès sécurisé avec authentification multi-facteurs",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de PV d'implantation",
         description: "Formulaire soigneusement complété et signé électroniquement",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier ou délibération de concession",
         description: "Document à retirer auprès de la DGDCF",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation certifié",
         description: "Établi et certifié par la DGDCF, indiquant orientation, voies de desserte",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDECC/Brigade Topographie",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "PV d'implantation officiel signé électroniquement par le Sous-Directeur de la SDECC",
       "Certificat numérique de conformité au plan topographique",
-      "Journal électronique des vérifications techniques"
-    ]
+      "Journal électronique des vérifications techniques",
+    ],
   },
   BPA_PS: {
     id: "permis-surelevation",
@@ -1007,80 +999,76 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Services compétents",
         description: "Analyse technique et réglementaire du projet",
-        systeme: "Retours des remarques en ligne"
+        systeme: "Retours des remarques en ligne",
       },
       {
         titre: "Étude technique approfondie",
         acteur: "Services techniques",
         description: "Vérification technique avancée et avis institutionnels",
-        systeme: "Gestion automatisée des partages sécurisés"
+        systeme: "Gestion automatisée des partages sécurisés",
       },
       {
         titre: "Commission d'urbanisme",
         acteur: "Commission",
         description: "Validation par la commission d'urbanisme compétente",
-        systeme: "Traçabilité des décisions"
+        systeme: "Traçabilité des décisions",
       },
       {
         titre: "Délivrance du permis",
         acteur: "DATUH",
         description: "Paiement des taxes et remise numérique du permis",
-        systeme: "Notification automatique"
-      }
+        systeme: "Notification automatique",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de Permis de Surélévation",
         description: "Formulaire complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Titre Foncier",
         description: "Délivré par la Direction des Domaines",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plan de situation",
         description: "Certifié par la DGDCF",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Plans de surélévation",
         description: "Plans détaillés des étages à ajouter",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Étude de structure",
         description: "Vérification de la capacité portante",
-        obligatoire: true
-      }
+        obligatoire: true,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH-Déléguée signataire",
-        role: "Signature finale"
+        role: "Signature finale",
       },
       {
         nom: "SDECC",
-        role: "Vérification technique"
-      }
+        role: "Vérification technique",
+      },
     ],
-    documentsDelivres: [
-      "Reçu électronique du paiement",
-      "Permis de Surélévation officiel",
-      "Lettre d'autorisation finale"
-    ]
+    documentsDelivres: ["Reçu électronique du paiement", "Permis de Surélévation officiel", "Lettre d'autorisation finale"],
   },
   BPA_CCR: {
     id: "certificat-conformite-remblai",
@@ -1093,76 +1081,76 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet avec tous les documents requis",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification de la conformité",
         acteur: "Brigade Topographie",
         description: "Analyse technique et réglementaire du projet",
-        systeme: "Retours des remarques en ligne"
+        systeme: "Retours des remarques en ligne",
       },
       {
         titre: "Visite de terrain",
         acteur: "Brigade Topographie",
         description: "Inspection sur site par les agents de la Brigade Topographie",
-        systeme: "Rapport numérique de la visite avec photos et géolocalisation"
+        systeme: "Rapport numérique de la visite avec photos et géolocalisation",
       },
       {
         titre: "Préparation du CCR",
         acteur: "Chef de Bureau (B.Topo)",
         description: "Élaboration numérique du CCR par le Chef de Bureau",
-        systeme: "Système intégré pour la génération du document"
+        systeme: "Système intégré pour la génération du document",
       },
       {
         titre: "Validation et signature électronique",
         acteur: "DATUH",
         description: "Transmission pour signature électronique qualifiée à la DATUH",
-        systeme: "Gestion sécurisée des signatures électroniques"
+        systeme: "Gestion sécurisée des signatures électroniques",
       },
       {
         titre: "Notification et remise numérique",
         acteur: "Système",
         description: "Notification automatique de la disponibilité du CCR",
-        systeme: "Téléchargement sécurisé du CCR"
-      }
+        systeme: "Téléchargement sécurisé du CCR",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de CCR",
         description: "Formulaire soigneusement complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Copie du Permis de Remblai",
         description: "Délivré par la DATUH",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Résultats des tests de remblai",
         description: "Délivrés par le Laboratoire Central de Bâtiment et des Équipements",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDATU/Brigade Topographie",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "Certificat de Conformité de Remblai (CCR) signé électroniquement",
       "Reçu électronique du traitement du dossier",
-      "Rapport numérique de la visite de terrain"
-    ]
+      "Rapport numérique de la visite de terrain",
+    ],
   },
   BPA_CCE: {
     id: "certificat-conformite-electrique",
@@ -1175,76 +1163,76 @@ export const servicesData = {
         titre: "Dépôt du dossier complet",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification technique et visite de terrain",
         acteur: "BCIE",
         description: "Vérification sur site par les agents du BCIE",
-        systeme: "Rapport numérique avec photos et géolocalisation"
+        systeme: "Rapport numérique avec photos et géolocalisation",
       },
       {
         titre: "Établissement du CCE",
         acteur: "Chef de Bureau BCIE",
         description: "Préparation numérique du CCE par le Chef de Bureau",
-        systeme: "Génération automatisée du document"
+        systeme: "Génération automatisée du document",
       },
       {
         titre: "Validation et signature électronique",
         acteur: "Sous-Directeur SDATU",
         description: "Transmission du CCE pour signature électronique qualifiée",
-        systeme: "Gestion sécurisée des signatures électroniques"
+        systeme: "Gestion sécurisée des signatures électroniques",
       },
       {
         titre: "Notification et remise numérique",
         acteur: "Système",
         description: "Notification automatique de la disponibilité du CCE",
-        systeme: "Téléchargement sécurisé du CCE"
-      }
+        systeme: "Téléchargement sécurisé du CCE",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Formulaire de demande de CCE",
         description: "Formulaire soigneusement complété",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Copie du Permis de Construire",
         description: "Délivré par la DATUH",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Plans et schémas électriques",
         description: "Délivrés et validés par un bureau d'études agréé",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Rapports de conformité des installations",
         description: "Délivrés par le BCIE",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDATU/Bureau de Conformité et des Installations Électriques (BCIE)",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "Certificat de Conformité Électrique (CCE) signé électroniquement",
       "Reçu électronique confirmant la soumission et le traitement du dossier",
-      "Rapport numérique de la visite de terrain"
-    ]
+      "Rapport numérique de la visite de terrain",
+    ],
   },
   BPA_CCP: {
     id: "certificat-conformite-parasismique",
@@ -1257,70 +1245,70 @@ export const servicesData = {
         titre: "Soumission et transmission initiale du dossier",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne via la plateforme numérique",
-        systeme: "Numéro de suivi et accusé de réception générés automatiquement"
+        systeme: "Numéro de suivi et accusé de réception générés automatiquement",
       },
       {
         titre: "Vérification automatisée",
         acteur: "Système",
         description: "Contrôle des données essentielles et validation numérique des exigences parasismiques",
-        systeme: "Rapport synthétique généré avec traçabilité numérique"
+        systeme: "Rapport synthétique généré avec traçabilité numérique",
       },
       {
         titre: "Finalisation du CCP",
         acteur: "SDECC",
         description: "Génération automatique du CCP sécurisé",
-        systeme: "Document électronique avec code QR pour vérification instantanée"
+        systeme: "Document électronique avec code QR pour vérification instantanée",
       },
       {
         titre: "Validation et signature électronique",
         acteur: "Sous-Directeur SDECC",
         description: "Signature électronique qualifiée par le Sous-Directeur",
-        systeme: "Processus sécurisé avec traçabilité et notification"
-      }
+        systeme: "Processus sécurisé avec traçabilité et notification",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Plan d'Approbation de plan d'exécution",
         description: "Approuvé par la SDECC",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Permis de Construire",
         description: "Délivré par la DATUH",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Bons pour coulage",
         description: "Délivrés par la SDECC",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Résultats du Laboratoire Central de Bâtiment et des Équipements",
         description: "Documents techniques validant la conformité parasismique",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / Sous-Direction Expertise et Contrôle des Constructions (SDECC)",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "Certificat de Conformité Parasismique (CCP) signé électroniquement",
       "Reçu électronique confirmant la soumission et le traitement du dossier",
-      "Rapport numérique de la visite de terrain"
-    ]
+      "Rapport numérique de la visite de terrain",
+    ],
   },
   BPA_CCG: {
     id: "certificat-conformite-general",
@@ -1333,82 +1321,81 @@ export const servicesData = {
         titre: "Soumission et transmission initiale du dossier",
         acteur: "Citoyen (ne)",
         description: "Dépôt en ligne du dossier complet via la plateforme numérique",
-        systeme: "Génération automatique d'un numéro de suivi"
+        systeme: "Génération automatique d'un numéro de suivi",
       },
       {
         titre: "Vérification technique",
         acteur: "SRA",
         description: "Vérification rapide des documents clés via la plateforme",
-        systeme: "Rapport numérique simplifié confirmant la conformité"
+        systeme: "Rapport numérique simplifié confirmant la conformité",
       },
       {
         titre: "Finalisation du CCG",
         acteur: "SRA",
         description: "Finalisation des données pour générer automatiquement le CCG",
-        systeme: "Génération automatisée du document avec codes QR"
+        systeme: "Génération automatisée du document avec codes QR",
       },
       {
         titre: "Validation et signature électronique",
         acteur: "DATUH",
         description: "Transmission du CCG pour signature électronique qualifiée",
-        systeme: "Processus sécurisé avec traçabilité et notification"
+        systeme: "Processus sécurisé avec traçabilité et notification",
       },
       {
         titre: "Notification et remise numérique",
         acteur: "Système",
         description: "Notification automatique et téléchargement sécurisé du CCG",
-        systeme: "Accès sécurisé avec authentification multi-facteurs"
-      }
+        systeme: "Accès sécurisé avec authentification multi-facteurs",
+      },
     ],
     documentsRequis: [
       {
         numero: "1",
         nom: "Demande de Certificat de Conformité Général",
         description: "Formulaire soigneusement complété et soumis par le demandeur",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "2",
         nom: "Certificat d'alignement",
         description: "À fournir auprès des Domaines",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "3",
         nom: "Certificat de Conformité Électrique (CCE)",
         description: "Délivré par la DATUH / BCIE",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "4",
         nom: "Certificat de Conformité Parasismique (CCP)",
         description: "Délivré par la DATUH / SDECC",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "5",
         nom: "Permis de Construire",
         description: "Délivré par la DATUH",
-        obligatoire: true
+        obligatoire: true,
       },
       {
         numero: "6",
         nom: "Autres",
         description: "Documents supplémentaires non obligatoires",
-        obligatoire: false
-      }
+        obligatoire: false,
+      },
     ],
     membresCommission: [
       {
         nom: "DATUH / SDATU/ Service de la Réglementation et des Autorisations (SRA)",
-        role: "Supervision du processus et vérification technique"
-      }
+        role: "Supervision du processus et vérification technique",
+      },
     ],
     documentsDelivres: [
       "Certificat de Conformité Général (CCG) signé électroniquement",
       "Reçu électronique confirmant la soumission et le traitement du dossier",
-      "Rapport numérique de la visite de terrain"
-    ]
-  }
+      "Rapport numérique de la visite de terrain",
+    ],
+  },
 };
- 

@@ -72,9 +72,6 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
                     Terminé
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
-                </p>
               </div>
             </div>
 
@@ -274,9 +271,6 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
                   En attente
                 </span>
               </div>
-              <p className="text-sm text-gray-500">
-                ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
-              </p>
             </div>
           </div>
 

@@ -88,10 +88,8 @@ export const useSaveObservations = (
             authToken: Digit.UserService.getUser()?.access_token,
           },
           Application: {
-            ...(() => {
-              const { workflow, ...applicationWithoutWorkflow } = currentApplication;
-              return applicationWithoutWorkflow;
-            })(),
+            ...currentApplication,
+            workflow: { ...(currentApplication.workflow || {}), action: "" },
             additionalDetails: {
               ...currentApplication.additionalDetails,
               commissionerObservations: updatedObservationsArray,

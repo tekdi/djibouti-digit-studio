@@ -11,7 +11,6 @@ const ModalHeader = ({ applicationNumber, isViewMode, isEditMode, isLoading, exi
         </div>
         <div>
           <h2 className="text-2xl font-bold">Fiche d'instruction (par le SRA)</h2>
-          <p className="text-white/90 mt-1">ID dossier : {applicationNumber}</p>
         </div>
       </div>
       <div className="flex items-center gap-3">

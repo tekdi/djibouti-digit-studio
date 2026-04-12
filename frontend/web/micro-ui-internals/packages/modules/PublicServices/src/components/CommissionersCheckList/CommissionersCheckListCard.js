@@ -13,8 +13,9 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
     applicationNumber: queryApplicationNumber,
   } = Digit.Hooks.useQueryParams();
   
-  // Use applicationNumber from props or query params
-  const applicationNumber = propApplicationId || queryApplicationNumber;
+  // Always prefer queryApplicationNumber (real app number like PL-000020/2026).
+  // propApplicationId is the record UUID which the backend rejects.
+  const applicationNumber = queryApplicationNumber || propApplicationId;
 
   const {
     checklistData,
@@ -147,9 +148,6 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
                     Terminé
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
-                </p>
               </div>
             </div>
 
@@ -300,9 +298,6 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
                     En attente
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span>
-                </p>
               </div>
             </div>
 

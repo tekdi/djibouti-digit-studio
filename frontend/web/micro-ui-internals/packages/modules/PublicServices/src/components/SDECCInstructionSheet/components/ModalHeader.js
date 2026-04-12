@@ -17,7 +17,6 @@ const ModalHeader = ({
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <h2 className="text-2xl font-bold mb-1">Fiche d'instruction SDECC (Structure)</h2>
-          <p className="text-sm text-white/80">Dossier : {applicationNumber}</p>
         </div>
 
         <div className="flex items-center gap-3">
