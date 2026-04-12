@@ -9,6 +9,7 @@ import { CommissionersCheckListCard } from "../../../components/CommissionersChe
 import { InstructionSheetCard } from "../../../components/InstructionSheet";
 import { SDECCInstructionSheetCard } from "../../../components/SDECCInstructionSheet";
 import { APEInstructionSheetCard } from "../../../components/APEInstructionSheet";
+import { CCRChecklistCard } from "../../../components/CCRChecklist";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -135,6 +136,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 }
               });
             }
+
+            // Add CCR checklist if configured (Certificat de Conformité de Remblai)
+            if (allowedCodes.includes("customCCRChecklist")) {
+              items.push({
+                id: "custom-ccr-checklist",
+                code: "customCCRChecklist",
+                clientId: "CCR_CHECKLIST",
+                auditDetails: {
+                  createdTime: Date.now() + 5
+                }
+              });
+            }
           }
 
           setCardItems(items);
@@ -158,8 +171,22 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
         .map((item, index) => {
           // Check if this is a custom agent checklist
           if (item.code === "customAgentChecklist") {
+            // Services that use the simple inline version (comments + photos only)
+            const inlineServices = ["BPA_ATARR"];
+            if (inlineServices.includes(service)) {
+              return (
+                <AgentReportInline
+                  key={index}
+                  service={service}
+                  state={state}
+                  t={t}
+                  isViewOnly={isViewOnly}
+                />
+              );
+            }
+            // All other services use the full card with modal (côtes table, etc.)
             return (
-              <AgentReportInline
+              <AgentReportCard
                 key={index}
                 service={service}
                 state={state}
@@ -229,6 +256,19 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 state={state}
                 t={t}
                 isViewOnly={isAPEInstructionViewOnly}
+              />
+            );
+          }
+
+          // CCR checklist (Certificat de Conformité de Remblai)
+          if (item.code === "customCCRChecklist") {
+            return (
+              <CCRChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
               />
             );
           }

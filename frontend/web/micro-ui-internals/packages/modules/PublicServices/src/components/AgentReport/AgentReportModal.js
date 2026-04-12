@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FileUploadSection } from "./components/FileUploadSection";
 import { ModalHeader } from "./components/ModalHeader";
+import { CotesTableSection } from "./components/CotesTableSection";
+import { TechnicalInfoSection } from "./components/TechnicalInfoSection";
 import { useAgentReportForm } from "./hooks/useAgentReportForm";
 import { useAgentReportAPI } from "./hooks/useAgentReportAPI";
 
@@ -125,6 +127,24 @@ const AgentReportModal = ({
         />
 
         <div className="p-6 lg:p-8 bg-white overflow-y-auto flex-1">
+          {/* Côtes PR Table */}
+          <CotesTableSection
+            cotesTable={formData.cotesTable || []}
+            isViewMode={isViewMode}
+            isEditMode={isEditMode}
+            handleCoteRowChange={handleCoteRowChange}
+            addCoteRow={addCoteRow}
+            removeCoteRow={removeCoteRow}
+          />
+
+          {/* Technical Info */}
+          <TechnicalInfoSection
+            technicalInfo={formData.technicalInfo || {}}
+            isViewMode={isViewMode}
+            isEditMode={isEditMode}
+            handleTechnicalInfoChange={handleTechnicalInfoChange}
+          />
+
           {/* Notes */}
           <div className="mb-8">
             <label className="block mb-3 font-semibold text-base text-gray-800">

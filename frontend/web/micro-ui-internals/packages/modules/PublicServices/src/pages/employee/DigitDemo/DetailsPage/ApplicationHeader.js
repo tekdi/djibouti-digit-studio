@@ -48,23 +48,19 @@ const ApplicationHeader = ({
   };
 
   // Localisation de la parcelle: support multiple application types
-  // - terrainDetails.terrainLocation for BPA_PR
-  // - landandProjectDesignDetails.siteLocation for PCO_SIMPLE
-  // - propertyDetails.constructionLocation for BPA_CCE (P13)
-  // - originalPermitDetails.localisation for BPA_CCP / BPA_CCG / BPA_CCR
-  // - projectDetails.projectLocation for BPA_APE (P12)
-  // - additionalDetails.applicants.address for others
   const terrainDetailsFirst = response && response.serviceDetails && response.serviceDetails.terrainDetails && response.serviceDetails.terrainDetails[0];
   const landProjectDetailsFirst = response && response.serviceDetails && response.serviceDetails.landandProjectDesignDetails && response.serviceDetails.landandProjectDesignDetails[0];
   const propertyDetailsFirst = response && response.serviceDetails && response.serviceDetails.propertyDetails && response.serviceDetails.propertyDetails[0];
   const originalPermitFirst = response && response.serviceDetails && response.serviceDetails.originalPermitDetails && response.serviceDetails.originalPermitDetails[0];
   const projectDetailsFirst = response && response.serviceDetails && response.serviceDetails.projectDetails && response.serviceDetails.projectDetails[0];
+  const terrainVerifFirst = response && response.serviceDetails && response.serviceDetails.terrainVerificationDetails && response.serviceDetails.terrainVerificationDetails[0];
   const terrainLocationRaw =
     (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.siteLocation) ||
     (propertyDetailsFirst && propertyDetailsFirst.constructionLocation) ||
     (originalPermitFirst && (originalPermitFirst.localisation || originalPermitFirst.location)) ||
     (projectDetailsFirst && (projectDetailsFirst.projectLocation || projectDetailsFirst.location)) ||
+    (terrainVerifFirst && (terrainVerifFirst.terrainLocation || terrainVerifFirst.location)) ||
     (response && response.additionalDetails && response.additionalDetails.applicants && response.additionalDetails.applicants.address);
   const terrainLocation =
     typeof terrainLocationRaw === "string"

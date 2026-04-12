@@ -35,7 +35,7 @@ const UploadFileComposer = ({ module, config, Controller, control, register, for
           <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center" }}>
             {item.code && (
               <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "" }}>
-                {t(`${localePrefix}_${item?.code}`)} {item?.isMandatory ? " * " : null}
+                {index + 1}. {t(`${localePrefix}_${item?.code}`)} {item?.isMandatory ? " * " : null}
               </CardLabel>
             )}
 
