@@ -373,7 +373,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_CCR",
-    checklist: ["customAgentChecklist"],
+    checklist: ["customCCRChecklist"],
   },
   {
     service: "BPA_CCE",

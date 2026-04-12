@@ -7,7 +7,7 @@ export const p10Data = {
       color: "blue",
       fields: [
         {
-          label: "Numéro du permis original",
+          label: "Numéro du permis de Remblai",
           key: "originalPermitNumber",
           icon: "LuHash"
         },
