@@ -8,6 +8,7 @@ import AgentReportInline from "../../../components/AgentReport/AgentReportInline
 import { CommissionersCheckListCard } from "../../../components/CommissionersCheckList";
 import { InstructionSheetCard } from "../../../components/InstructionSheet";
 import { SDECCInstructionSheetCard } from "../../../components/SDECCInstructionSheet";
+import { APEInstructionSheetCard } from "../../../components/APEInstructionSheet";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -122,6 +123,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 }
               });
             }
+
+            // Add APE instruction sheet if configured (P12 - Approbation de Plan d'Exécution)
+            if (allowedCodes.includes("customAPEInstructionSheet")) {
+              items.push({
+                id: "custom-ape-instruction-sheet",
+                code: "customAPEInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_APE",
+                auditDetails: {
+                  createdTime: Date.now() + 4
+                }
+              });
+            }
           }
 
           setCardItems(items);
@@ -195,16 +208,31 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customSDECCInstructionSheet") {
             const isSDECCInstructionViewOnly = !isSDECC;
             return (
-              <SDECCInstructionSheetCard 
+              <SDECCInstructionSheetCard
                 key={index}
-                service={service} 
-                state={state} 
+                service={service}
+                state={state}
                 t={t}
                 isViewOnly={isSDECCInstructionViewOnly}
               />
             );
           }
-          
+
+          // APE instruction sheet (P12 - Approbation de Plan d'Exécution)
+          // Editable by SDECC users, view-only for everyone else
+          if (item.code === "customAPEInstructionSheet") {
+            const isAPEInstructionViewOnly = !isSDECC;
+            return (
+              <APEInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isAPEInstructionViewOnly}
+              />
+            );
+          }
+
           // Skip any custom checklist items that weren't handled above
           // (safety check to prevent rendering with CheckListCard)
           if (item.code?.startsWith("custom")) {

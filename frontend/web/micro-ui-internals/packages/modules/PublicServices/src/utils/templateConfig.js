@@ -392,8 +392,9 @@ export const checklistByService = [
     checklist: ["customAgentChecklist"],
   },
   {
+    // p12
     service: "BPA_APE",
-    checklist: ["customAgentChecklist"],
+    checklist: ["customAPEInstructionSheet"],
   },
   {
     service: "BPA_PF",

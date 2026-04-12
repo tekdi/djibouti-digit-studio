@@ -161,6 +161,12 @@ export const getSimplifiedStatus = (status) => {
     "AWAITING_ON_SRA_HOD_REVIEW": "pending",
     "AWAITING_ON_DIRECTOR_REVIEW": "pending",
     "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT": "pending",
+    // BPA_APE workflow states
+    "BPA_SDECC_SUB_DIRECTOR_REVIEW": "pending",
+    "SUBMITTED_TO_SDECC": "pending",
+    "TECHNICAL_REVIEW": "pending",
+    "PENDING_HOD_VALIDATION": "pending",
+    "PENDING_SUB_DIRECTOR_SIGNATURE": "pending",
     "PAYMENT_PENDING": "payment_pending",
     "AWAITING_CITIZEN_PAYMENT": "payment_pending",
     "DOCUMENT_VERIFICATION_PENDING": "pending",
@@ -411,11 +417,32 @@ export const getStatusInfo = (status) => {
       progress: 65
     },
     "SUBMITTED_TO_SDECC": {
-      label: "Soumis au SDECC",
+      label: "Transmis au Chef de Service de Contrôle",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
       icon: LuClock,
-      progress: 40
+      progress: 50
+    },
+    "TECHNICAL_REVIEW": {
+      label: "Examen technique en cours",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 65
+    },
+    "PENDING_HOD_VALIDATION": {
+      label: "En attente de validation du Chef de Service",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 80
+    },
+    "PENDING_SUB_DIRECTOR_SIGNATURE": {
+      label: "En attente de signature du Sous-directeur",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 90
     },
     "SUBMITTED_TO_SDECC_HOD": {
       label: "Soumis au Chef de Département SDECC",
@@ -708,52 +735,59 @@ export const formatDateTime = (dateString) => {
   }
 };
 
-// Map commissioner role codes to the parallel workflow business service they work on.
-// When a user opens an application, the ViewScreen should render the branch that belongs
-// to the user's role — not the latest process instance on the application. Otherwise, every
-// user ends up viewing whichever branch was most recently acted on (e.g. BPA_PCO_DGDCF),
-// which breaks parallel workflows for SDECC / DNPC / EDD / INSPD / ONEAD commissioners.
-const COMMISSIONER_ROLE_TO_BRANCH = {
-  // SDECC
-  BPA_SDECC_COMM: "BPA_PCO_SDECC",
-  BPA_SDECC_HOD: "BPA_PCO_SDECC",
-  BPA_SDECC_AGENT: "BPA_PCO_SDECC",
-  BPA_SDECC_SUB_DIRECTOR: "BPA_PCO_SDECC",
-  // DGDCF
-  BPA_DGDCF_COMM: "BPA_PCO_DGDCF",
-  BPA_DGDCF: "BPA_PCO_DGDCF",
-  // DNPC
-  BPA_DNPC_COMM: "BPA_PCO_DNPC",
-  // EDD
-  BPA_EDD_COMM: "BPA_PCO_EDD",
-  // INSPD
-  BPA_INSPD_COMM: "BPA_PCO_INSPD",
-  // ONEAD
-  BPA_ONEAD_COMM: "BPA_PCO_ONEAD",
+// Per-base-service map of commissioner role codes → the parallel branch they work on.
+//
+// Only base services that actually spawn parallel commissioner workflows are listed here.
+// All other base services (BPA_CCP, BPA_CCE, BPA_PCS, BPA_PR, etc.) are standalone
+// workflows and must NOT be rerouted, even if the logged-in user happens to have a
+// commissioner role — those services don't have a BPA_*_SDECC / BPA_*_DGDCF branch,
+// so rewriting the URL would land the user on a non-existent business service.
+//
+// Add a new top-level entry here when a base service starts spawning parallel branches.
+// Only the *commissioner* role of each department reroutes to the parallel branch.
+// HOD / Agent / Sub-Director roles stay on the main BPA_PCO_SIMPLE flow because their
+// work happens on the main workflow (reviewing reports etc.), not on the parallel
+// commissioner conformance step.
+const PARALLEL_BRANCHES_BY_BASE = {
+  BPA_PCO_SIMPLE: {
+    BPA_SDECC_COMM: "BPA_PCO_SDECC",
+    BPA_DGDCF_COMM: "BPA_PCO_DGDCF",
+    BPA_DNPC_COMM: "BPA_PCO_DNPC",
+    BPA_EDD_COMM: "BPA_PCO_EDD",
+    BPA_INSPD_COMM: "BPA_PCO_INSPD",
+    BPA_ONEAD_COMM: "BPA_PCO_ONEAD",
+  },
 };
 
 /**
  * Resolve which business service branch a user should land on when opening an application.
  *
- * Priority:
- *   1. If the logged-in user has a commissioner role, navigate to that commissioner's
- *      parallel workflow branch (even if the branch hasn't been spawned yet — the
- *      ViewScreen will fall back gracefully).
- *   2. Otherwise, use the application's base businessService (typically BPA_PCO_SIMPLE)
- *      so agents / HODs / directors see the main workflow with the full history.
+ * Logic:
+ *   1. Look up the application's base businessService in PARALLEL_BRANCHES_BY_BASE.
+ *      - If the base service doesn't have any parallel branches (e.g. BPA_CCP, BPA_PCS),
+ *        return the base unchanged. This is critical: rerouting an SDECC user looking at
+ *        a BPA_CCP application to "BPA_PCO_SDECC" would point at a workflow that has
+ *        nothing to do with that application.
+ *   2. If the base does have parallel branches, check if any of the user's roles maps
+ *      to one of them — if so, return that branch. Otherwise return the base.
  *
  * The old behavior of using `ProcessInstance.businessService` is intentionally NOT used,
  * because that returns whichever branch was most recently touched — wrong for everyone
  * except the user who triggered that branch.
  *
- * @param {string} baseBusinessService - The application's primary businessService (e.g. "BPA_PCO_SIMPLE").
+ * @param {string} baseBusinessService - The application's primary businessService (e.g. "BPA_PCO_SIMPLE", "BPA_CCP").
  * @returns {string} The businessService to put in the ViewScreen URL.
  */
 export const resolveBusinessServiceForUser = (baseBusinessService) => {
+  const branchesForBase = PARALLEL_BRANCHES_BY_BASE[baseBusinessService];
+  if (!branchesForBase) {
+    // Standalone workflow (BPA_CCP, BPA_CCE, BPA_PCS, BPA_PR, ...). Never reroute.
+    return baseBusinessService;
+  }
   try {
     const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
     for (const role of userRoles) {
-      const branch = COMMISSIONER_ROLE_TO_BRANCH[role?.code];
+      const branch = branchesForBase[role?.code];
       if (branch) return branch;
     }
   } catch (e) {

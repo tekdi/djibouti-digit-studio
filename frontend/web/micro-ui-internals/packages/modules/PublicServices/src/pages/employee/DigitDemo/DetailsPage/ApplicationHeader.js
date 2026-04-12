@@ -51,14 +51,20 @@ const ApplicationHeader = ({
   // - terrainDetails.terrainLocation for BPA_PR
   // - landandProjectDesignDetails.siteLocation for PCO_SIMPLE
   // - propertyDetails.constructionLocation for BPA_CCE (P13)
+  // - originalPermitDetails.localisation for BPA_CCP / BPA_CCG / BPA_CCR
+  // - projectDetails.projectLocation for BPA_APE (P12)
   // - additionalDetails.applicants.address for others
   const terrainDetailsFirst = response && response.serviceDetails && response.serviceDetails.terrainDetails && response.serviceDetails.terrainDetails[0];
   const landProjectDetailsFirst = response && response.serviceDetails && response.serviceDetails.landandProjectDesignDetails && response.serviceDetails.landandProjectDesignDetails[0];
   const propertyDetailsFirst = response && response.serviceDetails && response.serviceDetails.propertyDetails && response.serviceDetails.propertyDetails[0];
+  const originalPermitFirst = response && response.serviceDetails && response.serviceDetails.originalPermitDetails && response.serviceDetails.originalPermitDetails[0];
+  const projectDetailsFirst = response && response.serviceDetails && response.serviceDetails.projectDetails && response.serviceDetails.projectDetails[0];
   const terrainLocationRaw =
     (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.siteLocation) ||
     (propertyDetailsFirst && propertyDetailsFirst.constructionLocation) ||
+    (originalPermitFirst && (originalPermitFirst.localisation || originalPermitFirst.location)) ||
+    (projectDetailsFirst && (projectDetailsFirst.projectLocation || projectDetailsFirst.location)) ||
     (response && response.additionalDetails && response.additionalDetails.applicants && response.additionalDetails.applicants.address);
   const terrainLocation =
     typeof terrainLocationRaw === "string"
@@ -70,20 +76,20 @@ const ApplicationHeader = ({
   // Région: support multiple application types
   // - terrainDetails.region for BPA_PR
   // - landandProjectDesignDetails.region for PCO_SIMPLE
-  // - address.city or address.boundarycode for BPA_CCE
   // - projectDetails.region for others
+  // NOTE: We intentionally do NOT fall back to address.boundarycode anymore — that
+  // returns useless values like "dj.city" which aren't real regions.
   const regionRaw =
     (terrainDetailsFirst && terrainDetailsFirst.region) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.region) ||
-    (response?.address?.city) ||
-    (response?.address?.boundarycode) ||
     (projectDetails && projectDetails.region);
   const region =
     typeof regionRaw === "string"
-      ? (regionRaw || "N/A")
+      ? regionRaw
       : regionRaw && typeof regionRaw === "object"
-        ? regionRaw.name || regionRaw.code || "N/A"
-        : "N/A";
+        ? regionRaw.name || regionRaw.code || ""
+        : "";
+  const hasRegion = Boolean(region && region.trim());
 
   return (
     <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl shadow-lg shadow-primary/25 p-6 border border-primary/20 hover:shadow-xl transition-all duration-300 text-white">
@@ -142,7 +148,9 @@ const ApplicationHeader = ({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-white/20 pt-3">
         <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Localisation de la parcelle" value={terrainLocation} />
 
-        <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(region)} />
+        {hasRegion && (
+          <InfoCard icon={LuMapPin} iconBgColor="bg-white/20" iconColor="text-white" label="Région" value={t(region)} />
+        )}
 
         <InfoCard
           icon={LuCalendar}

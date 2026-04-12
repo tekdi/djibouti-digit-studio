@@ -30,6 +30,7 @@
       "Bash(find 'C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/' -name \"*.java\" -exec grep -l \"costEstimation\" {} \\\\;)",
       "Bash(find 'C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/' -name \"*.java\" -exec grep -li \"authorized\" {} \\\\;)",
       "Bash(kubectl set env:*)"
+      "Read(//tmp/**)"
     ]
   }
 }
