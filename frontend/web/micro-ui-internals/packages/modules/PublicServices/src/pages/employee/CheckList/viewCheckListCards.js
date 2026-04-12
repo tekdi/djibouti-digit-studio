@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import transformViewCheckList from "../../../utils/createUtils.js";
 import CheckListCard from "../../../components/CheckListCard.js";
 import { AgentReportCard } from "../../../components/AgentReport";
+import AgentReportInline from "../../../components/AgentReport/AgentReportInline";
 import { CommissionersCheckListCard } from "../../../components/CommissionersCheckList";
 import { InstructionSheetCard } from "../../../components/InstructionSheet";
 import { SDECCInstructionSheetCard } from "../../../components/SDECCInstructionSheet";
@@ -158,10 +159,10 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           // Check if this is a custom agent checklist
           if (item.code === "customAgentChecklist") {
             return (
-              <AgentReportCard 
+              <AgentReportInline
                 key={index}
-                service={service} 
-                state={state} 
+                service={service}
+                state={state}
                 t={t}
                 isViewOnly={isViewOnly}
               />

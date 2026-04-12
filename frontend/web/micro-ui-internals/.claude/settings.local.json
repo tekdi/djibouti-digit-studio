@@ -24,6 +24,12 @@
       "Bash(kubectl top nodes:*)",
       "Bash(aws eks describe-nodegroup:*)",
       "Bash(kubectl delete pod:*)",
+      "Bash(kubectl top:*)",
+      "Bash(sort -k4 -h -r)",
+      "Bash(sort -k3 -h -r)",
+      "Bash(find 'C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/' -name \"*.java\" -exec grep -l \"costEstimation\" {} \\\\;)",
+      "Bash(find 'C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/' -name \"*.java\" -exec grep -li \"authorized\" {} \\\\;)",
+      "Bash(kubectl set env:*)"
       "Read(//tmp/**)"
     ]
   }

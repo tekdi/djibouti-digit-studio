@@ -14,7 +14,7 @@ const PaymentsTab = ({
 }) => {
   const { t } = useTranslation();
   
-  // Check if user is SRA (BPA_AGENTS or BPA_HOD) - only they can edit payment
+  // HOD and Agents can edit/calculate, but only HOD can save (backend rejects BPA_AGENTS for costEstimation writes)
   const userDetails = Digit.UserService.getUser();
   const isSRA = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
   const isPaymentViewOnly = !isSRA;
@@ -28,7 +28,9 @@ const PaymentsTab = ({
   const hasCalculationFees = serviceConfig && serviceConfig.checklist && serviceConfig.checklist.includes('calculationFees');
 
   // Fetch bill data for displaying payment details
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // Billing service rejects state-level tenantId (e.g. "dj"), needs city-level (e.g. "dj.city")
+  const rawTenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = rawTenantId && !rawTenantId.includes(".") ? rawTenantId + ".city" : rawTenantId;
   const requestCriteria = {
     url: "/billing-service/bill/v2/_fetchbill",
     params: {
@@ -57,8 +59,6 @@ const PaymentsTab = ({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Paiement de la taxe</h3>
-      
       {/* Free Service Message */}
       {isFreeService ? (
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-8 border border-green-200">
@@ -184,35 +184,9 @@ const PaymentsTab = ({
             </div>
           )}
 
-          {/* Cost Estimation Section - Show for everyone */}
-          {costEstimation && (
-            <div className="bg-gray-50 rounded-xl p-4">
-              <h4 className="font-semibold text-gray-900 mb-3">Estimation des coûts</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-gray-500">Coût total du bâtiment</p>
-                  <p className="text-lg font-bold text-gray-900">
-                    {costEstimation.totalBuildingCost?.toLocaleString()} Fdj
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Taxe totale</p>
-                  <p className="text-lg font-bold text-gray-900">
-                    {costEstimation.totalTax?.toLocaleString()} Fdj
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Calculation Fees Checklist Section - Only for SRA */}
-          {hasCalculationFees && !isPaymentViewOnly && (
-            <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-gray-900">Estimation de la redevance de la taxe</h4>
-              <div className="bg-white rounded-xl p-6 border border-gray-200">
-                <Calculation isCitizen={isCitizen} isViewOnly={isPaymentViewOnly} />
-              </div>
-            </div>
+          {/* Calculation Fees Section */}
+          {hasCalculationFees && (
+            <Calculation isCitizen={isCitizen} isViewOnly={isPaymentViewOnly} />
           )}
         </div>
       )}

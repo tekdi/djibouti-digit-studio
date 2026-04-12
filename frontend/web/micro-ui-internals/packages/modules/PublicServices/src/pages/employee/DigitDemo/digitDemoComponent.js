@@ -35,7 +35,7 @@ const DigitDemoComponent = ({ editdata }) => {
   // Get service title from servicesData
   const getServiceTitle = () => {
     const servicesData = {
-      BPA_PCO: "Permis de Construire Ordinaire (PCO) - Établissements Recevant du Public",
+      BPA_PCO: "Permis de Construire Ordinaire par CA/BE (PCO)",
       BPA_PCO_SIMPLE: "Permis de Construire Ordinaire (PCO) - Constructions Simples",
       BPA_PCS: "Permis de Construire Simplifié (PCS)",
       BPA_PL: "Permis de Lotir",
@@ -73,7 +73,6 @@ const DigitDemoComponent = ({ editdata }) => {
   const [showSurfaceWarningModal, setShowSurfaceWarningModal] = useState(false);
   const [warningCoveredArea, setWarningCoveredArea] = useState(0);
 
-
   useEffect(() => {
     //useEffect to set the prevfilled data
     if (window.location.href.includes("Edit")) {
@@ -81,7 +80,6 @@ const DigitDemoComponent = ({ editdata }) => {
       setFormData(editdata);
     }
   }, [editdata]);
-
 
   // Fetch service configuration from MDMS
   const requestCriteria = {
@@ -130,24 +128,21 @@ const DigitDemoComponent = ({ editdata }) => {
   if (currentFormConfig && currentFormConfig?.name === "applicantDetails") {
     const applicantDetails = formData.applicantDetails && formData.applicantDetails[0];
     const personTypeValue = applicantDetails?.personType;
-    const personType = typeof personTypeValue === 'string'
-      ? personTypeValue.toUpperCase()
-      : personTypeValue?.code?.toUpperCase() || '';
+    const personType = typeof personTypeValue === "string" ? personTypeValue.toUpperCase() : personTypeValue?.code?.toUpperCase() || "";
 
     // Create a copy of the form config to avoid mutating the original
     currentFormConfig = {
       ...currentFormConfig,
-      body: currentFormConfig.body ? [...currentFormConfig.body] : []
+      body: currentFormConfig.body ? [...currentFormConfig.body] : [],
     };
 
     // Filter fields based on personType
     if (currentFormConfig.body) {
-
-      currentFormConfig.body = currentFormConfig.body.filter(field => {
+      currentFormConfig.body = currentFormConfig.body.filter((field) => {
         const fieldName = field?.populators?.name; // Use the populators name from config
 
         // Always show personType field
-        if (fieldName === 'personType') {
+        if (fieldName === "personType") {
           return true;
         }
 
@@ -157,7 +152,7 @@ const DigitDemoComponent = ({ editdata }) => {
         }
 
         // Show section headers only for legal entities
-        if (field?.type === 'section') {
+        if (field?.type === "section") {
           return personType === "LEGAL_ENTITY";
         }
 
@@ -165,12 +160,12 @@ const DigitDemoComponent = ({ editdata }) => {
         if (personType === "INDIVIDUAL") {
           // Show individual fields (no section headers for individuals)
           const individualFields = [
-            'wayToAddress',
-            'name',
-            'address',
-            'idType',
-            'nationalIdNumber',
-            'mobileNumber',
+            "wayToAddress",
+            "name",
+            "address",
+            "idType",
+            "nationalIdNumber",
+            "mobileNumber",
             // 'eligibilityDeclaration',
             // 'accuracyDeclaration',
             // 'taxCalculationAgreement',
@@ -181,22 +176,22 @@ const DigitDemoComponent = ({ editdata }) => {
           // Show legal entity fields in correct order
           const legalEntityFields = [
             // Section headers
-            'companyInfoHeader',
-            'representativeInfoHeader',
+            "companyInfoHeader",
+            "representativeInfoHeader",
             // Company information first (including address and phone)
-            'corporateName',
-            'companyType',
-            'registrationNumber',
-            'adresseSiege',
-            'telephone',
+            "corporateName",
+            "companyType",
+            "registrationNumber",
+            "adresseSiege",
+            "telephone",
             // Representative's personal information (same field names as individual for API)
-            'qualiteRepresentant',
-            'wayToAddress',
-            'name',
-            'address',
-            'idType',
-            'nationalIdNumber',
-            'mobileNumber',
+            "qualiteRepresentant",
+            "wayToAddress",
+            "name",
+            "address",
+            "idType",
+            "nationalIdNumber",
+            "mobileNumber",
             // Common fields
             // 'eligibilityDeclaration',
             // 'accuracyDeclaration',
@@ -205,11 +200,9 @@ const DigitDemoComponent = ({ editdata }) => {
           ];
 
           // Show otherCompanyType only when companyType is OTHER
-          if (fieldName === 'otherCompanyType') {
+          if (fieldName === "otherCompanyType") {
             const companyTypeValue = applicantDetails?.companyType;
-            const companyType = typeof companyTypeValue === 'string'
-              ? companyTypeValue.toUpperCase()
-              : companyTypeValue?.code?.toUpperCase() || '';
+            const companyType = typeof companyTypeValue === "string" ? companyTypeValue.toUpperCase() : companyTypeValue?.code?.toUpperCase() || "";
             return companyType === "OTHER";
           }
 
@@ -232,7 +225,6 @@ const DigitDemoComponent = ({ editdata }) => {
     },
   });
 
-
   useEffect(() => {
     if (currentFormConfig?.name === "landandProjectDesignDetails") {
       const styleEl = document.createElement("style");
@@ -245,7 +237,7 @@ const DigitDemoComponent = ({ editdata }) => {
       };
     }
     // Even if the condition is false, return a cleanup function (no-op)
-    return () => { };
+    return () => {};
   }, [currentFormConfig]);
 
   //this to maintain the current state of the application entered by user
@@ -267,12 +259,11 @@ const DigitDemoComponent = ({ editdata }) => {
     // Validation for BPA_PCO_SIMPLE: coveredProjectArea must not exceed 200m²
     if (cleanServiceCode === "BPA_PCO_SIMPLE") {
       // Check in the current form data being submitted
-      const landDetails = data?.landandProjectDesignDetails?.[0] || 
-                          updatedFormData?.landandProjectDesignDetails?.[0];
-      
+      const landDetails = data?.landandProjectDesignDetails?.[0] || updatedFormData?.landandProjectDesignDetails?.[0];
+
       if (landDetails) {
         const coveredArea = parseFloat(landDetails.coveredProjectArea) || 0;
-        
+
         if (coveredArea > 200) {
           setWarningCoveredArea(coveredArea);
           setShowSurfaceWarningModal(true);
@@ -302,16 +293,16 @@ const DigitDemoComponent = ({ editdata }) => {
           body:
             isLastStep || applicationNumber
               ? transformToApplicationPayload(
-                updatedFormData,
-                Updatedconfig,
-                service,
-                tenantId,
-                config,
-                workflowDetails,
-                isLastStep,
-                applicationNumber,
-                queryStrings?.action
-              )
+                  updatedFormData,
+                  Updatedconfig,
+                  service,
+                  tenantId,
+                  config,
+                  workflowDetails,
+                  isLastStep,
+                  applicationNumber,
+                  queryStrings?.action
+                )
               : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, queryStrings?.action),
         },
         {
@@ -380,16 +371,14 @@ const DigitDemoComponent = ({ editdata }) => {
     }
   };
 
-
   if (currentFormConfig && currentFormConfig?.name === "landandProjectDesignDetails") {
     // Safely access nested properties
     const landDetails = formData.landandProjectDesignDetails && formData.landandProjectDesignDetails[0];
 
     if (landDetails) {
       // intededUse is now a text field, so get the value directly
-      const intededUseValue = typeof landDetails.intededUse === 'string'
-        ? landDetails.intededUse.toUpperCase()
-        : landDetails.intededUse?.code?.toUpperCase() || '';
+      const intededUseValue =
+        typeof landDetails.intededUse === "string" ? landDetails.intededUse.toUpperCase() : landDetails.intededUse?.code?.toUpperCase() || "";
       const demolitionType = landDetails?.demolitionType?.code?.toUpperCase();
 
       // Only proceed if currentFormConfig and its body exist
@@ -468,7 +457,7 @@ const DigitDemoComponent = ({ editdata }) => {
 
   return (
     <React.Fragment>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pt-[110px] min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-9" style={{ minHeight: "100vh", paddingTop: "100px" }}>
         {/* Beautiful Modern Header */}
         <div className="bg-gradient-djibouti-light rounded-2xl p-4 mb-8 shadow-lg">
           <div>
@@ -486,8 +475,10 @@ const DigitDemoComponent = ({ editdata }) => {
               </button>
             </div>
             <div className="flex items-center">
-
-              <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl"> {serviceRef || cleanServiceCode} - {getServiceTitle()}</p>
+              <p className="text-xl text-white text-opacity-90 leading-relaxed max-w-3xl">
+                {" "}
+                {serviceRef || cleanServiceCode} - {getServiceTitle()}
+              </p>
             </div>
           </div>
         </div>
@@ -526,11 +517,7 @@ const DigitDemoComponent = ({ editdata }) => {
       </div>
 
       {/* Surface Area Warning Modal for BPA_PCO_SIMPLE */}
-      <SurfaceAreaWarningModal 
-        isOpen={showSurfaceWarningModal}
-        onClose={() => setShowSurfaceWarningModal(false)}
-        coveredArea={warningCoveredArea}
-      />
+      <SurfaceAreaWarningModal isOpen={showSurfaceWarningModal} onClose={() => setShowSurfaceWarningModal(false)} coveredArea={warningCoveredArea} />
     </React.Fragment>
   );
 };

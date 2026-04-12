@@ -26,6 +26,7 @@ const InstructionSheetModal = ({
     applicantName: "",
     projectType: "",
     plotLocation: "",
+    landTitleNumber: "",
     documents: DOCUMENTS_LIST.map((doc) => ({
       id: doc.id,
       observations: [],
@@ -108,6 +109,7 @@ const InstructionSheetModal = ({
         applicantName: existingData.applicantName || "",
         projectType: existingData.projectType || "",
         plotLocation: existingData.plotLocation || "",
+        landTitleNumber: existingData.landTitleNumber || "",
         documents: existingData.documents || DOCUMENTS_LIST.map((doc) => ({
           id: doc.id,
           observations: [],

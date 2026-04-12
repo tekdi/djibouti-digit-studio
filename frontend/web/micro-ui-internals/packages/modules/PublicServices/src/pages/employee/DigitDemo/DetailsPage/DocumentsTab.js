@@ -20,8 +20,10 @@ const DocumentsTab = ({ documents }) => {
       const tenantId = Digit.ULBService.getCurrentTenantId();
       const response = await Digit.UploadServices.Filefetch([fileStoreId], tenantId);
 
-      if (response?.data?.[fileStoreId]) {
-        window.open(response.data[fileStoreId], "_blank");
+      const urls = response?.data?.[fileStoreId];
+      if (urls) {
+        const firstUrl = urls.split(",")[0].trim();
+        window.open(firstUrl, "_blank");
       }
     } catch (error) {
       console.error("Error downloading file:", error);

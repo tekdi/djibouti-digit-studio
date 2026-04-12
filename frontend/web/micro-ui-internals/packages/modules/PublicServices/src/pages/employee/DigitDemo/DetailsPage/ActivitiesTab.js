@@ -16,13 +16,16 @@ const ActivitiesTab = ({ timeline, response, isParallelWorkflow, isCitizen }) =>
         displayAction = t(`WF_${response?.module?.toUpperCase()}_${response?.businessService?.toUpperCase()}_${instance?.performedAction}`);
       }
       
-      const auditCreated = instance?.auditDetails?.created;
+      const epoch = instance?.auditDetails?.lastModifiedEpoch || instance?.auditDetails?.createdTime;
+      const auditCreated = epoch
+        ? new Date(epoch).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) + " à " + new Date(epoch).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+        : instance?.auditDetails?.created;
 
       return (
         <div key={index} className="flex items-start mb-6">
                      <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium mr-4 relative z-10 ${
-             isCurrentState 
-               ? 'border-djibouti-primary bg-djibouti-primary text-white' 
+             isCurrentState
+               ? 'border-djibouti-primary bg-djibouti-primary text-white'
                : 'border-gray-300 bg-white text-gray-500'
            }`}>
             {index + 1}

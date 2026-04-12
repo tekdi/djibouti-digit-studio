@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const TopFieldsSection = ({ formData, errors, isViewMode, isEditMode, handleInputChange }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       <div>
         <label className="block mb-2 font-semibold text-sm text-gray-700">
           Nom et prénom du pétitionnaire <span className="text-red-500">*</span>
@@ -79,6 +79,25 @@ const TopFieldsSection = ({ formData, errors, isViewMode, isEditMode, handleInpu
         )}
         {errors.plotLocation && (
           <p className="text-red-500 text-xs mt-1">{errors.plotLocation}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block mb-2 font-semibold text-sm text-gray-700">
+          Numéro de Titre Foncier
+        </label>
+        {isViewMode && !isEditMode ? (
+          <div className="w-full p-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700">
+            {formData.landTitleNumber || "Non renseigné"}
+          </div>
+        ) : (
+          <input
+            type="text"
+            value={formData.landTitleNumber || ""}
+            onChange={(e) => handleInputChange("landTitleNumber", e.target.value)}
+            placeholder="Ex: TF 12345"
+            className="w-full p-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-djibouti-primary focus:shadow-[0_0_0_3px_rgba(15,103,105,0.1)]"
+          />
         )}
       </div>
     </div>

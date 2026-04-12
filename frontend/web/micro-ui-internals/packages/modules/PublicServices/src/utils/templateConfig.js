@@ -353,7 +353,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_PL",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PCS",
@@ -369,7 +369,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_ATARR",
-    checklist: ["calculationFees"],
+    checklist: ["customAgentChecklist", "calculationFees"],
   },
   {
     service: "BPA_CCR",
