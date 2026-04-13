@@ -18,6 +18,7 @@ const SDECCInstructionSheetModal = ({
   state,
   onSuccess,
   isViewMode = false,
+  isViewOnly = false,
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
@@ -272,6 +273,7 @@ const SDECCInstructionSheetModal = ({
         <ModalHeader
           applicationNumber={applicationNumber}
           isViewMode={isViewMode}
+          isViewOnly={isViewOnly}
           isEditMode={isEditMode}
           isLoading={isLoading}
           existingData={existingData}

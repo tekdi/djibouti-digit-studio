@@ -14,7 +14,7 @@ var buildEmptyDocs = function (list) {
 var PSSDECCInstructionSheetModal = function (props) {
   var isOpen = props.isOpen, onClose = props.onClose, applicationNumber = props.applicationNumber;
   var service = props.service, serviceCode = props.serviceCode, state = props.state;
-  var onSuccess = props.onSuccess, isViewMode = props.isViewMode || false, existingData = props.existingData;
+  var onSuccess = props.onSuccess, isViewMode = props.isViewMode || false, isViewOnly = props.isViewOnly || false, existingData = props.existingData;
 
   var _s = useState({
     dossierDocuments: buildEmptyDocs(DOSSIER_DOCUMENTS_LIST),
@@ -238,7 +238,7 @@ var PSSDECCInstructionSheetModal = function (props) {
               <p className="text-sm text-white/80">Dossier : {applicationNumber}</p>
             </div>
             <div className="flex items-center gap-3">
-              {isViewMode && !isEditMode && existingData && (
+              {isViewMode && !isEditMode && existingData && !isViewOnly && (
                 <button onClick={function () { setIsEditMode(true); }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors">
                   <LuPen className="h-4 w-4" /> Modifier

@@ -16,6 +16,7 @@ const AgentReportModal = ({
   state,
   onSuccess,
   isViewMode = false,
+  isViewOnly = false,
   existingChecklistData = null,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -119,6 +120,7 @@ const AgentReportModal = ({
       >
         <ModalHeader
           isViewMode={isViewMode}
+          isViewOnly={isViewOnly}
           isEditMode={isEditMode}
           setIsEditMode={setIsEditMode}
           onSubmitChecklist={onSubmitChecklist}

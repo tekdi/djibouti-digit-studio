@@ -72,7 +72,7 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
         </div>
         <CCRChecklistModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
           applicationNumber={applicationNumber} service={service} serviceCode={serviceCode} state={state}
-          onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={isViewMode} existingData={checklistData} />
+          onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={isViewMode} isViewOnly={isViewOnly} existingData={checklistData} />
       </div>
     );
   }

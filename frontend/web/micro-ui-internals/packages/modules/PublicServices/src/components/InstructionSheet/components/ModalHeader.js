@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { LuX, LuFileText } from "react-icons/lu";
 
-const ModalHeader = ({ applicationNumber, isViewMode, isEditMode, isLoading, existingData, onClose, setIsEditMode, onSubmitChecklist }) => {
+const ModalHeader = ({ applicationNumber, isViewMode, isViewOnly, isEditMode, isLoading, existingData, onClose, setIsEditMode, onSubmitChecklist }) => {
   return (
     <div className="relative flex justify-between items-center bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark p-4 text-white border-b border-white/10">
       <div className="flex items-center gap-4">
@@ -27,7 +27,7 @@ const ModalHeader = ({ applicationNumber, isViewMode, isEditMode, isLoading, exi
             </button>
           </div>
         )}
-        {isViewMode && !isEditMode && (
+        {isViewMode && !isEditMode && !isViewOnly && (
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => setIsEditMode(true)}

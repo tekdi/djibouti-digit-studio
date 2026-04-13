@@ -228,60 +228,54 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           }
 
           // Check if this is an instruction sheet (SRA)
-          // Only SRA users (BPA_AGENTS, BPA_HOD) can edit, everyone else (SDECC, architects, etc.) can only view
+          // Only SRA users (BPA_AGENTS, BPA_HOD) can edit — citizens, architects, everyone else view-only
           if (item.code === "customInstructionSheet") {
-            const isSRAInstructionViewOnly = !isSRA;
             return (
-              <InstructionSheetCard 
+              <InstructionSheetCard
                 key={index}
-                service={service} 
-                state={state} 
+                service={service}
+                state={state}
                 t={t}
-                isViewOnly={isSRAInstructionViewOnly}
+                isViewOnly={isViewOnly || !isSRA}
               />
             );
           }
 
-          // Check if this is a SDECC instruction sheet
-          // Only SDECC users can edit, everyone else (SRA, architects, etc.) can only view
+          // SDECC instruction sheet — only SDECC users can edit
           if (item.code === "customSDECCInstructionSheet") {
-            const isSDECCInstructionViewOnly = !isSDECC;
             return (
               <SDECCInstructionSheetCard
                 key={index}
                 service={service}
                 state={state}
                 t={t}
-                isViewOnly={isSDECCInstructionViewOnly}
+                isViewOnly={isViewOnly || !isSDECC}
               />
             );
           }
 
-          // APE instruction sheet (P12 - Approbation de Plan d'Exécution)
-          // Editable by SDECC users, view-only for everyone else
+          // APE instruction sheet — only SDECC users can edit
           if (item.code === "customAPEInstructionSheet") {
-            const isAPEInstructionViewOnly = !isSDECC;
             return (
               <APEInstructionSheetCard
                 key={index}
                 service={service}
                 state={state}
                 t={t}
-                isViewOnly={isAPEInstructionViewOnly}
+                isViewOnly={isViewOnly || !isSDECC}
               />
             );
           }
 
-          // PS-specific SDECC instruction sheet (Surélévation)
+          // PS-specific SDECC instruction sheet — only SDECC users can edit
           if (item.code === "customPSSDECCInstructionSheet") {
-            var isPSSDECCViewOnly = !isSDECC;
             return (
               <PSSDECCInstructionSheetCard
                 key={index}
                 service={service}
                 state={state}
                 t={t}
-                isViewOnly={isPSSDECCViewOnly}
+                isViewOnly={isViewOnly || !isSDECC}
               />
             );
           }
