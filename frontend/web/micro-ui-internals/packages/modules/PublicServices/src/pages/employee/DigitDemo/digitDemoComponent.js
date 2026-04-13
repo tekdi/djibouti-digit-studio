@@ -36,7 +36,7 @@ const DigitDemoComponent = ({ editdata }) => {
   const getServiceTitle = () => {
     const servicesData = {
       BPA_PCO: "Permis de Construire Ordinaire par CA/BE (PCO)",
-      BPA_PCO_SIMPLE: "Permis de Construire Ordinaire (PCO) - Constructions Simples",
+      BPA_PCO_SIMPLE: "Permis de Construire Ordinaire (PCO < 200 m²)",
       BPA_PCS: "Permis de Construire Simplifié (PCS)",
       BPA_PL: "Permis de Lotir",
       BPA_PD: "Permis de Démolir",

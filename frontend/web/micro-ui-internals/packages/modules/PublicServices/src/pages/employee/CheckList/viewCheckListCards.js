@@ -10,6 +10,7 @@ import { InstructionSheetCard } from "../../../components/InstructionSheet";
 import { SDECCInstructionSheetCard } from "../../../components/SDECCInstructionSheet";
 import { APEInstructionSheetCard } from "../../../components/APEInstructionSheet";
 import { CCRChecklistCard } from "../../../components/CCRChecklist";
+import { PSSDECCInstructionSheetCard } from "../../../components/PSSDECCInstructionSheet";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -45,9 +46,10 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
     role.code === "BPA_SUB_DIRECTOR"
   );
   
-  // Architects can view but not edit the instruction tab
+  // Citizens and architects can only view — never edit checklists
+  const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
   const isArchitect = userRoles.some((role) => role.code === "BPA_ARCHITECT");
-  const isViewOnly = isArchitect;
+  const isViewOnly = isCitizen || isArchitect;
 
   // Check if user is SRA (BPA_AGENTS or BPA_HOD)
   const isSRA = userRoles.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
@@ -134,6 +136,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 auditDetails: {
                   createdTime: Date.now() + 4
                 }
+              });
+            }
+
+            // Add PS-specific SDECC instruction sheet
+            if (allowedCodes.includes("customPSSDECCInstructionSheet")) {
+              items.push({
+                id: "custom-ps-sdecc-instruction-sheet",
+                code: "customPSSDECCInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_PS_SDECC",
+                auditDetails: { createdTime: Date.now() + 5 }
               });
             }
 
@@ -256,6 +268,20 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 state={state}
                 t={t}
                 isViewOnly={isAPEInstructionViewOnly}
+              />
+            );
+          }
+
+          // PS-specific SDECC instruction sheet (Surélévation)
+          if (item.code === "customPSSDECCInstructionSheet") {
+            var isPSSDECCViewOnly = !isSDECC;
+            return (
+              <PSSDECCInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isPSSDECCViewOnly}
               />
             );
           }

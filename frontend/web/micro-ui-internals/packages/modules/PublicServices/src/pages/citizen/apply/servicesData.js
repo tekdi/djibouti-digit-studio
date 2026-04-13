@@ -163,7 +163,7 @@ export const servicesData = {
   },
   BPA_PCO_SIMPLE: {
     id: "permis-construire-ordinaire-simple",
-    title: "Permis de Construire Ordinaire (PCO) - Constructions Simples",
+    title: "Permis de Construire Ordinaire (PCO < 200 m²)",
     description: "Pour les constructions résidentielles et commerciales simples",
     delaiTraitement: "15 jours",
     frais: "Tax applicable",

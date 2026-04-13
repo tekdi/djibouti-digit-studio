@@ -99,6 +99,7 @@ export const ApplicantFields = [
           format: "component",
           component: "PersonTypeSelector",
           required: true,
+          hideInReview: true,
           options: [
             { value: "INDIVIDUAL", label: "Personne physique" },
             { value: "LEGAL_ENTITY", label: "Personne morale" },
@@ -365,7 +366,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_PS",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "BPA_PCO.PENDING_ACTION_BY_SDECC_AGENT", "calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "customPSSDECCInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_ATARR",
