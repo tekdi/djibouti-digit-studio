@@ -236,6 +236,7 @@ const AgentReportCard = ({ service, state, t, isViewOnly = false }) => {
           state={state}
           onSuccess={handleSuccess}
           isViewMode={isViewMode}
+          isViewOnly={isViewOnly}
           existingChecklistData={checklistData}
         />
       </div>

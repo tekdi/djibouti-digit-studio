@@ -5,6 +5,7 @@ import { LuX, LuSave, LuCheck, LuPen } from "react-icons/lu";
 const ModalHeader = ({
   applicationNumber,
   isViewMode,
+  isViewOnly,
   isEditMode,
   isLoading,
   existingData,
@@ -21,7 +22,7 @@ const ModalHeader = ({
         </div>
 
         <div className="flex items-center gap-3">
-          {isViewMode && !isEditMode && existingData ? (
+          {isViewMode && !isEditMode && existingData && !isViewOnly ? (
             <button
               onClick={() => setIsEditMode(true)}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors"

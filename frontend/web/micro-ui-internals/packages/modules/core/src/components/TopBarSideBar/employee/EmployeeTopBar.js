@@ -26,7 +26,7 @@ const roleTranslations = {
   BPA_DIRECTOR: "Directeur DATUH",
   BPA_HOD: "Chef SRA",
   BPA_AGENTS: "Instructeur technique SRA",
-  BPA_SDECC_HOD: "Chef SDECC",
+  BPA_SDECC_HOD: "Chef de SCC Privée",
   BPA_SDECC_AGENTS: "Instructeur technique SDECC",
   BPA_SDECC_COMM: "Commissaire SDECC",
   BPA_SRA_SUB_DIRECTOR: "Sous-Directeur SDATU",

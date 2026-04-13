@@ -29,6 +29,7 @@ const CCRChecklistModal = ({
   state,
   onSuccess,
   isViewMode = false,
+  isViewOnly = false,
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({ ...DEFAULT_FORM });
@@ -166,7 +167,7 @@ const CCRChecklistModal = ({
               <p className="text-sm text-white/80">Dossier : {applicationNumber}</p>
             </div>
             <div className="flex items-center gap-3">
-              {isViewMode && !isEditMode && existingData && (
+              {isViewMode && !isEditMode && existingData && !isViewOnly && (
                 <button onClick={function () { setIsEditMode(true); }} className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors">
                   <LuPen className="h-4 w-4" /> Modifier
                 </button>

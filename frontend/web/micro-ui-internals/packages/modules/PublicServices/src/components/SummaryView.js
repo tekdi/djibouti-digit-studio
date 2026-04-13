@@ -39,7 +39,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
           {t(sectionTitle)}
         </h3>
         <div className="space-y-1">
-          {entries.map(([key, value]) => {
+          {entries.filter(([key]) => key !== "personType").map(([key, value]) => {
             const rendered = renderValue(value);
             const label = t(serviceCode + "_" + key.toUpperCase());
 

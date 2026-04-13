@@ -16,8 +16,9 @@ const UserDropdown = ({ userDetails, userOptions }) => {
     "BPA_DIRECTOR": "Directeur DATUH",
     "BPA_HOD": "Chef SRA",
     "BPA_AGENTS": "Instructeur technique SRA",
-    "BPA_SDECC_HOD": "Chef SDECC",
-    "BPA_SDECC_AGENTS": "Instructeur technique SDECC",
+    "BPA_SDECC_HOD": "Chef de SCC Privée",
+    "BPA_SDECC_AGENTS": "Instructeur technique SCC Privée",
+    "BPA_SDEC_AGENT": "Instructeur technique SCC Privée",
     "BPA_SDECC_COMM": "Commissaire SDECC",
     "BPA_SDECC_AGENT": "Instructeur technique SDECC",
     "BPA_SDECC_SUB_DIRECTOR": "Sous-Directeur SDECC",
@@ -43,9 +44,12 @@ const UserDropdown = ({ userDetails, userOptions }) => {
   // Get user roles and find the display role
   const userRoles = userDetails?.info?.roles || [];
   const priorityRoles = [
-    "BPA_ARCHITECT", "BPA_DIRECTOR", "BPA_HOD", "BPA_AGENTS", "BPA_SDECC_HOD", 
-    "BPA_SDECC_AGENTS", "BPA_SDECC_COMM", "BPA_SDECC_AGENT", 
-    "TOPOGRAPHY_HOD", "TOPOGRAPHY_AGENT"
+    "BPA_ARCHITECT", "BPA_DIRECTOR", "BPA_HOD", "BPA_AGENTS", "BPA_SDECC_HOD",
+    "BPA_SDECC_SUB_DIRECTOR", "BPA_SDECC_AGENTS", "BPA_SDECC_COMM", "BPA_SDECC_AGENT",
+    "BPA_SRA_SUB_DIRECTOR", "BPA_SUB_DIRECTOR", "BPA_CAD_DGDCF_SUB_DIRECTOR",
+    "BCIE_AGENT", "BCIE_HOD", "TOPOGRAPHY_HOD", "TOPOGRAPHY_AGENT", "TOPOGRAPHY_CHIEF",
+    "COUNTER_EMPLOYEE", "BPA_INSPD_COMM", "BPA_EDD_COMM", "BPA_DNPC_COMM",
+    "BPA_ONEAD_COMM", "BPA_DGDCF_COMM", "BPA_PL_COMM"
   ];
   
   // Find the primary role to display

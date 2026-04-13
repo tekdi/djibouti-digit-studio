@@ -100,6 +100,13 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
     }
   ];
 
+  // Some services only allow specific commissioners
+  const COMMISSIONERS_BY_SERVICE = {
+    BPA_PS: ["SDECC"],
+  };
+  const allowedIds = COMMISSIONERS_BY_SERVICE[service];
+  const filteredCommissioners = allowedIds ? commissioners.filter(c => allowedIds.includes(c.id)) : commissioners;
+
   // Get selected commissioners from checklist data
   const selectedCommissioners = checklistData?.selectedCommissioners || [];
 
@@ -172,7 +179,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
                   Commissaires sélectionnés
                 </span>
                 <p className="mt-2 text-sm font-semibold text-emerald-800">
-                  {selectedCommissioners.length} sur {commissioners.length}
+                  {selectedCommissioners.length} sur {filteredCommissioners.length}
                 </p>
               </div>
 
@@ -211,7 +218,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
               </h4>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {selectedCommissioners.map((commissionerId) => {
-                  const commissioner = commissioners.find((c) => c.id === commissionerId);
+                  const commissioner = filteredCommissioners.find((c) => c.id === commissionerId);
                   if (!commissioner) return null;
                   const IconComponent = commissioner.icon;
 
@@ -271,7 +278,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
           onSuccess={handleSuccess}
           isViewMode={isViewMode}
           existingData={checklistData}
-          commissioners={commissioners}
+          commissioners={filteredCommissioners}
         />
       </React.Fragment>
     );
@@ -356,7 +363,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
         onSuccess={handleSuccess}
         isViewMode={isSubmitted}
         existingData={checklistData}
-        commissioners={commissioners}
+        commissioners={filteredCommissioners}
       />
     </React.Fragment>
   );

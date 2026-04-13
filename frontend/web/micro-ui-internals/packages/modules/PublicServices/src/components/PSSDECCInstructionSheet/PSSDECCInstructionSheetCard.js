@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye } from "react-icons/lu";
-import CCRChecklistModal from "./CCRChecklistModal";
+import PSSDECCInstructionSheetModal from "./PSSDECCInstructionSheetModal";
 
-const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isViewMode, setIsViewMode] = useState(false);
-  const [checklistData, setChecklistData] = useState(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+var PSSDECCInstructionSheetCard = function (props) {
+  var service = props.service, state = props.state, t = props.t, isViewOnly = props.isViewOnly || false;
+  var _m = useState(false), isModalOpen = _m[0], setIsModalOpen = _m[1];
+  var _v = useState(false), isViewMode = _v[0], setIsViewMode = _v[1];
+  var _d = useState(null), data = _d[0], setData = _d[1];
+  var _s = useState(false), isSubmitted = _s[0], setIsSubmitted = _s[1];
+  var _l = useState(false), isLoading = _l[0], setIsLoading = _l[1];
 
-  var { serviceCode, applicationNumber: queryAppNum } = Digit.Hooks.useQueryParams();
-  var applicationNumber = queryAppNum;
+  var qs = Digit.Hooks.useQueryParams();
+  var serviceCode = qs.serviceCode;
+  var applicationNumber = qs.applicationNumber;
   var tenantId = Digit.ULBService.getCurrentTenantId();
 
   var loadData = useCallback(async function () {
@@ -19,16 +21,15 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
     setIsLoading(true);
     try {
       var resp = await Digit.CustomService.getResponse({
-        url: "/public-service/v1/application/" + serviceCode,
-        method: "GET", headers: { "X-Tenant-Id": tenantId },
-        params: { applicationNumber: applicationNumber, tenantId: tenantId },
+        url: "/public-service/v1/application/" + serviceCode, method: "GET",
+        headers: { "X-Tenant-Id": tenantId }, params: { applicationNumber: applicationNumber, tenantId: tenantId },
       });
       var app = Array.isArray(resp?.Application) ? resp.Application[0] : resp?.Application;
-      if (app?.additionalDetails?.ccrChecklist) {
-        setChecklistData(app.additionalDetails.ccrChecklist);
-        setIsSubmitted(true);
+      if (app?.additionalDetails?.psSDECCInstructionSheet) {
+        setData(app.additionalDetails.psSDECCInstructionSheet);
+        setIsSubmitted(!!app.additionalDetails.psSDECCInstructionSheet.submittedAt);
       }
-    } catch (e) { console.error("Error loading CCR checklist:", e); }
+    } catch (e) { console.error("Error:", e); }
     finally { setIsLoading(false); }
   }, [applicationNumber, serviceCode, tenantId]);
 
@@ -36,7 +37,7 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
 
   if (!applicationNumber || !service) return null;
 
-  if (isSubmitted && checklistData) {
+  if (isSubmitted && data) {
     return (
       <div>
         <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -48,12 +49,12 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
               </div>
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
-                  <h3 className="text-xl font-semibold text-gray-900">Fiche de contrôle CCR</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">Fiche technique SDECC — Surélévation</h3>
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
                     <LuCircleCheck className="h-4 w-4" /> Terminé
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">Bénéficiaire : <span className="font-medium text-gray-900">{checklistData.beneficiaryName || "-"}</span></p>
+                <p className="text-sm text-gray-500">ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span></p>
               </div>
             </div>
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-4">
@@ -70,9 +71,9 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
             </div>
           </div>
         </div>
-        <CCRChecklistModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
+        <PSSDECCInstructionSheetModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
           applicationNumber={applicationNumber} service={service} serviceCode={serviceCode} state={state}
-          onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={isViewMode} isViewOnly={isViewOnly} existingData={checklistData} />
+          onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={isViewMode} isViewOnly={isViewOnly} existingData={data} />
       </div>
     );
   }
@@ -88,12 +89,12 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-semibold text-gray-900">Fiche de contrôle CCR</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Fiche technique SDECC — Surélévation</h3>
                 <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
                   <LuClock className="h-4 w-4" /> En attente
                 </span>
               </div>
-              <p className="text-sm text-gray-500">Certificat de Conformité de Remblai</p>
+              <p className="text-sm text-gray-500">ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span></p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -102,23 +103,19 @@ const CCRChecklistCard = ({ service, state, t, isViewOnly = false }) => {
                 className="inline-flex items-center gap-2 rounded-xl border border-djibouti-primary bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-djibouti-primary-dark transition-all disabled:opacity-50">
                 <LuFileText className="h-4 w-4" /> {isLoading ? "Chargement..." : "Remplir la fiche"}
               </button>
-            ) : (
-              <span className="text-sm text-gray-500 italic">Fiche non encore soumise</span>
-            )}
+            ) : <span className="text-sm text-gray-500 italic">Fiche non encore soumise</span>}
           </div>
         </div>
       </div>
-      <CCRChecklistModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
+      <PSSDECCInstructionSheetModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
         applicationNumber={applicationNumber} service={service} serviceCode={serviceCode} state={state}
-        onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={false} existingData={checklistData} />
+        onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={false} existingData={data} />
     </div>
   );
 };
 
-CCRChecklistCard.propTypes = {
-  service: PropTypes.string.isRequired,
-  state: PropTypes.string.isRequired,
-  t: PropTypes.func.isRequired,
+PSSDECCInstructionSheetCard.propTypes = {
+  service: PropTypes.string.isRequired, state: PropTypes.string.isRequired, t: PropTypes.func.isRequired,
 };
 
-export default CCRChecklistCard;
+export default PSSDECCInstructionSheetCard;

@@ -26,6 +26,7 @@ const APEInstructionSheetModal = ({
   state,
   onSuccess,
   isViewMode = false,
+  isViewOnly = false,
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
@@ -215,6 +216,7 @@ const APEInstructionSheetModal = ({
         <ModalHeader
           applicationNumber={applicationNumber}
           isViewMode={isViewMode}
+          isViewOnly={isViewOnly}
           isEditMode={isEditMode}
           isLoading={isLoading}
           existingData={existingData}

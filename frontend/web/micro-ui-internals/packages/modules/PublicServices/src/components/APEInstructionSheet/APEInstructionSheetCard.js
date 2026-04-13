@@ -212,6 +212,7 @@ const APEInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
           state={state}
           onSuccess={handleSuccess}
           isViewMode={isViewMode}
+          isViewOnly={isViewOnly}
           existingData={instructionData}
         />
       </div>
