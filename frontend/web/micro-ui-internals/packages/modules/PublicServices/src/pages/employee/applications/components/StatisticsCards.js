@@ -2,7 +2,7 @@ import React from "react";
 import { LuFolder, LuCircle, LuClock, LuCircleCheck } from "react-icons/lu";
 
 const StatisticsCards = ({ applications, totalCount }) => {
-  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED"];
+  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT"];
   const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
   const newApplicationsCount = applications.filter(

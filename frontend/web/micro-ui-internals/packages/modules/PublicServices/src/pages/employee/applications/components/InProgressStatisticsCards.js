@@ -12,6 +12,9 @@ const InProgressStatisticsCards = ({ applications, totalCount }) => {
       return status !== "PENDING_ACTION_BY_ARCHITECT" && 
              status !== "PENDING_ACTION_BY_CITIZEN" &&
              status !== "AGENT_NOT_ASSIGNED" &&
+             status !== "BPA_SDECC_SUB_DIRECTOR_REVIEW" &&
+             status !== "PENDING_ACTION" &&
+             status !== "PENDING_ACTION_BY_AGENT" &&
              status !== "PERMIT_GRANTED" &&
              status !== "CERTIFICATE_GRANTED";
     }

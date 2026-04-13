@@ -19,7 +19,7 @@ export const getServiceInfo = (businessService) => {
     },
     BPA_PCO_SIMPLE: {
       ref: "P3",
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
+      name: "P3 - Permis de Construire Ordinaire (PCO < 200 m²)",
       grantedLabel: "PCO",
       description: "Pour les constructions résidentielles et commerciales simples",
       category: "permits",

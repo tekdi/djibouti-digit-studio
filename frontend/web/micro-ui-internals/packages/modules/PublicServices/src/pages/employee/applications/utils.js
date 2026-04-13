@@ -19,7 +19,7 @@ export const getServiceInfo = (businessService) => {
     },
     BPA_PCO_SIMPLE: {
       ref: "P3",
-      name: "Permis de Construire Ordinaire (PCO) – Constructions Simples",
+      name: "P3 - Permis de Construire Ordinaire (PCO < 200 m²)",
       shortName: "PCO - Constructions Simples",
       description: "Pour les constructions résidentielles et commerciales simples",
       category: "permits",
@@ -133,6 +133,7 @@ export const getSimplifiedStatus = (status) => {
     BPA_SRA_SUB_DIRECTOR_REVIEW: "pending",
     BCIE_HOD_REVIEW: "pending",
     AGENT_INSPECTION_PENDING: "pending",
+    AGENT_VERIFICATION_PENDING: "pending",
     BPA_SRA_SUB_DIRECTOR_APPROVAL: "pending",
     SUB_DIRECTOR_APPROVAL_PENDING: "pending",
     DIRECTOR_APPROVAL_PENDING: "pending",
@@ -158,6 +159,7 @@ export const getSimplifiedStatus = (status) => {
     SUBMITTED_TO_SDECC: "pending",
     TECHNICAL_REVIEW: "pending",
     PENDING_HOD_VALIDATION: "pending",
+    HOD_APPROVAL_PENDING: "pending",
     PENDING_SUB_DIRECTOR_SIGNATURE: "pending",
     PAYMENT_PENDING: "payment_pending",
     AWAITING_CITIZEN_PAYMENT: "payment_pending",
@@ -429,6 +431,13 @@ export const getStatusInfo = (status) => {
       icon: LuClock,
       progress: 80,
     },
+    HOD_APPROVAL_PENDING: {
+      label: "En attente d'approbation du Chef de Service",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 75,
+    },
     PENDING_SUB_DIRECTOR_SIGNATURE: {
       label: "En attente de signature du Sous-directeur",
       color: "text-amber-600",
@@ -491,6 +500,13 @@ export const getStatusInfo = (status) => {
       bgColor: "bg-blue-50",
       icon: LuMapPin,
       progress: 45,
+    },
+    AGENT_VERIFICATION_PENDING: {
+      label: "Vérification de l'agent en attente",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuMapPin,
+      progress: 40,
     },
     BPA_SRA_SUB_DIRECTOR_APPROVAL: {
       label: "En attente d'approbation du Sous-directeur SDATU",

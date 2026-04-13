@@ -42,7 +42,7 @@ const InProgressApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  const excludedStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
+  const excludedStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT", "PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
   const inProgressApplications = useMemo(() => {
     return applications.filter((app) => {

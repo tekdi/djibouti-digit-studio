@@ -45,7 +45,23 @@ const ActionButtons = ({
           className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/30"
         >
           <LuDownload className="h-4 w-4" />
-          Télécharger le permis
+          {({
+            BPA_PCO: "Télécharger le Permis de Construire",
+            BPA_PCO_SIMPLE: "Télécharger le Permis de Construire",
+            BPA_PR: "Télécharger le Permis de Remblai",
+            BPA_PL: "Télécharger le Permis de Lotir",
+            BPA_PCS: "Télécharger le Permis de Construire Simplifié",
+            BPA_PD: "Télécharger le Permis de Démolir",
+            BPA_PF: "Télécharger le Permis de Clôture",
+            BPA_PS: "Télécharger le Permis de Surélévation",
+            BPA_ATARR: "Télécharger l'Autorisation de Travaux",
+            BPA_CCR: "Télécharger le Certificat de Conformité de Remblai",
+            BPA_CCE: "Télécharger le Certificat de Conformité Électrique",
+            BPA_CCP: "Télécharger le Certificat de Conformité Parasismique",
+            BPA_CCG: "Télécharger le Certificat de Conformité Général",
+            BPA_PV: "Télécharger le Procès-Verbal d'Implantation",
+            BPA_APE: "Télécharger l'Approbation du Plan d'Exécution",
+          })[response?.businessService] || "Télécharger le document"}
         </button>
       )}
 
