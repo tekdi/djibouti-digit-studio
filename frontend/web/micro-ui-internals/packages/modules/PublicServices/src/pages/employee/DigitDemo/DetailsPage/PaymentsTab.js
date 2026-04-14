@@ -171,6 +171,47 @@ const PaymentsTab = ({
                       </div>
                     </div>
                   </>
+                ) : costEstimation?.totalTaxWithServiceCharge || costEstimation?.totalTax ? (
+                  /* No bill yet, but SRA has already calculated the fees — show a preview
+                     from costEstimation so citizens/architects can see the expected
+                     amount before the director sends the app to payment. */
+                  <React.Fragment>
+                    <div className="space-y-3">
+                      {costEstimation?.royaltyFee != null && (
+                        <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                          <span className="text-gray-600">Redevance Permis de Construire</span>
+                          <span className="font-semibold text-gray-900">FDj {Number(costEstimation.royaltyFee).toLocaleString()}</span>
+                        </div>
+                      )}
+                      {costEstimation?.eqResistanceCost != null && costEstimation.eqResistanceCost > 0 && (
+                        <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                          <span className="text-gray-600">Redevance Contrôle Parasismique</span>
+                          <span className="font-semibold text-gray-900">FDj {Number(costEstimation.eqResistanceCost).toLocaleString()}</span>
+                        </div>
+                      )}
+                      {costEstimation?.registryServiceFee != null && costEstimation.registryServiceFee > 0 && (
+                        <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                          <span className="text-gray-600">Frais de service d'enregistrement</span>
+                          <span className="font-semibold text-gray-900">FDj {Number(costEstimation.registryServiceFee).toLocaleString()}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-djibouti-primary rounded-xl p-5 mt-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white font-medium text-lg">Montant total à payer</span>
+                        <span className="text-white font-bold text-2xl">
+                          FDj {Number(costEstimation.totalTaxWithServiceCharge || costEstimation.totalTax).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-xs text-amber-800">
+                        Aperçu — la facture officielle sera générée lorsque le dossier sera transmis au paiement.
+                      </p>
+                    </div>
+                  </React.Fragment>
                 ) : (
                   <div className="text-center py-8">
                     <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">

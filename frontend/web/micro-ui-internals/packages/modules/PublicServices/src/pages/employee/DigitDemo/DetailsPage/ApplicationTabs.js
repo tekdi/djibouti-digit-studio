@@ -6,6 +6,7 @@ import {
   LuActivity,
   LuSquareCheck,
   LuFileText,
+  LuMessageSquare,
 } from "react-icons/lu";
 
 const HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES = [
@@ -33,8 +34,13 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }
   );
 
   const hideInstructionTab = HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES.includes(businessService);
-  const showInstructionTab = !hideInstructionTab && (isArchitect || (!isCitizen && !isCommissioner));
+  // Commissioners see the instruction tab in read-only mode (they cannot edit checklists).
+  const showInstructionTab = !hideInstructionTab && (isArchitect || !isCitizen);
   const hideObservationsTab = HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES.includes(businessService);
+
+  // Internal employee comments tab — visible to all non-citizen, non-commissioner roles
+  // (director, sub-directors, agents, HODs, etc.)
+  const showCommentsTab = !isCitizen && !isCommissioner;
 
   const tabs = [
     { id: "project", label: "Demande", icon: LuBuilding },
@@ -46,6 +52,7 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }
       ? []
       : [...(showPaymentsTab ? [{ id: "payments", label: "Paiements", icon: LuCreditCard }] : [])]),
     ...(showInstructionTab ? [{ id: "checklist", label: "Instruction", icon: LuSquareCheck }] : []),
+    ...(showCommentsTab ? [{ id: "comments", label: "Commentaires", icon: LuMessageSquare }] : []),
     { id: "activities", label: "Historique", icon: LuActivity },
   ];
 

@@ -46,10 +46,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
     role.code === "BPA_SUB_DIRECTOR"
   );
   
-  // Citizens and architects can only view — never edit checklists
+  // Citizens, architects, and commissioners can only view — never edit checklists
   const isCitizen = Digit.UserService.getType()?.toLowerCase() === "citizen";
   const isArchitect = userRoles.some((role) => role.code === "BPA_ARCHITECT");
-  const isViewOnly = isCitizen || isArchitect;
+  const isCommissioner = userRoles.some((role) =>
+    role.code === "BPA_SDECC_COMM" || role.code === "BPA_DGDCF_COMM" ||
+    role.code === "BPA_ONEAD_COMM" || role.code === "BPA_DNPC_COMM" ||
+    role.code === "BPA_EDD_COMM" || role.code === "BPA_INSPD_COMM" ||
+    role.code === "BPA_PL_COMM"
+  );
+  const isViewOnly = isCitizen || isArchitect || isCommissioner;
 
   // Check if user is SRA (BPA_AGENTS or BPA_HOD)
   const isSRA = userRoles.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
