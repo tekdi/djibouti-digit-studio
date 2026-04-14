@@ -13,6 +13,32 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
   const isHODorAGENT = userDetails?.info?.roles?.some((role) => role.code === "BPA_HOD" || role.code === "BPA_AGENTS");
   const isHOD = userDetails?.info?.roles?.some((role) => role.code === "BPA_HOD");
 
+  // BPA_PF has a simplified fee structure: no commercial cost, no seismic fee, no registry service fee,
+  // and its own work-designation breakdown (Terrassement / Fondation / Maçonnerie / Béton armé /
+  // Électricité / Revêtement / Portail).
+  const isPF = queryStrings?.serviceCode === "BPA_PF" || queryStrings?.businessService === "BPA_PF";
+
+  const PF_COST_BREAKDOWN = [
+    { name: "CALCULATION_TERRASSEMENT", percentage: 8, amount: 0, id: "CALCULATION_TERRASSEMENT" },
+    { name: "CALCULATION_FONDATION", percentage: 10, amount: 0, id: "CALCULATION_FONDATION" },
+    { name: "CALCULATION_MACONNERIE", percentage: 28, amount: 0, id: "CALCULATION_MACONNERIE" },
+    { name: "CALCULATION_BETON_ARME", percentage: 10, amount: 0, id: "CALCULATION_BETON_ARME" },
+    { name: "CALCULATION_ELECTRICITE", percentage: 9, amount: 0, id: "CALCULATION_ELECTRICITE" },
+    { name: "CALCULATION_REVETEMENTS", percentage: 20, amount: 0, id: "CALCULATION_REVETEMENTS" },
+    { name: "CALCULATION_PORTAIL", percentage: 15, amount: 0, id: "CALCULATION_PORTAIL" },
+  ];
+  const DEFAULT_COST_BREAKDOWN = [
+    { name: "CALCULATION_TERRASSEMENT", percentage: 8, amount: 0, id: "CALCULATION_TERRASSEMENT" },
+    { name: "CALCULATION_FONDATION", percentage: 10, amount: 0, id: "CALCULATION_FONDATION" },
+    { name: "CALCULATION_MACONNERIE", percentage: 9, amount: 0, id: "CALCULATION_MACONNERIE" },
+    { name: "CALCULATION_BETON_ARME", percentage: 28, amount: 0, id: "CALCULATION_BETON_ARME" },
+    { name: "CALCULATION_REVETEMENTS", percentage: 20, amount: 0, id: "CALCULATION_REVETEMENTS" },
+    { name: "CALCULATION_MENUISERIES", percentage: 11, amount: 0, id: "CALCULATION_MENUISERIES" },
+    { name: "CALCULATION_ELECTRICITE", percentage: 6, amount: 0, id: "CALCULATION_ELECTRICITE" },
+    { name: "CALCULATION_PLOMBERIE", percentage: 3, amount: 0, id: "CALCULATION_PLOMBERIE" },
+    { name: "CALCULATION_ASSAINISSEMENT", percentage: 5, amount: 0, id: "CALCULATION_ASSAINISSEMENT" },
+  ];
+
   // HOD + Agents can edit, calculate, and save
   const isEditDisabled = isViewOnly || !isHODorAGENT;
   const isSaveDisabled = isEditDisabled;
@@ -49,17 +75,7 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
   const [taxChangeReason, setTaxChangeReason] = useState("");
   const isTotalTaxEditable = queryStrings?.state === "AWAITING_ON_COMMISSIONER";
 
-  const [costBreakdown, setCostBreakdown] = useState([
-    { name: "CALCULATION_TERRASSEMENT", percentage: 8, amount: 0, id: "CALCULATION_TERRASSEMENT" },
-    { name: "CALCULATION_FONDATION", percentage: 10, amount: 0, id: "CALCULATION_FONDATION" },
-    { name: "CALCULATION_MACONNERIE", percentage: 9, amount: 0, id: "CALCULATION_MACONNERIE" },
-    { name: "CALCULATION_BETON_ARME", percentage: 28, amount: 0, id: "CALCULATION_BETON_ARME" },
-    { name: "CALCULATION_REVETEMENTS", percentage: 20, amount: 0, id: "CALCULATION_REVETEMENTS" },
-    { name: "CALCULATION_MENUISERIES", percentage: 11, amount: 0, id: "CALCULATION_MENUISERIES" },
-    { name: "CALCULATION_ELECTRICITE", percentage: 6, amount: 0, id: "CALCULATION_ELECTRICITE" },
-    { name: "CALCULATION_PLOMBERIE", percentage: 3, amount: 0, id: "CALCULATION_PLOMBERIE" },
-    { name: "CALCULATION_ASSAINISSEMENT", percentage: 5, amount: 0, id: "CALCULATION_ASSAINISSEMENT" },
-  ]);
+  const [costBreakdown, setCostBreakdown] = useState(isPF ? PF_COST_BREAKDOWN : DEFAULT_COST_BREAKDOWN);
 
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
@@ -268,7 +284,11 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
           { key: "royaltyFeePercentage", label: t("CALCULATION_ROYALTY_FEES"), unit: "% " + t("OF_ESTIMATED_QUOTE"), ph: "1.5" },
           { key: "seismicFeePercentage", label: t("CALCULATION_SEISMIC_FEES"), unit: "% " + t("OF_ESTIMATED_QUOTE"), ph: "1" },
           { key: "registryServiceFee", label: t("CALCULATION_REGISTRY_SERVICE_FEE"), unit: "FDJ", ph: "5000" },
-        ].map(function (item) {
+        ].filter(function (item) {
+          // BPA_PF: hide commercial cost, seismic fee and registry service fee rate inputs.
+          if (isPF && (item.key === "commercialCost" || item.key === "seismicFeePercentage" || item.key === "registryServiceFee")) return false;
+          return true;
+        }).map(function (item) {
           return (
             <div key={item.key} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
               <label className="block text-xs font-medium text-gray-500 mb-2">{item.label}</label>
@@ -394,9 +414,13 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
           {[
             { label: t("CALCULATION_SURFACE_PARCELLE"), value: (calculatedFees.totalProjectValue || 0).toLocaleString() },
             { label: t("CALCULATION_ROYALTY_FEES_CALCULATED"), value: (calculatedFees.royaltyFee || 0) + " FDj" },
-            { label: t("CALCULATION_SEISMIC_FEES_CALCULATED"), value: (calculatedFees.seismicFees || 0).toLocaleString() + " FDj" },
+            { key: "seismic", label: t("CALCULATION_SEISMIC_FEES_CALCULATED"), value: (calculatedFees.seismicFees || 0).toLocaleString() + " FDj" },
             { label: t("CALCULATION_TOTAL_TAXES"), value: (calculatedFees.totalTax || 0).toLocaleString() + " FDj" },
-          ].map(function (item, i) {
+          ].filter(function (item) {
+            // BPA_PF: hide the seismic fees row in the results section.
+            if (isPF && item.key === "seismic") return false;
+            return true;
+          }).map(function (item, i) {
             return (
               <div key={i} className="p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <p className="text-xs text-gray-500 mb-1">{item.label}</p>

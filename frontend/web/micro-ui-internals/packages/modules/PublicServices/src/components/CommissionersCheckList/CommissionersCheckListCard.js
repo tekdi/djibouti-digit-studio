@@ -103,6 +103,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
   // Some services only allow specific commissioners
   const COMMISSIONERS_BY_SERVICE = {
     BPA_PS: ["SDECC"],
+    BPA_PF: ["DGDCF"],
   };
   const allowedIds = COMMISSIONERS_BY_SERVICE[service];
   const filteredCommissioners = allowedIds ? commissioners.filter(c => allowedIds.includes(c.id)) : commissioners;

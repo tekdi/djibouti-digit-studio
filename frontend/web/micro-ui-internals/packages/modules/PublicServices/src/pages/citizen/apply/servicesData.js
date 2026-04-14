@@ -609,7 +609,7 @@ export const servicesData = {
   },
   BPA_PF: {
     id: "permis-fonctionner",
-    title: "Permis de Fonctionner",
+    title: "Permis de Clôture",
     description: "Pour l'ouverture d'établissements recevant du public",
     delaiTraitement: "30 jours",
     frais: "Tax applicable",
@@ -636,7 +636,7 @@ export const servicesData = {
     documentsRequis: [
       {
         numero: "1",
-        nom: "Formulaire de demande de Permis de Fonctionner",
+        nom: "Formulaire de demande de Permis de Clôture",
         description: "Formulaire complété",
         obligatoire: true,
       },
@@ -657,7 +657,7 @@ export const servicesData = {
         role: "Vérification technique",
       },
     ],
-    documentsDelivres: ["Reçu électronique du paiement", "Permis de Fonctionner officiel", "Lettre d'autorisation finale"],
+    documentsDelivres: ["Reçu électronique du paiement", "Permis de Clôture officiel", "Lettre d'autorisation finale"],
   },
   BPA_ATARR: {
     id: "autorisation-travaux-arrondissement",

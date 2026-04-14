@@ -399,6 +399,6 @@ export const checklistByService = [
   },
   {
     service: "BPA_PF",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "calculationFees"],
+    checklist: ["customCommissionersChecklist", "calculationFees"],
   },
 ];
