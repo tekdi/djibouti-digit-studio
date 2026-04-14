@@ -5,7 +5,7 @@ import { LuTriangleAlert, LuBuilding2, LuPhone, LuX, LuInfo } from "react-icons/
  * Modal for BPA_PCO_SIMPLE surface area warning
  * Shown when coveredProjectArea exceeds 200m²
  */
-const SurfaceAreaWarningModal = ({ isOpen, onClose, coveredArea }) => {
+const SurfaceAreaWarningModal = ({ isOpen, onClose, coveredArea, maxArea = 200 }) => {
   if (!isOpen) return null;
 
   return (
@@ -47,14 +47,14 @@ const SurfaceAreaWarningModal = ({ isOpen, onClose, coveredArea }) => {
             <div className="flex justify-center mb-4">
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold">
                 <LuInfo className="w-4 h-4" />
-                Votre surface : {coveredArea} m² (max. 200 m²)
+                Votre surface : {coveredArea} m² (max. {maxArea} m²)
               </span>
             </div>
 
             {/* Message */}
             <div className="bg-gray-50 rounded-xl p-4 mb-6">
               <p className="text-gray-700 text-center leading-relaxed">
-                Pour une <strong>surface totale bâtie supérieure à 200 m²</strong>, vous devez faire appel à un professionnel agréé pour soumettre votre demande.
+                Pour une <strong>surface totale bâtie supérieure à {maxArea} m²</strong>, vous devez faire appel à un professionnel agréé pour soumettre votre demande.
               </p>
             </div>
 

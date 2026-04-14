@@ -40,7 +40,7 @@ const DigitDemoComponent = ({ editdata }) => {
       BPA_PCS: "Permis de Construire Simplifié (PCS)",
       BPA_PL: "Permis de Lotir",
       BPA_PD: "Permis de Démolir",
-      BPA_PF: "Permis de Fonctionner",
+      BPA_PF: "Permis de Clôture",
       BPA_ATARR: "Autorisation de Travaux d'Arrondissement",
       BPA_PR: "Permis de Remblai (PR)",
       BPA_APE: "Approbation de Plan d'Exécution (APE)",
@@ -72,6 +72,7 @@ const DigitDemoComponent = ({ editdata }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSurfaceWarningModal, setShowSurfaceWarningModal] = useState(false);
   const [warningCoveredArea, setWarningCoveredArea] = useState(0);
+  const [warningMaxArea, setWarningMaxArea] = useState(200);
 
   useEffect(() => {
     //useEffect to set the prevfilled data
@@ -517,7 +518,7 @@ const DigitDemoComponent = ({ editdata }) => {
       </div>
 
       {/* Surface Area Warning Modal for BPA_PCO_SIMPLE */}
-      <SurfaceAreaWarningModal isOpen={showSurfaceWarningModal} onClose={() => setShowSurfaceWarningModal(false)} coveredArea={warningCoveredArea} />
+      <SurfaceAreaWarningModal isOpen={showSurfaceWarningModal} onClose={() => setShowSurfaceWarningModal(false)} coveredArea={warningCoveredArea} maxArea={warningMaxArea} />
     </React.Fragment>
   );
 };

@@ -745,29 +745,30 @@ export const formatDateTime = (dateString) => {
   }
 };
 
-// Per-base-service map of commissioner role codes → the parallel branch they work on.
-//
-// Only base services that actually spawn parallel commissioner workflows are listed here.
-// All other base services (BPA_CCP, BPA_CCE, BPA_PCS, BPA_PR, etc.) are standalone
-// workflows and must NOT be rerouted, even if the logged-in user happens to have a
-// commissioner role — those services don't have a BPA_*_SDECC / BPA_*_DGDCF branch,
-// so rewriting the URL would land the user on a non-existent business service.
-//
-// Add a new top-level entry here when a base service starts spawning parallel branches.
-// Only the *commissioner* role of each department reroutes to the parallel branch.
-// HOD / Agent / Sub-Director roles stay on the main BPA_PCO_SIMPLE flow because their
-// work happens on the main workflow (reviewing reports etc.), not on the parallel
-// commissioner conformance step.
-const PARALLEL_BRANCHES_BY_BASE = {
-  BPA_PCO_SIMPLE: {
-    BPA_SDECC_COMM: "BPA_PCO_SDECC",
-    BPA_DGDCF_COMM: "BPA_PCO_DGDCF",
-    BPA_DNPC_COMM: "BPA_PCO_DNPC",
-    BPA_EDD_COMM: "BPA_PCO_EDD",
-    BPA_INSPD_COMM: "BPA_PCO_INSPD",
-    BPA_ONEAD_COMM: "BPA_PCO_ONEAD",
-  },
+// Commissioner role → parallel branch mapping.
+// All permit types that have a commissioner step share the SAME BPA_PCO_* branch names.
+// Only _COMM roles reroute; HOD/Agent/Sub-Director stay on the main workflow.
+const COMMISSIONER_BRANCHES = {
+  BPA_SDECC_COMM: "BPA_PCO_SDECC",
+  BPA_DGDCF_COMM: "BPA_PCO_DGDCF",
+  BPA_DNPC_COMM: "BPA_PCO_DNPC",
+  BPA_EDD_COMM: "BPA_PCO_EDD",
+  BPA_INSPD_COMM: "BPA_PCO_INSPD",
+  BPA_ONEAD_COMM: "BPA_PCO_ONEAD",
 };
+
+// Base services that spawn parallel commissioner workflows.
+// Services NOT in this set (BPA_CCP, BPA_CCE, BPA_CCR, BPA_CCG, BPA_PV, BPA_APE, BPA_ATARR)
+// are standalone — commissioners should NOT be rerouted on those.
+const SERVICES_WITH_COMMISSIONER_BRANCHES = new Set([
+  "BPA_PCO_SIMPLE",
+  "BPA_PCO",
+  "BPA_PS",
+  "BPA_PF",
+  "BPA_PL",
+  "BPA_PD",
+  "BPA_PCS",
+]);
 
 /**
  * Resolve which business service branch a user should land on when opening an application.
@@ -789,15 +790,14 @@ const PARALLEL_BRANCHES_BY_BASE = {
  * @returns {string} The businessService to put in the ViewScreen URL.
  */
 export const resolveBusinessServiceForUser = (baseBusinessService) => {
-  const branchesForBase = PARALLEL_BRANCHES_BY_BASE[baseBusinessService];
-  if (!branchesForBase) {
-    // Standalone workflow (BPA_CCP, BPA_CCE, BPA_PCS, BPA_PR, ...). Never reroute.
+  if (!SERVICES_WITH_COMMISSIONER_BRANCHES.has(baseBusinessService)) {
+    // Standalone workflow (BPA_CCP, BPA_CCE, BPA_CCR, etc.). Never reroute.
     return baseBusinessService;
   }
   try {
     const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
     for (const role of userRoles) {
-      const branch = branchesForBase[role?.code];
+      const branch = COMMISSIONER_BRANCHES[role?.code];
       if (branch) return branch;
     }
   } catch (e) {
