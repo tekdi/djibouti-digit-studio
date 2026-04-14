@@ -19,6 +19,11 @@ const useApplications = () => {
   console.log("userDetails", userDetails);
   const uuid = userDetails?.info?.uuid;
   const indId = individualDetails && individualDetails?.Individual?.[0]?.individualId;
+  // Architects submit on behalf of citizens — their own applicants[].userId points at the
+  // citizen (not themselves), so filtering by userId would hide their submissions. For
+  // architects we fall back to createdBy = their uuid (pre-fix behavior). Plain citizens
+  // keep the userId filter so they see apps submitted on their behalf.
+  const isArchitect = userDetails?.info?.roles?.some((r) => r.code === "BPA_ARCHITECT");
 
   // Cache keys for localStorage
   const CACHE_KEY = `applications_cache_${uuid}`;
@@ -119,12 +124,22 @@ const useApplications = () => {
 
     try {
       const response = await axios.get(`/public-service/v1/application`, {
-        params: {
-          tenantId: tenantId,
-          userId: indId,
-          status: "ACTIVE",
-          createdBy: uuid
-        },
+        params: isArchitect
+          ? {
+              // Architects: filter by createdBy so they see everything THEY submitted
+              // (including on-behalf-of-citizen applications whose applicants[].userId
+              // points at the citizen, not at them).
+              tenantId: tenantId,
+              createdBy: uuid,
+            }
+          : {
+              // Citizens: filter by userId (individual id) so they see applications
+              // submitted on their behalf by architects. Do NOT filter by status=ACTIVE
+              // (backend leaves top-level status empty on architect-submitted records)
+              // or by createdBy (that's the architect, not the citizen).
+              tenantId: tenantId,
+              userId: indId,
+            },
         headers: {
           "X-Tenant-Id": tenantId,
           "auth-token": userDetails?.access_token,

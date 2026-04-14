@@ -176,6 +176,10 @@ export const transformToApplicationPayload = (
       prefix: "253",
       active: true,
       userId: formData?.responseData?.Application?.applicants?.[index]?.userId || formData?.response?.applicants?.[index]?.userId || "",
+      // IMPORTANT: include userUuid so the billing service can resolve the citizen when
+      // the director sends the app to payment. Without this, billing fails with
+      // EG_BS_USER_UUID_NOTFOUND (uuid defaults to 00000000-...-000000000000).
+      userUuid: formData?.responseData?.Application?.applicants?.[index]?.userUuid || formData?.response?.applicants?.[index]?.userUuid || "",
     })) || [];
 
   const applicant = formData.applicantDetails?.filter(Boolean)?.[0];

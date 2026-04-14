@@ -2,15 +2,24 @@ import { sortBy } from "lodash";
 import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
-export const citizenInboxGenericConfig = (tenantId, individualId, uuid) => {
+export const citizenInboxGenericConfig = (tenantId, individualId, uuid, isArchitect = false) => {
   const { module } = useParams();
   const prefix = `${module?.toUpperCase()}`;
+
+  // Architects: filter by createdBy so they see what THEY submitted (including apps
+  //   submitted on-behalf-of citizens, whose userId points at the citizen, not them).
+  // Citizens: filter by userId so they see apps submitted on their behalf. Don't apply
+  //   status=ACTIVE (backend leaves it empty on architect-submitted records) or
+  //   createdBy (that's the architect, not the citizen).
+  const serviceQuery = isArchitect
+    ? `/public-service/v1/application?tenantId=${tenantId}&createdBy=${uuid}`
+    : `/public-service/v1/application?tenantId=${tenantId}&userId=${individualId}`;
 
   return {
     headerLabel: `${prefix}_INBOX_HEADER`,
     type: "inbox",
     apiDetails: {
-      serviceName: `/public-service/v1/application?tenantId=${tenantId}&userId=${individualId}&status=ACTIVE&createdBy=${uuid}`,
+      serviceName: serviceQuery,
       requestBody: {
         inbox: {
           processSearchCriteria: {

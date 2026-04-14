@@ -64,7 +64,8 @@ const CitizenInboxService = () => {
 
   }, [tenantId])
 
-  const configs = citizenInboxGenericConfig(tenantId,indId,uuid);
+  const isArchitect = userDetails?.info?.roles?.some((r) => r.code === "BPA_ARCHITECT");
+  const configs = citizenInboxGenericConfig(tenantId, indId, uuid, isArchitect);
 
 
   const updatedConfig = useMemo(() => {

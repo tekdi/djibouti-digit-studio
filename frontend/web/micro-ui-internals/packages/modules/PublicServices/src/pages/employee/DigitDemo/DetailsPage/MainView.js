@@ -5,6 +5,7 @@ import PaymentsTab from "./PaymentsTab";
 import ActivitiesTab from "./ActivitiesTab";
 import ChecklistTab from "./ChecklistTab";
 import ObservationsTab from "./ObservationsTab";
+import EmployeeCommentsTab from "./EmployeeCommentsTab";
 
 const MainView = ({ 
   activeTab, 
@@ -80,6 +81,13 @@ const MainView = ({
           queryStrings={queryStrings}
           timelineWorkflowDetails={timelineWorkflowDetails}
           workflowDetails={workflowDetails}
+        />
+      )}
+
+      {activeTab === "comments" && (
+        <EmployeeCommentsTab
+          response={response}
+          queryStrings={queryStrings}
         />
       )}
     </div>
