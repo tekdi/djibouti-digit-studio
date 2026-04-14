@@ -164,12 +164,20 @@ func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationR
 	// Step 5: Get Payer Info
 	var payerUser model.User
 	if len(apps.Application.Applicants) > 0 {
-		individualId := apps.Application.Applicants[0].UserId
+		applicant := apps.Application.Applicants[0]
+
+		// Attempt to enrich payer from the Individual service. Pass the real
+		// RequestInfo so the Individual service accepts the auth context — passing
+		// an empty RequestInfo{} used to silently return zero results, which caused
+		// the payer UUID to default to 00000000-... and the billing service to
+		// reject the demand with EG_BS_USER_UUID_NOTFOUND.
+		individualId := applicant.UserId
 		criteria := map[string]interface{}{
 			"uuid":     individualId,
 			"tenantId": apps.Application.TenantId,
 		}
-		indResp := s.individualService.GetIndividual(model.RequestInfo{}, criteria)
+		indResp := s.individualService.GetIndividual(apps.RequestInfo, criteria)
+
 		if len(indResp.Individual) > 0 {
 			individual := indResp.Individual[0]
 			parsedUUID, err := uuid.Parse(individual.UserUuid)
@@ -186,6 +194,28 @@ func (s *EnrichmentService) EnrichApplicationsWithDemand(apps model.ApplicationR
 				TenantId:     individual.TenantId,
 				Type:         individual.UserDetails.Type,
 			}
+		} else if applicant.UserUuid != "" {
+			// Fallback: Individual service lookup came back empty (it can happen when
+			// the internal call runs without a privileged auth context). The applicant
+			// record already carries the citizen's UserUuid — use it directly so the
+			// billing demand still gets a non-zero payer UUID.
+			parsedUUID, err := uuid.Parse(applicant.UserUuid)
+			if err != nil {
+				log.Printf("Invalid UUID format for Applicant.UserUuid fallback: %v", err)
+				return apps, errors.New("Invalid UUID format for Applicant.UserUuid to enrich payer")
+			}
+			payerUser = model.User{
+				Uuid:         parsedUUID,
+				Name:         applicant.Name,
+				MobileNumber: strconv.FormatInt(applicant.MobileNumber, 10),
+				EmailId:      applicant.EmailId,
+				TenantId:     apps.Application.TenantId,
+				Type:         "CITIZEN",
+			}
+			log.Printf("Payer enriched from applicant.UserUuid fallback: %s", applicant.UserUuid)
+		} else {
+			log.Println("Cannot resolve payer: Individual lookup empty and applicant.UserUuid blank")
+			return apps, errors.New("Cannot resolve payer UUID for demand (empty individual lookup and blank applicant.UserUuid)")
 		}
 	} else {
 		log.Println("No applicants found to assign as payer")
