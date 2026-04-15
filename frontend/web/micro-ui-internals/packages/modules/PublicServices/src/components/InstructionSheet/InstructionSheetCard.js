@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
+import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import InstructionSheetModal from "./InstructionSheetModal";
 import { useInstructionSheetData } from "./hooks/useInstructionSheetData";
 
@@ -67,10 +67,22 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
                   <h3 className="text-xl font-semibold text-gray-900">
                     Fiche d'instruction (par le SRA)
                   </h3>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <LuCircleCheck className="h-4 w-4" />
-                    Terminé
-                  </span>
+                  {instructionData.finalOpinion === "FAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" />
+                      Avis Favorable
+                    </span>
+                  ) : instructionData.finalOpinion === "DEFAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                      <LuCircleX className="h-4 w-4" />
+                      Avis Défavorable
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" />
+                      Terminé
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -128,24 +140,6 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
                 </p>
               </div>
             </div>
-
-            {/* Final Opinion */}
-            {instructionData.finalOpinion && (
-              <div className="border-t border-gray-100 pt-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-700">Avis final :</span>
-                  <span
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-semibold ${
-                      instructionData.finalOpinion === "FAVORABLE"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {instructionData.finalOpinion === "FAVORABLE" ? "Favorable" : "Défavorable"}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {/* History */}
             {instructionData.history && instructionData.history.length > 0 && (

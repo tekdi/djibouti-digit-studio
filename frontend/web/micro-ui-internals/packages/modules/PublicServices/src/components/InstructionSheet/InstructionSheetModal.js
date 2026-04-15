@@ -24,10 +24,15 @@ const InstructionSheetModal = ({
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
+    pcoNumber: "",
     applicantName: "",
     projectType: "",
     plotLocation: "",
     landTitleNumber: "",
+    region: "",
+    ces: "",
+    cos: "",
+    destination: "",
     documents: DOCUMENTS_LIST.map((doc) => ({
       id: doc.id,
       observations: [],
@@ -107,10 +112,15 @@ const InstructionSheetModal = ({
   useEffect(() => {
     if (existingData) {
       setFormData({
+        pcoNumber: existingData.pcoNumber || "",
         applicantName: existingData.applicantName || "",
         projectType: existingData.projectType || "",
         plotLocation: existingData.plotLocation || "",
         landTitleNumber: existingData.landTitleNumber || "",
+        region: existingData.region || "",
+        ces: existingData.ces || "",
+        cos: existingData.cos || "",
+        destination: existingData.destination || "",
         documents: existingData.documents || DOCUMENTS_LIST.map((doc) => ({
           id: doc.id,
           observations: [],

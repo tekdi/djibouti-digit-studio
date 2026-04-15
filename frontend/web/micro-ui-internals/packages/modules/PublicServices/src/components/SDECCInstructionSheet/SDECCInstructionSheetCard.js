@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
+import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import SDECCInstructionSheetModal from "./SDECCInstructionSheetModal";
 import { useSDECCInstructionSheetData } from "./hooks/useSDECCInstructionSheetData";
 
@@ -67,10 +67,22 @@ const SDECCInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
                   <h3 className="text-xl font-semibold text-gray-900">
                     Fiche d'instruction SDECC (Structure)
                   </h3>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <LuCircleCheck className="h-4 w-4" />
-                    Terminé
-                  </span>
+                  {instructionData.finalOpinion === "FAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" />
+                      Avis Favorable
+                    </span>
+                  ) : instructionData.finalOpinion === "DEFAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                      <LuCircleX className="h-4 w-4" />
+                      Avis Défavorable
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" />
+                      Terminé
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

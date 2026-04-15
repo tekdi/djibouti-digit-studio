@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye } from "react-icons/lu";
+import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye } from "react-icons/lu";
 import PSSDECCInstructionSheetModal from "./PSSDECCInstructionSheetModal";
 
 var PSSDECCInstructionSheetCard = function (props) {
@@ -50,9 +50,19 @@ var PSSDECCInstructionSheetCard = function (props) {
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-xl font-semibold text-gray-900">Fiche technique SDECC — Surélévation</h3>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <LuCircleCheck className="h-4 w-4" /> Terminé
-                  </span>
+                  {data.finalOpinion === "FAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" /> Avis Favorable
+                    </span>
+                  ) : data.finalOpinion === "DEFAVORABLE" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                      <LuCircleX className="h-4 w-4" /> Avis Défavorable
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <LuCircleCheck className="h-4 w-4" /> Terminé
+                    </span>
+                  )}
                 </div>
                 <p className="text-sm text-gray-500">ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span></p>
               </div>

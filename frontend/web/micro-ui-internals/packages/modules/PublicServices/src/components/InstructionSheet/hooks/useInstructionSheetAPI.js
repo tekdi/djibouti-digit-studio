@@ -31,9 +31,15 @@ export const useInstructionSheetAPI = (tenantId, serviceCode, applicationNumber)
           const existingHistory = existingData.history || [];
           instructionSheetData = {
             ...existingData,
+            pcoNumber: formData.pcoNumber,
             applicantName: formData.applicantName,
             projectType: formData.projectType,
             plotLocation: formData.plotLocation,
+            landTitleNumber: formData.landTitleNumber,
+            region: formData.region,
+            ces: formData.ces,
+            cos: formData.cos,
+            destination: formData.destination,
             documents: formData.documents,
             conformity: formData.conformity,
             finalComments: formData.finalComments,
@@ -48,9 +54,15 @@ export const useInstructionSheetAPI = (tenantId, serviceCode, applicationNumber)
         } else {
           // Create new sheet
           instructionSheetData = {
+            pcoNumber: formData.pcoNumber,
             applicantName: formData.applicantName,
             projectType: formData.projectType,
             plotLocation: formData.plotLocation,
+            landTitleNumber: formData.landTitleNumber,
+            region: formData.region,
+            ces: formData.ces,
+            cos: formData.cos,
+            destination: formData.destination,
             documents: formData.documents,
             conformity: formData.conformity,
             finalComments: formData.finalComments,
