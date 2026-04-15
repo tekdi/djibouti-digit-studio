@@ -7,6 +7,7 @@ import { LuClipboardList, LuRefreshCw } from "react-icons/lu";
 import Filters from "./components/Filters";
 import ErrorDisplay from "./components/ErrorDisplay";
 import ApplicationsTable from "./components/ApplicationsTable";
+import { getNewStatusesForUser } from "./utils";
 
 const NewApplications = () => {
   const { t } = useTranslation();
@@ -41,7 +42,10 @@ const NewApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT"];
+  // Role-aware: BCIE HOD also sees BCIE_HOD_REVIEW as "new" because they are the
+  // assignee at that step.
+  const userRoles = Digit.UserService.getUser()?.info?.roles || [];
+  const newStatuses = useMemo(() => getNewStatusesForUser(userRoles), [userRoles]);
 
   const newApplications = useMemo(() => {
     return applications.filter((app) => {

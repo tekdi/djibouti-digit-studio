@@ -57,7 +57,7 @@ const ApplicationHeader = ({
   const terrainLocationRaw =
     (terrainDetailsFirst && terrainDetailsFirst.terrainLocation) ||
     (landProjectDetailsFirst && landProjectDetailsFirst.siteLocation) ||
-    (propertyDetailsFirst && propertyDetailsFirst.constructionLocation) ||
+    (propertyDetailsFirst && (propertyDetailsFirst.constructionLocation || propertyDetailsFirst.propertyLocation)) ||
     (originalPermitFirst && (originalPermitFirst.localisation || originalPermitFirst.location)) ||
     (projectDetailsFirst && (projectDetailsFirst.projectLocation || projectDetailsFirst.location)) ||
     (terrainVerifFirst && (terrainVerifFirst.terrainLocation || terrainVerifFirst.location)) ||

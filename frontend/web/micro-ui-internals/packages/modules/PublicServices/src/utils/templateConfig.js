@@ -386,11 +386,11 @@ export const checklistByService = [
   },
   {
     service: "BPA_CCG",
-    checklist: ["customAgentChecklist"],
+    checklist: ["customCCGVisitChecklist"],
   },
   {
     service: "BPA_PV",
-    checklist: ["customAgentChecklist"],
+    checklist: ["customPVImplantationChecklist"],
   },
   {
     // p12

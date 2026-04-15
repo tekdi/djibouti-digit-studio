@@ -35,7 +35,11 @@
       "Bash(TOKEN=4f00dc97-d0a3-49a7-a316-20c0f3a68654 node:*)",
       "Bash(awk -F: '$2 >= 2325 && $2 < 2900')",
       "Bash(awk -F: 'NR>1 {print}')",
-      "Bash(awk 'NR==2325,/^    }$/{print NR\":\"$0}' \"C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/djibouti-egov-mdms-data/data/dj/DigitStudio/DocumentConfig.json\")"
+      "Bash(awk 'NR==2325,/^    }$/{print NR\":\"$0}' \"C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/djibouti-egov-mdms-data/data/dj/DigitStudio/DocumentConfig.json\")",
+      "Bash(kill %1)",
+      "Bash(pkill -f \"kubectl logs\")",
+      "Bash(kubectl cp:*)",
+      "Bash(awk '$4 >= 2 {print $1, \"restarts=\"$4}')"
     ]
   }
 }

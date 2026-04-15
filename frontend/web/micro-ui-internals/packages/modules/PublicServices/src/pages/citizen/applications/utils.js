@@ -142,21 +142,35 @@ export const getServiceIcon = (businessService) => {
 };
 
 // Simplified status mapping based on workflow
+const GRANTED_STATUSES = new Set([
+  "PERMIT_GRANTED",
+  "CERTIFICATE_GRANTED",
+  "CERTIFICATE_ISSUED",
+  "APPROVED",
+  "PV_APPROVED",
+  "APE_APPROVED",
+]);
+
+const REJECTED_STATUSES = new Set([
+  "REJECTED",
+  "PERMIT_REJECTED",
+  "CERTIFICATE_REJECTED",
+  "INSPECTION_REJECTED",
+  "PV_REJECTED",
+  "APE_REJECTED",
+  "APPLICATION_REJECTED",
+  "FINAL_REJECTED",
+]);
+
 export const getSimplifiedStatus = (status) => {
+  if (!status) return "in_progress";
   if (status === "INITIATED") return "draft";
-  if (status === "PERMIT_GRANTED" || status === "CERTIFICATE_ISSUED") return "granted";
-  if (status === "PERMIT_REJECTED" || status === "CERTIFICATE_REJECTED") return "rejected";
+  if (GRANTED_STATUSES.has(status)) return "granted";
+  if (REJECTED_STATUSES.has(status)) return "rejected";
+  // Any status that ends with _REJECTED is treated as rejected (covers service-specific
+  // rejection states we may not have enumerated above).
+  if (status.endsWith("_REJECTED")) return "rejected";
   if (status === "AWAITING_CITIZEN_PAYMENT") return "payment_pending";
-  if (
-    status === "INITIATED" ||
-    (status !== "PERMIT_GRANTED" &&
-      status !== "PERMIT_REJECTED" &&
-      status !== "CERTIFICATE_ISSUED" &&
-      status !== "CERTIFICATE_REJECTED" &&
-      status !== "AWAITING_CITIZEN_PAYMENT")
-  ) {
-    return "in_progress";
-  }
   return "in_progress";
 };
 

@@ -10,11 +10,11 @@ import {
 } from "react-icons/lu";
 
 const HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES = [
-  "BPA_PR", "BPA_CCR", "BPA_PCS", "BPA_PF", "BPA_PD", "BPA_ATARR",
+  "BPA_PR", "BPA_CCR", "BPA_PCS", "BPA_PD", "BPA_ATARR",
   "BPA_PV", "BPA_APE", "BPA_CCE", "BPA_CCP", "BPA_CCG",
 ];
 
-const HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES = ["BPA_CCP", "BPA_PD"];
+const HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES = ["BPA_CCP", "BPA_PD", "BPA_PCS"];
 
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }) => {
   const userDetails = Digit.UserService.getUser();

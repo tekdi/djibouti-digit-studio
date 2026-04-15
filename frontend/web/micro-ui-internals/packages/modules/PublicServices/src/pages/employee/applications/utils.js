@@ -118,6 +118,30 @@ export const getServiceInfo = (businessService) => {
   );
 };
 
+// Statuses considered "Nouveau" (needs immediate attention) on the employee
+// dashboard. Some statuses are role-specific — e.g. BCIE_HOD_REVIEW is only a
+// "new" item for the BCIE HOD whose action is required at that step. Pass the
+// logged-in user's roles to get the correctly extended list.
+const BASE_NEW_STATUSES = [
+  "AGENT_NOT_ASSIGNED",
+  "APPLICATION_SUBMITTED",
+  "BPA_SDECC_SUB_DIRECTOR_REVIEW",
+  "PENDING_ACTION",
+  "PENDING_ACTION_BY_AGENT",
+];
+
+export const getNewStatusesForUser = (roles = []) => {
+  const codes = (roles || []).map((r) => r?.code).filter(Boolean);
+  const extra = [];
+  if (codes.includes("BCIE_HOD")) extra.push("BCIE_HOD_REVIEW");
+  // SDATU sub-director: BPA_SRA_SUB_DIRECTOR_REVIEW ("Révision par le Sous-directeur SDATU")
+  // is awaiting their action, so it should appear in the "Nouveau" bucket too.
+  if (codes.includes("BPA_SRA_SUB_DIRECTOR") || codes.includes("BPA_SUB_DIRECTOR")) {
+    extra.push("BPA_SRA_SUB_DIRECTOR_REVIEW");
+  }
+  return [...BASE_NEW_STATUSES, ...extra];
+};
+
 export const getSimplifiedStatus = (status) => {
   const statusMap = {
     INITIATED: "pending",
@@ -149,6 +173,8 @@ export const getSimplifiedStatus = (status) => {
     PENDING_REVIEW_BY_SRA_AGENT: "pending",
     PENDING_REVIEW_BY_SUB_DIRECTOR: "pending",
     PENDING_REVIEW_BY_DIRECTOR: "pending",
+    PENDING_REVIEW_BY_DGDCF: "pending",
+    SENT_TO_TOPOGRAPHY: "pending",
     AWAITING_ON_COMMISSIONER: "pending",
     AWAITING_ON_SUB_DIRECTOR_REVIEW: "pending",
     AWAITING_ON_SRA_HOD_REVIEW: "pending",
@@ -169,6 +195,8 @@ export const getSimplifiedStatus = (status) => {
     APPROVED: "approved",
     REJECTED: "rejected",
     PERMIT_REJECTED: "rejected",
+    INSPECTION_REJECTED: "rejected",
+    VERIFICATION_REJECTED: "rejected",
     PERMIT_GRANTED: "completed",
     CERTIFICATE_GRANTED: "completed",
     CERTIFICATE_ISSUED: "completed",
@@ -522,6 +550,20 @@ export const getStatusInfo = (status) => {
       icon: LuClock,
       progress: 70,
     },
+    PENDING_REVIEW_BY_DGDCF: {
+      label: "En attente de révision par DGDCF",
+      color: "text-amber-600",
+      bgColor: "bg-amber-50",
+      icon: LuClock,
+      progress: 60,
+    },
+    SENT_TO_TOPOGRAPHY: {
+      label: "Transmis au service Topographie",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
+      icon: LuMapPin,
+      progress: 55,
+    },
     DIRECTOR_APPROVAL_PENDING: {
       label: "En attente d'approbation du Directeur",
       color: "text-amber-600",
@@ -610,6 +652,20 @@ export const getStatusInfo = (status) => {
     },
     CERTIFICATE_REJECTED: {
       label: "Certificat rejeté",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleX,
+      progress: 0,
+    },
+    INSPECTION_REJECTED: {
+      label: "Inspection rejetée",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
+      icon: LuCircleX,
+      progress: 0,
+    },
+    VERIFICATION_REJECTED: {
+      label: "Vérification rejetée",
       color: "text-red-600",
       bgColor: "bg-red-50",
       icon: LuCircleX,

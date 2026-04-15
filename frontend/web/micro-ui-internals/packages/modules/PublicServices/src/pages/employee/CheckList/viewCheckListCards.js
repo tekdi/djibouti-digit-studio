@@ -11,6 +11,8 @@ import { SDECCInstructionSheetCard } from "../../../components/SDECCInstructionS
 import { APEInstructionSheetCard } from "../../../components/APEInstructionSheet";
 import { CCRChecklistCard } from "../../../components/CCRChecklist";
 import { PSSDECCInstructionSheetCard } from "../../../components/PSSDECCInstructionSheet";
+import { PVImplantationChecklistCard } from "../../../components/PVImplantationChecklist";
+import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -166,6 +168,26 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 }
               });
             }
+
+            // Add PV Implantation checklist if configured (Procès-Verbal d'Implantation)
+            if (allowedCodes.includes("customPVImplantationChecklist")) {
+              items.push({
+                id: "custom-pv-implantation-checklist",
+                code: "customPVImplantationChecklist",
+                clientId: "PV_IMPLANTATION_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 6 }
+              });
+            }
+
+            // Add CCG Visit checklist if configured (Procès-Verbal de Visite — Certificat de Conformité Générale)
+            if (allowedCodes.includes("customCCGVisitChecklist")) {
+              items.push({
+                id: "custom-ccg-visit-checklist",
+                code: "customCCGVisitChecklist",
+                clientId: "CCG_VISIT_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 7 }
+              });
+            }
           }
 
           setCardItems(items);
@@ -290,6 +312,30 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customCCRChecklist") {
             return (
               <CCRChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customPVImplantationChecklist") {
+            return (
+              <PVImplantationChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customCCGVisitChecklist") {
+            return (
+              <CCGVisitChecklistCard
                 key={index}
                 service={service}
                 state={state}

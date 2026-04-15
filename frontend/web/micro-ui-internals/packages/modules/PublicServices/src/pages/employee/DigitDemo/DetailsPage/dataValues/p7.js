@@ -1,5 +1,6 @@
 export const p7Data = {
-  // Define which blocks should be shown for P7 (BPA_PF)
+  // BPA_PF (Permis de Clôture) — serviceDetails only carries:
+  // area, perimeter, region, siteLocation, tfNo
   blocks: {
     landandProjectDesignDetails: {
       title: "Détails du projet",
@@ -7,26 +8,21 @@ export const p7Data = {
       color: "purple",
       fields: [
         {
-          label: "Type de travail",
-          key: "workType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Usage prévu",
-          key: "intededUse",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Surface couverte",
-          key: "coveredProjectArea",
-          icon: "LuMapPin",
-          suffix: " m²"
+          label: "Numéro de titre foncier",
+          key: "tfNo",
+          icon: "LuFileText"
         },
         {
           label: "Surface du terrain",
-          key: "plotArea",
+          key: "area",
           icon: "LuMapPin",
           suffix: " m²"
+        },
+        {
+          label: "Périmètre",
+          key: "perimeter",
+          icon: "LuMapPin",
+          suffix: " ml"
         },
         {
           label: "Région",
@@ -37,74 +33,6 @@ export const p7Data = {
           label: "Localisation",
           key: "siteLocation",
           icon: "LuMapPin"
-        },
-        {
-          label: "Statut légal",
-          key: "legalStatus",
-          icon: "LuFileText"
-        },
-        {
-          label: "Titre foncier définitif",
-          key: "definitiveLandTitle",
-          icon: "LuFileText"
-        },
-        {
-          label: "Certificat d'enregistrement",
-          key: "registrationCertificate",
-          icon: "LuFileText"
-        },
-        {
-          label: "Nombre d'unités",
-          key: "noOfUnits",
-          icon: "LuHash"
-        },
-        {
-          label: "CES maximum autorisé",
-          key: "maximumAuthorizedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS maximum autorisé",
-          key: "maximumAuthorizedCos",
-          icon: "LuHash"
-        },
-        {
-          label: "CES projeté",
-          key: "projectedCes",
-          icon: "LuHash"
-        },
-        {
-          label: "COS projeté",
-          key: "projectedCos",
-          icon: "LuHash"
-        },
-        {
-          label: "Coût par m²",
-          key: "constructionCostPerSqMt",
-          icon: "LuHash",
-          suffix: " Fdj"
-        }
-      ]
-    },
-    legalEntityDetails: {
-      title: "Entité légale",
-      icon: "LuBuilding",
-      color: "teal",
-      fields: [
-        {
-          label: "Raison sociale",
-          key: "corporateName",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Type de société",
-          key: "companyType",
-          icon: "LuBuilding"
-        },
-        {
-          label: "Numéro d'enregistrement",
-          key: "registrationNumber",
-          icon: "LuHash"
         }
       ]
     }
