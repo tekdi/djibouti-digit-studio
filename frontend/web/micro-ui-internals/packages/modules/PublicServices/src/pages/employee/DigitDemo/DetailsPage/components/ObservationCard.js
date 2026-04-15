@@ -93,7 +93,7 @@ const ObservationCard = ({
 
       <div className="p-6 space-y-6 flex-1">
         {hasAnyContent ? (
-          <>
+          <React.Fragment>
             <ObservationsDisplay observations={observationData.observations} />
             <FileList
               files={observationData.files}
@@ -110,7 +110,7 @@ const ObservationCard = ({
               loadingFiles={loadingFiles}
               isEditable={false}
             />
-          </>
+          </React.Fragment>
         ) : (
           <p className="text-sm text-gray-500 italic">
             {verdict
