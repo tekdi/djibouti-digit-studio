@@ -20,7 +20,8 @@ const ProjectDataView = ({
   status,
   applicationNumber,
   businessService,
-  singleColumn = false
+  singleColumn = false,
+  hideProjectDetailsBlock = false,
 }) => {
   const { t } = useTranslation();
 
@@ -124,11 +125,27 @@ const ProjectDataView = ({
   // Blocks that are now shown in the "Informations du demandeur" card in ProjectTab,
   // so we should not duplicate them here.
   const EXCLUDED_BLOCKS = new Set(["designOfficeDetailing", "legalEntityDetails"]);
+  // When the SRA Fiche d'instruction has been filled, the "Détails du projet"
+  // section is rendered from its values instead of the raw submission data.
+  // These are the block keys that map to that section across services.
+  const PROJECT_DETAILS_BLOCKS = new Set([
+    "landandProjectDesignDetails",
+    "projectDetails",
+    "terrainDetails",
+    "constructionDetails",
+    "simpleConstructionDetails",
+    "propertyDetails",
+    "elevationDetails",
+    "demolitionDetails",
+    "projectFileDetails",
+    "layoutDetails",
+  ]);
 
   // Render blocks based on service configuration
   if (hardcodedData && hardcodedData.blocks) {
     Object.entries(hardcodedData.blocks).forEach(([blockKey, blockConfig]) => {
       if (EXCLUDED_BLOCKS.has(blockKey)) return;
+      if (hideProjectDetailsBlock && PROJECT_DETAILS_BLOCKS.has(blockKey)) return;
 
       const data = serviceDetails[blockKey];
 

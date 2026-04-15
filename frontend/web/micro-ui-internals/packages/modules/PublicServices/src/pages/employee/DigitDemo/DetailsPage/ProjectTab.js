@@ -1,7 +1,58 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { LuUser, LuBuilding, LuPenTool, LuPhone, LuMail, LuHash, LuMapPin } from "react-icons/lu";
+import { LuUser, LuBuilding, LuPenTool, LuPhone, LuMail, LuHash, LuMapPin, LuFileText } from "react-icons/lu";
 import ProjectDataView from "./ProjectDataView";
+
+// Block rendered from the SRA Fiche d'instruction. Replaces the raw
+// `landandProjectDesignDetails` / `projectDetails` block on the Demande tab
+// so the reviewer sees the SRA-curated values rather than the applicant's
+// initial submission data.
+const FicheSRAProjectBlock = ({ fiche }) => {
+  if (!fiche) return null;
+
+  // Order requested:
+  //   1) Numéro du Permis de Construire
+  //   2) Nom et Prénoms du Pétitionnaire
+  //   3) Type de Projet
+  //   4) Localisation de la Parcelle
+  //   5) Région
+  //   6) Numéro du Titre Foncier
+  //   7) Coefficient d'Emprise au Sol (C.E.S)
+  //   8) Coefficient d'Occupation du Sol (C.O.S)
+  //   9) Destination du Projet
+  const rows = [
+    { label: "Numéro du Permis de Construire", value: fiche.pcoNumber },
+    { label: "Nom et Prénoms du Pétitionnaire", value: fiche.applicantName },
+    { label: "Type de Projet", value: fiche.projectType },
+    { label: "Localisation de la Parcelle", value: fiche.plotLocation },
+    { label: "Région", value: fiche.region },
+    { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
+    { label: "Coefficient d'Emprise au Sol (C.E.S)", value: fiche.ces },
+    { label: "Coefficient d'Occupation du Sol (C.O.S)", value: fiche.cos },
+    { label: "Destination du Projet", value: fiche.destination },
+  ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+          <LuFileText className="w-4 h-4 text-purple-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Détails du projet</h3>
+      </div>
+      <div className="space-y-1">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+            <span className="text-sm font-medium text-gray-600">{r.label}</span>
+            <span className="text-sm font-semibold text-gray-900 text-right">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const companyTypeMap = {
   "BPA_COMPANYTYPE_COMPANYTYPE_SARL": "SARL",
@@ -154,8 +205,12 @@ const ProjectTab = ({
           )}
         </div>
 
-        {/* RIGHT: Service-specific data blocks (first block only to pair with left) */}
-        <div>
+        {/* RIGHT: Service-specific data blocks. When the SRA Fiche d'instruction
+            has been filled, its fields replace the "Détails du projet" block
+            sourced from the raw submission data — the reviewer sees the curated
+            values. */}
+        <div className="space-y-6">
+          <FicheSRAProjectBlock fiche={response?.additionalDetails?.instructionSheet} />
           <ProjectDataView
             serviceCode={serviceCode}
             data={applicationData}
@@ -163,6 +218,7 @@ const ProjectTab = ({
             applicationNumber={response?.applicationNumber}
             businessService={response?.businessService?.toUpperCase()}
             singleColumn={true}
+            hideProjectDetailsBlock={!!response?.additionalDetails?.instructionSheet}
           />
         </div>
       </div>
