@@ -354,7 +354,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_PL",
-    checklist: ["calculationFees", "customCommissionersChecklist"],
+    checklist: ["customInstructionSheet", "calculationFees", "customCommissionersChecklist"],
   },
   {
     service: "BPA_PCS",
