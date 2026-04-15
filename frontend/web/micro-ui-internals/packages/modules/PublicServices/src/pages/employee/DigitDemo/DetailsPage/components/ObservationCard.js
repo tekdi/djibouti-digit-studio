@@ -1,5 +1,5 @@
 import React from "react";
-import { LuBuilding2, LuClock, LuCircleCheck, LuCircleX } from "react-icons/lu";
+import { LuBuilding2, LuClock, LuCircleCheck, LuCircleX, LuClock3 } from "react-icons/lu";
 import ObservationsDisplay from "./ObservationsDisplay";
 import FileList from "./FileList";
 
@@ -12,6 +12,13 @@ const VERDICT_STYLES = {
     badge: "bg-red-100 text-red-700 border-red-200",
     icon: LuCircleX,
   },
+};
+
+// Badge shown when the commissioner hasn't acted yet.
+const PENDING_BADGE = {
+  badge: "bg-amber-100 text-amber-700 border-amber-200",
+  icon: LuClock3,
+  label: "En attente",
 };
 
 const ObservationCard = ({
@@ -27,6 +34,11 @@ const ObservationCard = ({
 
   const verdictStyle = verdict ? VERDICT_STYLES[verdict.verdict] : null;
   const VerdictIcon = verdictStyle?.icon;
+  const PendingIcon = PENDING_BADGE.icon;
+
+  const hasObservationsText = !!(observationData.observations && String(observationData.observations).trim());
+  const hasFiles = Array.isArray(observationData.files) && observationData.files.length > 0;
+  const hasAnyContent = hasObservationsText || hasFiles;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden flex flex-col">
@@ -40,12 +52,19 @@ const ObservationCard = ({
               <h2 className="text-xl font-bold text-gray-900">
                 {commissionerName}
               </h2>
-              {verdict && verdictStyle && (
+              {verdict && verdictStyle ? (
                 <span
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${verdictStyle.badge}`}
                 >
                   {VerdictIcon && <VerdictIcon className="h-3.5 w-3.5" />}
                   {verdict.label}
+                </span>
+              ) : (
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${PENDING_BADGE.badge}`}
+                >
+                  <PendingIcon className="h-3.5 w-3.5" />
+                  {PENDING_BADGE.label}
                 </span>
               )}
             </div>
@@ -73,22 +92,32 @@ const ObservationCard = ({
       </div>
 
       <div className="p-6 space-y-6 flex-1">
-        <ObservationsDisplay observations={observationData.observations} />
-        <FileList
-          files={observationData.files}
-          fileDescriptions={observationData.files?.reduce((acc, file) => {
-            if (file.description) {
-              acc[file.fileStoreId] = file.description;
-            }
-            return acc;
-          }, {}) || {}}
-          onDescriptionChange={() => {}}
-          onPreview={onPreview}
-          onDownload={onDownload}
-          onRemove={() => {}}
-          loadingFiles={loadingFiles}
-          isEditable={false}
-        />
+        {hasAnyContent ? (
+          <>
+            <ObservationsDisplay observations={observationData.observations} />
+            <FileList
+              files={observationData.files}
+              fileDescriptions={observationData.files?.reduce((acc, file) => {
+                if (file.description) {
+                  acc[file.fileStoreId] = file.description;
+                }
+                return acc;
+              }, {}) || {}}
+              onDescriptionChange={() => {}}
+              onPreview={onPreview}
+              onDownload={onDownload}
+              onRemove={() => {}}
+              loadingFiles={loadingFiles}
+              isEditable={false}
+            />
+          </>
+        ) : (
+          <p className="text-sm text-gray-500 italic">
+            {verdict
+              ? "Aucune observation ni document ajoutés."
+              : "Ce commissaire n'a pas encore soumis d'avis."}
+          </p>
+        )}
       </div>
     </div>
   );

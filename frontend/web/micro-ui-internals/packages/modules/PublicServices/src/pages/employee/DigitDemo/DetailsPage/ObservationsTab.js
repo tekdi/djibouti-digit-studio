@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LuFileText } from "react-icons/lu";
 import { PDFPreview } from "../../../../components/ChecklistCards/Common";
-import { checkIfCommissioner, getCurrentUserCommissionerRole, getOrganizationInfo } from "./utils/commissionerUtils";
+import { checkIfCommissioner, getCurrentUserCommissionerRole, getOrganizationInfo, COMMISSIONER_ORGANIZATIONS } from "./utils/commissionerUtils";
 import { useObservations } from "./hooks/useObservations";
 import { useFileOperations } from "./hooks/useFileOperations";
 import { useSaveObservations } from "./hooks/useSaveObservations";
@@ -192,17 +192,59 @@ const ObservationsTab = ({ response, queryStrings, timelineWorkflowDetails, work
     response?.processInstance
   );
 
-  // For non-commissioners, show only read-only view
+  // Build one card per commissioner this application was sent to.
+  // Cards show status = PENDING / FAVORABLE / DEFAVORABLE even when the commissioner
+  // has not added an observation or files. This gives a quick at-a-glance view.
+  // selectedCommissioners is a list of short names ("SDECC", "DGDCF", ...), which we
+  // map to the role code ("BPA_SDECC_COMM", ...).
+  const selectedCommissioners =
+    response?.additionalDetails?.commissionersChecklist?.selectedCommissioners || [];
+  const shortNameToRoleCode = Object.entries(COMMISSIONER_ORGANIZATIONS).reduce((acc, [roleCode, org]) => {
+    acc[org.name] = roleCode;
+    return acc;
+  }, {});
+  const selectedRoleCodes = selectedCommissioners
+    .map((shortName) => shortNameToRoleCode[shortName])
+    .filter(Boolean);
+  // Also include any role that already has an observation or verdict, in case the
+  // selectedCommissioners list is out of date.
+  observationsArray.forEach((obs) => {
+    if (obs.updatedByRoleCode && !selectedRoleCodes.includes(obs.updatedByRoleCode)) {
+      selectedRoleCodes.push(obs.updatedByRoleCode);
+    }
+  });
+  Object.keys(verdictsByRole).forEach((roleCode) => {
+    if (!selectedRoleCodes.includes(roleCode)) selectedRoleCodes.push(roleCode);
+  });
+
+  const cardsForAllCommissioners = selectedRoleCodes.map((roleCode) => {
+    const org = getOrganizationInfo(roleCode);
+    const observation = observationsArray.find((o) => o.updatedByRoleCode === roleCode);
+    return {
+      roleCode,
+      observationData: observation || {
+        updatedByRoleCode: roleCode,
+        updatedByOrganization: org,
+        updatedByName: org.fullName,
+        observations: "",
+        files: [],
+      },
+      verdict: verdictsByRole[roleCode],
+    };
+  });
+
+  // For non-commissioners, show only read-only view — but always render a card for
+  // every selected commissioner so the reviewer can see the overall state.
   if (!isCommissioner) {
     return (
       <div className="space-y-6">
-        {hasObservations ? (
+        {cardsForAllCommissioners.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {observationsArray.map((observationData, index) => (
+            {cardsForAllCommissioners.map(({ roleCode, observationData, verdict }) => (
               <ObservationCard
-                key={index}
+                key={roleCode}
                 observationData={observationData}
-                verdict={verdictsByRole[observationData.updatedByRoleCode]}
+                verdict={verdict}
                 onPreview={handlePreviewFile}
                 onDownload={handleDownloadFile}
                 loadingFiles={loadingFiles}

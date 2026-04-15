@@ -333,7 +333,7 @@ const OpenView = () => {
       <PaymentLoadingOverlay isVisible={isSubmitting} />
       
       <div>
-        <form id="payment-form" onSubmit={handlePaymentSubmit} noValidate className="max-w-6xl mx-auto space-y-6">
+        <form id="payment-form" onSubmit={handlePaymentSubmit} noValidate className="max-w-6xl mx-auto space-y-6 pt-16">
           
           {/* Header Section */}
           <div className="bg-primary rounded-2xl p-6 md:p-8 shadow-xl">

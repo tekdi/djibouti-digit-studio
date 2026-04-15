@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useApplications from "../applications/useApplications";
-import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser } from "../applications/utils";
+import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser, getNewStatusesForUser } from "../applications/utils";
 import {
   LuFileText,
   LuClock,
@@ -46,7 +46,9 @@ const EmployeeDashboard = () => {
 
   // Calculate statistics
   const counts = useMemo(() => {
-    const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT"];
+    // Role-aware: BCIE_HOD sees BCIE_HOD_REVIEW as "Nouveau" because that step
+    // is awaiting their action.
+    const newStatuses = getNewStatusesForUser(userDetails?.info?.roles || []);
     const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
     let total = applications.length;

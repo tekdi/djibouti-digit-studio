@@ -12,6 +12,18 @@ var getCommissionerName = function (bs) {
   return COMMISSIONER_NAMES[last] || null;
 };
 
+// Workflow actions that represent a commissioner's verdict on an application.
+// When an entry uses one of these actions AND is scoped to a commissioner's
+// businessService (e.g. BPA_PCO_SIMPLE_SDECC), we show the verdict label
+// ("Avis Favorable par SDECC") instead of the generic "Demande envoyée au SDECC".
+var VERDICT_ACTIONS_FAVORABLE = ["CONFORM_APPLICATION", "APPROVE", "APPROVE_APPLICATION"];
+var VERDICT_ACTIONS_DEFAVORABLE = ["NON_CONFORM", "REJECT_APPLICATION", "REJECT"];
+var getVerdictForAction = function (action) {
+  if (VERDICT_ACTIONS_FAVORABLE.indexOf(action) !== -1) return "Avis Favorable";
+  if (VERDICT_ACTIONS_DEFAVORABLE.indexOf(action) !== -1) return "Avis D\u00e9favorable";
+  return null;
+};
+
 var ActivitiesTab = function (props) {
   var timeline = props.timeline, response = props.response, isCitizen = props.isCitizen;
   var t = useTranslation().t;
@@ -68,19 +80,24 @@ var ActivitiesTab = function (props) {
         }
       }
 
-      // Check if any of these are commissioner parallel entries
+      // Only group entries when they represent a "send to commissioners" fan-out:
+      //   - multiple entries at the same timestamp
+      //   - OR a single SEND_TO_COMMISSIONER action.
+      // Commissioner verdict actions (CONFORM_APPLICATION / NON_CONFORM / ...) are
+      // rendered as individual entries so we can show "Avis Favorable par SDECC"
+      // instead of the misleading "Demande envoyée au SDECC".
       var names = [];
-      var hasParallel = false;
+      var hasSendFanout = false;
       for (var k = 0; k < sameTimeEntries.length; k++) {
         var e2 = sameTimeEntries[k];
         var cn = getCommissionerName(e2?.businessService);
-        if (cn && names.indexOf(cn) === -1) { names.push(cn); hasParallel = true; }
+        if (cn && names.indexOf(cn) === -1) names.push(cn);
         var a2 = e2?.performedAction || "";
-        if (a2 === "SEND_TO_COMMISSIONER") hasParallel = true;
+        if (a2 === "SEND_TO_COMMISSIONER") hasSendFanout = true;
       }
-
-      if (hasParallel && names.length > 0) {
-        // Group everything at this timestamp into one commissioner entry
+      var isMultiCommissionerFanout = names.length > 1; // truly parallel fan-out
+      if ((hasSendFanout || isMultiCommissionerFanout) && names.length > 0) {
+        // Group everything at this timestamp into one "sent to commissioners" entry
         result.push({ type: "parallel", representative: current, commissionerNames: names });
         i = j;
       } else {
@@ -107,7 +124,16 @@ var ActivitiesTab = function (props) {
           if (entry.type === "parallel") {
             label = "Demande envoy\u00e9e au " + entry.commissionerNames.join(", ");
           } else {
-            label = getDisplayAction(inst);
+            // Commissioner verdict action (CONFORM_APPLICATION, NON_CONFORM, ...)
+            // scoped to a commissioner's businessService — show the verdict.
+            var action = inst?.performedAction || inst?.action;
+            var verdictLabel = getVerdictForAction(action);
+            var cn = getCommissionerName(inst?.businessService);
+            if (verdictLabel && cn) {
+              label = verdictLabel + " par " + cn;
+            } else {
+              label = getDisplayAction(inst);
+            }
           }
 
           return (

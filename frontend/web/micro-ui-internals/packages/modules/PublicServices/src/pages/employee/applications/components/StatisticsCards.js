@@ -1,8 +1,10 @@
 import React from "react";
 import { LuFolder, LuCircle, LuClock, LuCircleCheck } from "react-icons/lu";
+import { getNewStatusesForUser } from "../utils";
 
 const StatisticsCards = ({ applications, totalCount }) => {
-  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT"];
+  // Role-aware "Nouveau" set (BCIE_HOD also sees BCIE_HOD_REVIEW as new).
+  const newStatuses = getNewStatusesForUser(Digit.UserService.getUser()?.info?.roles || []);
   const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
   const newApplicationsCount = applications.filter(

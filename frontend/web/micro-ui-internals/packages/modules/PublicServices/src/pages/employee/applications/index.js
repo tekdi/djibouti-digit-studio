@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useApplications from "./useApplications";
-import { getServiceInfo } from "./utils";
+import { getServiceInfo, getNewStatusesForUser } from "./utils";
 import axios from "axios";
 import {
   LuFolderOpen,
@@ -48,7 +48,8 @@ const EmployeeApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  const newStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT"];
+  // Role-aware "Nouveau" set (BCIE_HOD also sees BCIE_HOD_REVIEW as new).
+  const newStatuses = getNewStatusesForUser(Digit.UserService.getUser()?.info?.roles || []);
   const completedStatuses = ["PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
 
   const counts = useMemo(() => {

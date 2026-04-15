@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import useApplications from "./useApplications";
-import { getServiceInfo } from "./utils";
+import { getServiceInfo, getNewStatusesForUser } from "./utils";
 import axios from "axios";
 import { LuClock, LuRefreshCw, LuFolder, LuCircleAlert } from "react-icons/lu";
 
@@ -42,7 +42,12 @@ const InProgressApplications = () => {
     fetchBusinessServices();
   }, []);
 
-  const excludedStatuses = ["AGENT_NOT_ASSIGNED", "APPLICATION_SUBMITTED", "BPA_SDECC_SUB_DIRECTOR_REVIEW", "PENDING_ACTION", "PENDING_ACTION_BY_AGENT", "PERMIT_GRANTED", "CERTIFICATE_GRANTED"];
+  // Exclude anything that's already in "Nouveau" (role-aware) or "Terminés".
+  const excludedStatuses = [
+    ...getNewStatusesForUser(Digit.UserService.getUser()?.info?.roles || []),
+    "PERMIT_GRANTED",
+    "CERTIFICATE_GRANTED",
+  ];
 
   const inProgressApplications = useMemo(() => {
     return applications.filter((app) => {
