@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Calculation from "../../../../../../core/src/pages/citizen/Calculation";
 import { checklistByService } from "../../../../utils/templateConfig.js";
 import { LuReceipt, LuCreditCard } from "react-icons/lu";
+import TaxExemptionSection from "./TaxExemptionSection";
 
 const PaymentsTab = ({
   costEstimation,
@@ -129,6 +130,15 @@ const PaymentsTab = ({
               )}
             </div>
           </div>
+
+          {/* BPA_PL only — tax exemption document section, just after the
+              "Détails du paiement" card. Internally the component returns null
+              for any other service. */}
+          <TaxExemptionSection
+            service={service}
+            applicationNumber={applicationNumber}
+            isViewOnly={isPaymentViewOnly}
+          />
 
           {/* Calculation Fees Section */}
           {hasCalculationFees && (
