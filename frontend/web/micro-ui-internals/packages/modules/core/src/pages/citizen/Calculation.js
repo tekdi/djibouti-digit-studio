@@ -259,12 +259,19 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
     const estimation = calculationResponse?.additionalDetails?.costEstimation;
     const fallbackEstimation = response?.additionalDetails?.costEstimation;
 
+    // Service-specific defaults must match the initial useState:
+    //   PCS → 25 000 FDJ/m² residential | PF → 30 000 FDJ/ml | default → 50 000 FDJ/m²
+    //   PCS / PF / ATARR → 0 seismic, 0 registry service fee (not applicable).
+    const defaultResidential = isPCS ? 25000 : isPF ? 30000 : 50000;
+    const defaultSeismic = isPCS || isPF || isATARR ? 0 : 1;
+    const defaultRegistry = isPCS || isPF || isATARR ? 0 : 5000;
+
     setFeeRates({
-      residentialCost: getValue(estimation?.costPerSqmLivingSpace, fallbackEstimation?.costPerSqmLivingSpace, 50000),
+      residentialCost: getValue(estimation?.costPerSqmLivingSpace, fallbackEstimation?.costPerSqmLivingSpace, defaultResidential),
       commercialCost: getValue(estimation?.costPerSqmCommercialSpace, fallbackEstimation?.costPerSqmCommercialSpace, 30000),
-      royaltyFeePercentage: getValue(estimation?.royaltyPer, fallbackEstimation?.royaltyPer, 1.5),
-      seismicFeePercentage: getValue(estimation?.eqResistancePer, fallbackEstimation?.eqResistancePer, 1),
-      registryServiceFee: getValue(estimation?.registryServiceFee, fallbackEstimation?.registryServiceFee, 5000),
+      royaltyFeePercentage: getValue(estimation?.royaltyPer, fallbackEstimation?.royaltyPer, isPCS ? 2.5 : 1.5),
+      seismicFeePercentage: getValue(estimation?.eqResistancePer, fallbackEstimation?.eqResistancePer, defaultSeismic),
+      registryServiceFee: getValue(estimation?.registryServiceFee, fallbackEstimation?.registryServiceFee, defaultRegistry),
     });
 
     setCostBreakdown((prev) =>
