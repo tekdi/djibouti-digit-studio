@@ -13,6 +13,7 @@ import { CCRChecklistCard } from "../../../components/CCRChecklist";
 import { PSSDECCInstructionSheetCard } from "../../../components/PSSDECCInstructionSheet";
 import { PVImplantationChecklistCard } from "../../../components/PVImplantationChecklist";
 import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
+import { BCIEInspectionChecklistCard } from "../../../components/BCIEInspectionChecklist";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -188,6 +189,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 auditDetails: { createdTime: Date.now() + 7 }
               });
             }
+
+            // Add BCIE Inspection checklist if configured (Certificat de Conformité Électrique)
+            if (allowedCodes.includes("customBCIEInspectionChecklist")) {
+              items.push({
+                id: "custom-bcie-inspection-checklist",
+                code: "customBCIEInspectionChecklist",
+                clientId: "BCIE_INSPECTION_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 8 }
+              });
+            }
           }
 
           setCardItems(items);
@@ -336,6 +347,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customCCGVisitChecklist") {
             return (
               <CCGVisitChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customBCIEInspectionChecklist") {
+            return (
+              <BCIEInspectionChecklistCard
                 key={index}
                 service={service}
                 state={state}

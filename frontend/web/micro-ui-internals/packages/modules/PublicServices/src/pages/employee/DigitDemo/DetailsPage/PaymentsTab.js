@@ -39,6 +39,23 @@ const PaymentsTab = ({
   const totalTaxWithService = Number(costEstimation?.totalTaxWithServiceCharge || totalTax || 0);
   const hasCalculationResults = totalProjectValue > 0 || totalTax > 0 || royaltyFee > 0;
 
+  // Paid check: application has moved past the payment step.
+  // Covers the explicit "payment done" state as well as any downstream granted/approved states.
+  const appStatus =
+    data?.Application?.[0]?.processInstance?.[0]?.state?.applicationStatus ||
+    data?.Application?.[0]?.processInstance?.[0]?.state?.state ||
+    data?.Application?.[0]?.workflowStatus;
+  const PAID_STATUSES = new Set([
+    "CITIZEN_PAYMENT_DONE",
+    "PAYMENT_DONE",
+    "PAID",
+    "PERMIT_GRANTED",
+    "CERTIFICATE_GRANTED",
+    "CERTIFICATE_ISSUED",
+    "APPROVED",
+  ]);
+  const isPaid = appStatus ? PAID_STATUSES.has(appStatus) : false;
+
   return (
     <div className="space-y-6">
       {/* Free Service Message */}
@@ -64,51 +81,61 @@ const PaymentsTab = ({
       ) : (
         <div className="space-y-6">
 
-          {/* Détails du paiement — résultat des calculs (visible à tous) */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-djibouti-primary/10 px-6 py-4 border-b border-gray-100">
+          {/* Détails du paiement — résultat des calculs (visible à tous).
+              When the application is paid, the entire card switches to a light-green theme. */}
+          <div className={`rounded-2xl shadow-lg overflow-hidden border ${isPaid ? "bg-green-50 border-green-200" : "bg-white border-gray-100"}`}>
+            <div className={`px-6 py-4 border-b ${isPaid ? "bg-green-100 border-green-200" : "bg-djibouti-primary/10 border-gray-100"}`}>
               <div className="flex items-center gap-3">
-                <div className="bg-djibouti-primary p-2 rounded-lg">
+                <div className={`p-2 rounded-lg ${isPaid ? "bg-green-500" : "bg-djibouti-primary"}`}>
                   <LuReceipt className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-lg font-semibold text-gray-900">Détails du paiement</h2>
+                <h2 className={`text-lg font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>
+                  Détails du paiement
+                </h2>
+                {isPaid && (
+                  <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">
+                    Payé
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="p-6 space-y-3">
               {hasCalculationResults ? (
                 <React.Fragment>
-                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">Valeur de projet estimée</span>
-                    <span className="font-semibold text-gray-900">{totalProjectValue.toLocaleString()}</span>
+                  <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
+                    <span className={isPaid ? "text-green-900" : "text-gray-600"}>Valeur de projet estimée</span>
+                    <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{totalProjectValue.toLocaleString()}</span>
                   </div>
 
-                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">
+                  <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
+                    <span className={isPaid ? "text-green-900" : "text-gray-600"}>
                       Redevance de {royaltyPer != null ? royaltyPer : 1.5}% sur le Permis de Construire
                     </span>
-                    <span className="font-semibold text-gray-900">{royaltyFee.toLocaleString()} FDj</span>
+                    <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{royaltyFee.toLocaleString()} FDj</span>
                   </div>
 
                   {seismicFee > 0 && (
-                    <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">
+                    <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
+                      <span className={isPaid ? "text-green-900" : "text-gray-600"}>
                         Redevance de {seismicPer != null ? seismicPer : 1}% pour le Contrôle Parasismique
                       </span>
-                      <span className="font-semibold text-gray-900">{seismicFee.toLocaleString()} FDj</span>
+                      <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{seismicFee.toLocaleString()} FDj</span>
                     </div>
                   )}
 
                   {registryServiceFee > 0 && (
-                    <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
-                      <span className="text-gray-600">Frais de service d'enregistrement</span>
-                      <span className="font-semibold text-gray-900">{registryServiceFee.toLocaleString()} FDj</span>
+                    <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
+                      <span className={isPaid ? "text-green-900" : "text-gray-600"}>Frais de service d'enregistrement</span>
+                      <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{registryServiceFee.toLocaleString()} FDj</span>
                     </div>
                   )}
 
-                  <div className="bg-djibouti-primary rounded-xl p-5 mt-4">
+                  <div className={`rounded-xl p-5 mt-4 ${isPaid ? "bg-green-500" : "bg-djibouti-primary"}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-medium text-lg">Montant de la taxe à payer</span>
+                      <span className="text-white font-medium text-lg">
+                        {isPaid ? "Montant payé" : "Montant de la taxe à payer"}
+                      </span>
                       <span className="text-white font-bold text-2xl">
                         {totalTaxWithService.toLocaleString()} FDj
                       </span>
