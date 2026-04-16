@@ -25,7 +25,10 @@ const ConformityTable = ({
               <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 w-12">
                 #
               </th>
-              <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[300px]">
+              <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[260px]">
+                Point de contrôle
+              </th>
+              <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
                 Prescriptions techniques
               </th>
               <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
@@ -34,8 +37,11 @@ const ConformityTable = ({
               <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
                 Prescriptions du projet
               </th>
-              <th className="border border-gray-200 p-3 text-center text-sm font-semibold text-gray-700 min-w-[250px]">
-                Observation
+              <th className="border border-gray-200 p-3 text-center text-sm font-semibold text-gray-700 min-w-[220px]">
+                Observations
+              </th>
+              <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[220px]">
+                Commentaires
               </th>
             </tr>
           </thead>
@@ -112,61 +118,57 @@ const ConformityTable = ({
                     )}
                   </td>
                   <td className="border border-gray-200 p-3">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-center gap-4 flex-wrap">
-                        {CONFORMITY_OBSERVATION_OPTIONS.map((option) => {
-                          const isChecked = conformityData.observation === option.value;
-                          const shouldShow = 
-                            (item.id === 5 || item.id === 6 || item.id === 13) 
-                              ? (option.value === "NON" || option.value === "OUI")
-                              : (option.value === "CONFORME" || option.value === "NON_CONFORME");
+                    <div className="flex items-center justify-center gap-4 flex-wrap">
+                      {CONFORMITY_OBSERVATION_OPTIONS.map((option) => {
+                        const isChecked = conformityData.observation === option.value;
+                        const shouldShow =
+                          (item.id === 5 || item.id === 6 || item.id === 13)
+                            ? (option.value === "NON" || option.value === "OUI")
+                            : (option.value === "CONFORME" || option.value === "NON_CONFORME");
 
-                          if (!shouldShow) return null;
+                        if (!shouldShow) return null;
 
-                          return (
-                            <label
-                              key={option.value}
-                              className={`flex items-center gap-2 cursor-pointer ${
-                                isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                              }`}
-                            >
-                              <input
-                                type="radio"
-                                name={`conformity-${item.id}`}
-                                checked={isChecked}
-                                onChange={() =>
-                                  !isDisabled && handleConformityChange(item.id, "observation", option.value)
-                                }
-                                disabled={isDisabled}
-                                className="w-4 h-4 cursor-pointer"
-                              />
-                              <span className={`text-xs font-medium ${getColorClass(option.color)}`}>
-                                {option.label}
-                              </span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                      {needsTextInput && (
-                        <div className="mt-2">
-                          {isViewMode && !isEditMode ? (
-                            <div className="text-sm text-gray-700">
-                              {conformityData.textInput || "-"}
-                            </div>
-                          ) : (
+                        return (
+                          <label
+                            key={option.value}
+                            className={`flex items-center gap-2 cursor-pointer ${
+                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                          >
                             <input
-                              type="text"
-                              value={conformityData.textInput}
-                              onChange={(e) =>
-                                handleConformityChange(item.id, "textInput", e.target.value)
+                              type="radio"
+                              name={`conformity-${item.id}`}
+                              checked={isChecked}
+                              onChange={() =>
+                                !isDisabled && handleConformityChange(item.id, "observation", option.value)
                               }
-                              placeholder={item.textInputLabel || "Précisez..."}
-                              className="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-djibouti-primary transition-colors"
+                              disabled={isDisabled}
+                              className="w-4 h-4 cursor-pointer"
                             />
-                          )}
-                        </div>
-                      )}
+                            <span className={`text-xs font-medium ${getColorClass(option.color)}`}>
+                              {option.label}
+                            </span>
+                          </label>
+                        );
+                      })}
                     </div>
+                  </td>
+                  <td className="border border-gray-200 p-3">
+                    {isViewMode && !isEditMode ? (
+                      <div className="text-sm text-gray-700">
+                        {conformityData.textInput || "—"}
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        value={conformityData.textInput || ""}
+                        onChange={(e) =>
+                          handleConformityChange(item.id, "textInput", e.target.value)
+                        }
+                        placeholder={item.textInputLabel || "Commentaires..."}
+                        className="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-djibouti-primary transition-colors"
+                      />
+                    )}
                   </td>
                 </tr>
               );

@@ -119,25 +119,120 @@ export const getServiceInfo = (businessService) => {
 };
 
 // Statuses considered "Nouveau" (needs immediate attention) on the employee
-// dashboard. Some statuses are role-specific — e.g. BCIE_HOD_REVIEW is only a
-// "new" item for the BCIE HOD whose action is required at that step. Pass the
-// logged-in user's roles to get the correctly extended list.
+// dashboard. Think of "Nouveau" as the user's inbox — anything where the
+// application is pending THEIR action. Most statuses are role-specific, so we
+// build the final list based on the logged-in user's roles.
 const BASE_NEW_STATUSES = [
   "AGENT_NOT_ASSIGNED",
   "APPLICATION_SUBMITTED",
-  "BPA_SDECC_SUB_DIRECTOR_REVIEW",
   "PENDING_ACTION",
   "PENDING_ACTION_BY_AGENT",
 ];
 
+// Role code → statuses that are awaiting action from that role.
+// When any of the user's roles match, those statuses get added to "Nouveau".
+const ROLE_INBOX_STATUSES = {
+  BPA_DIRECTOR: [
+    "AWAITING_ON_DIRECTOR_REVIEW",
+    "UNDER_REVIEW_BY_DIRECTOR",
+    "PENDING_REVIEW_BY_DIRECTOR",
+    "DIRECTOR_APPROVAL_PENDING",
+    "PENDING_DIRECTOR_APPROVAL",
+  ],
+  BPA_HOD: [
+    "REVIEW_IN_PROGRESS_BY_SRA_HOD",
+    "PENDING_REVIEW_BY_SRA_HOD",
+    "AWAITING_ON_SRA_HOD_REVIEW",
+  ],
+  BPA_AGENTS: [
+    "PENDING_REVIEW_BY_SRA_AGENT",
+    "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT",
+  ],
+  BPA_SRA_SUB_DIRECTOR: [
+    "BPA_SRA_SUB_DIRECTOR_REVIEW",
+    "BPA_SRA_SUB_DIRECTOR_APPROVAL",
+    "AWAITING_ON_SUB_DIRECTOR_REVIEW",
+    "UNDER_REVIEW_BY_SUB_DIRECTOR",
+    "PENDING_REVIEW_BY_SUB_DIRECTOR",
+    "PENDING_SUB_DIRECTOR_ACTION",
+    "PENDING_SUB_DIRECTOR_APPROVAL",
+    "SUB_DIRECTOR_APPROVAL_PENDING",
+  ],
+  BPA_SUB_DIRECTOR: [
+    "BPA_SRA_SUB_DIRECTOR_REVIEW",
+    "BPA_SRA_SUB_DIRECTOR_APPROVAL",
+    "AWAITING_ON_SUB_DIRECTOR_REVIEW",
+    "UNDER_REVIEW_BY_SUB_DIRECTOR",
+    "PENDING_REVIEW_BY_SUB_DIRECTOR",
+    "PENDING_SUB_DIRECTOR_ACTION",
+    "PENDING_SUB_DIRECTOR_APPROVAL",
+    "SUB_DIRECTOR_APPROVAL_PENDING",
+  ],
+  BPA_SDECC_SUB_DIRECTOR: [
+    "BPA_SDECC_SUB_DIRECTOR_REVIEW",
+  ],
+  BPA_SDECC_HOD: [
+    "SDECC_HOD_REVIEW",
+    "SUBMITTED_TO_SDECC_HOD",
+    "SUBMITTED_TO_SDECC",
+    "TECHNICAL_REVIEW",
+    "PENDING_HOD_VALIDATION",
+    "HOD_APPROVAL_PENDING",
+  ],
+  BPA_SDECC_AGENT: [
+    "SDECC_AGENT_NOT_ASSSIGNED",
+    "PENDING_ACTION_BY_SDECC_AGENT",
+    "AGENT_VERIFICATION_PENDING",
+  ],
+  BPA_SDECC_AGENTS: [
+    "SDECC_AGENT_NOT_ASSSIGNED",
+    "PENDING_ACTION_BY_SDECC_AGENT",
+    "AGENT_VERIFICATION_PENDING",
+  ],
+  BCIE_HOD: [
+    "BCIE_HOD_REVIEW",
+  ],
+  BCIE_AGENT: [
+    "AGENT_INSPECTION_PENDING",
+    "AGENT_NOT_ASSIGNED",
+    "AGENT_ASSIGNED",
+    "PENDING_ACTION_BY_AGENT",
+  ],
+  BCIE_AGENTS: [
+    "AGENT_INSPECTION_PENDING",
+    "AGENT_NOT_ASSIGNED",
+    "AGENT_ASSIGNED",
+    "PENDING_ACTION_BY_AGENT",
+  ],
+  TOPOGRAPHY_HOD: [
+    "TOPOGRAPHY_HOD_REVIEW",
+    "SUBMITTED_TO_TOPOGRAPHY_HOD",
+  ],
+  TOPOGRAPHY_CHIEF: [
+    "TOPOGRAPHY_HOD_REVIEW",
+    "SUBMITTED_TO_TOPOGRAPHY_HOD",
+  ],
+  TOPOGRAPHY_AGENT: [
+    "SENT_TO_TOPOGRAPHY",
+  ],
+  BPA_DGDCF_COMM: [
+    "PENDING_REVIEW_BY_DGDCF",
+    "AWAITING_ON_COMMISSIONER",
+  ],
+  BPA_SDECC_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_INSPD_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_EDD_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_DNPC_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_ONEAD_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_PL_COMM: ["AWAITING_ON_COMMISSIONER"],
+};
+
 export const getNewStatusesForUser = (roles = []) => {
   const codes = (roles || []).map((r) => r?.code).filter(Boolean);
-  const extra = [];
-  if (codes.includes("BCIE_HOD")) extra.push("BCIE_HOD_REVIEW");
-  // SDATU sub-director: BPA_SRA_SUB_DIRECTOR_REVIEW ("Révision par le Sous-directeur SDATU")
-  // is awaiting their action, so it should appear in the "Nouveau" bucket too.
-  if (codes.includes("BPA_SRA_SUB_DIRECTOR") || codes.includes("BPA_SUB_DIRECTOR")) {
-    extra.push("BPA_SRA_SUB_DIRECTOR_REVIEW");
+  const extra = new Set();
+  for (const code of codes) {
+    const statuses = ROLE_INBOX_STATUSES[code];
+    if (statuses) statuses.forEach((s) => extra.add(s));
   }
   return [...BASE_NEW_STATUSES, ...extra];
 };

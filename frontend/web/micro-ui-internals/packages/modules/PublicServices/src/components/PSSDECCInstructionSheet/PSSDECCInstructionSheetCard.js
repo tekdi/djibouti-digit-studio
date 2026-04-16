@@ -3,8 +3,16 @@ import PropTypes from "prop-types";
 import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye } from "react-icons/lu";
 import PSSDECCInstructionSheetModal from "./PSSDECCInstructionSheetModal";
 
+var COMMISSIONER_ROLES_PSSDECC = new Set([
+  "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
+  "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM",
+]);
+
 var PSSDECCInstructionSheetCard = function (props) {
   var service = props.service, state = props.state, t = props.t, isViewOnly = props.isViewOnly || false;
+  var userRoles = (Digit.UserService.getUser() || {}).info?.roles || [];
+  var isCommissioner = userRoles.some(function (r) { return COMMISSIONER_ROLES_PSSDECC.has(r && r.code); });
   var _m = useState(false), isModalOpen = _m[0], setIsModalOpen = _m[1];
   var _v = useState(false), isViewMode = _v[0], setIsViewMode = _v[1];
   var _d = useState(null), data = _d[0], setData = _d[1];
@@ -64,11 +72,13 @@ var PSSDECCInstructionSheetCard = function (props) {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-500">ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span></p>
+                {!isCommissioner && (
+                  <p className="text-sm text-gray-500">ID dossier : <span className="font-medium text-gray-900">{applicationNumber}</span></p>
+                )}
               </div>
             </div>
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-4">
-              {!isViewOnly && (
+              {!isViewOnly && !isCommissioner && (
                 <button onClick={function () { setIsViewMode(false); setIsModalOpen(true); }}
                   className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:border-djibouti-primary/40 hover:text-djibouti-primary transition-all">
                   <LuPen className="h-4 w-4" /> Modifier

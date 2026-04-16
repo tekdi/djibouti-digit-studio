@@ -340,6 +340,7 @@ const InstructionSheetModal = ({
             isViewMode={isViewMode}
             isEditMode={isEditMode}
             handleInputChange={handleInputChange}
+            service={service}
           />
 
           <DocumentsTable

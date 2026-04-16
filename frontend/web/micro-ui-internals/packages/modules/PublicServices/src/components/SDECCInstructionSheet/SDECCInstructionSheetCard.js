@@ -4,10 +4,20 @@ import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye, LuChevronD
 import SDECCInstructionSheetModal from "./SDECCInstructionSheetModal";
 import { useSDECCInstructionSheetData } from "./hooks/useSDECCInstructionSheetData";
 
+const COMMISSIONER_ROLES = new Set([
+  "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
+  "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM",
+]);
+
 const SDECCInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  // Commissioners see a minimal card: title + verdict badge + "Voir les détails" only.
+  const userRoles = Digit.UserService.getUser()?.info?.roles || [];
+  const isCommissioner = userRoles.some((r) => COMMISSIONER_ROLES.has(r?.code));
 
   const {
     serviceCode,
@@ -87,6 +97,7 @@ const SDECCInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
               </div>
             </div>
 
+            {!isCommissioner && (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
                 <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -131,9 +142,10 @@ const SDECCInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
                 )}
               </div>
             </div>
+            )}
 
-            {/* History */}
-            {instructionData.history && instructionData.history.length > 0 && (
+            {/* History — hidden for commissioners */}
+            {!isCommissioner && instructionData.history && instructionData.history.length > 0 && (
               <div className="border-t border-gray-100 pt-6">
                 <button
                   onClick={() => setIsHistoryOpen(!isHistoryOpen)}
@@ -187,7 +199,7 @@ const SDECCInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
             )}
 
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6 mt-auto">
-              {!isViewOnly && (
+              {!isViewOnly && !isCommissioner && (
                 <button
                   onClick={handleOpenModal}
                   className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
