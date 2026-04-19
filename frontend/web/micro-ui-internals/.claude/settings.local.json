@@ -39,7 +39,9 @@
       "Bash(kill %1)",
       "Bash(pkill -f \"kubectl logs\")",
       "Bash(kubectl cp:*)",
-      "Bash(awk '$4 >= 2 {print $1, \"restarts=\"$4}')"
+      "Bash(awk '$4 >= 2 {print $1, \"restarts=\"$4}')",
+      "Bash(TOKEN=57a5838e-0133-4a5e-98b2-1018ac7bc8cc node:*)",
+      "Bash(awk '$4 >= 3 {print $1, \"restarts=\"$4}')"
     ]
   }
 }

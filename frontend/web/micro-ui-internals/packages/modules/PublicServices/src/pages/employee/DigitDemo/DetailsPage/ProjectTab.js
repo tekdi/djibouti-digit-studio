@@ -27,8 +27,9 @@ const FicheSRAProjectBlock = ({ fiche }) => {
     { label: "Localisation de la Parcelle", value: fiche.plotLocation },
     { label: "Région", value: fiche.region },
     { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
-    { label: "Coefficient d'Emprise au Sol (C.E.S)", value: fiche.ces },
-    { label: "Coefficient d'Occupation du Sol (C.O.S)", value: fiche.cos },
+    { label: "Coefficient d'Emprise au Sol (C.E.S) %", value: fiche.ces },
+    { label: "Coefficient d'Occupation du Sol (C.O.S) %", value: fiche.cos },
+    { label: "Surface bâtie (m²)", value: fiche.builtArea },
     { label: "Destination du Projet", value: fiche.destination },
   ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
 

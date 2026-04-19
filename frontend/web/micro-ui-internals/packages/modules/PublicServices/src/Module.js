@@ -4,6 +4,7 @@ import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 import PublicServicesCard from "./components/PublicServicesCard";
 import PersonTypeSelector from "./pages/employee/DigitDemo/components/PersonTypeSelector";
+import LandDocumentsBanner from "./pages/employee/DigitDemo/components/LandDocumentsBanner";
 import { updateCustomConfigs } from "./utils";
 import axios from "axios";
 
@@ -72,6 +73,7 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
 const componentsToRegister = {
   PublicServicesModule,
   PersonTypeSelector,
+  LandDocumentsBanner,
   // PublicServicesCard,
 };
 

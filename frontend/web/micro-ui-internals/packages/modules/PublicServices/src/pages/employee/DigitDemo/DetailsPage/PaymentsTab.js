@@ -38,6 +38,11 @@ const PaymentsTab = ({
   const totalTax = Number(costEstimation?.totalTax || 0);
   const totalTaxWithService = Number(costEstimation?.totalTaxWithServiceCharge || totalTax || 0);
   const hasCalculationResults = totalProjectValue > 0 || totalTax > 0 || royaltyFee > 0;
+  // Services with a simplified fee structure — no seismic fee, no registry service fee.
+  // Even when an application was calculated *before* the simplified rates were applied
+  // (so the saved costEstimation still has non-zero values), we force-hide those lines.
+  const FEE_SIMPLIFIED_SERVICES = new Set(["BPA_PF", "BPA_PCS", "BPA_ATARR"]);
+  const hideSeismicAndRegistry = FEE_SIMPLIFIED_SERVICES.has(service);
 
   // Paid check: application has moved past the payment step.
   // Covers the explicit "payment done" state as well as any downstream granted/approved states.
@@ -115,7 +120,7 @@ const PaymentsTab = ({
                     <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{royaltyFee.toLocaleString()} FDj</span>
                   </div>
 
-                  {seismicFee > 0 && (
+                  {!hideSeismicAndRegistry && seismicFee > 0 && (
                     <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
                       <span className={isPaid ? "text-green-900" : "text-gray-600"}>
                         Redevance de {seismicPer != null ? seismicPer : 1}% pour le Contrôle Parasismique
@@ -124,7 +129,7 @@ const PaymentsTab = ({
                     </div>
                   )}
 
-                  {registryServiceFee > 0 && (
+                  {!hideSeismicAndRegistry && registryServiceFee > 0 && (
                     <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
                       <span className={isPaid ? "text-green-900" : "text-gray-600"}>Frais de service d'enregistrement</span>
                       <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{registryServiceFee.toLocaleString()} FDj</span>
@@ -137,7 +142,7 @@ const PaymentsTab = ({
                         {isPaid ? "Montant payé" : "Montant de la taxe à payer"}
                       </span>
                       <span className="text-white font-bold text-2xl">
-                        {totalTaxWithService.toLocaleString()} FDj
+                        {(hideSeismicAndRegistry ? royaltyFee : totalTaxWithService).toLocaleString()} FDj
                       </span>
                     </div>
                   </div>
