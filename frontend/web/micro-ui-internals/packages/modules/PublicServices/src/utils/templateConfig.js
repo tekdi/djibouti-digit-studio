@@ -378,7 +378,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_CCE",
-    checklist: ["customBCIEInspectionChecklist"],
+    checklist: ["customBCIEInspectionChecklist", "customACELocauxPublicChecklist"],
   },
   {
     service: "BPA_CCP",

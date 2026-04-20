@@ -4,7 +4,7 @@ import {
 } from "react-icons/lu";
 
 /**
- * BPA_CCE — Fiche d'inspection BCIE (Certificat de Conformité Électrique).
+ * BPA_CCE — Attestation de Conformité Électrique (Certificat de Conformité Électrique).
  *
  * Sections (matching the paper form):
  *   ⓪ En-tête : propriétaire / téléphone / type d'autorisation / date inspection / localisation
@@ -290,6 +290,20 @@ const BCIEInspectionModal = ({
   if (!isOpen) return null;
 
   const isEditable = !isViewMode || isEditMode;
+
+  // Role gating. Two restricted blocks:
+  //   • "Cadre réservé au chef du BCIE" column (natureConformity.*.decision)
+  //     → only BCIE_HOD may edit. Agents see read-only.
+  //   • Sub-Director ATU avis (subDirectorAtuDecision) + Avis final (finalOpinion)
+  //     → only BPA_SRA_SUB_DIRECTOR and BCIE_HOD may edit. Agents see read-only.
+  const userRoles = Digit.UserService.getUser()?.info?.roles || [];
+  const hasRole = (code) => userRoles.some((r) => r?.code === code);
+  const isBcieHod = hasRole("BCIE_HOD");
+  const isSubDirector = hasRole("BPA_SRA_SUB_DIRECTOR") || hasRole("BPA_SUB_DIRECTOR");
+  const isStudioAdmin = hasRole("STUDIO_ADMIN");
+  const canEditChefBcieColumn = isEditable && (isBcieHod || isStudioAdmin);
+  const canEditAvisAndConformity = isEditable && (isSubDirector || isBcieHod || isStudioAdmin);
+
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const setNested = (section, rowId, col) => (e) =>
     setForm((f) => ({
@@ -321,7 +335,7 @@ const BCIEInspectionModal = ({
         <div className="sticky top-0 z-10 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark text-white p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">Fiche d'inspection BCIE — Certificat de Conformité Électrique</h2>
+              <h2 className="text-2xl font-bold mb-1">Attestation de Conformité Électrique</h2>
               <p className="text-sm text-white/80">Dossier : {applicationNumber}</p>
             </div>
             <div className="flex items-center gap-3">
@@ -409,7 +423,7 @@ const BCIEInspectionModal = ({
                           <Input value={form.natureConformity[row.id]?.realized || ""} onChange={setNested("natureConformity", row.id, "realized")} disabled={!isEditable} />
                         </td>
                         <td className="border border-gray-200 p-3">
-                          <Select value={form.natureConformity[row.id]?.decision} onChange={setNested("natureConformity", row.id, "decision")} disabled={!isEditable} options={CONFORM_OPTIONS} />
+                          <Select value={form.natureConformity[row.id]?.decision} onChange={setNested("natureConformity", row.id, "decision")} disabled={!canEditChefBcieColumn} options={CONFORM_OPTIONS} />
                         </td>
                       </tr>
                     ))}
@@ -430,7 +444,7 @@ const BCIEInspectionModal = ({
                   Cadre réservé exclusivement au Sous-Directeur ATU
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button type="button" disabled={!isEditable}
+                  <button type="button" disabled={!canEditAvisAndConformity}
                     onClick={() => setForm((f) => ({ ...f, subDirectorAtuDecision: "FAVORABLE" }))}
                     className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${
                       form.subDirectorAtuDecision === "FAVORABLE"
@@ -440,7 +454,7 @@ const BCIEInspectionModal = ({
                   >
                     <LuCircleCheck className="h-5 w-5" /> Favorable
                   </button>
-                  <button type="button" disabled={!isEditable}
+                  <button type="button" disabled={!canEditAvisAndConformity}
                     onClick={() => setForm((f) => ({ ...f, subDirectorAtuDecision: "DEFAVORABLE" }))}
                     className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${
                       form.subDirectorAtuDecision === "DEFAVORABLE"
@@ -451,6 +465,11 @@ const BCIEInspectionModal = ({
                     <LuCircleX className="h-5 w-5" /> Défavorable
                   </button>
                 </div>
+                {!canEditAvisAndConformity && (
+                  <p className="mt-2 text-xs italic text-gray-500">
+                    Réservé au Sous-Directeur ATU et au Chef du BCIE.
+                  </p>
+                )}
               </div>
             </section>
 
@@ -567,7 +586,7 @@ const BCIEInspectionModal = ({
             <section>
               <SectionTitle>Avis final</SectionTitle>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button type="button" disabled={!isEditable}
+                <button type="button" disabled={!canEditAvisAndConformity}
                   onClick={() => setForm((f) => ({ ...f, finalOpinion: "CONFORME" }))}
                   className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${
                     form.finalOpinion === "CONFORME"
@@ -577,7 +596,7 @@ const BCIEInspectionModal = ({
                 >
                   <LuCircleCheck className="h-5 w-5" /> Conforme
                 </button>
-                <button type="button" disabled={!isEditable}
+                <button type="button" disabled={!canEditAvisAndConformity}
                   onClick={() => setForm((f) => ({ ...f, finalOpinion: "NON_CONFORME" }))}
                   className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-all ${
                     form.finalOpinion === "NON_CONFORME"
@@ -588,6 +607,11 @@ const BCIEInspectionModal = ({
                   <LuCircleX className="h-5 w-5" /> Non conforme
                 </button>
               </div>
+              {!canEditAvisAndConformity && (
+                <p className="mt-2 text-xs italic text-gray-500">
+                  Réservé au Sous-Directeur ATU et au Chef du BCIE.
+                </p>
+              )}
             </section>
           </div>
         </div>
@@ -653,7 +677,7 @@ const BCIEInspectionChecklistCard = ({ service, t, isViewOnly = false }) => {
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-semibold text-gray-900">Fiche d'inspection BCIE</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Attestation de Conformité Électrique</h3>
                 {isSubmitted ? (
                   data.finalOpinion === "CONFORME" ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -704,7 +728,7 @@ const BCIEInspectionChecklistCard = ({ service, t, isViewOnly = false }) => {
                 }`}
               >
                 {isSubmitted ? <LuPen className="h-4 w-4" /> : <LuClipboardList className="h-4 w-4" />}
-                {isSubmitted ? "Modifier" : "Rédiger la fiche d'inspection"}
+                {isSubmitted ? "Modifier" : "Rédiger l'attestation"}
               </button>
             )}
             {isSubmitted && (

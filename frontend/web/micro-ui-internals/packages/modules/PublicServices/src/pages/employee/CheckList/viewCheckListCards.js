@@ -15,6 +15,7 @@ import { PVImplantationChecklistCard } from "../../../components/PVImplantationC
 import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
 import { BCIEInspectionChecklistCard } from "../../../components/BCIEInspectionChecklist";
 import { ATARRInstructionSheetCard } from "../../../components/ATARRInstructionSheet";
+import { ACELocauxPublicChecklistCard } from "../../../components/ACELocauxPublicChecklist";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -210,6 +211,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 auditDetails: { createdTime: Date.now() + 9 }
               });
             }
+
+            // Add ACE (Attestation de Conformité Électrique) — Locaux accueillant du public variant
+            if (allowedCodes.includes("customACELocauxPublicChecklist")) {
+              items.push({
+                id: "custom-ace-locaux-public-checklist",
+                code: "customACELocauxPublicChecklist",
+                clientId: "ACE_LOCAUX_PUBLIC_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 10 }
+              });
+            }
           }
 
           setCardItems(items);
@@ -382,6 +393,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customATARRInstructionSheet") {
             return (
               <ATARRInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customACELocauxPublicChecklist") {
+            return (
+              <ACELocauxPublicChecklistCard
                 key={index}
                 service={service}
                 state={state}
