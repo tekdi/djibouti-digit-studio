@@ -32,6 +32,7 @@ const InstructionSheetModal = ({
     region: "",
     ces: "",
     cos: "",
+    builtArea: "",
     destination: "",
     documents: DOCUMENTS_LIST.map((doc) => ({
       id: doc.id,
@@ -120,6 +121,7 @@ const InstructionSheetModal = ({
         region: existingData.region || "",
         ces: existingData.ces || "",
         cos: existingData.cos || "",
+        builtArea: existingData.builtArea || "",
         destination: existingData.destination || "",
         documents: existingData.documents || DOCUMENTS_LIST.map((doc) => ({
           id: doc.id,

@@ -166,7 +166,7 @@ const TopFieldsSection = ({ formData, errors, isViewMode, isEditMode, handleInpu
       </div>
 
       <div>
-        <label className="block mb-2 font-semibold text-sm text-gray-700">Coefficient d'Emprise au Sol (C.E.S)</label>
+        <label className="block mb-2 font-semibold text-sm text-gray-700">Coefficient d'Emprise au Sol (C.E.S) %</label>
         {isViewMode && !isEditMode ? (
           <div className="w-full p-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700">
             {formData.ces || "Non renseigné"}
@@ -183,7 +183,7 @@ const TopFieldsSection = ({ formData, errors, isViewMode, isEditMode, handleInpu
       </div>
 
       <div>
-        <label className="block mb-2 font-semibold text-sm text-gray-700">Coefficient d'Occupation du Sol (C.O.S)</label>
+        <label className="block mb-2 font-semibold text-sm text-gray-700">Coefficient d'Occupation du Sol (C.O.S) %</label>
         {isViewMode && !isEditMode ? (
           <div className="w-full p-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700">
             {formData.cos || "Non renseigné"}
@@ -194,6 +194,23 @@ const TopFieldsSection = ({ formData, errors, isViewMode, isEditMode, handleInpu
             value={formData.cos || ""}
             onChange={(e) => handleInputChange("cos", e.target.value)}
             placeholder="Ex: 100%"
+            className="w-full p-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-djibouti-primary focus:shadow-[0_0_0_3px_rgba(15,103,105,0.1)]"
+          />
+        )}
+      </div>
+
+      <div>
+        <label className="block mb-2 font-semibold text-sm text-gray-700">Surface bâtie (m²)</label>
+        {isViewMode && !isEditMode ? (
+          <div className="w-full p-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-700">
+            {formData.builtArea || "Non renseigné"}
+          </div>
+        ) : (
+          <input
+            type="text"
+            value={formData.builtArea || ""}
+            onChange={(e) => handleInputChange("builtArea", e.target.value)}
+            placeholder="Ex: 250"
             className="w-full p-3 border-2 border-gray-200 rounded-xl transition-all duration-200 outline-none focus:border-djibouti-primary focus:shadow-[0_0_0_3px_rgba(15,103,105,0.1)]"
           />
         )}

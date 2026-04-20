@@ -490,7 +490,61 @@ const DigitDemoComponent = ({ editdata }) => {
             <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
           </div>
         ) : (
-          <FormComposerV2
+          <div style={{ position: "relative" }}>
+            {currentStep === 1 && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "12px",
+                  padding: "16px",
+                  marginBottom: "12px",
+                  marginTop: "8px",
+                  borderRadius: "14px",
+                  border: "1px solid #fcd34d",
+                  background: "linear-gradient(90deg, #fffbeb 0%, #fff7ed 100%)",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "40px",
+                    width: "40px",
+                    flexShrink: 0,
+                    borderRadius: "12px",
+                    backgroundColor: "#fef3c7",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#d97706"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: "14px", fontWeight: 600, color: "#78350f", margin: "0 0 2px 0" }}>
+                    Information importante
+                  </p>
+                  <p style={{ fontSize: "14px", color: "#92400e", lineHeight: 1.5, margin: 0 }}>
+                    Cette section est réservée aux informations relatives aux documents fonciers
+                  </p>
+                </div>
+              </div>
+            )}
+            <FormComposerV2
             key={`${currentStep}-${currentFormConfig?.name}`}
             // heading={t(`${serviceCode}_HEADING`)}
             label={currentStep === steps.length - 1 ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
@@ -511,6 +565,7 @@ const DigitDemoComponent = ({ editdata }) => {
             onPrevious={onPrevious}
             onFormValueChange={onFormValueChange}
           />
+          </div>
         )}
         {showToast && (
           <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />

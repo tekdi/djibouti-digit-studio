@@ -197,6 +197,12 @@ const WorkflowActions = ({
         callback?.onSuccess?.();
         // to refetch updated workflowData and re-render timeline and actions
         workflowDetails.revalidate();
+
+        // Full page reload so every tab's derived data (project block, fiche,
+        // payments, observations, activities, applicable actions) picks up the
+        // new server-side state instead of showing a stale snapshot. Small
+        // delay so the success toast stays visible briefly.
+        setTimeout(() => window.location.reload(), 1200);
       },
     });
   };

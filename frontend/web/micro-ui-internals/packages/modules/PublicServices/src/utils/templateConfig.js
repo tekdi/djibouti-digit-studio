@@ -370,7 +370,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_ATARR",
-    checklist: ["customAgentChecklist", "calculationFees"],
+    checklist: ["customATARRInstructionSheet", "calculationFees"],
   },
   {
     service: "BPA_CCR",
@@ -378,7 +378,7 @@ export const checklistByService = [
   },
   {
     service: "BPA_CCE",
-    checklist: ["customBCIEInspectionChecklist"],
+    checklist: ["customBCIEInspectionChecklist", "customACELocauxPublicChecklist"],
   },
   {
     service: "BPA_CCP",

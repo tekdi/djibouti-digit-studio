@@ -3,6 +3,45 @@ import { useTranslation } from "react-i18next";
 import { LuUser, LuBuilding, LuPenTool, LuPhone, LuMail, LuHash, LuMapPin, LuFileText } from "react-icons/lu";
 import ProjectDataView from "./ProjectDataView";
 
+// ATARR-specific fiche block. Rendered on the Demande tab for BPA_ATARR
+// applications when the "Fiche d'instruction — Détails du projet d'extension"
+// has been filled from the Instruction tab. Mirrors FicheSRAProjectBlock but
+// with the reduced ATARR field set (plotArea instead of CES/COS).
+const FicheATARRProjectBlock = ({ fiche }) => {
+  if (!fiche) return null;
+  const rows = [
+    { label: "Numéro du Permis de Construire", value: fiche.pcoNumber },
+    { label: "Nom et Prénoms du Pétitionnaire", value: fiche.applicantName },
+    { label: "Type de Projet", value: fiche.projectType },
+    { label: "Localisation de la Parcelle", value: fiche.plotLocation },
+    { label: "Surface de la parcelle (m²)", value: fiche.plotArea },
+    { label: "Région", value: fiche.region },
+    { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
+    { label: "Surface bâtie (m²)", value: fiche.builtArea },
+  ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+          <LuFileText className="w-4 h-4 text-purple-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Détails du projet d'extension</h3>
+      </div>
+      <div className="space-y-1">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+            <span className="text-sm font-medium text-gray-600">{r.label}</span>
+            <span className="text-sm font-semibold text-gray-900 text-right">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Block rendered from the SRA Fiche d'instruction. Replaces the raw
 // `landandProjectDesignDetails` / `projectDetails` block on the Demande tab
 // so the reviewer sees the SRA-curated values rather than the applicant's
@@ -27,8 +66,9 @@ const FicheSRAProjectBlock = ({ fiche }) => {
     { label: "Localisation de la Parcelle", value: fiche.plotLocation },
     { label: "Région", value: fiche.region },
     { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
-    { label: "Coefficient d'Emprise au Sol (C.E.S)", value: fiche.ces },
-    { label: "Coefficient d'Occupation du Sol (C.O.S)", value: fiche.cos },
+    { label: "Coefficient d'Emprise au Sol (C.E.S) %", value: fiche.ces },
+    { label: "Coefficient d'Occupation du Sol (C.O.S) %", value: fiche.cos },
+    { label: "Surface bâtie (m²)", value: fiche.builtArea },
     { label: "Destination du Projet", value: fiche.destination },
   ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
 
@@ -211,6 +251,7 @@ const ProjectTab = ({
             values. */}
         <div className="space-y-6">
           <FicheSRAProjectBlock fiche={response?.additionalDetails?.instructionSheet} />
+          <FicheATARRProjectBlock fiche={response?.additionalDetails?.atarrInstructionSheet} />
           <ProjectDataView
             serviceCode={serviceCode}
             data={applicationData}
@@ -218,7 +259,10 @@ const ProjectTab = ({
             applicationNumber={response?.applicationNumber}
             businessService={response?.businessService?.toUpperCase()}
             singleColumn={true}
-            hideProjectDetailsBlock={!!response?.additionalDetails?.instructionSheet}
+            hideProjectDetailsBlock={
+              !!response?.additionalDetails?.instructionSheet ||
+              !!response?.additionalDetails?.atarrInstructionSheet
+            }
           />
         </div>
       </div>

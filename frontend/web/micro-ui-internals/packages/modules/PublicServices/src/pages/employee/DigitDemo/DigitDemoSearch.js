@@ -1,12 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { Redirect } from "react-router-dom";
 import { useSearchGenericConfig } from "../../../configs/searchGenericConfig";
 import { InboxSearchComposer, Loader } from "@egovernments/digit-ui-components";
 
 const DigitDemoSearch = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  // The employee-side generic /:module/search page is not exposed to citizens.
+  // Citizens have their own dashboard + application list views.
+  const roles = Digit.UserService.getUser()?.info?.roles || [];
+  const isCitizen = roles.length === 1 && roles[0]?.code === "CITIZEN";
+  if (isCitizen) {
+    return <Redirect to={`/${window?.contextPath}/citizen/publicservices/dashboard`} />;
+  }
 
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
