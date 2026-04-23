@@ -335,7 +335,7 @@ const BCIEInspectionModal = ({
         <div className="sticky top-0 z-10 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark text-white p-6 border-b border-white/10">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">Attestation de Conformité Électrique</h2>
+              <h2 className="text-2xl font-bold mb-1">Fiche technique</h2>
               <p className="text-sm text-white/80">Dossier : {applicationNumber}</p>
             </div>
             <div className="flex items-center gap-3">
@@ -677,7 +677,7 @@ const BCIEInspectionChecklistCard = ({ service, t, isViewOnly = false }) => {
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-semibold text-gray-900">Attestation de Conformité Électrique</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Fiche technique</h3>
                 {isSubmitted ? (
                   data.finalOpinion === "CONFORME" ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">

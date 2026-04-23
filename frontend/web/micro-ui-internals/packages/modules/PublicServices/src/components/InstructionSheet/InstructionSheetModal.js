@@ -259,6 +259,21 @@ const InstructionSheetModal = ({
     if (!formData.plotLocation?.trim()) {
       newErrors.plotLocation = "La localisation de la parcelle est obligatoire";
     }
+    if (!formData.region || !String(formData.region).trim()) {
+      newErrors.region = "La région est obligatoire";
+    }
+    if (formData.ces === undefined || formData.ces === null || !String(formData.ces).trim()) {
+      newErrors.ces = "Le C.E.S est obligatoire";
+    }
+    if (formData.cos === undefined || formData.cos === null || !String(formData.cos).trim()) {
+      newErrors.cos = "Le C.O.S est obligatoire";
+    }
+    if (formData.builtArea === undefined || formData.builtArea === null || !String(formData.builtArea).trim()) {
+      newErrors.builtArea = "La surface bâtie est obligatoire";
+    }
+    if (!formData.destination || !String(formData.destination).trim()) {
+      newErrors.destination = "La destination du projet est obligatoire";
+    }
     if (!formData.finalOpinion) {
       newErrors.finalOpinion = "L'avis final est obligatoire";
     }

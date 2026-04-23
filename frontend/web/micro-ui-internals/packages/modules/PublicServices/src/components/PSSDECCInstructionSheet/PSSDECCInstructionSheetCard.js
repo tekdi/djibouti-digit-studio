@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye } from "react-icons/lu";
+import { LuFileText, LuCircleCheck, LuCircleX, LuClock, LuPen, LuEye, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import PSSDECCInstructionSheetModal from "./PSSDECCInstructionSheetModal";
 
 var COMMISSIONER_ROLES_PSSDECC = new Set([
   "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
   "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
-  "BPA_DCT_COMM", "BPA_PL_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM", "BPA_DJITELECOM_COMM",
 ]);
 
 var PSSDECCInstructionSheetCard = function (props) {
@@ -18,6 +18,8 @@ var PSSDECCInstructionSheetCard = function (props) {
   var _d = useState(null), data = _d[0], setData = _d[1];
   var _s = useState(false), isSubmitted = _s[0], setIsSubmitted = _s[1];
   var _l = useState(false), isLoading = _l[0], setIsLoading = _l[1];
+  var _h = useState(false), isHistoryOpen = _h[0], setIsHistoryOpen = _h[1];
+  var _a = useState(""), applicantName = _a[0], setApplicantName = _a[1];
 
   var qs = Digit.Hooks.useQueryParams();
   var serviceCode = qs.serviceCode;
@@ -37,6 +39,13 @@ var PSSDECCInstructionSheetCard = function (props) {
         setData(app.additionalDetails.psSDECCInstructionSheet);
         setIsSubmitted(!!app.additionalDetails.psSDECCInstructionSheet.submittedAt);
       }
+      // Applicant name for the Pétitionnaire tile — pull from the application's
+      // applicants array (fallback to responseData.applicants for apps without
+      // a cleaned top-level array).
+      var firstApplicant = (app?.applicants || []).find(function (a) { return a && (a.name || a.mobileNumber); });
+      var rd = app?.serviceDetails?.responseData?.Application?.applicants?.[0];
+      var name = firstApplicant?.name || rd?.name || "";
+      if (name) setApplicantName(name);
     } catch (e) { console.error("Error:", e); }
     finally { setIsLoading(false); }
   }, [applicationNumber, serviceCode, tenantId]);
@@ -77,6 +86,95 @@ var PSSDECCInstructionSheetCard = function (props) {
                 )}
               </div>
             </div>
+
+            {/* Metadata grid — mirrors the Fiche d'instruction (par le SRA) card.
+                Hidden for commissioners (they only need the verdict + button). */}
+            {!isCommissioner && (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Soumis le</span>
+                  <p className="mt-2 text-sm font-semibold text-gray-900">
+                    {new Date(data.submittedAt || Date.now()).toLocaleDateString("fr-FR", {
+                      year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Créé par</span>
+                  <p className="mt-2 text-sm font-semibold text-gray-900">{data.submittedByName || "Utilisateur inconnu"}</p>
+                </div>
+                <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Dernière modification</span>
+                  <p className="mt-2 text-sm font-semibold text-gray-900">{data.lastEditedByName || "Utilisateur inconnu"}</p>
+                  {data.lastEditedAt && (
+                    <p className="text-xs text-gray-500">
+                      {new Date(data.lastEditedAt).toLocaleDateString("fr-FR", {
+                        month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                  <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">Pétitionnaire</span>
+                  <p className="mt-2 text-sm font-semibold text-emerald-800">{applicantName || "Non renseigné"}</p>
+                </div>
+              </div>
+            )}
+
+            {/* History — collapsible block, hidden for commissioners */}
+            {!isCommissioner && Array.isArray(data.history) && data.history.length > 0 && (
+              <div className="border-t border-gray-100 pt-6">
+                <button
+                  onClick={function () { setIsHistoryOpen(!isHistoryOpen); }}
+                  className="flex items-center justify-between w-full text-left mb-4 group"
+                >
+                  <h4 className="text-sm font-semibold text-gray-700 group-hover:text-djibouti-primary transition-colors">
+                    Historique des modifications
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">
+                      ({data.history.length} {data.history.length === 1 ? "modification" : "modifications"})
+                    </span>
+                    {isHistoryOpen
+                      ? <LuChevronUp className="h-4 w-4 text-gray-500 group-hover:text-djibouti-primary transition-colors" />
+                      : <LuChevronDown className="h-4 w-4 text-gray-500 group-hover:text-djibouti-primary transition-colors" />}
+                  </div>
+                </button>
+                {isHistoryOpen && (
+                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                    {data.history.slice().reverse().map(function (entry, index) {
+                      return (
+                        <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold text-gray-900">
+                                {entry.editedByName || "Utilisateur inconnu"}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {entry.timestamp
+                                  ? new Date(entry.timestamp).toLocaleDateString("fr-FR", {
+                                      year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+                                    })
+                                  : ""}
+                              </span>
+                            </div>
+                            {entry.changes && entry.changes.finalOpinion && (
+                              <div className="text-xs text-gray-600">
+                                Avis :{" "}
+                                <span className={"font-semibold " + (entry.changes.finalOpinion === "FAVORABLE" ? "text-emerald-700" : "text-red-700")}>
+                                  {entry.changes.finalOpinion === "FAVORABLE" ? "Favorable" : "Défavorable"}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-4">
               {!isViewOnly && !isCommissioner && (
                 <button onClick={function () { setIsViewMode(false); setIsModalOpen(true); }}

@@ -198,17 +198,9 @@ const useApplications = () => {
     fetchApplications();
   }, []);
 
-  // Auto-refetch every 3 minutes (180000 ms)
-  useEffect(() => {
-    if (!hasInitialized.current) return;
-
-    const intervalId = setInterval(() => {
-      console.log("Auto-refreshing employee applications after 3 minutes");
-      refreshApplications();
-    }, 180000); // 3 minutes
-
-    return () => clearInterval(intervalId);
-  }, []);
+  // Background auto-refetch was removed — silent polling mid-session caused
+  // random page reloads and occasional logouts while testing. Users click the
+  // refresh button (or navigate away and back) if they want fresh data.
 
   return {
     applications,

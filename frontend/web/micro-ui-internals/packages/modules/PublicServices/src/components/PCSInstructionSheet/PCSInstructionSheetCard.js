@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye } from "react-icons/lu";
-import ATARRInstructionSheetModal from "./ATARRInstructionSheetModal";
-import { useATARRInstructionSheetAPI } from "./hooks/useATARRInstructionSheetAPI";
+import PCSInstructionSheetModal from "./PCSInstructionSheetModal";
+import { usePCSInstructionSheetAPI } from "./hooks/usePCSInstructionSheetAPI";
 
-const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
+const PCSInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { serviceCode, applicationNumber } = Digit.Hooks.useQueryParams();
-  const { getFiche } = useATARRInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
+  const { getFiche } = usePCSInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
@@ -19,9 +19,9 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
   }, [getFiche]);
 
   const handleSaved = useCallback(() => {
-    // Full reload so the status badge, project block on the Demande tab, and
-    // any other fiche-derived UI picks up the newly-saved values. Triggered
-    // by an explicit user save, not silent polling.
+    // Full reload so the status badge + "Détails du projet simplifié" block
+    // on the Demande tab pick up the newly-saved values. Triggered by an
+    // explicit user save (not background polling).
     window.location.reload();
   }, []);
 
@@ -63,7 +63,7 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Fiche d'instruction — Détails du projet d'extension
+                  Fiche d'instruction — Détails du projet simplifié
                 </h3>
                 {isSubmitted ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -144,7 +144,7 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
         </div>
       </div>
 
-      <ATARRInstructionSheetModal
+      <PCSInstructionSheetModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         applicationNumber={applicationNumber}
@@ -160,11 +160,11 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
   );
 };
 
-ATARRInstructionSheetCard.propTypes = {
+PCSInstructionSheetCard.propTypes = {
   service: PropTypes.string.isRequired,
   state: PropTypes.string,
   t: PropTypes.func,
   isViewOnly: PropTypes.bool,
 };
 
-export default ATARRInstructionSheetCard;
+export default PCSInstructionSheetCard;

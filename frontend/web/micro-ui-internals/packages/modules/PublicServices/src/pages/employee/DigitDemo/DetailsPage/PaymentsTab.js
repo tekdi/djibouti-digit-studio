@@ -17,8 +17,15 @@ const PaymentsTab = ({
 
   // HOD and Agents can edit/calculate, but only HOD can save (backend rejects BPA_AGENTS for costEstimation writes)
   const userDetails = Digit.UserService.getUser();
-  const isSRA = userDetails?.info?.roles?.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
+  const userRoles = userDetails?.info?.roles || [];
+  const isSRA = userRoles.some((role) => role.code === "BPA_AGENTS" || role.code === "BPA_HOD");
   const isPaymentViewOnly = !isSRA;
+
+  // Citizens and architects only see the "Détails du paiement" summary card.
+  // The detailed Calculation component (fee rates, floor table, breakdown) is
+  // an SRA-side working tool and is hidden from applicants.
+  const isArchitect = userRoles.some((role) => role.code === "BPA_ARCHITECT");
+  const hideCalculationForUser = isCitizen || isArchitect;
 
   // Services that are free (no payment required) - all others except the ones that require payment
   const paidServices = ['BPA_PCO', 'BPA_PCO_SIMPLE', 'BPA_PL', 'BPA_PCS', 'BPA_PF', 'BPA_PS', 'BPA_ATARR'];
@@ -172,9 +179,17 @@ const PaymentsTab = ({
             isViewOnly={isPaymentViewOnly}
           />
 
-          {/* Calculation Fees Section */}
+          {/* Calculation Fees Section.
+              Citizens and architects now see this too (view-only) so they
+              can understand how the redevance was computed, BUT with the
+              "Désignation des travaux" cost-breakdown table hidden (internal
+              SRA working data they don't need to see). */}
           {hasCalculationFees && (
-            <Calculation isCitizen={isCitizen} isViewOnly={isPaymentViewOnly} />
+            <Calculation
+              isCitizen={isCitizen}
+              isViewOnly={isPaymentViewOnly}
+              hideCostBreakdown={hideCalculationForUser}
+            />
           )}
         </div>
       )}

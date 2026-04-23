@@ -14,7 +14,7 @@ const HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES = [
   "BPA_PV", "BPA_APE", "BPA_CCE", "BPA_CCP", "BPA_CCG",
 ];
 
-const HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES = ["BPA_CCP", "BPA_PD", "BPA_PCS"];
+const HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES = ["BPA_CCP"];
 
 const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }) => {
   const userDetails = Digit.UserService.getUser();
@@ -22,7 +22,8 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }
   const isCommissioner = userDetails?.info?.roles?.some((role) =>
     role.code === "BPA_SDECC_COMM" || role.code === "BPA_DGDCF_COMM" ||
     role.code === "BPA_ONEAD_COMM" || role.code === "BPA_DNPC_COMM" ||
-    role.code === "BPA_EDD_COMM" || role.code === "BPA_INSPD_COMM"
+    role.code === "BPA_EDD_COMM" || role.code === "BPA_INSPD_COMM" ||
+    role.code === "BPA_DJITELECOM_COMM" || role.code === "BPA_PL_COMM"
   );
 
   const isArchitect = userDetails?.info?.roles?.some((role) => role.code === "BPA_ARCHITECT");

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { LuSearch, LuFileText, LuUser, LuCalendar, LuArrowUpRight, LuLoader, LuCircleAlert, LuSparkles } from "react-icons/lu";
 import axios from "axios";
 import { getServiceInfo, getStatusInfo as getStatusInfoFromUtils } from "../citizen/applications/utils";
-import { resolveBusinessServiceForUser } from "./applications/utils";
+import { resolveBusinessServiceForUser, getDisplayApplicationId } from "./applications/utils";
 
 const truncateName = (name, max = 25) => {
   if (!name) return "—";
@@ -215,7 +215,7 @@ const EmployeeSearch = () => {
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.applicationNumber}</span>
+                        <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{getDisplayApplicationId(app)}</span>
                         {serviceInfo?.ref && (
                           <span className="shrink-0 rounded-md bg-primary/8 px-1.5 py-0.5 text-[9px] font-bold text-primary">{serviceInfo.ref}</span>
                         )}

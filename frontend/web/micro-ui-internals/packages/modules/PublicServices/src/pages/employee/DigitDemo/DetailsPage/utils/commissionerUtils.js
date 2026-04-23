@@ -24,6 +24,17 @@ export const COMMISSIONER_ORGANIZATIONS = {
     name: "INSPD",
     fullName: "Institut National de la Santé Publique de Djibouti",
   },
+  "BPA_DJITELECOM_COMM": {
+    name: "DJITELECOM",
+    fullName: "Djibouti Telecom",
+  },
+  // BPA_PL_COMM is the role tied to the BPA_PL_ADR parallel workflow. Kept as
+  // "ADR" since the underlying organization is the Agence Djiboutienne des
+  // Routes regardless of which service triggered the review.
+  "BPA_PL_COMM": {
+    name: "ADR",
+    fullName: "Agence Djiboutienne des Routes",
+  },
 };
 
 export const getOrganizationInfo = (roleCode) => {

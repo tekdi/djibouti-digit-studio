@@ -29,9 +29,6 @@ const ConformityTable = ({
                 Point de contrôle
               </th>
               <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
-                Prescriptions techniques
-              </th>
-              <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
                 Prescriptions réglementaires
               </th>
               <th className="border border-gray-200 p-3 text-left text-sm font-semibold text-gray-700 min-w-[200px]">
@@ -65,23 +62,6 @@ const ConformityTable = ({
                   </td>
                   <td className="border border-gray-200 p-3 text-sm text-gray-700">
                     {item.label}
-                  </td>
-                  <td className="border border-gray-200 p-3">
-                    {isViewMode && !isEditMode ? (
-                      <div className="text-sm text-gray-700">
-                        {conformityData.technicalPrescription || "-"}
-                      </div>
-                    ) : (
-                      <input
-                        type="text"
-                        value={conformityData.technicalPrescription}
-                        onChange={(e) =>
-                          handleConformityChange(item.id, "technicalPrescription", e.target.value)
-                        }
-                        placeholder="..."
-                        className="w-full p-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-djibouti-primary transition-colors"
-                      />
-                    )}
                   </td>
                   <td className="border border-gray-200 p-3">
                     {isViewMode && !isEditMode ? (

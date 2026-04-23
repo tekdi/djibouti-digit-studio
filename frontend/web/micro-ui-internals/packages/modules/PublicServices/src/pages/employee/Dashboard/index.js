@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useApplications from "../applications/useApplications";
-import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser, getNewStatusesForUser } from "../applications/utils";
+import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser, getNewStatusesForUser, getDisplayApplicationId } from "../applications/utils";
 import {
   LuFileText,
   LuClock,
@@ -86,7 +86,11 @@ const EmployeeDashboard = () => {
         const applicant = bo?.applicants?.[0];
 
         return {
+          // `id` stays the raw application number (used in URL params +
+          // React list keys). `displayId` is what we render to the user and
+          // prefers the PCO number once the SRA has filled the Fiche.
           id: bo?.applicationNumber,
+          displayId: getDisplayApplicationId(bo),
           title: serviceInfo?.name || bo?.businessService,
           shortName: serviceInfo?.shortName || bo?.businessService,
           ref: serviceInfo?.ref,
@@ -221,7 +225,7 @@ const EmployeeDashboard = () => {
                   {/* Header: ID + ref badge + arrow */}
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.id}</span>
+                      <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.displayId || app.id}</span>
                       {app.ref && (
                         <span className="ml-1.5 inline-flex rounded-lg bg-primary/8 px-1.5 py-0.5 text-[10px] font-bold text-primary align-middle">
                           {app.ref}

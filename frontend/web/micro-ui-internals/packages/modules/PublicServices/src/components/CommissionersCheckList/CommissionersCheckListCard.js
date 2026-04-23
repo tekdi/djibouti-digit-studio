@@ -121,7 +121,7 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
   };
 
   const handleSuccess = () => {
-    checkExistingChecklist(); 
+    checkExistingChecklist();
     window.location.reload();
   };
 

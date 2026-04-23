@@ -149,6 +149,44 @@ const WorkflowActions = ({
   // Handle action selection
   const onActionSelect = (action) => {
     setDisplayMenu(false);
+
+    // Cost-estimation guard: when the SRA agent is in the
+    // AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT state, block SEND_TO_HOD /
+    // FORWARD_TO_HOD until costEstimation is populated on the application.
+    // Without this check the app can reach AWAITING_CITIZEN_PAYMENT with no
+    // fees to pay (stuck forever — the only fix after that is a DB rescue).
+    const FORWARD_FROM_CALC_ACTIONS = new Set(["SEND_TO_HOD", "FORWARD_TO_HOD"]);
+    if (FORWARD_FROM_CALC_ACTIONS.has(action?.action)) {
+      const currentState =
+        applicationDetails?.processInstance?.[0]?.state?.state ||
+        applicationDetails?.Application?.[0]?.processInstance?.[0]?.state?.state ||
+        applicationDetails?.workflowStatus;
+      if (currentState === "AWAITING_ON_CALCULATION_FEE_BY_SRA_AGENT") {
+        // costEstimation is stored at additionalDetails.costEstimation on the
+        // Application record — see DigitDemoViewComponent.js:173.
+        const costEstimation =
+          applicationDetails?.additionalDetails?.costEstimation ||
+          applicationDetails?.Application?.[0]?.additionalDetails?.costEstimation ||
+          applicationDetails?.costEstimation ||
+          applicationDetails?.Application?.[0]?.costEstimation;
+        const hasAnyFee =
+          costEstimation &&
+          (Number(costEstimation.totalBuildingCost) > 0 ||
+            Number(costEstimation.totalTax) > 0 ||
+            Number(costEstimation.totalTaxWithServiceCharge) > 0 ||
+            Number(costEstimation.royaltyFee) > 0);
+        if (!hasAnyFee) {
+          setShowToast({
+            type: "error",
+            label: "Vous devez d'abord calculer et enregistrer les redevances (onglet Paiements) avant de transmettre au chef du SRA.",
+            isDleteBtn: true,
+          });
+          closeToast();
+          return;
+        }
+      }
+    }
+
     setSelectedAction(action);
     if (action.action.includes("MAKE_PAYMENT")) {
       const redirectionUrl = `/${window.contextPath}/${userType}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`;
@@ -201,7 +239,9 @@ const WorkflowActions = ({
         // Full page reload so every tab's derived data (project block, fiche,
         // payments, observations, activities, applicable actions) picks up the
         // new server-side state instead of showing a stale snapshot. Small
-        // delay so the success toast stays visible briefly.
+        // delay so the success toast stays visible briefly. This fires only
+        // after the user explicitly clicks an action, so it's not the silent
+        // background refetch that was causing session loss.
         setTimeout(() => window.location.reload(), 1200);
       },
     });

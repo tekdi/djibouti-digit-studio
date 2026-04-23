@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { LuRefreshCw, LuArrowUpRight, LuChevronLeft, LuChevronRight, LuChevronsLeft, LuChevronsRight, LuInbox, LuFileText, LuUser, LuCalendar } from "react-icons/lu";
-import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser } from "../utils";
+import { getStatusInfo, formatDate, getServiceInfo, resolveBusinessServiceForUser, getDisplayApplicationId } from "../utils";
 
 const truncateName = (name, max = 20) => {
   if (!name) return "—";
@@ -94,7 +94,7 @@ const ApplicationsTable = ({
                   className="group cursor-pointer border-b border-gray-50 transition-colors hover:bg-gray-50/80"
                 >
                   <td className="px-5 py-3.5">
-                    <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{bo?.applicationNumber}</span>
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{getDisplayApplicationId(bo)}</span>
                   </td>
                   <td className="px-5 py-3.5">
                     <div>
@@ -154,7 +154,7 @@ const ApplicationsTable = ({
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-gray-900 truncate">{bo?.applicationNumber}</span>
+                  <span className="text-sm font-semibold text-gray-900 truncate">{getDisplayApplicationId(bo)}</span>
                   {serviceInfo?.ref && (
                     <span className="shrink-0 rounded-md bg-primary/8 px-1 py-0.5 text-[9px] font-bold text-primary">{serviceInfo.ref}</span>
                   )}

@@ -7,7 +7,7 @@ import { useInstructionSheetData } from "./hooks/useInstructionSheetData";
 const COMMISSIONER_ROLES = new Set([
   "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
   "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
-  "BPA_DCT_COMM", "BPA_PL_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM", "BPA_DJITELECOM_COMM",
 ]);
 
 const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
@@ -48,7 +48,7 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   };
 
   const handleSuccess = () => {
-    checkExistingInstructionSheet(); 
+    checkExistingInstructionSheet();
     window.location.reload();
   };
 

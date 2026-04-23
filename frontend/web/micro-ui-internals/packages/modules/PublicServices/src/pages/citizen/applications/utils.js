@@ -249,6 +249,16 @@ export const formatDate = (timestamp) => {
   });
 };
 
+// Primary display identifier: PCO number from the SRA Fiche d'instruction
+// (`additionalDetails.instructionSheet.pcoNumber`) when filled, otherwise
+// the raw application number. Used on list cards and the detail header.
+export const getDisplayApplicationId = (app) => {
+  if (!app) return "";
+  const pcoNumber = app && app.additionalDetails && app.additionalDetails.instructionSheet && app.additionalDetails.instructionSheet.pcoNumber;
+  if (pcoNumber && String(pcoNumber).trim()) return String(pcoNumber).trim();
+  return app.applicationNumber || "";
+};
+
 // Status options for filter
 export const statusOptions = [
   { value: "all", label: "Tous les statuts" },

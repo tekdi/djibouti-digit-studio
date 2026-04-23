@@ -39,7 +39,9 @@ const DigitDemoViewComponent = () => {
     },
     config: {
       cacheTime: 0,
-      refetchInterval: 30000,
+      // Background refetch disabled — silent polling mid-session was causing
+      // random page reloads and occasional logouts while testing. Users can
+      // refresh manually if they need fresh data.
     },
   };
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
@@ -55,7 +57,7 @@ const DigitDemoViewComponent = () => {
       },
     },
     config: {
-      refetchInterval: 30000,
+      // Background refetch disabled — see note above.
     },
   };
 
@@ -69,7 +71,7 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
-      refetchInterval: 180000,
+      // Background refetch disabled — silent polling caused random reloads.
     },
   });
 
@@ -79,7 +81,7 @@ const DigitDemoViewComponent = () => {
     config: {
       enabled: response && serviceConfig ? true : false,
       cacheTime: 0,
-      refetchInterval: 180000,
+      // Background refetch disabled — silent polling caused random reloads.
     },
   });
 

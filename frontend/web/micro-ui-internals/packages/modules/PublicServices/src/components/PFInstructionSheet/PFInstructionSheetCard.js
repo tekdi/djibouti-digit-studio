@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye } from "react-icons/lu";
-import ATARRInstructionSheetModal from "./ATARRInstructionSheetModal";
-import { useATARRInstructionSheetAPI } from "./hooks/useATARRInstructionSheetAPI";
+import PFInstructionSheetModal from "./PFInstructionSheetModal";
+import { usePFInstructionSheetAPI } from "./hooks/usePFInstructionSheetAPI";
 
-const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
+const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { serviceCode, applicationNumber } = Digit.Hooks.useQueryParams();
-  const { getFiche } = useATARRInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
+  const { getFiche } = usePFInstructionSheetAPI(tenantId, serviceCode, applicationNumber);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
@@ -19,9 +19,6 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
   }, [getFiche]);
 
   const handleSaved = useCallback(() => {
-    // Full reload so the status badge, project block on the Demande tab, and
-    // any other fiche-derived UI picks up the newly-saved values. Triggered
-    // by an explicit user save, not silent polling.
     window.location.reload();
   }, []);
 
@@ -31,49 +28,33 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
 
   if (!applicationNumber || !service) return null;
 
-  const openFill = () => {
-    setIsViewMode(false);
-    setIsModalOpen(true);
-  };
-  const openView = () => {
-    setIsViewMode(true);
-    setIsModalOpen(true);
-  };
-
+  const openFill = () => { setIsViewMode(false); setIsModalOpen(true); };
+  const openView = () => { setIsViewMode(true); setIsModalOpen(true); };
   const isSubmitted = Boolean(data);
 
   return (
     <div>
       <div className="group relative mb-6 flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-        <div
-          className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${
-            isSubmitted ? "from-djibouti-primary to-djibouti-primary-dark" : "from-djibouti-primary/70 to-djibouti-primary"
-          }`}
-        />
-
+        <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${
+          isSubmitted ? "from-djibouti-primary to-djibouti-primary-dark" : "from-djibouti-primary/70 to-djibouti-primary"
+        }`} />
         <div className="flex flex-col gap-6 p-6 min-h-full">
           <div className="flex items-start gap-4">
-            <div
-              className={`flex h-12 w-12 items-center justify-center rounded-xl ${
-                isSubmitted ? "bg-djibouti-primary/10" : "bg-amber-100/70"
-              }`}
-            >
+            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${
+              isSubmitted ? "bg-djibouti-primary/10" : "bg-amber-100/70"
+            }`}>
               <LuFileText className={`h-6 w-6 ${isSubmitted ? "text-djibouti-primary" : "text-amber-600"}`} />
             </div>
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Fiche d'instruction — Détails du projet d'extension
-                </h3>
+                <h3 className="text-xl font-semibold text-gray-900">Fiche d'instruction — Détails du Permis de Clôture</h3>
                 {isSubmitted ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <LuCircleCheck className="h-4 w-4" />
-                    Terminé
+                    <LuCircleCheck className="h-4 w-4" /> Terminé
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                    <LuClock className="h-4 w-4" />
-                    En attente
+                    <LuClock className="h-4 w-4" /> En attente
                   </span>
                 )}
               </div>
@@ -86,25 +67,17 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
                 <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Soumis le</span>
                 <p className="mt-2 text-sm font-semibold text-gray-900">
                   {new Date(data.submittedAt || Date.now()).toLocaleDateString("fr-FR", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
                   })}
                 </p>
               </div>
               <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
                 <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Créé par</span>
-                <p className="mt-2 text-sm font-semibold text-gray-900">
-                  {data.submittedByName || "Utilisateur inconnu"}
-                </p>
+                <p className="mt-2 text-sm font-semibold text-gray-900">{data.submittedByName || "Utilisateur inconnu"}</p>
               </div>
               <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4 md:col-span-2">
                 <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">Pétitionnaire</span>
-                <p className="mt-2 text-sm font-semibold text-emerald-800">
-                  {data.applicantName || "Non renseigné"}
-                </p>
+                <p className="mt-2 text-sm font-semibold text-emerald-800">{data.applicantName || "Non renseigné"}</p>
               </div>
             </div>
           )}
@@ -117,16 +90,14 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
                     onClick={openFill}
                     className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
                   >
-                    <LuPen className="h-4 w-4" />
-                    Modifier la fiche
+                    <LuPen className="h-4 w-4" /> Modifier la fiche
                   </button>
                 )}
                 <button
                   onClick={openView}
                   className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-djibouti-primary-dark"
                 >
-                  <LuEye className="h-4 w-4" />
-                  Voir les détails
+                  <LuEye className="h-4 w-4" /> Voir les détails
                 </button>
               </React.Fragment>
             ) : !isViewOnly ? (
@@ -134,8 +105,7 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
                 onClick={openFill}
                 className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-djibouti-primary-dark"
               >
-                <LuFileText className="h-4 w-4" />
-                Remplir la fiche
+                <LuFileText className="h-4 w-4" /> Remplir la fiche
               </button>
             ) : (
               <span className="text-sm text-gray-500 italic">Fiche non encore soumise</span>
@@ -144,7 +114,7 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
         </div>
       </div>
 
-      <ATARRInstructionSheetModal
+      <PFInstructionSheetModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         applicationNumber={applicationNumber}
@@ -160,11 +130,11 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
   );
 };
 
-ATARRInstructionSheetCard.propTypes = {
+PFInstructionSheetCard.propTypes = {
   service: PropTypes.string.isRequired,
   state: PropTypes.string,
   t: PropTypes.func,
   isViewOnly: PropTypes.bool,
 };
 
-export default ATARRInstructionSheetCard;
+export default PFInstructionSheetCard;

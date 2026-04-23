@@ -3,6 +3,113 @@ import { useTranslation } from "react-i18next";
 import { LuUser, LuBuilding, LuPenTool, LuPhone, LuMail, LuHash, LuMapPin, LuFileText } from "react-icons/lu";
 import ProjectDataView from "./ProjectDataView";
 
+// PF-specific fiche block (Permis de Clôture). Includes closureType +
+// perimeter in addition to the shared identity fields.
+const FichePFProjectBlock = ({ fiche }) => {
+  if (!fiche) return null;
+  const rows = [
+    { label: "Numéro du Permis de Construire", value: fiche.pcoNumber },
+    { label: "Nom et Prénoms du Pétitionnaire", value: fiche.applicantName },
+    { label: "Type de clôture", value: fiche.closureType },
+    { label: "Localisation de la Parcelle", value: fiche.plotLocation },
+    { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
+    { label: "Surface de la parcelle (m²)", value: fiche.plotArea },
+    { label: "Périmètre de la parcelle (ml)", value: fiche.perimeter },
+    { label: "Région", value: fiche.region },
+  ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
+  if (rows.length === 0) return null;
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+          <LuFileText className="w-4 h-4 text-purple-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Détails du Permis de Clôture</h3>
+      </div>
+      <div className="space-y-1">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+            <span className="text-sm font-medium text-gray-600">{r.label}</span>
+            <span className="text-sm font-semibold text-gray-900 text-right">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// PD-specific fiche block (Permis de Démolition). Adds demolitionType.
+const FichePDProjectBlock = ({ fiche }) => {
+  if (!fiche) return null;
+  const rows = [
+    { label: "Numéro du Permis de Construire", value: fiche.pcoNumber },
+    { label: "Nom et Prénoms du Pétitionnaire", value: fiche.applicantName },
+    { label: "Type de démolition", value: fiche.demolitionType },
+    { label: "Localisation de la Parcelle", value: fiche.plotLocation },
+    { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
+    { label: "Surface de la parcelle (m²)", value: fiche.plotArea },
+    { label: "Région", value: fiche.region },
+  ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
+  if (rows.length === 0) return null;
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+          <LuFileText className="w-4 h-4 text-purple-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Détails du Permis de Démolition</h3>
+      </div>
+      <div className="space-y-1">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+            <span className="text-sm font-medium text-gray-600">{r.label}</span>
+            <span className="text-sm font-semibold text-gray-900 text-right">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// PCS-specific fiche block. Rendered on the Demande tab for BPA_PCS
+// applications when the "Fiche d'instruction — Détails du projet simplifié"
+// has been filled. Same shape as the ATARR block (no CES/COS/destination,
+// just plotArea + builtArea + the identity fields).
+const FichePCSProjectBlock = ({ fiche }) => {
+  if (!fiche) return null;
+  const rows = [
+    { label: "Numéro du Permis de Construire", value: fiche.pcoNumber },
+    { label: "Nom et Prénoms du Pétitionnaire", value: fiche.applicantName },
+    { label: "Type de Projet", value: fiche.projectType },
+    { label: "Localisation de la Parcelle", value: fiche.plotLocation },
+    { label: "Numéro du Titre Foncier", value: fiche.landTitleNumber },
+    { label: "Surface de la parcelle (m²)", value: fiche.plotArea },
+    { label: "Surface bâtie (m²)", value: fiche.builtArea },
+    { label: "Région", value: fiche.region },
+  ].filter((r) => r.value !== undefined && r.value !== null && String(r.value).trim() !== "");
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+          <LuFileText className="w-4 h-4 text-purple-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Détails du projet simplifié</h3>
+      </div>
+      <div className="space-y-1">
+        {rows.map((r) => (
+          <div key={r.label} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+            <span className="text-sm font-medium text-gray-600">{r.label}</span>
+            <span className="text-sm font-semibold text-gray-900 text-right">{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ATARR-specific fiche block. Rendered on the Demande tab for BPA_ATARR
 // applications when the "Fiche d'instruction — Détails du projet d'extension"
 // has been filled from the Instruction tab. Mirrors FicheSRAProjectBlock but
@@ -252,6 +359,9 @@ const ProjectTab = ({
         <div className="space-y-6">
           <FicheSRAProjectBlock fiche={response?.additionalDetails?.instructionSheet} />
           <FicheATARRProjectBlock fiche={response?.additionalDetails?.atarrInstructionSheet} />
+          <FichePCSProjectBlock fiche={response?.additionalDetails?.pcsInstructionSheet} />
+          <FichePFProjectBlock fiche={response?.additionalDetails?.pfInstructionSheet} />
+          <FichePDProjectBlock fiche={response?.additionalDetails?.pdInstructionSheet} />
           <ProjectDataView
             serviceCode={serviceCode}
             data={applicationData}
@@ -261,7 +371,10 @@ const ProjectTab = ({
             singleColumn={true}
             hideProjectDetailsBlock={
               !!response?.additionalDetails?.instructionSheet ||
-              !!response?.additionalDetails?.atarrInstructionSheet
+              !!response?.additionalDetails?.atarrInstructionSheet ||
+              !!response?.additionalDetails?.pcsInstructionSheet ||
+              !!response?.additionalDetails?.pfInstructionSheet ||
+              !!response?.additionalDetails?.pdInstructionSheet
             }
           />
         </div>

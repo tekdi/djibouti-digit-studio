@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LuFileText } from "react-icons/lu";
 import { PDFPreview } from "../../../../components/ChecklistCards/Common";
 import { checkIfCommissioner, getCurrentUserCommissionerRole, getOrganizationInfo, COMMISSIONER_ORGANIZATIONS } from "./utils/commissionerUtils";
@@ -20,19 +20,17 @@ const VERDICT_ACTIONS = {
   APPROVE: { verdict: "CONFORME", label: "Avis Favorable", color: "emerald" },
   APPROVE_APPLICATION: { verdict: "CONFORME", label: "Avis Favorable", color: "emerald" },
   NON_CONFORM: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
+  NON_CONFORM_APPLICATION: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
   REJECT_APPLICATION: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
   REJECT: { verdict: "NON_CONFORME", label: "Avis Défavorable", color: "red" },
 };
 
-// Commissioner role → the action's enclosing business service (used as a secondary hint)
-const COMMISSIONER_ROLE_CODES = new Set([
-  "BPA_DGDCF_COMM",
-  "BPA_SDECC_COMM",
-  "BPA_INSPD_COMM",
-  "BPA_ONEAD_COMM",
-  "BPA_EDD_COMM",
-  "BPA_DCT_COMM",
-]);
+// Commissioner role codes. Kept in sync with COMMISSIONER_ORGANIZATIONS in
+// utils/commissionerUtils.js — missing any one here silently drops that
+// commissioner's avis from the Avis tab (regression: BPA_DNPC_COMM was
+// missing and DNPC's CONFORM_APPLICATION never got mapped to a verdict,
+// so the card stayed "En attente" even after the avis was given).
+const COMMISSIONER_ROLE_CODES = new Set(Object.keys(COMMISSIONER_ORGANIZATIONS));
 
 /**
  * Given the two workflow detail objects, build a map:
@@ -90,6 +88,43 @@ const ObservationsTab = ({ response, queryStrings, timelineWorkflowDetails, work
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const serviceCode = queryStrings?.serviceCode;
   const applicationNumber = queryStrings?.applicationNumber;
+
+  // Fetch the FULL process-instance history for this business id across every
+  // business-service (main + parallel commissioner sub-workflows). The shared
+  // timelineWorkflowDetails prop is scoped to the main BPA service and misses
+  // the CONFORM_APPLICATION rows that live in BPA_PCO_DGDCF / BPA_PCO_DNPC /
+  // etc, which is why commissioner avis + comments weren't surfacing here.
+  const [parallelProcessInstances, setParallelProcessInstances] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    const fetchAll = async () => {
+      if (!applicationNumber) return;
+      try {
+        const resp = await Digit.CustomService.getResponse({
+          url: "/egov-workflow-v2/egov-wf/process/_search",
+          method: "POST",
+          params: {
+            tenantId,
+            businessIds: applicationNumber,
+            history: true,
+          },
+          body: {
+            RequestInfo: {
+              apiId: "Rainmaker",
+              authToken: Digit.UserService.getUser()?.access_token,
+            },
+          },
+        });
+        if (!cancelled) {
+          setParallelProcessInstances(Array.isArray(resp?.ProcessInstances) ? resp.ProcessInstances : []);
+        }
+      } catch (e) {
+        console.error("Failed to load full workflow timeline for commissioner avis:", e);
+      }
+    };
+    fetchAll();
+    return () => { cancelled = true; };
+  }, [applicationNumber, tenantId]);
 
   const userDetails = Digit.UserService.getUser();
   const isCommissioner = checkIfCommissioner(userDetails);
@@ -185,9 +220,14 @@ const ObservationsTab = ({ response, queryStrings, timelineWorkflowDetails, work
     (obs) => obs.observations || (obs.files && obs.files.length > 0)
   );
 
-  // Build commissioner verdict map (CONFORME / NON_CONFORME) from workflow history
+  // Build commissioner verdict map (CONFORME / NON_CONFORME) from workflow
+  // history. Also include the cross-service parallelProcessInstances list so
+  // that CONFORM_APPLICATION / NON_CONFORM_APPLICATION rows from each
+  // commissioner sub-workflow (BPA_PCO_DGDCF, BPA_PCO_DNPC, …) are counted.
   const verdictsByRole = buildVerdictsByRole(
-    timelineWorkflowDetails,
+    { ...(timelineWorkflowDetails || {}), processInstances: parallelProcessInstances.length
+        ? [...(timelineWorkflowDetails?.processInstances || []), ...parallelProcessInstances]
+        : timelineWorkflowDetails?.processInstances },
     workflowDetails,
     response?.processInstance
   );

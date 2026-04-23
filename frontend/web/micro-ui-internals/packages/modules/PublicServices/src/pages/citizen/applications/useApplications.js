@@ -203,17 +203,9 @@ const useApplications = () => {
     }
   }, [indId]);
 
-  // Auto-refetch every 3 minutes (180000 ms)
-  useEffect(() => {
-    if (!indId || !hasInitialized.current) return;
-
-    const intervalId = setInterval(() => {
-      console.log("Auto-refreshing citizen applications after 3 minutes");
-      refreshApplications();
-    }, 180000); // 3 minutes
-
-    return () => clearInterval(intervalId);
-  }, [indId]);
+  // Background auto-refetch was removed — silent polling mid-session caused
+  // random page reloads and occasional logouts while testing. Users click the
+  // refresh button if they want fresh data.
 
   return {
     applications,

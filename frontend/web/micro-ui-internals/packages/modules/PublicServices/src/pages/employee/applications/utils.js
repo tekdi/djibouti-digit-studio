@@ -225,6 +225,20 @@ const ROLE_INBOX_STATUSES = {
   BPA_DNPC_COMM: ["AWAITING_ON_COMMISSIONER"],
   BPA_ONEAD_COMM: ["AWAITING_ON_COMMISSIONER"],
   BPA_PL_COMM: ["AWAITING_ON_COMMISSIONER"],
+  BPA_DJITELECOM_COMM: ["AWAITING_ON_COMMISSIONER"],
+};
+
+// Primary display identifier for an application:
+//   - once the SRA has filled the Fiche d'instruction with a
+//     `Numéro du Permis de Construire` (additionalDetails.instructionSheet.pcoNumber),
+//     use that number everywhere (cards, detail header, etc.)
+//   - otherwise fall back to the raw application number (e.g. "PCO-000041/2026")
+// Keeps applicationNumber accessible for traceability if the caller needs it.
+export const getDisplayApplicationId = (app) => {
+  if (!app) return "";
+  const pcoNumber = app?.additionalDetails?.instructionSheet?.pcoNumber;
+  if (pcoNumber && String(pcoNumber).trim()) return String(pcoNumber).trim();
+  return app.applicationNumber || "";
 };
 
 export const getNewStatusesForUser = (roles = []) => {

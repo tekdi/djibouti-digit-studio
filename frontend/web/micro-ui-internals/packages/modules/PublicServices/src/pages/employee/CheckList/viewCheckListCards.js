@@ -15,7 +15,11 @@ import { PVImplantationChecklistCard } from "../../../components/PVImplantationC
 import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
 import { BCIEInspectionChecklistCard } from "../../../components/BCIEInspectionChecklist";
 import { ATARRInstructionSheetCard } from "../../../components/ATARRInstructionSheet";
+import { PCSInstructionSheetCard } from "../../../components/PCSInstructionSheet";
+import { PFInstructionSheetCard } from "../../../components/PFInstructionSheet";
+import { PDInstructionSheetCard } from "../../../components/PDInstructionSheet";
 import { ACELocauxPublicChecklistCard } from "../../../components/ACELocauxPublicChecklist";
+import { ACEHabitationChecklistCard } from "../../../components/ACEHabitationChecklist";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min.js";
 import { checklistByService } from "../../../utils/templateConfig.js";
@@ -58,7 +62,7 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
     role.code === "BPA_SDECC_COMM" || role.code === "BPA_DGDCF_COMM" ||
     role.code === "BPA_ONEAD_COMM" || role.code === "BPA_DNPC_COMM" ||
     role.code === "BPA_EDD_COMM" || role.code === "BPA_INSPD_COMM" ||
-    role.code === "BPA_PL_COMM"
+    role.code === "BPA_PL_COMM" || role.code === "BPA_DJITELECOM_COMM"
   );
   const isViewOnly = isCitizen || isArchitect || isCommissioner;
 
@@ -212,6 +216,36 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
               });
             }
 
+            // Add PCS Instruction Sheet if configured (P7 - Permis de Construire Simplifié)
+            if (allowedCodes.includes("customPCSInstructionSheet")) {
+              items.push({
+                id: "custom-pcs-instruction-sheet",
+                code: "customPCSInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_PCS",
+                auditDetails: { createdTime: Date.now() + 12 }
+              });
+            }
+
+            // Add PF Instruction Sheet if configured (P8 - Permis de Clôture)
+            if (allowedCodes.includes("customPFInstructionSheet")) {
+              items.push({
+                id: "custom-pf-instruction-sheet",
+                code: "customPFInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_PF",
+                auditDetails: { createdTime: Date.now() + 13 }
+              });
+            }
+
+            // Add PD Instruction Sheet if configured (P9 - Permis de Démolition)
+            if (allowedCodes.includes("customPDInstructionSheet")) {
+              items.push({
+                id: "custom-pd-instruction-sheet",
+                code: "customPDInstructionSheet",
+                clientId: "INSTRUCTION_SHEET_PD",
+                auditDetails: { createdTime: Date.now() + 14 }
+              });
+            }
+
             // Add ACE (Attestation de Conformité Électrique) — Locaux accueillant du public variant
             if (allowedCodes.includes("customACELocauxPublicChecklist")) {
               items.push({
@@ -219,6 +253,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 code: "customACELocauxPublicChecklist",
                 clientId: "ACE_LOCAUX_PUBLIC_CHECKLIST",
                 auditDetails: { createdTime: Date.now() + 10 }
+              });
+            }
+
+            // Add ACE (Attestation de Conformité Électrique) — Habitation variant
+            if (allowedCodes.includes("customACEHabitationChecklist")) {
+              items.push({
+                id: "custom-ace-habitation-checklist",
+                code: "customACEHabitationChecklist",
+                clientId: "ACE_HABITATION_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 11 }
               });
             }
           }
@@ -402,9 +446,57 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
             );
           }
 
+          if (item.code === "customPCSInstructionSheet") {
+            return (
+              <PCSInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customPFInstructionSheet") {
+            return (
+              <PFInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customPDInstructionSheet") {
+            return (
+              <PDInstructionSheetCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
           if (item.code === "customACELocauxPublicChecklist") {
             return (
               <ACELocauxPublicChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customACEHabitationChecklist") {
+            return (
+              <ACEHabitationChecklistCard
                 key={index}
                 service={service}
                 state={state}
