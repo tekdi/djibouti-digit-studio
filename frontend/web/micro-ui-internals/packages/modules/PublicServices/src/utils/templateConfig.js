@@ -358,11 +358,11 @@ export const checklistByService = [
   },
   {
     service: "BPA_PCS",
-    checklist: ["calculationFees"],
+    checklist: ["customPCSInstructionSheet", "calculationFees"],
   },
   {
     service: "BPA_PD",
-    checklist: ["BPA_PCO.PENDING_ACTION_BY_AGENT", "customAgentChecklist"],
+    checklist: ["customPDInstructionSheet"],
   },
   {
     service: "BPA_PS",
@@ -378,7 +378,11 @@ export const checklistByService = [
   },
   {
     service: "BPA_CCE",
-    checklist: ["customBCIEInspectionChecklist", "customACELocauxPublicChecklist"],
+    checklist: [
+      "customBCIEInspectionChecklist",
+      "customACELocauxPublicChecklist",
+      "customACEHabitationChecklist",
+    ],
   },
   {
     service: "BPA_CCP",
@@ -399,6 +403,6 @@ export const checklistByService = [
   },
   {
     service: "BPA_PF",
-    checklist: ["customCommissionersChecklist", "calculationFees"],
+    checklist: ["customPFInstructionSheet", "customCommissionersChecklist", "calculationFees"],
   },
 ];

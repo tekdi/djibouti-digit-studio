@@ -93,11 +93,29 @@ const ApplicationHeader = ({
         <div className="flex items-center space-x-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">{response?.applicationNumber}</h1>
+              {/* Once the SRA has filled the Fiche d'instruction with a
+                  Numéro du Permis de Construire, show that as the primary
+                  title instead of the raw internal application number. The
+                  application number is still shown as a subtitle for
+                  traceability. */}
+              {(() => {
+                const pcoNumber = response?.additionalDetails?.instructionSheet?.pcoNumber;
+                const hasPco = pcoNumber && String(pcoNumber).trim();
+                return (
+                  <h1 className="text-2xl font-bold text-white">
+                    {hasPco ? pcoNumber : response?.applicationNumber}
+                  </h1>
+                );
+              })()}
               <StatusBadge state={response?.processInstance?.[0]?.state?.state} isCitizen={isCitizen} />
             </div>
+            {response?.additionalDetails?.instructionSheet?.pcoNumber && (
+              <p className="text-xs text-white/70 mb-1">
+                Dossier : {response?.applicationNumber}
+              </p>
+            )}
             <h2 className="text-xl font-semibold text-white mb-1">
-              {serviceInfo.name} 
+              {serviceInfo.name}
             </h2>
           </div>
         </div>

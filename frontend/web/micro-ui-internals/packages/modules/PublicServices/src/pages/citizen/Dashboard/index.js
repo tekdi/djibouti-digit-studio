@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import useApplications from "../applications/useApplications";
-import { getSimplifiedStatus, getServiceInfo, getStatusInfo } from "../applications/utils";
+import { getSimplifiedStatus, getServiceInfo, getStatusInfo, getDisplayApplicationId } from "../applications/utils";
 import {
   LuFileText,
   LuCircleCheck,
@@ -76,7 +76,10 @@ const CitizenDashboard = () => {
         const serviceInfo = getServiceInfo(app.businessService) || {};
         const applicant = app.serviceDetails?.responseData?.Application?.applicants?.[0] || app.applicants?.[0];
         return {
+          // `id` = raw application number (URL + list key). `displayId` shows
+          // the PCO number from the SRA Fiche when it has been filled.
           id: app.applicationNumber,
+          displayId: getDisplayApplicationId(app),
           title: serviceInfo.name || app.businessService,
           shortName: serviceInfo.name || app.businessService,
           ref: serviceInfo.ref || null,
@@ -224,7 +227,7 @@ const CitizenDashboard = () => {
                 <div className="flex h-full flex-col rounded-2xl border border-gray-100 bg-white p-4 transition-all hover:border-primary/20 hover:shadow-sm sm:p-5">
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.id}</span>
+                      <span className="text-sm font-semibold text-gray-900 group-hover:text-primary">{app.displayId || app.id}</span>
                       {app.ref && (
                         <span className="ml-1.5 inline-flex rounded-lg bg-primary/8 px-1.5 py-0.5 text-[10px] font-bold text-primary align-middle">
                           {app.ref}

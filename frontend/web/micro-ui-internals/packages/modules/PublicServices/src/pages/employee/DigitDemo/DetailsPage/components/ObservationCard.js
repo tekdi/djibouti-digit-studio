@@ -92,6 +92,30 @@ const ObservationCard = ({
       </div>
 
       <div className="p-6 space-y-6 flex-1">
+        {/* Commentaire du commissaire — captured from the workflow action
+            (e.g. "Sans objection", "OK"). Shown whenever the avis was given,
+            even if no observation text or files were attached. */}
+        {verdict?.comment && String(verdict.comment).trim() && (
+          <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">
+              Commentaire
+            </p>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap">
+              {verdict.comment}
+            </p>
+            {verdict.timestamp ? (
+              <p className="mt-2 text-xs text-gray-500">
+                {new Date(verdict.timestamp).toLocaleDateString('fr-FR', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </p>
+            ) : null}
+          </div>
+        )}
         {hasAnyContent ? (
           <React.Fragment>
             <ObservationsDisplay observations={observationData.observations} />

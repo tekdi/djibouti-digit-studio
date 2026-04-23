@@ -491,7 +491,9 @@ const DigitDemoComponent = ({ editdata }) => {
           </div>
         ) : (
           <div style={{ position: "relative" }}>
-            {currentStep === 1 && (
+            {/* BPA_PL and BPA_CCG re-use this step for applicant info, not land documents,
+                so the "documents fonciers" banner would be misleading there. */}
+            {currentStep === 1 && !["BPA_PL", "BPA_CCG"].includes(service?.toUpperCase()) && (
               <div
                 style={{
                   display: "flex",

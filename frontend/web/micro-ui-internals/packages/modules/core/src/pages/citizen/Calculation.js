@@ -5,7 +5,7 @@ import TextInput from "../../../../../ui-components/src/atoms/TextInput";
 import Loader from "../../../../../ui-components/src/atoms/Loader";
 import { Toast } from "@egovernments/digit-ui-react-components";
 
-const Calculation = ({ isCitizen, isViewOnly = false }) => {
+const Calculation = ({ isCitizen, isViewOnly = false, hideCostBreakdown = false }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
@@ -532,7 +532,9 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
         </div>
       )}
 
-      {/* Cost Breakdown Table */}
+      {/* Cost Breakdown Table — internal SRA working data.
+          Hidden for citizens and architects. */}
+      {!hideCostBreakdown && (
       <div className={"mb-6 " + disabledStyle}>
         <div className="flex items-center gap-2 mb-4">
           <div className="w-1 h-5 bg-djibouti-primary rounded-full" />
@@ -568,6 +570,7 @@ const Calculation = ({ isCitizen, isViewOnly = false }) => {
           </table>
         </div>
       </div>
+      )}
 
       {/* Save Button — only HOD can save (backend rejects agents for costEstimation) */}
       {!isSaveDisabled && (

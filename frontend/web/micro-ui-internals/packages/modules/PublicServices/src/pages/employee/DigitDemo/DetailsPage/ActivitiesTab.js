@@ -109,11 +109,17 @@ var ActivitiesTab = function (props) {
     return result;
   };
 
-  var grouped = Array.isArray(timeline) ? dedupeAndGroup(timeline) : [];
+  // Drop the DRAFT step (Brouillon) — history should start at the first real
+  // submission event (CREATE / "Créer"). The draft-save is an internal
+  // editor step that doesn't belong in the reviewer-facing timeline.
+  var filteredTimeline = Array.isArray(timeline)
+    ? timeline.filter(function (inst) { return (inst?.performedAction || inst?.action) !== "DRAFT"; })
+    : [];
+  var grouped = dedupeAndGroup(filteredTimeline);
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-black text-gray-900 mb-4">Historique des activit\u00e9s</h3>
+      <h3 className="text-lg font-black text-gray-900 mb-4">Historique des activités</h3>
       <div className="relative">
         <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-gray-200 z-0"></div>
         {grouped.map(function (entry, index) {

@@ -6,7 +6,7 @@ import {
   LuUser,
   LuEye
 } from "react-icons/lu";
-import { getStatusInfo, getServiceInfo, getSimplifiedStatus, formatDate } from "./utils";
+import { getStatusInfo, getServiceInfo, getSimplifiedStatus, formatDate, getDisplayApplicationId } from "./utils";
 import { useTranslation } from "react-i18next";
 
 const ApplicationCard = ({ app }) => {
@@ -47,9 +47,10 @@ const ApplicationCard = ({ app }) => {
         {serviceInfo.ref} - {serviceInfo.name}
         </h3>
         
-        {/* Reference */}
+        {/* Reference — prefer the PCO number once the SRA has filled the
+            Fiche d'instruction; otherwise the raw application number. */}
         <p className="text-sm text-gray-500 mb-4">
-          Réf • {app.applicationNumber}
+          Réf • {getDisplayApplicationId(app)}
         </p>
       </div>
 

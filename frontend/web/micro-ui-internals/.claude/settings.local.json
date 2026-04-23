@@ -44,7 +44,11 @@
       "Bash(awk '$4 >= 3 {print $1, \"restarts=\"$4}')",
       "Bash(TOKEN=\"0ce449fb-ce85-40fa-8bbf-e5cb91049604\" node *)",
       "Bash(awk 'NR==1 || $4 >= 1')",
-      "Bash(sort -k4 -rn)"
+      "Bash(sort -k4 -rn)",
+      "Bash(TOKEN=$\\(cat C:/tmp/_tok\\) node C:/tmp/patch_trigger_workflows.js)",
+      "Bash(TOKEN=$\\(cat C:/tmp/_tok\\) node C:/tmp/grant_djitelecom_actions.js)",
+      "Bash(awk '$4 >= 2 {print $1, \"restarts=\"$4, \"age=\"$5}')",
+      "Bash(awk '{print $4}')"
     ]
   }
 }
