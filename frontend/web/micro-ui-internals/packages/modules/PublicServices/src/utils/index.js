@@ -25,7 +25,11 @@ const getServiceDetails = (formData) => {
     return acc;
   }, {});
 
-  // Handle legal entity details from applicant details
+  // Handle legal entity details from applicant details. The form (templateConfig
+  // ApplicantFields) collects company info + representative-specific fields
+  // (qualité, contact, head office) under the same applicantDetails[0] node —
+  // copy them all into legalEntityDetails so they survive the save and can be
+  // displayed in the Demande tab's "Représentant légal" subsection.
   if (formData.applicantDetails && formData.applicantDetails[0]?.personType === "LEGAL_ENTITY") {
     const applicant = formData.applicantDetails[0];
     if (!validSections.legalEntityDetails) {
@@ -34,6 +38,9 @@ const getServiceDetails = (formData) => {
         companyType: applicant.companyType,
         otherCompanyType: applicant.otherCompanyType,
         registrationNumber: applicant.registrationNumber,
+        telephone: applicant.telephone,
+        adresseSiege: applicant.adresseSiege,
+        qualiteRepresentant: applicant.qualiteRepresentant,
       }];
     }
   }

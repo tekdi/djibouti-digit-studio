@@ -48,7 +48,16 @@
       "Bash(TOKEN=$\\(cat C:/tmp/_tok\\) node C:/tmp/patch_trigger_workflows.js)",
       "Bash(TOKEN=$\\(cat C:/tmp/_tok\\) node C:/tmp/grant_djitelecom_actions.js)",
       "Bash(awk '$4 >= 2 {print $1, \"restarts=\"$4, \"age=\"$5}')",
-      "Bash(awk '{print $4}')"
+      "Bash(awk '{print $4}')",
+      "Bash(sort -u echo \"---\")",
+      "Bash(aws eks list-nodegroups *)",
+      "Bash(wait)",
+      "Bash(yarn workspace *)",
+      "Bash(awk '{print $2}')",
+      "Bash(awk '$5 >= 3 {print $1, $2, \"restarts=\"$5}')",
+      "Read(//c/Users/amaze/.claude/skills/**)",
+      "Bash(agent-browser --version)",
+      "Bash(PYTHONIOENCODING=utf-8 python *)"
     ]
   }
 }

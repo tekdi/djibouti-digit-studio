@@ -228,16 +228,63 @@ const ROLE_INBOX_STATUSES = {
   BPA_DJITELECOM_COMM: ["AWAITING_ON_COMMISSIONER"],
 };
 
-// Primary display identifier for an application:
-//   - once the SRA has filled the Fiche d'instruction with a
-//     `Numéro du Permis de Construire` (additionalDetails.instructionSheet.pcoNumber),
-//     use that number everywhere (cards, detail header, etc.)
-//   - otherwise fall back to the raw application number (e.g. "PCO-000041/2026")
-// Keeps applicationNumber accessible for traceability if the caller needs it.
+// Primary display name for the applicant (Nom du demandeur / Pétitionnaire).
+//
+// When the reviewing agent fills a Fiche/PV, the applicant name they type is
+// the single source of truth — it overrides whatever was on the original
+// application record. The original `applicants[0].name` is only used as a
+// fallback (before any fiche has been filled).
+//
+// Mirrors the lookup order used in getDisplayApplicationId.
+export const getDisplayApplicantName = (app) => {
+  if (!app) return "";
+  const ad = app.additionalDetails || {};
+  const candidates = [
+    ad.instructionSheet?.applicantName,          // PCO / PCO_SIMPLE / PL / PS
+    ad.atarrInstructionSheet?.applicantName,     // ATARR
+    ad.pcsInstructionSheet?.applicantName,       // PCS
+    ad.pfInstructionSheet?.applicantName,        // PF
+    ad.pdInstructionSheet?.applicantName,        // PD
+    ad.ccgVisitChecklist?.applicantName,         // CCG
+    ad.pvImplantationChecklist?.applicantName,   // PV
+  ];
+  for (const c of candidates) {
+    if (c && String(c).trim()) return String(c).trim();
+  }
+  return app.applicants?.[0]?.name || "";
+};
+
+// Primary display identifier for an application.
+//
+// Once the SRA (or the relevant inspector) has filled a Fiche/PV with a permit
+// or certificate number, that number takes precedence over the raw
+// applicationNumber (e.g. "PCO-000041/2026") in cards, detail header, search,
+// dashboards, etc. The applicationNumber stays accessible for traceability.
+//
+// Priority: CCG cert number > any service-specific fiche pcoNumber.
+// The order of the pcoNumber list is irrelevant because at most one fiche is
+// filled per application.
 export const getDisplayApplicationId = (app) => {
   if (!app) return "";
-  const pcoNumber = app?.additionalDetails?.instructionSheet?.pcoNumber;
-  if (pcoNumber && String(pcoNumber).trim()) return String(pcoNumber).trim();
+  const ad = app.additionalDetails || {};
+
+  // BPA_CCG — PV de Visite issues a CCG number (ccgNumber); the pcoNumber on
+  // that same fiche points to the ORIGINAL permit and is not what we display.
+  const ccgNumber = ad.ccgVisitChecklist?.ccgNumber;
+  if (ccgNumber && String(ccgNumber).trim()) return String(ccgNumber).trim();
+
+  // All other fiches use a `pcoNumber` field for the issued permit number.
+  const candidates = [
+    ad.instructionSheet?.pcoNumber,        // PCO / PCO_SIMPLE / PL / PS
+    ad.atarrInstructionSheet?.pcoNumber,   // ATARR
+    ad.pcsInstructionSheet?.pcoNumber,     // PCS
+    ad.pfInstructionSheet?.pcoNumber,      // PF
+    ad.pdInstructionSheet?.pcoNumber,      // PD
+    ad.pvImplantationChecklist?.pcoNumber, // PV
+  ];
+  for (const c of candidates) {
+    if (c && String(c).trim()) return String(c).trim();
+  }
   return app.applicationNumber || "";
 };
 

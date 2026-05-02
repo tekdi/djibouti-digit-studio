@@ -45,7 +45,7 @@ const DigitDemoCreateComponent = () => {
           serviceCode: application?.serviceCode || null,
           tenantId: application?.tenantId || null,
           module: application?.module || null,
-          businessService: application?.businessService || null,
+          businessService: application?.businessService || service || null,
           status: "ACTIVE",
           channel: application?.channel || Digit.UserService.getUser()?.info?.type || "counter",
           reference: application?.reference || null,
@@ -82,7 +82,7 @@ const DigitDemoCreateComponent = () => {
           Workflow: {
             action: "CREATE",
             comment: "",
-            businessService: application?.workflow?.businessService || application?.businessService,
+            businessService: application?.workflow?.businessService || application?.businessService || service,
           },
           auditDetails: {
             createdTime: application?.auditDetails?.createdTime || null,

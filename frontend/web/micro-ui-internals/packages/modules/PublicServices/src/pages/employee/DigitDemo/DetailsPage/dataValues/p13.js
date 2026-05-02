@@ -2,22 +2,30 @@ export const p13Data = {
   // Define which blocks should be shown for P13 (Certificate of Conformity)
   blocks: {
     originalPermitDetails: {
-      title: "Détails du permis de construction original",
+      title: "Détails du projet",
       icon: "LuFileText",
       color: "purple",
       fields: [
+        // `ccgNumber` is synthesized in ProjectTab.js from response.applicationNumber
+        // (the originalPermitDetails array coming from the form has no CCG number —
+        // the CCG number IS the application number).
         {
-          label: "Numéro de permis original",
+          label: "Numéro du Certificat de Conformité Générale",
+          key: "ccgNumber",
+          icon: "LuHash"
+        },
+        {
+          label: "Numéro du Permis de Construire",
           key: "originalPermitNumber",
           icon: "LuHash"
         },
         {
-          label: "Date du permis original",
+          label: "Date de délivrance du Permis de Construire",
           key: "originalPermitDate",
           icon: "LuCalendar"
         },
         {
-          label: "Date d'achèvement de construction",
+          label: "Date d'achèvement de la construction",
           key: "constructionCompletionDate",
           icon: "LuCalendar"
         },
@@ -27,7 +35,7 @@ export const p13Data = {
           icon: "LuMapPin"
         },
         {
-          label: "Type de construction",
+          label: "Type de projet autorisé",
           key: "constructionType",
           icon: "LuBuilding"
         },
@@ -39,37 +47,37 @@ export const p13Data = {
       ]
     },
     conformityCertificatesDetails: {
-      title: "Détails des certificats de conformité",
+      title: "Détails des documents des Certificats de Conformité",
       icon: "LuCircleCheck",
       color: "green",
       fields: [
         {
-          label: "Numéro de certificat d'alignement",
+          label: "Numéro de Référence du Certificat d'Alignement",
           key: "alignmentCertificateNumber",
           icon: "LuHash"
         },
         {
-          label: "Date du certificat d'alignement",
+          label: "Date de délivrance du Certificat d'Alignement",
           key: "alignmentCertificateDate",
           icon: "LuCalendar"
         },
         {
-          label: "Numéro de certificat électrique",
+          label: "Numéro de Référence du Certificat de Conformité Électrique",
           key: "electricalCertificateNumber",
           icon: "LuHash"
         },
         {
-          label: "Date du certificat électrique",
+          label: "Date de délivrance du Certificat de Conformité Électrique",
           key: "electricalCertificateDate",
           icon: "LuCalendar"
         },
         {
-          label: "Numéro de certificat sismique",
+          label: "Numéro de Référence du Certificat de Conformité Parasismique",
           key: "seismicCertificateNumber",
           icon: "LuHash"
         },
         {
-          label: "Date du certificat sismique",
+          label: "Date de délivrance du Certificat de Conformité Parasismique",
           key: "seismicCertificateDate",
           icon: "LuCalendar"
         }

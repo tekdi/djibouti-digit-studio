@@ -249,7 +249,7 @@ const Calculation = ({ isCitizen, isViewOnly = false, hideCostBreakdown = false 
           setIsSaveBtnDisable(false);
           setOnSubmitLoading(false);
           setShowToast({ label: t("CALCULATION_SAVE_ERROR"), type: "error" });
-          setTimeout(() => { setShowToast(null); window.history.back(); }, 3000);
+          setTimeout(() => { setShowToast(null); }, 3000);
         },
       }
     );
