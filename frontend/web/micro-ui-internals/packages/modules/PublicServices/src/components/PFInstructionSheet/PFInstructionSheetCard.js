@@ -4,6 +4,12 @@ import { LuFileText, LuCircleCheck, LuClock, LuPen, LuEye } from "react-icons/lu
 import PFInstructionSheetModal from "./PFInstructionSheetModal";
 import { usePFInstructionSheetAPI } from "./hooks/usePFInstructionSheetAPI";
 
+const COMMISSIONER_ROLES = new Set([
+  "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
+  "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM", "BPA_DJITELECOM_COMM",
+]);
+
 const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { serviceCode, applicationNumber } = Digit.Hooks.useQueryParams();
@@ -12,6 +18,11 @@ const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
   const [data, setData] = useState(null);
+
+  // Commissioners get a stripped-down card — just the title, badge, and the
+  // "Voir les détails" button. No metadata grid, no edit button.
+  const userRoles = Digit.UserService.getUser()?.info?.roles || [];
+  const isCommissioner = userRoles.some((r) => COMMISSIONER_ROLES.has(r?.code));
 
   const reload = useCallback(async () => {
     const d = await getFiche();
@@ -61,7 +72,7 @@ const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
             </div>
           </div>
 
-          {isSubmitted && (
+          {isSubmitted && !isCommissioner && (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
                 <span className="text-xs font-medium uppercase tracking-wide text-gray-500">Soumis le</span>
@@ -85,7 +96,7 @@ const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
           <div className="flex flex-wrap gap-3 border-t border-gray-100 pt-6 mt-auto">
             {isSubmitted ? (
               <React.Fragment>
-                {!isViewOnly && (
+                {!isViewOnly && !isCommissioner && (
                   <button
                     onClick={openFill}
                     className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:border-djibouti-primary/40 hover:text-djibouti-primary"
@@ -100,7 +111,7 @@ const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
                   <LuEye className="h-4 w-4" /> Voir les détails
                 </button>
               </React.Fragment>
-            ) : !isViewOnly ? (
+            ) : !isViewOnly && !isCommissioner ? (
               <button
                 onClick={openFill}
                 className="inline-flex items-center gap-2 rounded-xl bg-djibouti-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-djibouti-primary-dark"

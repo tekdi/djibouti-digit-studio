@@ -70,10 +70,18 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   const basePath = `/${window?.contextPath}/employee/publicservices`;
 
   const fullName = userDetails?.info?.name || "Utilisateur";
-  const shortName = fullName.length > 12 ? fullName.substring(0, 12) + "..." : fullName;
   const userRoles = userDetails?.info?.roles || [];
   const primaryRole = userRoles.find(r => priorityRoles.includes(r?.code))?.code || userRoles[0]?.code || "CITIZEN";
   const displayRole = roleTranslations[primaryRole] || primaryRole;
+
+  // Commissioner user accounts are typically seeded with a role-derived name
+  // (e.g. "Dgdcf Comm" for BPA_DGDCF_COMM) rather than a real person's name.
+  // When that's the case, swap so the translated role ("Commissaire DGDCF")
+  // becomes the primary header label and the raw name drops to the subtitle.
+  const isCommissioner = /_COMM$/.test(primaryRole || "");
+  const headerPrimary = isCommissioner ? displayRole : fullName;
+  const headerSecondary = isCommissioner ? fullName : displayRole;
+  const shortName = headerPrimary.length > 18 ? headerPrimary.substring(0, 18) + "..." : headerPrimary;
 
   const navItems = [
     { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard, path: `${basePath}/dashboard-employee` },
@@ -187,15 +195,15 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
                   </div>
                   <div className="text-left">
                     <p className="text-xs font-semibold text-gray-900 leading-tight">{shortName}</p>
-                    <p className="text-[10px] text-gray-400 leading-tight">{displayRole}</p>
+                    <p className="text-[10px] text-gray-400 leading-tight">{headerSecondary}</p>
                   </div>
                   <LuChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${showUserDropdown ? "rotate-180" : ""}`} />
                 </button>
                 {showUserDropdown && (
                   <div className="absolute top-full right-0 mt-2 w-52 rounded-xl border border-gray-100 bg-white shadow-lg py-1.5 z-50">
                     <div className="px-3 py-2 border-b border-gray-50">
-                      <p className="text-sm font-semibold text-gray-900">{fullName}</p>
-                      <p className="text-[11px] text-gray-400">{displayRole}</p>
+                      <p className="text-sm font-semibold text-gray-900">{headerPrimary}</p>
+                      <p className="text-[11px] text-gray-400">{headerSecondary}</p>
                     </div>
                     {userOptions?.map((option, i) => {
                       const isLogout = option.name?.toLowerCase().includes("logout") || option.name?.toLowerCase().includes("déconnexion");
@@ -244,8 +252,8 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
                 <LuUser className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{fullName}</p>
-                <p className="text-xs text-gray-400">{displayRole}</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">{headerPrimary}</p>
+                <p className="text-xs text-gray-400">{headerSecondary}</p>
               </div>
             </div>
 

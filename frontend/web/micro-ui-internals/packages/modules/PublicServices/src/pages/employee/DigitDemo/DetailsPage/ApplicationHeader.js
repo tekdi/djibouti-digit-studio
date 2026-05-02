@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
-import { LuUser, LuMapPin, LuCalendar, LuClock, LuDownload } from "react-icons/lu";
+import React from "react";
+import { LuUser, LuMapPin, LuCalendar, LuClock, LuFileCheck2 } from "react-icons/lu";
 import StatusBadge from "./StatusBadge";
 import InfoCard from "./InfoCard";
 import ActionButtons from "./ActionButtons";
 import { useTranslation } from "react-i18next";
-import { PermitPDFTemplate, generatePermitPDF } from "../../../../components/PermitPDF";
+import { getDisplayApplicationId, getDisplayApplicantName } from "../../../employee/applications/utils";
+import { getFileUrl } from "./utils/fileUtils";
 
 const ApplicationHeader = ({ 
   response, 
@@ -24,17 +25,25 @@ const ApplicationHeader = ({
   service
 }) => {
   const { t } = useTranslation();
-  const pdfRef = useRef(null);
-  const [showPdfTemplate, setShowPdfTemplate] = useState(false);
 
   const isPermitGranted = processInstanceState === "PERMIT_GRANTED" || processInstanceState === "CERTIFICATE_GRANTED" || processInstanceState === "CERTIFICATE_ISSUED" || processInstanceState === "APPROVED";
 
-  const handleCitizenPdfDownload = async () => {
-    setShowPdfTemplate(true);
-    setTimeout(async () => {
-      await generatePermitPDF(pdfRef, `permis-${response?.applicationNumber || "document"}.pdf`);
-      setShowPdfTemplate(false);
-    }, 500);
+  const signedPermit = response?.additionalDetails?.signedPermit || null;
+  const hasSignedPermit = Boolean(signedPermit && signedPermit.fileStoreId);
+
+  const handleSignedPermitDownload = async () => {
+    if (!signedPermit?.fileStoreId) return;
+    try {
+      const url = await getFileUrl(signedPermit.fileStoreId, tenantId);
+      if (!url) {
+        if (Digit.Toast) Digit.Toast.error("Impossible de récupérer le permis signé");
+        return;
+      }
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      console.error("Error downloading signed permit:", e);
+      if (Digit.Toast) Digit.Toast.error("Erreur lors du téléchargement du permis signé");
+    }
   };
 
   const formatDate = (timestamp) => {
@@ -93,27 +102,25 @@ const ApplicationHeader = ({
         <div className="flex items-center space-x-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              {/* Once the SRA has filled the Fiche d'instruction with a
-                  Numéro du Permis de Construire, show that as the primary
-                  title instead of the raw internal application number. The
-                  application number is still shown as a subtitle for
-                  traceability. */}
-              {(() => {
-                const pcoNumber = response?.additionalDetails?.instructionSheet?.pcoNumber;
-                const hasPco = pcoNumber && String(pcoNumber).trim();
-                return (
-                  <h1 className="text-2xl font-bold text-white">
-                    {hasPco ? pcoNumber : response?.applicationNumber}
-                  </h1>
-                );
-              })()}
+              {/* Once the relevant Fiche/PV is filled with a permit or
+                  certificate number, show that as the primary title instead
+                  of the raw internal application number. Supported fiches:
+                  PCO/PCS/PF/PD/ATARR/PV (pcoNumber), CCG (ccgNumber). The
+                  application number stays as a subtitle for traceability. */}
+              <h1 className="text-2xl font-bold text-white">
+                {getDisplayApplicationId(response)}
+              </h1>
               <StatusBadge state={response?.processInstance?.[0]?.state?.state} isCitizen={isCitizen} />
             </div>
-            {response?.additionalDetails?.instructionSheet?.pcoNumber && (
-              <p className="text-xs text-white/70 mb-1">
-                Dossier : {response?.applicationNumber}
-              </p>
-            )}
+            {(() => {
+              const displayId = getDisplayApplicationId(response);
+              const hasFicheNumber = displayId && displayId !== response?.applicationNumber;
+              return hasFicheNumber ? (
+                <p className="text-xs text-white/70 mb-1">
+                  Dossier : {response?.applicationNumber}
+                </p>
+              ) : null;
+            })()}
             <h2 className="text-xl font-semibold text-white mb-1">
               {serviceInfo.name}
             </h2>
@@ -137,29 +144,40 @@ const ApplicationHeader = ({
           />
         ) : (
           isPermitGranted && (
-            <button
-              onClick={handleCitizenPdfDownload}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/30"
-            >
-              <LuDownload className="h-4 w-4" />
-              {({
-                BPA_PCO: "Télécharger le Permis de Construire",
-                BPA_PCO_SIMPLE: "Télécharger le Permis de Construire",
-                BPA_PR: "Télécharger le Permis de Remblai",
-                BPA_PL: "Télécharger le Permis de Lotir",
-                BPA_PCS: "Télécharger le Permis de Construire Simplifié",
-                BPA_PD: "Télécharger le Permis de Démolir",
-                BPA_PF: "Télécharger le Permis de Clôture",
-                BPA_PS: "Télécharger le Permis de Surélévation",
-                BPA_ATARR: "Télécharger l'Autorisation de Travaux",
-                BPA_CCR: "Télécharger le Certificat de Conformité de Remblai",
-                BPA_CCE: "Télécharger le Certificat de Conformité Électrique",
-                BPA_CCP: "Télécharger le Certificat de Conformité Parasismique",
-                BPA_CCG: "Télécharger le Certificat de Conformité Général",
-                BPA_PV: "Télécharger le Procès-Verbal d'Implantation",
-                BPA_APE: "Télécharger l'Approbation du Plan d'Exécution",
-              })[response?.businessService] || "Télécharger le document"}
-            </button>
+            hasSignedPermit ? (
+              <button
+                onClick={handleSignedPermitDownload}
+                className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/30"
+                title={signedPermit.fileName}
+              >
+                <LuFileCheck2 className="h-4 w-4" />
+                {({
+                  BPA_PCO: "Télécharger le Permis de Construire signé",
+                  BPA_PCO_SIMPLE: "Télécharger le Permis de Construire signé",
+                  BPA_PR: "Télécharger le Permis de Remblai signé",
+                  BPA_PL: "Télécharger le Permis de Lotir signé",
+                  BPA_PCS: "Télécharger le Permis de Construire Simplifié signé",
+                  BPA_PD: "Télécharger le Permis de Démolir signé",
+                  BPA_PF: "Télécharger le Permis de Clôture signé",
+                  BPA_PS: "Télécharger le Permis de Surélévation signé",
+                  BPA_ATARR: "Télécharger l'Autorisation de Travaux signée",
+                  BPA_CCR: "Télécharger le Certificat de Conformité de Remblai signé",
+                  BPA_CCE: "Télécharger le Certificat de Conformité Électrique signé",
+                  BPA_CCP: "Télécharger le Certificat de Conformité Parasismique signé",
+                  BPA_CCG: "Télécharger le Certificat de Conformité Général signé",
+                  BPA_PV: "Télécharger le Procès-Verbal d'Implantation signé",
+                  BPA_APE: "Télécharger l'Approbation du Plan d'Exécution signée",
+                })[response?.businessService] || "Télécharger le document signé"}
+              </button>
+            ) : (
+              <div
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-2.5 text-sm font-medium text-white/80"
+                title="Le document signé sera disponible une fois téléversé par l'administration."
+              >
+                <LuClock className="h-4 w-4" />
+                Document signé en cours de préparation
+              </div>
+            )
           )
         )}
       </div>
@@ -170,7 +188,7 @@ const ApplicationHeader = ({
           iconBgColor="bg-white/20"
           iconColor="text-white"
           label="Demandeur"
-          value={`Nom et prénom : ${applicant?.name || "N/A"} | Téléphone : ${applicant?.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant?.mobileNumber || "N/A"}`}
+          value={`Nom et prénom : ${getDisplayApplicantName(response) || applicant?.name || "N/A"} | Téléphone : ${applicant?.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant?.mobileNumber || "N/A"}`}
         />
       </div>
 
@@ -190,17 +208,6 @@ const ApplicationHeader = ({
           value={formatDate(response?.auditDetails?.createdTime)}
         />
       </div>
-
-      {/* Hidden PDF Template for citizen download */}
-      {showPdfTemplate && (
-        <div style={{ position: "fixed", left: "-9999px", top: 0 }}>
-          <PermitPDFTemplate
-            ref={pdfRef}
-            response={response}
-            businessService={response?.businessService}
-          />
-        </div>
-      )}
     </div>
   );
 };

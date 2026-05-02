@@ -23,12 +23,14 @@ import {
 const CONFORMITY_ROWS = [
   { id: "cos", label: "Coefficient d'Occupation du Sol" },
   { id: "ces", label: "Coefficient d'Emprise au Sol" },
-  { id: "reculNord", label: "Recul antérieur Nord" },
-  { id: "reculSud", label: "Recul antérieur Sud" },
-  { id: "reculEst", label: "Recul antérieur Est" },
-  { id: "reculOuest", label: "Recul antérieur Ouest" },
+  { id: "reculNord", label: "Recul par rapport à la limite Nord" },
+  { id: "reculSud", label: "Recul par rapport à la limite Sud" },
+  { id: "reculEst", label: "Recul par rapport à la limite Est" },
+  { id: "reculOuest", label: "Recul par rapport à la limite Ouest" },
   { id: "distancesEntreConstructions", label: "Distances entre les constructions" },
   { id: "hauteur", label: "Hauteur" },
+  { id: "marchesDomainePublic", label: "Marches sur le domaine public" },
+  { id: "porteAFaux", label: "Porte-à-faux" },
 ];
 
 const OBSERVATION_OPTIONS = [
@@ -46,6 +48,7 @@ const buildEmptyConformity = () =>
 const EMPTY_FORM = {
   // I) Informations générales
   applicantName: "",
+  ccgNumber: "",
   applicantContact: "",
   constructionLocation: "",
   projectNature: "",
@@ -63,11 +66,13 @@ const EMPTY_FORM = {
   agentSraDate: "",
   chefSraName: "",
   chefSraDate: "",
-  // VI) Observations Chef SRA
+  // VI) Observations Cheffe SRA
   chefSraObservations: "",
-  // VII) Avis SDATU
+  // VII) Observations SDATU
   sdatuAvis: "",
-  // VIII) Avis final
+  // VIII) Observation DATUH
+  datuhObservations: "",
+  // IX) Conclusion
   finalOpinion: "", // CONFORME | NON_CONFORME
 };
 
@@ -361,6 +366,7 @@ const CCGVisitModal = ({
     const ed = existingData || {};
     setForm({
       applicantName: ed.applicantName || "",
+      ccgNumber: ed.ccgNumber || "",
       applicantContact: ed.applicantContact || "",
       constructionLocation: ed.constructionLocation || "",
       projectNature: ed.projectNature || "",
@@ -376,6 +382,7 @@ const CCGVisitModal = ({
       chefSraDate: ed.chefSraDate || "",
       chefSraObservations: ed.chefSraObservations || "",
       sdatuAvis: ed.sdatuAvis || "",
+      datuhObservations: ed.datuhObservations || "",
       finalOpinion: ed.finalOpinion || "",
     });
   }, [isOpen, existingData]);
@@ -465,9 +472,22 @@ const CCGVisitModal = ({
             <section>
               <SectionTitle>I) Informations générales</SectionTitle>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Field label="Nom du demandeur" className="md:col-span-2">
+                <Field label="Nom du propriétaire">
                   <Input value={form.applicantName} onChange={set("applicantName")} disabled={!isEditable}
                     placeholder="ex. Monsieur IBRAHIM ROBLEH GUEDI HARBI" />
+                </Field>
+                <Field
+                  label={
+                    <span>
+                      Numéro du Certificat de Conformité Générale{" "}
+                      <span className="font-normal normal-case tracking-normal text-xs text-gray-500">
+                        (format : P15-CCG-N°184/2026)
+                      </span>
+                    </span>
+                  }
+                >
+                  <Input value={form.ccgNumber} onChange={set("ccgNumber")} disabled={!isEditable}
+                    placeholder="Ex: P15-CCG-N°184/2026" />
                 </Field>
                 <Field label="Adresse / Numéro de téléphone">
                   <Input value={form.applicantContact} onChange={set("applicantContact")} disabled={!isEditable}
@@ -477,7 +497,7 @@ const CCGVisitModal = ({
                   <Input value={form.constructionLocation} onChange={set("constructionLocation")} disabled={!isEditable}
                     placeholder="ex. Lotissement Haramous, lot n°322" />
                 </Field>
-                <Field label="Nature du projet" className="md:col-span-2">
+                <Field label="Type de projet" className="md:col-span-2">
                   <Input value={form.projectNature} onChange={set("projectNature")} disabled={!isEditable}
                     placeholder="ex. Un Simple rez-de-chaussée" />
                 </Field>
@@ -515,7 +535,7 @@ const CCGVisitModal = ({
                   <thead>
                     <tr className="bg-gradient-to-r from-djibouti-primary/10 to-djibouti-primary/5">
                       <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Élément</th>
-                      <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Annexés au PC</th>
+                      <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Autorisé dans le Permis de Construire</th>
                       <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Travaux Réalisés</th>
                       <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Prescriptions réglementaires</th>
                       <th className="border border-gray-200 p-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">Observations du DATUH</th>
@@ -599,33 +619,45 @@ const CCGVisitModal = ({
               </div>
             </section>
 
-            {/* VI) Observations Chef SRA */}
+            {/* VI) Observations Cheffe SRA */}
             <section>
-              <SectionTitle>VI) Observations du Chef SRA</SectionTitle>
+              <SectionTitle>VI) Observations de la Cheffe SRA</SectionTitle>
               <Textarea
                 rows={5}
                 value={form.chefSraObservations}
                 onChange={set("chefSraObservations")}
                 disabled={!isEditable}
-                placeholder="Observations du Chef du Service SRA…"
+                placeholder="Observations de la Cheffe du Service SRA…"
               />
             </section>
 
-            {/* VII) Avis SDATU */}
+            {/* VII) Observations SDATU */}
             <section>
-              <SectionTitle>VII) Avis du SDATU</SectionTitle>
+              <SectionTitle>VII) Observations du SDATU</SectionTitle>
               <Textarea
                 rows={4}
                 value={form.sdatuAvis}
                 onChange={set("sdatuAvis")}
                 disabled={!isEditable}
-                placeholder="Avis du SDATU…"
+                placeholder="Observations du SDATU…"
               />
             </section>
 
-            {/* VIII) Avis final */}
+            {/* VIII) Observation DATUH */}
             <section>
-              <SectionTitle>VIII) Avis final</SectionTitle>
+              <SectionTitle>VIII) Observation du DATUH</SectionTitle>
+              <Textarea
+                rows={4}
+                value={form.datuhObservations}
+                onChange={set("datuhObservations")}
+                disabled={!isEditable}
+                placeholder="Observation du DATUH…"
+              />
+            </section>
+
+            {/* IX) Conclusion */}
+            <section>
+              <SectionTitle>IX) Conclusion</SectionTitle>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button" disabled={!isEditable}
@@ -660,6 +692,12 @@ const CCGVisitModal = ({
 
 // ---------- Card ----------
 
+const COMMISSIONER_ROLES_CCG = new Set([
+  "BPA_SDECC_COMM", "BPA_DGDCF_COMM", "BPA_ONEAD_COMM",
+  "BPA_DNPC_COMM", "BPA_EDD_COMM", "BPA_INSPD_COMM",
+  "BPA_DCT_COMM", "BPA_PL_COMM", "BPA_DJITELECOM_COMM",
+]);
+
 const CCGVisitChecklistCard = ({ service, t, isViewOnly = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
@@ -668,6 +706,9 @@ const CCGVisitChecklistCard = ({ service, t, isViewOnly = false }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data, isLoading, submit } = useCCGChecklist(tenantId, serviceCode, applicationNumber);
   const isSubmitted = !!data?.submittedAt;
+
+  const userRoles = Digit.UserService.getUser()?.info?.roles || [];
+  const isCommissioner = userRoles.some((r) => COMMISSIONER_ROLES_CCG.has(r?.code));
 
   if (!applicationNumber || !service) return null;
 
@@ -714,7 +755,7 @@ const CCGVisitChecklistCard = ({ service, t, isViewOnly = false }) => {
                   </span>
                 )}
               </div>
-              {isSubmitted && data.submittedByName && (
+              {isSubmitted && data.submittedByName && !isCommissioner && (
                 <p className="text-xs text-gray-500">
                   Soumis par <span className="font-medium text-gray-700">{data.submittedByName}</span>
                   {photoCount > 0 && <> · {photoCount} photo{photoCount > 1 ? "s" : ""}</>}
@@ -733,7 +774,7 @@ const CCGVisitChecklistCard = ({ service, t, isViewOnly = false }) => {
           )}
 
           <div className="flex flex-wrap gap-3 mt-auto border-t border-gray-100 pt-6">
-            {!isViewOnly && (
+            {!isViewOnly && !isCommissioner && (
               <button
                 onClick={openEdit}
                 disabled={isLoading}

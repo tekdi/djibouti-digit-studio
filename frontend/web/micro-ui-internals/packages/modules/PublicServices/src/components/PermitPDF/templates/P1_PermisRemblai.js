@@ -1,192 +1,226 @@
 import React from "react";
 
-var formatDate = function (ts) {
+const DATUH_LOGO_URL = "https://res.cloudinary.com/djykaulgo/image/upload/v1777182370/datuh-logo_y8vx0s.png";
+
+const formatDate = (ts) => {
   if (!ts) return "……/……/………";
-  return new Date(ts).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return new Date(ts).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
 
-var P1_PermisRemblai = React.forwardRef(function (props, ref) {
-  var response = props.response;
-  var createdDate = response?.auditDetails?.createdTime;
+const formatYear = (ts) => {
+  if (!ts) return "…";
+  return String(new Date(ts).getFullYear());
+};
+
+const padSequence = (n) => String(n || "").replace(/^.*?(\d+).*$/, "$1").padStart(2, "0");
+
+const P1_PermisRemblai = React.forwardRef((props, ref) => {
+  const { response } = props;
+  const createdDate = response?.auditDetails?.createdTime;
 
   // Applicant
-  var rootApplicant = response?.applicants?.[0];
-  var nestedApplicant = response?.serviceDetails?.responseData?.Application?.applicants?.[0];
-  var applicant = (rootApplicant?.name) ? rootApplicant : (nestedApplicant || rootApplicant);
-  var name = applicant?.name || "…………………………";
+  const rootApplicant = response?.applicants?.[0];
+  const nestedApplicant = response?.serviceDetails?.responseData?.Application?.applicants?.[0];
+  const applicant = rootApplicant?.name ? rootApplicant : (nestedApplicant || rootApplicant) || {};
+  const civility = applicant.civility || applicant.gender || "Monsieur";
+  const civilityLabel = String(civility).toLowerCase().startsWith("mada") ? "Madame" : "Monsieur";
+  const applicantName = applicant.name || "…………………………";
 
   // Terrain
-  var terrain = response?.serviceDetails?.terrainDetails?.[0] || {};
-  var location = terrain.terrainLocation || "…………………………";
-  var surface = terrain.terrainSurface || "………";
-  var titleNum = terrain.landTitleNumber || "………";
+  const terrain = response?.serviceDetails?.terrainDetails?.[0] || {};
+  const location = terrain.terrainLocation || "…………………………";
+  const lotNumber = terrain.lotNumber || terrain.plotNumber || "…";
+  const surface = terrain.terrainSurface || "………";
+  const titleNum = terrain.landTitleNumber || "………";
 
-  // Agent checklist data
-  var agent = response?.additionalDetails?.agentChecklist || {};
-  var cotes = (agent.cotesTable && agent.cotesTable.length > 0) ? agent.cotesTable : [];
-  var tech = agent.technicalInfo || {};
+  // Agent checklist data (filled by Brigade Topographe)
+  const agent = response?.additionalDetails?.agentChecklist || {};
+  const cotes = (agent.cotesTable && agent.cotesTable.length > 0) ? agent.cotesTable : [];
+  const tech = agent.technicalInfo || {};
+  const voieReference = tech.voieReference || "Voie d'emprise";
+  const coteVoie = tech.coteVoieNiveauMer || "…";
+  const volumeRemblai = tech.volumeRemblai || "……";
+  const hauteurMoyenne = tech.hauteurMaximale || "……";
+  const nombreCouches = tech.nombreCouches || "…";
+
+  // Permit number — prefer the agent-filled fiche number, otherwise build
+  // one from the application sequence number.
+  const ficheNumber = response?.additionalDetails?.instructionSheet?.pcoNumber
+    || response?.additionalDetails?.atarrInstructionSheet?.pcoNumber
+    || response?.additionalDetails?.pcsInstructionSheet?.pcoNumber;
+  const appNo = response?.applicationNumber || "";
+  const seqMatch = appNo.match(/(\d+)/);
+  const seq = seqMatch ? padSequence(seqMatch[1]) : "…";
+  const year = formatYear(createdDate);
+  const permitNumber = ficheNumber || `${seq}/${year}`;
+
+  // Reference number for top-left (DATUH/SDATU/BT/AYY/HHR style).
+  const refNumber = `DATUH/SDATU/BT/${year}`;
 
   return (
     <div ref={ref} style={pageStyle}>
       <div style={outerBorder}>
         <div style={innerBorder}>
 
-          {/* ═══════ YELLOW BANNER ═══════ */}
-          <div style={bannerStyle}>
-            <div style={{ fontWeight: "bold", fontSize: "7.5px" }}>SOUS COUVERT DE MONSIEUR LE MINISTRE</div>
-            <div style={{ fontSize: "7px" }}>DE L'URBANISME ET DE L'HABITAT</div>
-          </div>
-
-          {/* ═══════ HEADER: Ministry | Emblem | Republic ═══════ */}
-          <table style={{ width: "100%", borderCollapse: "collapse", margin: "8px 0" }}>
+          {/* Top line: reference number + République de Djibouti */}
+          <table style={headerTopTable}>
             <tbody>
               <tr>
-                {/* Left - Ministry */}
-                <td style={{ width: "38%", verticalAlign: "top", padding: 0, lineHeight: "1.35" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "8.5px", textDecoration: "underline" }}>MINISTERE DE L'URBANISME</div>
-                  <div style={{ fontWeight: "bold", fontSize: "8.5px", textDecoration: "underline" }}>DE L'URBANISME ET DE L'HABITAT</div>
-                  <div style={{ fontSize: "7.5px", marginTop: "5px" }}>Direction de l'Aménagement</div>
-                  <div style={{ fontSize: "7.5px" }}>du Territoire et de l'Urbanisme</div>
-                  <div style={{ fontSize: "7.5px", marginTop: "5px", fontStyle: "italic" }}>Brigade Topographe</div>
+                <td style={headerTopLeft}>
+                  <span>N°........</span>
+                  <span style={highlight}>{refNumber} du {formatDate(createdDate)}</span>
                 </td>
-                {/* Center - Emblem */}
-                <td style={{ width: "24%", textAlign: "center", verticalAlign: "middle", padding: 0 }}>
-                  <div style={{ width: "60px", height: "60px", margin: "0 auto", border: "1px solid #bbb", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", color: "#333" }}>
-                    &#9733;
-                  </div>
-                </td>
-                {/* Right - Republic */}
-                <td style={{ width: "38%", textAlign: "right", verticalAlign: "top", padding: 0, lineHeight: "1.35" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "10px" }}>République de Djibouti</div>
-                  <div style={{ fontStyle: "italic", fontSize: "8.5px", marginTop: "2px" }}>Unité Égalité Paix</div>
+                <td style={headerTopRight}>
+                  <div style={{ fontWeight: "bold" }}>République de Djibouti</div>
+                  <div>Unité-Égalité-paix</div>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          {/* ═══════ REF & DATE ═══════ */}
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9.5px", margin: "6px 0 2px 0" }}>
-            <div>
-              <strong>Réf N° : </strong>
-              <span style={dottedUnderline}>{response?.applicationNumber || "……/……"}</span>
-            </div>
-            <div><strong>DATUS</strong></div>
-          </div>
-          <div style={{ fontSize: "9.5px", marginBottom: "12px" }}>
-            <strong>DATE : </strong>
-            <span style={dottedUnderline}>{formatDate(createdDate)}</span>
+          {/* Header: Ministry block (left) | DATUH logo (right) */}
+          <table style={headerTable}>
+            <tbody>
+              <tr>
+                <td style={headerMinistryCell}>
+                  <div style={ministryTitle}>Ministère de la Ville,</div>
+                  <div style={ministryTitle}>De l'Urbanisme et de l'Habitat</div>
+                  <div style={asterisks}>**********************</div>
+                  <div style={ministryTitle}>Direction de l'Aménagement du Territoire</div>
+                  <div style={ministryTitle}>de l'Urbanisme et de l'Habitat</div>
+                  <div style={asterisks}>**********************</div>
+                  <div style={ministryTitle}>Sous-direction de l'Aménagement</div>
+                  <div style={ministryTitle}>du Territoire et de l'Urbanisme</div>
+                  <div style={asterisks}>**********************</div>
+                  <div style={ministryTitle}>Brigade Topographie</div>
+                </td>
+                <td style={headerLogoCell}>
+                  <img
+                    src={DATUH_LOGO_URL}
+                    alt="DATUH"
+                    crossOrigin="anonymous"
+                    style={{ width: "120px", height: "auto", display: "block", margin: "0 auto" }}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Issuance line */}
+          <div style={{ fontStyle: "italic", margin: "10px 0 8px 0", fontSize: "10px" }}>
+            DATUH, le ……………..
           </div>
 
-          {/* ═══════ TITLE BAR ═══════ */}
+          {/* Title bar */}
           <div style={titleBar}>
-            <strong>PERMIS DE REMBLAI {formatDate(createdDate)}</strong>
+            <span>PERMIS DE REMBLAI N°</span>
+            <span style={highlight}>{permitNumber}</span>
           </div>
 
-          {/* ═══════ BODY PARAGRAPHS ═══════ */}
-          <div style={bodyStyle}>
-            <p style={paraIndent}>
-              Vu à nos bureaux de <b>Djibouti</b>, en date du <b>DATUS</b>, la Direction de l'Aménagement
-              du Territoire et de l'Urbanisme, rattachée au Ministère de l'Urbanisme et de l'Habitat,
-            </p>
-            <p style={paraIndent}>
-              Vu la demande formulée par <b>Mr/Mme {name}</b> en vue de remblayer un terrain de{" "}
-              <b>{surface} m²</b> situé à <b>{location}</b>,
-              inscrit au titre foncier N° <b>{titleNum}</b>.
-            </p>
-            <p style={paraIndent}>
-              Vu le rapport d'inspection et de vérification de la côte de remblai sur le site par la brigade topographe de la DATUS,
-            </p>
-            <p style={paraIndent}>
-              <b>Autorise Mr/Mme {name}</b> à procéder à un remblai d'un terrain d'une superficie de{" "}
-              <b>{surface} m²</b> au lieu-dit <b>{location}</b>,
-              à condition de respecter les côtes indiquées dans le tableau ci-dessous et de se conformer aux prescriptions techniques
-              de la Direction.
-            </p>
+          {/* Body intro */}
+          <div style={bodyParagraph}>
+            Suite à une demande de <span style={highlight}>{civilityLabel} {applicantName}</span>, en date du{" "}
+            <span style={highlight}>{formatDate(createdDate)}</span>. La Direction de l'Aménagement du
+            Territoire de l'Urbanisme et de l'Habitat lui délivre un Permis de Remblai pour sa parcelle{" "}
+            <span style={highlight}>de {surface} m² sise à Djibouti-Lotissement {location} Lot n°{lotNumber}, Objet du Titre Foncier n°{titleNum}.</span>
+          </div>
+          <div style={{ ...bodyParagraph, marginBottom: "8px" }}>
+            Les côtes de remblai à respecter sont fixées comme suit :
           </div>
 
-          {/* ═══════ CÔTES TABLE ═══════ */}
-          <table style={tableStyle}>
+          {/* Côtes table — 4 columns, with Voie de référence merged across rows */}
+          <table style={cotesTable}>
             <thead>
               <tr>
-                <th style={thGold}>N°</th>
-                <th style={thGold}>CÔTES RELEVÉES</th>
-                <th style={thGold}>CÔTES DU PROJET</th>
-                <th style={thGold}>OBSERVATION</th>
+                <th style={thBlack}>N°</th>
+                <th style={thBlack}>côtes relevées</th>
+                <th style={thBlack}>côtes du projet</th>
+                <th style={thBlack}>Voie de référence</th>
               </tr>
             </thead>
             <tbody>
-              {cotes.length > 0 ? cotes.map(function (row, i) {
+              {[0, 1, 2, 3, 4].map((i) => {
+                const row = cotes[i] || {};
+                const labels = [
+                  "Angle Nord-est",
+                  "Angle Nord Ouest",
+                  "Angle Sud-est",
+                  "Angle Sud-ouest",
+                  "Hauteur Moyenne",
+                ];
+                const releve = row.cotesRelevees ? `${labels[i]} : ${row.cotesRelevees}` : labels[i];
+                const projet = row.cotesDuProjet || "";
                 return (
                   <tr key={i}>
-                    <td style={tdCell}>{i + 1}</td>
-                    <td style={tdCell}>{row.cotesRelevees || ""}</td>
-                    <td style={tdCell}>{row.cotesDuProjet || ""}</td>
-                    <td style={tdCell}>{row.observation || ""}</td>
-                  </tr>
-                );
-              }) : [1, 2, 3, 4].map(function (n) {
-                return (
-                  <tr key={n}>
-                    <td style={tdCell}>{n}</td>
-                    <td style={tdCell}></td>
-                    <td style={tdCell}></td>
-                    <td style={tdCell}></td>
+                    <td style={tdBlack}><span style={highlight}>{i + 1}</span></td>
+                    <td style={tdBlackLeft}><span style={highlight}>{releve}</span></td>
+                    <td style={tdBlackLeft}>{projet ? <span style={highlight}>{projet}</span> : ""}</td>
+                    {i === 0 && (
+                      <td style={voieCell} rowSpan={5}>
+                        <div style={highlight}>{voieReference} {coteVoie}m</div>
+                        <div style={highlight}>Située au Sud du terrain.</div>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
             </tbody>
           </table>
 
-          {/* ═══════ INFORMATIONS TECHNIQUES ═══════ */}
-          <div style={{ margin: "14px 0", borderLeft: "3px solid #2980b9", paddingLeft: "12px" }}>
-            <div style={{ fontWeight: "bold", fontSize: "11px", marginBottom: "8px" }}>
-              Informations techniques complémentaires
-            </div>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "10px" }}>
-              <tbody>
-                <tr>
-                  <td style={techLabel}>Voie de référence</td>
-                  <td style={techValue}>{tech.voieReference || "N/A"}</td>
-                  <td style={techLabel}>Côte de la voie / niveau mer</td>
-                  <td style={techValue}>{tech.coteVoieNiveauMer || "N/A"}</td>
-                </tr>
-                <tr>
-                  <td style={techLabel}>Volume de remblai nécessaire (m³)</td>
-                  <td style={techValue}>{tech.volumeRemblai || "N/A"}</td>
-                  <td style={techLabel}>Hauteur maximale</td>
-                  <td style={techValue}>{tech.hauteurMaximale || "N/A"}</td>
-                </tr>
-                <tr>
-                  <td style={techLabel}>Nombre de couches</td>
-                  <td style={techValue}>{tech.nombreCouches || "N/A"}</td>
-                  <td style={techLabel}></td>
-                  <td style={techValue}></td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Technical highlights */}
+          <div style={techBlock}>
+            <div><span style={highlight}>Côte de la voie : {coteVoie}m</span> par rapport au niveau 0 de la mer</div>
+            <div><span style={highlight}>Le volume de remblai nécessaire est estimé à {volumeRemblai}m³.</span></div>
           </div>
 
-          {/* ═══════ NB BOX ═══════ */}
-          <div style={nbBox}>
-            <div style={{ fontWeight: "bold", marginBottom: "3px" }}>NB :</div>
-            <div>- Le présent permis est valable pour une durée d'un (1) an à compter de sa date de délivrance.</div>
-            <div>- Le bénéficiaire devra respecter les normes et côtes prescrites sous peine de sanctions.</div>
-            <div>- Toute modification du projet devra faire l'objet d'une nouvelle demande.</div>
+          {/* Body — discharge / extraction / tests */}
+          <div style={bodyParagraph}>
+            &nbsp;&nbsp;&nbsp;&nbsp;Les matériaux constituants d'éventuel décaissement du terrain naturel devront être déversés
+            systématiquement à la décharge publique.
+          </div>
+          <div style={bodyParagraph}>
+            Les matériaux constitutifs du remblai doivent obligatoirement provenir d'un site d'extraction prévu à cet effet.
+          </div>
+          <div style={bodyParagraph}>
+            &nbsp;&nbsp;&nbsp;&nbsp;Avant la décharge des travaux, vous devez prendre contact avec le Laboratoire Central du Bâtiment et de
+            l'Équipement pour qu'il puisse réaliser des essais après chaque couche de remblai.
+          </div>
+          <div style={bodyParagraph}>
+            Les remblais seront arrosés et compactés par couche de 0.25 m d'épaisseur maximum.
+          </div>
+          <div style={bodyParagraph}>
+            Dès l'achèvement des travaux, une demande doit être adressée à la Direction de l'Aménagement du Territoire, de
+            l'Urbanisme et de l'Habitat pour la délivrance d'un Certificat de Conformité de Remblai qui sera remis après :
+          </div>
+          <ul style={bulletList}>
+            <li>Contrôle des côtes de nivellement,</li>
+            <li>Contrôle du taux de compactage de chaque couche effectué par le Laboratoire Central du Bâtiment et de l'Équipement,</li>
+            <li>Remise à mes services d'une copie de l'autorisation d'extraction des matériaux de remblai délivré par la Mairie de Djibouti ainsi que le récépissé de versement des droits d'extraction.</li>
+          </ul>
+
+          {/* Signature block */}
+          <div style={signatureBlock}>
+            <div style={highlight}>Le Directeur de l'Aménagement du Territoire</div>
+            <div style={highlight}>De l'Urbanisme et de l'Habitat</div>
+            <div style={{ marginTop: "55px", ...highlight, fontWeight: "bold" }}>HABIB IBRAHIM MOHAMED</div>
           </div>
 
-          {/* ═══════ SIGNATURES ═══════ */}
-          <table style={{ width: "100%", marginTop: "25px", fontSize: "9.5px" }}>
+          {/* Footer */}
+          <table style={footerTable}>
             <tbody>
               <tr>
-                <td style={{ width: "45%", textAlign: "center", verticalAlign: "top", padding: 0 }}>
-                  <div style={{ fontStyle: "italic" }}>Brigade Topographe</div>
-                  <div style={{ marginTop: "55px" }}>____________________</div>
+                <td style={footerLeft}>
+                  <div style={{ fontWeight: "bold" }}>Ampliations :</div>
+                  <div>- DATUH</div>
+                  <div>- SDATU</div>
+                  <div>- Brigade Topographie</div>
                 </td>
-                <td style={{ width: "10%" }}></td>
-                <td style={{ width: "45%", textAlign: "center", verticalAlign: "top", padding: 0 }}>
-                  <div style={{ fontWeight: "bold" }}>Le Directeur de l'Aménagement du Territoire</div>
-                  <div style={{ fontWeight: "bold" }}>et de l'Urbanisme</div>
-                  <div style={{ marginTop: "55px" }}>____________________</div>
+                <td style={footerRight}>
+                  <div style={pageNumberBox}>1/1</div>
                 </td>
               </tr>
             </tbody>
@@ -198,69 +232,145 @@ var P1_PermisRemblai = React.forwardRef(function (props, ref) {
   );
 });
 
+P1_PermisRemblai.displayName = "P1_PermisRemblai";
+export default P1_PermisRemblai;
+
 // ─── Page ───
-var pageStyle = {
-  width: "794px", minHeight: "1123px", padding: "8px",
+const pageStyle = {
+  width: "794px",
+  minHeight: "1123px",
   fontFamily: "'Times New Roman', Times, serif",
-  fontSize: "11px", lineHeight: "1.45", color: "#000", backgroundColor: "#fff",
-  margin: "0 auto", boxSizing: "border-box",
+  fontSize: "11px",
+  lineHeight: "1.4",
+  color: "#000",
+  backgroundColor: "#fff",
+  margin: "0 auto",
+  boxSizing: "border-box",
+  padding: "0",
 };
 
-// ─── Borders ───
-var outerBorder = { border: "3px double #000", padding: "3px", minHeight: "1107px" };
-var innerBorder = { border: "1px solid #000", padding: "18px 28px 15px 28px", minHeight: "1095px" };
+const outerBorder = { border: "1.5px solid #000", padding: "0", minHeight: "1123px" };
+const innerBorder = { padding: "20px 28px", minHeight: "1110px" };
 
-// ─── Banner ───
-var bannerStyle = {
-  backgroundColor: "#EAC87D", border: "1px solid #C4A44A",
-  padding: "3px 8px", textAlign: "center",
-  fontSize: "7.5px", lineHeight: "1.3", marginBottom: "6px",
-};
+// ─── Highlight (was yellow in reference image to mark dynamic fields;
+// rendered without a background in the actual permit) ───
+const highlight = {};
 
-// ─── Dotted underline for blanks ───
-var dottedUnderline = {
-  borderBottom: "1px dotted #000", display: "inline-block",
-  minWidth: "140px", paddingBottom: "1px",
-};
+// ─── Top line ───
+const headerTopTable = { width: "100%", borderCollapse: "collapse", marginBottom: "4px", fontSize: "10.5px" };
+const headerTopLeft = { width: "60%", textAlign: "left", padding: 0, verticalAlign: "top" };
+const headerTopRight = { width: "40%", textAlign: "right", padding: 0, verticalAlign: "top", fontStyle: "italic" };
 
-// ─── Title ───
-var titleBar = {
-  textAlign: "center", fontSize: "14px", letterSpacing: "1px",
-  borderTop: "2px solid #000", borderBottom: "2px solid #000",
-  padding: "5px 0", margin: "0 0 12px 0",
+// ─── Header (ministry + logo) ───
+const headerTable = { width: "100%", borderCollapse: "collapse", marginBottom: "4px" };
+const headerMinistryCell = { width: "65%", verticalAlign: "top", padding: 0, lineHeight: "1.45" };
+const headerLogoCell = { width: "35%", verticalAlign: "middle", padding: 0, textAlign: "center" };
+const ministryTitle = { fontWeight: "bold", fontSize: "11px" };
+const asterisks = { fontWeight: "bold", letterSpacing: "1px", fontSize: "10px", margin: "1px 0" };
+
+// ─── Title bar ───
+const titleBar = {
+  textAlign: "center",
+  fontSize: "14px",
+  fontWeight: "bold",
+  borderTop: "2.5px solid #000",
+  borderBottom: "2.5px solid #000",
+  padding: "6px 0",
+  margin: "8px 0 10px 0",
 };
 
 // ─── Body ───
-var bodyStyle = { fontSize: "10.5px", lineHeight: "1.65", textAlign: "justify", marginBottom: "10px" };
-var paraIndent = { textIndent: "35px", marginBottom: "6px" };
-
-// ─── Côtes Table ───
-var tableStyle = { width: "100%", borderCollapse: "collapse", fontSize: "9.5px", marginBottom: "2px" };
-var thGold = {
-  border: "1.5px solid #000", padding: "5px 6px",
-  backgroundColor: "#EAC87D", fontWeight: "bold",
-  textAlign: "center", fontSize: "8.5px", textTransform: "uppercase",
-};
-var tdCell = {
-  border: "1px solid #000", padding: "4px 6px",
-  textAlign: "center", fontSize: "9.5px", minHeight: "20px",
+const bodyParagraph = {
+  fontSize: "11px",
+  lineHeight: "1.55",
+  textAlign: "justify",
+  marginBottom: "6px",
 };
 
-// ─── Technical Info ───
-var techLabel = {
-  padding: "4px 6px", fontSize: "8.5px", color: "#555",
-  borderBottom: "1px solid #eee", width: "25%", verticalAlign: "top",
+// ─── Côtes table ───
+const cotesTable = {
+  width: "100%",
+  borderCollapse: "collapse",
+  fontSize: "10.5px",
+  marginBottom: "8px",
 };
-var techValue = {
-  padding: "4px 6px", fontSize: "10.5px", fontWeight: "bold",
-  borderBottom: "1px solid #eee", width: "25%", verticalAlign: "top",
+const thBlack = {
+  border: "1.5px solid #000",
+  padding: "5px 6px",
+  fontWeight: "bold",
+  textAlign: "center",
+  fontSize: "11px",
+};
+const tdBlack = {
+  border: "1.5px solid #000",
+  padding: "4px 6px",
+  textAlign: "center",
+  fontSize: "10.5px",
+  height: "26px",
+};
+const tdBlackLeft = {
+  border: "1.5px solid #000",
+  padding: "4px 6px",
+  textAlign: "left",
+  fontSize: "10.5px",
+  height: "26px",
+};
+const voieCell = {
+  border: "1.5px solid #000",
+  padding: "6px 8px",
+  textAlign: "left",
+  fontSize: "10.5px",
+  verticalAlign: "top",
+  width: "26%",
 };
 
-// ─── NB Box ───
-var nbBox = {
-  border: "1.5px solid #000", padding: "8px 12px",
-  fontSize: "9.5px", lineHeight: "1.55", marginBottom: "5px",
+// ─── Technical highlights ───
+const techBlock = {
+  fontSize: "11px",
+  lineHeight: "1.6",
+  margin: "6px 0 10px 0",
+  paddingLeft: "8px",
 };
 
-P1_PermisRemblai.displayName = "P1_PermisRemblai";
-export default P1_PermisRemblai;
+// ─── Bullet list ───
+const bulletList = {
+  margin: "0 0 8px 30px",
+  paddingLeft: "10px",
+  fontSize: "11px",
+  lineHeight: "1.55",
+};
+
+// ─── Signature ───
+const signatureBlock = {
+  textAlign: "center",
+  marginTop: "20px",
+  marginBottom: "20px",
+  fontSize: "11px",
+  lineHeight: "1.5",
+};
+
+// ─── Footer ───
+const footerTable = {
+  width: "100%",
+  borderCollapse: "collapse",
+  marginTop: "8px",
+  fontSize: "10px",
+};
+const footerLeft = {
+  width: "70%",
+  verticalAlign: "bottom",
+  padding: 0,
+  lineHeight: "1.4",
+};
+const footerRight = {
+  width: "30%",
+  verticalAlign: "bottom",
+  padding: 0,
+  textAlign: "right",
+};
+const pageNumberBox = {
+  display: "inline-block",
+  border: "1px solid #000",
+  padding: "2px 14px",
+  fontSize: "10px",
+};

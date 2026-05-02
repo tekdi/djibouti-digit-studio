@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { LuUser, LuBuilding, LuPenTool, LuPhone, LuMail, LuHash, LuMapPin, LuFileText } from "react-icons/lu";
 import ProjectDataView from "./ProjectDataView";
+import { getDisplayApplicantName } from "../../applications/utils";
 
 // PF-specific fiche block (Permis de Clôture). Includes closureType +
 // perimeter in addition to the shared identity fields.
@@ -217,6 +218,12 @@ const idTypeMap = {
   "BPA_IDENTITYTYPE_IDTYPE_OTHER": "Autre",
 };
 
+const civilityMap = {
+  "COMMON-MASTERS_GENDERTYPE_WAYTOADDRESS_MALE": "Monsieur",
+  "COMMON-MASTERS_GENDERTYPE_WAYTOADDRESS_FEMALE": "Madame",
+  "COMMON-MASTERS_GENDERTYPE_WAYTOADDRESS_MADEMOISELLE": "Mademoiselle",
+};
+
 const InfoField = ({ label, value, icon: Icon }) => {
   if (!value || value === "N/A" || value === 0 || value === "0") return null;
   return (
@@ -270,6 +277,19 @@ const ProjectTab = ({
   const designOffice = response?.serviceDetails?.designOfficeDetailing?.[0];
   const hasArchitectOrDesignOffice = isArchitectSubmission || designOffice;
 
+  // For BPA_CCG, the "Numéro du Certificat de Conformité Générale" is the
+  // number the agent writes on the Procès-Verbal de Visite (ccgVisitChecklist
+  // → ccgNumber). It is NOT the raw application number. Inject it into each
+  // originalPermitDetails item so p13.js can render it through the same
+  // field-loop as the other keys. If it hasn't been filled yet, the field
+  // stays empty (and ProjectDataView hides empty fields).
+  const ccgChecklistNumber = response?.additionalDetails?.ccgVisitChecklist?.ccgNumber;
+  const originalPermitDetails = (response?.serviceDetails?.originalPermitDetails || []).map((item) =>
+    response?.businessService === "BPA_CCG" && ccgChecklistNumber
+      ? { ...item, ccgNumber: ccgChecklistNumber }
+      : item
+  );
+
   const applicationData = {
     applicants: response?.applicants || [],
     additionalDetails: response?.additionalDetails || {},
@@ -278,7 +298,7 @@ const ProjectTab = ({
       landandProjectDesignDetails: response?.serviceDetails?.landandProjectDesignDetails || [],
       designOfficeDetailing: response?.serviceDetails?.designOfficeDetailing || [],
       legalEntityDetails: response?.serviceDetails?.legalEntityDetails || [],
-      originalPermitDetails: response?.serviceDetails?.originalPermitDetails || [],
+      originalPermitDetails: originalPermitDetails,
       conformityCertificatesDetails: response?.serviceDetails?.conformityCertificatesDetails || [],
       terrainDetails: response?.serviceDetails?.terrainDetails || [],
       demolitionDetails: response?.serviceDetails?.demolitionDetails || [],
@@ -307,7 +327,10 @@ const ProjectTab = ({
             </div>
             <h3 className="text-lg font-semibold text-gray-900">Informations du demandeur</h3>
           </div>
-          <InfoField label="Nom et prénom" value={applicant.name} icon={LuUser} />
+          {/* When the agent has filled the Fiche/PV with a Nom du Pétitionnaire,
+              that value is the single source of truth and overrides the raw
+              applicants[0].name from the original submission. */}
+          <InfoField label="Nom et prénom" value={getDisplayApplicantName(response) || applicant.name} icon={LuUser} />
           <InfoField label="Téléphone" value={applicant.mobileNumber ? `${applicant.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant.mobileNumber}` : null} icon={LuPhone} />
           <InfoField label="Email" value={applicant.emailId !== "user1@example.com" ? applicant.emailId : null} icon={LuMail} />
           <InfoField label="Pièce d'identité" value={idTypeMap[additionalApplicant.idType] || additionalApplicant.idType} icon={LuHash} />
@@ -321,9 +344,23 @@ const ProjectTab = ({
               <InfoField label="Raison sociale" value={legalEntity.corporateName} icon={LuBuilding} />
               <InfoField label="Forme juridique" value={companyTypeMap[legalEntity.companyType] || t(legalEntity.companyType)} icon={LuHash} />
               <InfoField label="N° d'immatriculation" value={legalEntity.registrationNumber} icon={LuHash} />
+              <InfoField label="Téléphone de l'entreprise" value={legalEntity.telephone ? `+253 ${legalEntity.telephone}` : null} icon={LuPhone} />
+              <InfoField label="Adresse du siège" value={legalEntity.adresseSiege} icon={LuMapPin} />
               {legalEntity.otherCompanyType && (
                 <InfoField label="Autre type" value={legalEntity.otherCompanyType} icon={LuHash} />
               )}
+
+              {/* Représentant légal — the individual authorised to act on behalf
+                  of the company. On the form (applicantDetails step), these are
+                  the fields filled under "Informations du représentant" when
+                  personType === LEGAL_ENTITY. */}
+              <SectionTitle icon={LuUser} iconBg="bg-blue-100" iconColor="text-blue-600" title="Représentant légal" />
+              <InfoField label="Qualité du représentant" value={additionalApplicant.qualiteRepresentant || legalEntity.qualiteRepresentant} icon={LuHash} />
+              <InfoField label="Civilité" value={civilityMap[additionalApplicant.wayToAddress] || additionalApplicant.wayToAddress} icon={LuUser} />
+              <InfoField label="Nom et prénom" value={applicant.name} icon={LuUser} />
+              <InfoField label="Téléphone" value={applicant.mobileNumber ? `${applicant.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant.mobileNumber}` : null} icon={LuPhone} />
+              <InfoField label="Pièce d'identité" value={idTypeMap[additionalApplicant.idType] || additionalApplicant.idType} icon={LuHash} />
+              <InfoField label="N° pièce d'identité" value={additionalApplicant.nationalIdNumber} icon={LuHash} />
             </React.Fragment>
           )}
 

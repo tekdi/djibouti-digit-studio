@@ -249,13 +249,57 @@ export const formatDate = (timestamp) => {
   });
 };
 
-// Primary display identifier: PCO number from the SRA Fiche d'instruction
-// (`additionalDetails.instructionSheet.pcoNumber`) when filled, otherwise
-// the raw application number. Used on list cards and the detail header.
+// Primary display name for the applicant (Nom du demandeur / Pétitionnaire).
+// When the reviewing agent fills a Fiche/PV, the applicant name they type is
+// the single source of truth — it overrides whatever was on the original
+// application record. Mirrors getDisplayApplicationId's lookup order.
+export const getDisplayApplicantName = (app) => {
+  if (!app) return "";
+  const ad = (app && app.additionalDetails) || {};
+  const candidates = [
+    ad.instructionSheet && ad.instructionSheet.applicantName,                 // PCO / PCO_SIMPLE / PL / PS
+    ad.atarrInstructionSheet && ad.atarrInstructionSheet.applicantName,       // ATARR
+    ad.pcsInstructionSheet && ad.pcsInstructionSheet.applicantName,           // PCS
+    ad.pfInstructionSheet && ad.pfInstructionSheet.applicantName,             // PF
+    ad.pdInstructionSheet && ad.pdInstructionSheet.applicantName,             // PD
+    ad.ccgVisitChecklist && ad.ccgVisitChecklist.applicantName,               // CCG
+    ad.pvImplantationChecklist && ad.pvImplantationChecklist.applicantName,   // PV
+  ];
+  for (const c of candidates) {
+    if (c && String(c).trim()) return String(c).trim();
+  }
+  return (app.applicants && app.applicants[0] && app.applicants[0].name) || "";
+};
+
+// Primary display identifier for an application.
+//
+// Once the SRA (or the relevant inspector) has filled a Fiche/PV with a permit
+// or certificate number, that number takes precedence over the raw
+// applicationNumber in the citizen's cards and detail header. The
+// applicationNumber stays accessible for traceability.
+//
+// Priority: CCG cert number > any service-specific fiche pcoNumber.
 export const getDisplayApplicationId = (app) => {
   if (!app) return "";
-  const pcoNumber = app && app.additionalDetails && app.additionalDetails.instructionSheet && app.additionalDetails.instructionSheet.pcoNumber;
-  if (pcoNumber && String(pcoNumber).trim()) return String(pcoNumber).trim();
+  const ad = (app && app.additionalDetails) || {};
+
+  // BPA_CCG — issues a CCG number (ccgNumber); the pcoNumber on that fiche
+  // points to the ORIGINAL permit and is not what we display.
+  const ccgNumber = ad.ccgVisitChecklist && ad.ccgVisitChecklist.ccgNumber;
+  if (ccgNumber && String(ccgNumber).trim()) return String(ccgNumber).trim();
+
+  // All other fiches use a `pcoNumber` field for the issued permit number.
+  const candidates = [
+    ad.instructionSheet && ad.instructionSheet.pcoNumber,                 // PCO / PCO_SIMPLE / PL / PS
+    ad.atarrInstructionSheet && ad.atarrInstructionSheet.pcoNumber,       // ATARR
+    ad.pcsInstructionSheet && ad.pcsInstructionSheet.pcoNumber,           // PCS
+    ad.pfInstructionSheet && ad.pfInstructionSheet.pcoNumber,             // PF
+    ad.pdInstructionSheet && ad.pdInstructionSheet.pcoNumber,             // PD
+    ad.pvImplantationChecklist && ad.pvImplantationChecklist.pcoNumber,   // PV
+  ];
+  for (const c of candidates) {
+    if (c && String(c).trim()) return String(c).trim();
+  }
   return app.applicationNumber || "";
 };
 
