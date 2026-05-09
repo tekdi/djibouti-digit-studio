@@ -28,11 +28,8 @@ const ATARRInstructionSheetCard = ({ service, state, t, isViewOnly = false }) =>
   }, [getFiche]);
 
   const handleSaved = useCallback(() => {
-    // Full reload so the status badge, project block on the Demande tab, and
-    // any other fiche-derived UI picks up the newly-saved values. Triggered
-    // by an explicit user save, not silent polling.
-    window.location.reload();
-  }, []);
+    reload();
+  }, [reload]);
 
   useEffect(() => {
     if (applicationNumber && serviceCode) reload();

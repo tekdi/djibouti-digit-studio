@@ -28,11 +28,8 @@ const PCSInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   }, [getFiche]);
 
   const handleSaved = useCallback(() => {
-    // Full reload so the status badge + "Détails du projet simplifié" block
-    // on the Demande tab pick up the newly-saved values. Triggered by an
-    // explicit user save (not background polling).
-    window.location.reload();
-  }, []);
+    reload();
+  }, [reload]);
 
   useEffect(() => {
     if (applicationNumber && serviceCode) reload();

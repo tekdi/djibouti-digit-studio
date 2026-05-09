@@ -14,9 +14,9 @@ const UserDropdown = ({ userDetails, userOptions }) => {
     "CITIZEN": "Citoyen (ne)",
     "BPA_ARCHITECT": "Architecte",
     "BPA_DIRECTOR": "Directeur DATUH",
-    "BPA_HOD": "Chef SRA",
+    "BPA_HOD": "Cheffe SRA",
     "BPA_AGENTS": "Instructeur technique SRA",
-    "BPA_SDECC_HOD": "Chef de SCC Privée",
+    "BPA_SDECC_HOD": "Sous-Directeur SDECC par Intérim (SDECC)",
     "BPA_SDECC_AGENTS": "Instructeur technique SCC Privée",
     "BPA_SDEC_AGENT": "Instructeur technique SCC Privée",
     "BPA_SDECC_COMM": "Commissaire SDECC",
@@ -32,13 +32,13 @@ const UserDropdown = ({ userDetails, userOptions }) => {
     "BPA_SRA_SUB_DIRECTOR": "Sous-Directeur SDATU",
     "BPA_SUB_DIRECTOR": "Sous-Directeur SDATU",
     "CHAKSHU": "Équipe Interne",
-    "COUNTER_EMPLOYEE": "Agent Trésorier",
+    "COUNTER_EMPLOYEE": "Régisseur du trésor",
     "STUDIO_ADMIN": "Administrateur",
     "BPA_INSPD_COMM": "Commissaire Santé Publique",
     "BPA_EDD_COMM": "Commissaire Électricité",
     "BPA_DNPC_COMM": "Commissaire Protection Civile",
     "BPA_ONEAD_COMM": "Commissaire Eau et Assainissement",
-    "BPA_DGDCF_COMM": "DGDCF - Direction Générale des Domaines et de la Conservation Foncière",
+    "BPA_DGDCF_COMM": "Directeur Général DGDCF",
   };
 
   // Get user roles and find the display role

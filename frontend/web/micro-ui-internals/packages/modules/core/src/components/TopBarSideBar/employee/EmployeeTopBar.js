@@ -24,14 +24,14 @@ const roleTranslations = {
   CITIZEN: "Citoyen (ne)",
   BPA_ARCHITECT: "Architecte",
   BPA_DIRECTOR: "Directeur DATUH",
-  BPA_HOD: "Chef SRA",
+  BPA_HOD: "Cheffe SRA",
   BPA_AGENTS: "Instructeur technique SRA",
-  BPA_SDECC_HOD: "Chef de SCC Privée",
+  BPA_SDECC_HOD: "Sous-Directeur SDECC par Intérim (SDECC)",
   BPA_SDECC_AGENT: "Instructeur technique SDECC",
   BPA_SDECC_AGENTS: "Instructeur technique SDECC",
   BPA_SDECC_SUB_DIRECTOR: "Sous-Directeur SDECC",
   BPA_SDECC_COMM: "Commissaire SDECC",
-  BPA_DGDCF_COMM: "Commissaire DGDCF",
+  BPA_DGDCF_COMM: "Directeur Général DGDCF",
   BPA_INSPD_COMM: "Commissaire Santé Publique",
   BPA_EDD_COMM: "Commissaire Électricité",
   BPA_DNPC_COMM: "Commissaire Protection Civile",
@@ -46,7 +46,7 @@ const roleTranslations = {
   TOPOGRAPHY_CHIEF: "Chef Topographie",
   TOPOGRAPHY_AGENT: "Instructeur technique Topographie",
   STUDIO_ADMIN: "Administrateur",
-  COUNTER_EMPLOYEE: "Agent Trésorier",
+  COUNTER_EMPLOYEE: "Régisseur du trésor",
 };
 
 const priorityRoles = [

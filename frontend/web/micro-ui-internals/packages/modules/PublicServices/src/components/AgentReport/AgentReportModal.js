@@ -4,6 +4,7 @@ import { FileUploadSection } from "./components/FileUploadSection";
 import { ModalHeader } from "./components/ModalHeader";
 import { CotesTableSection } from "./components/CotesTableSection";
 import { TechnicalInfoSection } from "./components/TechnicalInfoSection";
+import { PermitInfoSection } from "./components/PermitInfoSection";
 import { useAgentReportForm } from "./hooks/useAgentReportForm";
 import { useAgentReportAPI } from "./hooks/useAgentReportAPI";
 
@@ -32,10 +33,12 @@ const AgentReportModal = ({
     validateForm,
     setFormData,
     handleTechnicalInfoChange,
+    handlePermitInfoChange,
     handleCoteRowChange,
     addCoteRow,
     removeCoteRow,
-  } = useAgentReportForm();
+    clearLocalDraft,
+  } = useAgentReportForm(applicationNumber);
 
   const { isLoading, submitChecklist, downloadFile, getFileUrl } = useAgentReportAPI(tenantId, serviceCode, applicationNumber);
 
@@ -94,10 +97,12 @@ const AgentReportModal = ({
         Digit.Toast.success(isEdit ? "Liste de contrôle mise à jour avec succès" : "Liste de contrôle soumise avec succès");
       }
 
+      // Wipe the local auto-save draft now that the fiche is persisted server-side.
+      clearLocalDraft();
+
       onClose();
       if (onSuccess) {
         onSuccess();
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error submitting checklist:", error);
@@ -129,6 +134,14 @@ const AgentReportModal = ({
         />
 
         <div className="p-6 lg:p-8 bg-white overflow-y-auto flex-1">
+          {/* Permit / petitioner info — fully editable by the agent. */}
+          <PermitInfoSection
+            permitInfo={formData.permitInfo || {}}
+            isViewMode={isViewMode}
+            isEditMode={isEditMode}
+            handlePermitInfoChange={handlePermitInfoChange}
+          />
+
           {/* Côtes PR Table */}
           <CotesTableSection
             cotesTable={formData.cotesTable || []}

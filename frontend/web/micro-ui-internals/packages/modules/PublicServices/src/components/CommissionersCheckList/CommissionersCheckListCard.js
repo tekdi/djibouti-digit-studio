@@ -122,7 +122,6 @@ const CommissionersCheckListCard = ({ service, state, t, isViewOnly = false, app
 
   const handleSuccess = () => {
     checkExistingChecklist();
-    window.location.reload();
   };
 
   const handleViewReport = () => {

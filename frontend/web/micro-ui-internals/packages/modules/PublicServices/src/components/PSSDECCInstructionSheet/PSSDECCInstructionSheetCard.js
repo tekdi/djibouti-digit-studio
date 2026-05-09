@@ -191,7 +191,7 @@ var PSSDECCInstructionSheetCard = function (props) {
         </div>
         <PSSDECCInstructionSheetModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
           applicationNumber={applicationNumber} service={service} serviceCode={serviceCode} state={state}
-          onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={isViewMode} isViewOnly={isViewOnly} existingData={data} />
+          onSuccess={function () { loadData(); }} isViewMode={isViewMode} isViewOnly={isViewOnly} existingData={data} />
       </div>
     );
   }
@@ -227,7 +227,7 @@ var PSSDECCInstructionSheetCard = function (props) {
       </div>
       <PSSDECCInstructionSheetModal isOpen={isModalOpen} onClose={function () { setIsModalOpen(false); }}
         applicationNumber={applicationNumber} service={service} serviceCode={serviceCode} state={state}
-        onSuccess={function () { loadData(); window.location.reload(); }} isViewMode={false} existingData={data} />
+        onSuccess={function () { loadData(); }} isViewMode={false} existingData={data} />
     </div>
   );
 };

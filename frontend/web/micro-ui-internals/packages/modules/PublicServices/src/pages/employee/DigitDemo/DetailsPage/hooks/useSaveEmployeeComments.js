@@ -101,7 +101,6 @@ export const useSaveEmployeeComments = (serviceCode, applicationNumber, tenantId
       await Digit.CustomService.getResponse(updateRequest);
 
       setShowToast({ label: "Commentaire enregistré avec succès", isError: false });
-      setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
       console.error("Error saving employee comment:", e);
       setShowToast({ label: "Erreur lors de l'enregistrement du commentaire", isError: true });
@@ -160,7 +159,6 @@ export const useSaveEmployeeComments = (serviceCode, applicationNumber, tenantId
       };
       await Digit.CustomService.getResponse(updateRequest);
       setShowToast({ label: "Commentaire supprimé", isError: false });
-      setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
       console.error("Error deleting employee comment:", e);
       setShowToast({ label: "Erreur lors de la suppression", isError: true });

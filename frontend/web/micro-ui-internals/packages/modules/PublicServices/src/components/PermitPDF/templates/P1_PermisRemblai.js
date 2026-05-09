@@ -152,13 +152,28 @@ const P1_PermisRemblai = React.forwardRef((props, ref) => {
                   "Angle Sud-ouest",
                   "Hauteur Moyenne",
                 ];
-                const releve = row.cotesRelevees ? `${labels[i]} : ${row.cotesRelevees}` : labels[i];
-                const projet = row.cotesDuProjet || "";
+                // Row 5 (Hauteur Moyenne) — pull from technicalInfo so the
+                // agent-filled "Hauteur maximale" + "Nombre de couches" land
+                // in the table the way the official template expects.
+                let releveText, projetText;
+                if (i === 4) {
+                  const rawHauteur = (tech.hauteurMaximale || "").toString().trim();
+                  const rawNombre = (tech.nombreCouches || "").toString().trim();
+                  releveText = rawHauteur
+                    ? `${labels[i]} : ${rawHauteur}m`
+                    : (row.cotesRelevees ? `${labels[i]} : ${row.cotesRelevees}` : labels[i]);
+                  projetText = rawNombre
+                    ? `Nombre de couches : ${rawNombre}`
+                    : (row.cotesDuProjet || "");
+                } else {
+                  releveText = row.cotesRelevees ? `${labels[i]} : ${row.cotesRelevees}` : labels[i];
+                  projetText = row.cotesDuProjet || "";
+                }
                 return (
                   <tr key={i}>
                     <td style={tdBlack}><span style={highlight}>{i + 1}</span></td>
-                    <td style={tdBlackLeft}><span style={highlight}>{releve}</span></td>
-                    <td style={tdBlackLeft}>{projet ? <span style={highlight}>{projet}</span> : ""}</td>
+                    <td style={tdBlackLeft}><span style={highlight}>{releveText}</span></td>
+                    <td style={tdBlackLeft}>{projetText ? <span style={highlight}>{projetText}</span> : ""}</td>
                     {i === 0 && (
                       <td style={voieCell} rowSpan={5}>
                         <div style={highlight}>{voieReference} {coteVoie}m</div>

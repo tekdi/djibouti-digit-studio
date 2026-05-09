@@ -22,9 +22,59 @@ const ResponseEmployee = () => {
   const [isResponseSuccess, setIsResponseSuccess] = useState(state?.iSuccess || false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [ficheNumber, setFicheNumber] = useState(null);
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
   const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  // Fetch the application to extract the fiche-derived permit number
+  // (PCO/PCS/PR/etc number filled by the SRA agent in the fiche). The
+  // raw applicationNumber from `state` is the internal id (e.g.
+  // "PCO-SMPL-000037/2026") — what the citizen actually sees on their
+  // permit is the fiche number (e.g. "P3-PCO-N°283/2026").
+  useEffect(() => {
+    if (!state?.applicationNumber || !queryStrings?.serviceCode || !tenantId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await Digit.CustomService.getResponse({
+          url: `/public-service/v1/application/${queryStrings.serviceCode}`,
+          method: "GET",
+          headers: {
+            "X-Tenant-Id": tenantId,
+            "auth-token": Digit.UserService.getUser()?.access_token,
+          },
+          params: { applicationNumber: state.applicationNumber, tenantId },
+        });
+        if (cancelled) return;
+        const app = res?.Application?.[0];
+        const ad = app?.additionalDetails || {};
+        // Lookup priority — same fiche locations as getDisplayApplicationId.
+        const candidates = [
+          ad.ccgVisitChecklist?.ccgNumber,
+          ad.instructionSheet?.pcoNumber,
+          ad.atarrInstructionSheet?.pcoNumber,
+          ad.pcsInstructionSheet?.pcoNumber,
+          ad.pfInstructionSheet?.pcoNumber,
+          ad.pdInstructionSheet?.pcoNumber,
+          ad.pvImplantationChecklist?.pcoNumber,
+          ad.ccrChecklist?.ccrNumber,
+          ad.agentChecklist?.permitInfo?.prNumber,
+        ];
+        for (const c of candidates) {
+          if (c && String(c).trim()) {
+            setFicheNumber(String(c).trim());
+            return;
+          }
+        }
+      } catch (e) {
+        /* swallow — fall back to applicationNumber */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [state?.applicationNumber, queryStrings?.serviceCode, tenantId]);
+
+  const displayedApplicationId = ficheNumber || state?.applicationNumber;
 
   useEffect(() => {
     if (isResponseSuccess) {
@@ -150,7 +200,7 @@ const ResponseEmployee = () => {
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs text-gray-500 mb-0.5">{t("COMMON_APPLICATION_ID")}</p>
-                    <p className="text-base font-bold text-gray-900 font-mono truncate">{state?.applicationNumber}</p>
+                    <p className="text-base font-bold text-gray-900 font-mono truncate">{displayedApplicationId}</p>
                   </div>
                 </div>
               </div>
