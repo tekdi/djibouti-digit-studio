@@ -67,7 +67,24 @@
       "Bash(agent-browser snapshot *)",
       "Bash(agent-browser wait *)",
       "Bash(agent-browser reload *)",
-      "Bash(agent-browser fill *)"
+      "Bash(agent-browser fill *)",
+      "Bash(agent-browser click *)",
+      "Bash(agent-browser type *)",
+      "Bash(agent-browser press *)",
+      "Bash(agent-browser console *)",
+      "Bash(agent-browser scroll *)",
+      "Bash(agent-browser eval *)",
+      "Bash(agent-browser upload *)",
+      "Bash(agent-browser find *)",
+      "Bash(agent-browser --help)",
+      "Bash(agent-browser errors *)",
+      "Bash(agent-browser network *)",
+      "Bash(unzip -o \"C:/Users/amaze/Desktop/AmaCode/egouv_inidia/epermit_djibouti/Modèle du PERMIS DE CONSTRUIRE/P3 ET P4-Autorisation de Construction.docx\" word/document.xml -d .)",
+      "PowerShell(Get-Process *)",
+      "Bash(awk '$5 ~ /^[0-9]+$/ && $5+0 >= 3 {print $1, $2, \"restarts=\"$5}')",
+      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $1, $2, \"ready=\"$3}')",
+      "Bash(awk '{print $1}')",
+      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $0}')"
     ]
   }
 }

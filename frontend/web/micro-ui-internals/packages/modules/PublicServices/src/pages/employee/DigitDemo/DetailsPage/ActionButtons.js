@@ -1,8 +1,10 @@
-import React, { useRef, useState } from "react";
-import { LuDownload, LuUpload, LuFileCheck2 } from "react-icons/lu";
+import React, { Fragment, useRef, useState } from "react";
+import { LuDownload, LuUpload, LuFileCheck2, LuEye } from "react-icons/lu";
 import WorkflowActions from "../../../../components/WorkflowActions";
 import { PermitPDFTemplate, generatePermitPDF } from "../../../../components/PermitPDF";
 import { useSignedPermit } from "./hooks/useSignedPermit";
+import { PDFPreview } from "../../../../components/ChecklistCards/Common";
+import { getFileUrl } from "./utils/fileUtils";
 
 const PERMIT_LABELS = {
   BPA_PCO: "Permis de Construire",
@@ -38,6 +40,8 @@ const ActionButtons = ({
   const pdfRef = useRef(null);
   const fileInputRef = useRef(null);
   const [showPdfTemplate, setShowPdfTemplate] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isOpeningPreview, setIsOpeningPreview] = useState(false);
 
   const { isUploading, isDownloading, uploadSignedPermit, downloadSignedPermit } = useSignedPermit(
     queryStrings?.serviceCode,
@@ -66,6 +70,21 @@ const ActionButtons = ({
     e.target.value = "";
   };
 
+  const handlePreviewSignedPermit = async (signed) => {
+    if (!signed?.fileStoreId) return;
+    setIsOpeningPreview(true);
+    try {
+      const url = await getFileUrl(signed.fileStoreId, tenantId);
+      if (url) setPreviewUrl({ url, name: signed.fileName });
+      else if (Digit.Toast) Digit.Toast.error("Impossible de charger l'aperçu");
+    } catch (err) {
+      console.error("Preview error:", err);
+      if (Digit.Toast) Digit.Toast.error("Erreur lors du chargement de l'aperçu");
+    } finally {
+      setIsOpeningPreview(false);
+    }
+  };
+
   const effectiveBusinessService = queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices?.[0]?.code;
   const isActionsDisabled = !effectiveBusinessService;
 
@@ -77,6 +96,10 @@ const ActionButtons = ({
 
   const baseBtn =
     "inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-white/30 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap";
+  // Green emphasis variant — used for the "view signed permit" CTA so it stands out
+  // once the wet-signed scan has been uploaded.
+  const greenBtn =
+    "inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-400/60 bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-emerald-500 hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap";
 
   return (
     <div className="flex items-start gap-3">
@@ -109,17 +132,28 @@ const ActionButtons = ({
             style={{ display: "none" }}
           />
 
-          {/* Download SIGNED permit (once uploaded) */}
+          {/* View / Download SIGNED permit (once uploaded) */}
           {hasSignedPermit && (
-            <button
-              onClick={() => downloadSignedPermit(signedPermit)}
-              disabled={isDownloading}
-              className={baseBtn}
-              title={signedPermit.fileName}
-            >
-              <LuFileCheck2 className="h-4 w-4" />
-              {isDownloading ? "Ouverture..." : `Télécharger le ${docLabel} signé`}
-            </button>
+            <Fragment>
+              <button
+                onClick={() => handlePreviewSignedPermit(signedPermit)}
+                disabled={isOpeningPreview}
+                className={greenBtn}
+                title={signedPermit.fileName}
+              >
+                <LuEye className="h-4 w-4" />
+                {isOpeningPreview ? "Ouverture..." : `Voir le ${docLabel} signé`}
+              </button>
+              <button
+                onClick={() => downloadSignedPermit(signedPermit)}
+                disabled={isDownloading}
+                className={baseBtn}
+                title={signedPermit.fileName}
+              >
+                <LuFileCheck2 className="h-4 w-4" />
+                {isDownloading ? "Ouverture..." : `Télécharger le ${docLabel} signé`}
+              </button>
+            </Fragment>
           )}
         </div>
       )}
@@ -133,6 +167,16 @@ const ActionButtons = ({
             businessService={response?.businessService}
           />
         </div>
+      )}
+
+      {/* Signed permit PDF preview modal */}
+      {previewUrl && (
+        <PDFPreview
+          fileUrl={previewUrl.url}
+          fileName={previewUrl.name || `${docLabel} signé`}
+          onClose={() => setPreviewUrl(null)}
+          onDownload={() => downloadSignedPermit(signedPermit)}
+        />
       )}
 
       {/* Workflow Actions —

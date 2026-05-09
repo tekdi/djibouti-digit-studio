@@ -103,18 +103,15 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
               name: "commissioner",
               optionsKey: "commissionerCode",
               options: filteredApprovers,
-              hideInForm: actionString !== "SEND_TO_COMMISSIONER",
+              hideInForm: actionString !== "SEND_TO_COMMISSIONER" && actionString !== "SEND_TO_COMMISSION",
               optionsCustomStyle: {
                 top: "2.3rem",
               },
             },
           },
           {
-            // Label intentionally blank — the assignee dropdown receives the
-            // file going forward (which can be a chef de service, a
-            // sous-directeur, a directeur, etc., depending on the action).
-            // Saying "Sélectionner l'approbateur" was misleading because the
-            // recipient is not always an "approbateur".
+            // No label on the assignee dropdown — the modal heading already
+            // tells the user what the action is, the field label was just noise.
             label: " ",
             type: "dropdown",
             isMandatory: true,

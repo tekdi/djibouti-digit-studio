@@ -1,12 +1,14 @@
 import React from "react";
 import P1_PermisRemblai from "./templates/P1_PermisRemblai";
+import P2_CertificatConformiteRemblai from "./templates/P2_CertificatConformiteRemblai";
 
-// Map each business service to its permit template
+// Map each business service to its permit/certificate template
 var TEMPLATES = {
   BPA_PR: P1_PermisRemblai,
+  BPA_CCR: P2_CertificatConformiteRemblai,
   // Future: add more templates here
-  // BPA_PCO: P2_PermisConstruire,
-  // BPA_PL: P4_PermisLotir,
+  // BPA_PCO: P3_PermisConstruire,
+  // BPA_PL: P5_PermisLotir,
   // etc.
 };
 

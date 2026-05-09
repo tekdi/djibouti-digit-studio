@@ -17,8 +17,9 @@ const ModalHeader = ({
     <div className="sticky top-0 z-10 bg-gradient-to-r from-djibouti-primary to-djibouti-primary-dark text-white p-6 border-b border-white/10">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <h2 className="text-2xl font-bold mb-1">Fiche d'instruction APE</h2>
-          <p className="text-sm text-white/80">Approbation de Plan d'Exécution — Dossier : {applicationNumber}</p>
+          <h2 className="text-2xl font-bold mb-1">Fiche d'instruction — Approbation des plans d'exécution</h2>
+          <p className="text-sm text-white/90 font-medium">P12 — Approbation des plans d'exécution (APE)</p>
+          <p className="text-xs text-white/70 mt-1">Dossier : {applicationNumber}</p>
         </div>
 
         <div className="flex items-center gap-3">

@@ -112,7 +112,7 @@ const useACEChecklist = (tenantId, serviceCode, applicationNumber) => {
           currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
         history,
       };
-      await Digit.CustomService.getResponse({
+      const putResp = await Digit.CustomService.getResponse({
         url: `/public-service/v1/application/${serviceCode}`,
         method: "PUT",
         headers: { "X-Tenant-Id": tenantId },
@@ -132,11 +132,21 @@ const useACEChecklist = (tenantId, serviceCode, applicationNumber) => {
           },
         },
       });
-      setData(payload);
+      // Use the echoed payload to keep local state in sync with what the
+      // server actually persisted; otherwise re-fetch.
+      const echoed = Array.isArray(putResp?.Application)
+        ? putResp?.Application?.[0]?.additionalDetails?.aceLocauxPublic
+        : putResp?.Application?.additionalDetails?.aceLocauxPublic;
+      if (echoed) {
+        setData(echoed);
+      } else {
+        setData(payload);
+        await refresh();
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [fetchApplication, serviceCode, tenantId]);
+  }, [fetchApplication, refresh, serviceCode, tenantId]);
 
   return { data, isLoading, submit };
 };

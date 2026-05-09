@@ -491,61 +491,9 @@ const DigitDemoComponent = ({ editdata }) => {
           </div>
         ) : (
           <div style={{ position: "relative" }}>
-            {/* BPA_PL and BPA_CCG re-use this step for applicant info, not land documents,
-                so the "documents fonciers" banner would be misleading there. */}
-            {currentStep === 1 && !["BPA_PL", "BPA_CCG"].includes(service?.toUpperCase()) && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "12px",
-                  padding: "16px",
-                  marginBottom: "12px",
-                  marginTop: "8px",
-                  borderRadius: "14px",
-                  border: "1px solid #fcd34d",
-                  background: "linear-gradient(90deg, #fffbeb 0%, #fff7ed 100%)",
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "40px",
-                    width: "40px",
-                    flexShrink: 0,
-                    borderRadius: "12px",
-                    backgroundColor: "#fef3c7",
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#d97706"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                  </svg>
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: "14px", fontWeight: 600, color: "#78350f", margin: "0 0 2px 0" }}>
-                    Information importante
-                  </p>
-                  <p style={{ fontSize: "14px", color: "#92400e", lineHeight: 1.5, margin: 0 }}>
-                    Cette section est réservée aux informations relatives aux documents fonciers
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* "Information importante — Cette section est réservée aux informations
+                relatives aux documents fonciers" banner removed per user request.
+                Was on currentStep === 1 for all services except BPA_PL/BPA_CCG. */}
             <FormComposerV2
             key={`${currentStep}-${currentFormConfig?.name}`}
             // heading={t(`${serviceCode}_HEADING`)}

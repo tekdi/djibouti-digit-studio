@@ -279,9 +279,9 @@ const PVChecklistModal = ({
                 <Field label="Date d'implantation">
                   <Input type="date" value={form.implantationDate} onChange={set("implantationDate")} disabled={!isEditable} />
                 </Field>
-                <Field label="N° Permis de Construire">
+                <Field label="N° du Procès-Verbal d'Implantation">
                   <Input
-                    type="text" placeholder="ex. 398/2025"
+                    type="text" placeholder="ex. P11-PV N°21/2026"
                     value={form.pcoNumber} onChange={set("pcoNumber")} disabled={!isEditable}
                   />
                 </Field>

@@ -35,8 +35,12 @@ const ApplicationTabs = ({ activeTab, setActiveTab, isCitizen, businessService }
   );
 
   const hideInstructionTab = HIDE_INSTRUCTION_TAB_FOR_BUSINESS_SERVICES.includes(businessService);
+  // DGDCF is a domain authority — they don't review the technical fiche, only
+  // give a foncier/cadastral opinion via Observations. Hide the Instruction
+  // tab for them so the SRA fiche stays internal.
+  const isDGDCF = userDetails?.info?.roles?.some((role) => role.code === "BPA_DGDCF_COMM");
   // Commissioners see the instruction tab in read-only mode (they cannot edit checklists).
-  const showInstructionTab = !hideInstructionTab && (isArchitect || !isCitizen);
+  const showInstructionTab = !hideInstructionTab && !isDGDCF && (isArchitect || !isCitizen);
   const hideObservationsTab = HIDE_OBSERVATIONS_FOR_BUSINESS_SERVICES.includes(businessService);
 
   // Internal employee comments tab — visible to all non-citizen, non-commissioner roles
