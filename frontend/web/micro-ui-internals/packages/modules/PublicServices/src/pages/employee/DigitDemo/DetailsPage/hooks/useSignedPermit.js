@@ -100,7 +100,6 @@ export const useSignedPermit = (serviceCode, applicationNumber, tenantId) => {
       });
 
       if (Digit.Toast) Digit.Toast.success("Permis signé téléchargé avec succès");
-      setTimeout(() => window.location.reload(), 1200);
     } catch (e) {
       console.error("Error uploading signed permit:", e);
       if (Digit.Toast) Digit.Toast.error("Erreur lors du téléchargement du permis signé");

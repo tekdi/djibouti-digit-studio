@@ -5,7 +5,7 @@ import { LuBuilding, LuPhone, LuInfo, LuRocket, LuSparkles, LuZap, LuArrowRight,
 const features = [
   {
     icon: LuRocket,
-    title: "Démarches Citoyen (ne)nes",
+    title: "Démarches Citoyennes",
     description: "Accédez facilement à tous vos services administratifs en ligne",
     color: "text-djibouti-primary",
   },

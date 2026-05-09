@@ -104,10 +104,6 @@ export const useSaveObservations = (
         label: "Observations enregistrées avec succès",
         isError: false,
       });
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
     } catch (error) {
       console.error("Error saving observations:", error);
       setShowToast({

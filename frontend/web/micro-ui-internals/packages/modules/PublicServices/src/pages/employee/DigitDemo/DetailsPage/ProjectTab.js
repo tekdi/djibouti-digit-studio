@@ -284,11 +284,63 @@ const ProjectTab = ({
   // field-loop as the other keys. If it hasn't been filled yet, the field
   // stays empty (and ProjectDataView hides empty fields).
   const ccgChecklistNumber = response?.additionalDetails?.ccgVisitChecklist?.ccgNumber;
-  const originalPermitDetails = (response?.serviceDetails?.originalPermitDetails || []).map((item) =>
-    response?.businessService === "BPA_CCG" && ccgChecklistNumber
-      ? { ...item, ccgNumber: ccgChecklistNumber }
-      : item
-  );
+  const ccrFiche = response?.additionalDetails?.ccrChecklist || null;
+  const originalPermitDetails = (response?.serviceDetails?.originalPermitDetails || []).map((item, idx) => {
+    if (response?.businessService === "BPA_CCG" && ccgChecklistNumber) {
+      return { ...item, ccgNumber: ccgChecklistNumber };
+    }
+    if (response?.businessService === "BPA_CCR" && ccrFiche && idx === 0) {
+      // The Brigade Topo agent's fiche values override the citizen-submitted
+      // values for Numéro PR, Date de délivrance, etc.
+      return {
+        ...item,
+        ccrNumber: ccrFiche.ccrNumber || "",
+        originalPermitNumber: ccrFiche.prNumber || item.originalPermitNumber || "",
+        prDeliveryDate: ccrFiche.prDeliveryDate || "",
+      };
+    }
+    return item;
+  });
+  // Edge case for BPA_CCR: if the citizen never had originalPermitDetails on
+  // the application (older shape), but the agent has filled the fiche, build
+  // a synthetic row so the block still renders the agent's values.
+  const finalOriginalPermitDetails =
+    response?.businessService === "BPA_CCR" && ccrFiche && originalPermitDetails.length === 0
+      ? [{
+          ccrNumber: ccrFiche.ccrNumber || "",
+          originalPermitNumber: ccrFiche.prNumber || "",
+          prDeliveryDate: ccrFiche.prDeliveryDate || "",
+        }]
+      : originalPermitDetails;
+
+  // For BPA_PR (P1), the Brigade Topo agent fills the parcel/applicant info in
+  // the fiche (`agentChecklist.permitInfo`). Those values override what's
+  // displayed in the "Détails du Permis de Remblai" block on the Demande tab.
+  // If the agent hasn't filled the fiche yet, fall back to the citizen's
+  // submitted terrain values.
+  const isPR = response?.businessService === "BPA_PR";
+  const prAgentInfo = isPR ? (response?.additionalDetails?.agentChecklist?.permitInfo || {}) : null;
+  const baseTerrainDetails = response?.serviceDetails?.terrainDetails || [];
+  const terrainDetails = isPR && prAgentInfo
+    ? (baseTerrainDetails.length > 0
+        ? baseTerrainDetails.map((item, idx) => idx === 0 ? {
+            ...item,
+            prNumber: prAgentInfo.prNumber || "",
+            applicantName: prAgentInfo.applicantName || item.applicantName || response?.applicants?.[0]?.name || "",
+            terrainLocation: prAgentInfo.terrainLocation || item.terrainLocation || "",
+            region: prAgentInfo.region || (typeof item.region === "string" ? item.region : (item.region?.name || item.region?.code || "")),
+            terrainSurface: prAgentInfo.terrainSurface || item.terrainSurface || "",
+            landTitleNumber: prAgentInfo.landTitleNumber || item.landTitleNumber || "",
+          } : item)
+        : [{
+            prNumber: prAgentInfo.prNumber || "",
+            applicantName: prAgentInfo.applicantName || response?.applicants?.[0]?.name || "",
+            terrainLocation: prAgentInfo.terrainLocation || "",
+            region: prAgentInfo.region || "",
+            terrainSurface: prAgentInfo.terrainSurface || "",
+            landTitleNumber: prAgentInfo.landTitleNumber || "",
+          }])
+    : baseTerrainDetails;
 
   const applicationData = {
     applicants: response?.applicants || [],
@@ -298,9 +350,9 @@ const ProjectTab = ({
       landandProjectDesignDetails: response?.serviceDetails?.landandProjectDesignDetails || [],
       designOfficeDetailing: response?.serviceDetails?.designOfficeDetailing || [],
       legalEntityDetails: response?.serviceDetails?.legalEntityDetails || [],
-      originalPermitDetails: originalPermitDetails,
+      originalPermitDetails: finalOriginalPermitDetails,
       conformityCertificatesDetails: response?.serviceDetails?.conformityCertificatesDetails || [],
-      terrainDetails: response?.serviceDetails?.terrainDetails || [],
+      terrainDetails: terrainDetails,
       demolitionDetails: response?.serviceDetails?.demolitionDetails || [],
       projectFileDetails: response?.serviceDetails?.projectFileDetails || [],
       elevationDetails: response?.serviceDetails?.elevationDetails || [],

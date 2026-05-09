@@ -573,9 +573,25 @@ export const getDetailsByIdWorks = async ({ tenantId, id, moduleCode }) => {
       .map((state) => {
         let _nextActions = state.actions?.map?.((ac) => {
           let actionResultantState = getStateForUUID(ac.nextState);
+          // Compute the recipient role list = roles of every "forward" action
+          // available in the next state. We deliberately EXCLUDE escalation
+          // actions (ADD_QUERY, REJECT, SEND_BACK_*) because their role lists
+          // are intentionally broad (Director, Sub-Director, etc. for escalation)
+          // and would otherwise pollute the assignee dropdown with unrelated
+          // hierarchy-level users (e.g. the Director showing up when an agent
+          // sends his report to his Bureau Chief).
+          const isForwardAction = (action) =>
+            action !== "ADD_QUERY" &&
+            action !== "REJECT" &&
+            !String(action || "").startsWith("SEND_BACK_");
           let assignees = actionResultantState?.actions?.reduce?.((acc, act) => {
-            return [...acc, ...act.roles];
+            if (!isForwardAction(act.action)) return acc;
+            return [...acc, ...(act.roles || [])];
           }, []);
+          // Drop STUDIO_ADMIN — it's a system-only role, not a real assignee.
+          assignees = (assignees || []).filter((r) => r !== "STUDIO_ADMIN");
+          // Dedupe
+          assignees = Array.from(new Set(assignees));
           return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
         });
         // if (state?.isStateUpdatable && moduleCode==="MR") {

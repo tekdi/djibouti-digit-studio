@@ -49,7 +49,6 @@ const InstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
 
   const handleSuccess = () => {
     checkExistingInstructionSheet();
-    window.location.reload();
   };
 
   const handleViewReport = () => {

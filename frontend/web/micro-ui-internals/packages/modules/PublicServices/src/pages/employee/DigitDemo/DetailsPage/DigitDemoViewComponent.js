@@ -26,6 +26,21 @@ const DigitDemoViewComponent = () => {
 
   const isDownloadButtonEnable = true;
 
+  // Background refetch FULLY disabled. Silent polling — especially the
+  // refetch-on-window-focus default — was causing the modal forms (fiche
+  // technique, checklist, instruction sheet) to re-mount mid-typing whenever
+  // the agent switched tabs and came back, destroying ~10 minutes of work.
+  // Refetches now happen ONLY when an explicit save fires the exposed
+  // `refetch()` function.
+  const NO_AUTO_REFETCH = {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
+    staleTime: Infinity,
+    retry: false,
+  };
+
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
     headers: {
@@ -37,14 +52,9 @@ const DigitDemoViewComponent = () => {
       applicationNumber: queryStrings?.applicationNumber,
       tenantId: tenantId,
     },
-    config: {
-      cacheTime: 0,
-      // Background refetch disabled — silent polling mid-session was causing
-      // random page reloads and occasional logouts while testing. Users can
-      // refresh manually if they need fresh data.
-    },
+    config: { ...NO_AUTO_REFETCH },
   };
-  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
+  const { isLoading, data, refetch: refetchApplication } = Digit.Hooks.useCustomAPIHook(request);
   let response = data ? data?.Application?.[0] : {};
   const processInstanceState = response?.processInstance?.[0]?.state?.state;
 
@@ -56,34 +66,36 @@ const DigitDemoViewComponent = () => {
         schemaCode: "Studio.ServiceConfiguration",
       },
     },
-    config: {
-      // Background refetch disabled — see note above.
-    },
+    config: { ...NO_AUTO_REFETCH },
   };
 
   const { isLoading: ServiceConfigLoading, data: serviceConfigData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
   const serviceConfig = serviceConfigData?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
 
-  let { data: workflowDetails, isLoading: workflowLoading } = useWorkflowDetails({
+  let { data: workflowDetails, isLoading: workflowLoading, revalidate: refetchWorkflow } = useWorkflowDetails({
     tenantId: tenantId,
     id: queryStrings?.applicationNumber,
     moduleCode: queryStrings?.businessService || serviceConfig?.data?.workflow?.businessService,
     config: {
       enabled: response && serviceConfig ? true : false,
-      cacheTime: 0,
-      // Background refetch disabled — silent polling caused random reloads.
+      ...NO_AUTO_REFETCH,
     },
   });
 
-  let { data: timelineWorkflowDetails, isLoading: timelineWorkflowLoading } = useWorkflowDetails({
+  let { data: timelineWorkflowDetails, isLoading: timelineWorkflowLoading, revalidate: refetchTimeline } = useWorkflowDetails({
     tenantId: tenantId,
     id: queryStrings?.applicationNumber,
     config: {
       enabled: response && serviceConfig ? true : false,
-      cacheTime: 0,
-      // Background refetch disabled — silent polling caused random reloads.
+      ...NO_AUTO_REFETCH,
     },
   });
+
+  const refetchAll = React.useCallback(() => {
+    if (refetchApplication) refetchApplication();
+    if (refetchWorkflow) refetchWorkflow();
+    if (refetchTimeline) refetchTimeline();
+  }, [refetchApplication, refetchWorkflow, refetchTimeline]);
 
   useEffect(() => {
     if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
@@ -181,6 +193,7 @@ const DigitDemoViewComponent = () => {
             data={data}
             serviceConfig={serviceConfig}
             selectedBusinessService={selectedBusinessService}
+            refetchAll={refetchAll}
           />
         </div>
       </div>

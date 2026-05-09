@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 import { LuX, LuSave, LuCheck, LuPen, LuPlus, LuTrash2 } from "react-icons/lu";
 
 const DEFAULT_FORM = {
+  ccrNumber: "",
+  prNumber: "",
+  prDeliveryDate: "",
   beneficiaryName: "",
   location: "",
   lotNumbers: "",
@@ -42,6 +45,9 @@ const CCRChecklistModal = ({
   useEffect(() => {
     if (existingData) {
       setFormData({
+        ccrNumber: existingData.ccrNumber || "",
+        prNumber: existingData.prNumber || "",
+        prDeliveryDate: existingData.prDeliveryDate || "",
         beneficiaryName: existingData.beneficiaryName || "",
         location: existingData.location || "",
         lotNumbers: existingData.lotNumbers || "",
@@ -191,6 +197,34 @@ const CCRChecklistModal = ({
             </div>
           )}
 
+          {/* Numéros de référence */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-1 h-5 bg-djibouti-primary rounded-full" />
+              <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Numéros de référence</h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { key: "ccrNumber", label: "Numéro du Certificat de Conformité de Remblai", placeholder: "Ex : P2-CCR-N°21/2026" },
+                { key: "prNumber", label: "Numéro du Permis de Remblai", placeholder: "Ex : P1-PR-N°20/2026" },
+                { key: "prDeliveryDate", label: "Date de délivrance du Permis de Remblai", placeholder: "", type: "date" },
+              ].map(function (f) {
+                return (
+                  <div key={f.key}>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">{f.label}</label>
+                    {isEditable ? (
+                      <input type={f.type || "text"} value={formData[f.key]} onChange={function (e) { handleChange(f.key, e.target.value); }}
+                        placeholder={f.placeholder}
+                        className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-djibouti-primary focus:ring-2 focus:ring-djibouti-primary/20 transition-all" />
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-900 py-2.5">{formData[f.key] || "-"}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Beneficiary Info */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
@@ -199,7 +233,7 @@ const CCRChecklistModal = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { key: "beneficiaryName", label: "Nom du bénéficiaire", placeholder: "Mr/Mme..." },
+                { key: "beneficiaryName", label: "Nom et prénom du bénéficiaire", placeholder: "Mr/Mme..." },
                 { key: "location", label: "Localisation (Sise)", placeholder: "Ex: HERON EXTENSION" },
                 { key: "lotNumbers", label: "Numéro(s) de lot", placeholder: "Ex: lot n°116, 117, et 118" },
                 { key: "landTitleNumber", label: "Numéro du Titre Foncier", placeholder: "Ex: n°24295" },

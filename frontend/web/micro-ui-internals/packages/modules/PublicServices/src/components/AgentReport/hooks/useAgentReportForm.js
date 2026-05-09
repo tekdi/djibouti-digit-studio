@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 const createEmptyCoteRow = () => ({
   cotesRelevees: "",
@@ -10,6 +10,14 @@ const DEFAULT_FORM_DATA = {
   report: [],
   notes: "",
   photos: [],
+  permitInfo: {
+    prNumber: "",
+    applicantName: "",
+    terrainLocation: "",
+    region: "",
+    terrainSurface: "",
+    landTitleNumber: "",
+  },
   cotesTable: [createEmptyCoteRow()],
   technicalInfo: {
     voieReference: "",
@@ -20,10 +28,68 @@ const DEFAULT_FORM_DATA = {
   },
 };
 
-export const useAgentReportForm = () => {
-  const [formData, setFormData] = useState({ ...DEFAULT_FORM_DATA });
+// Auto-save the in-progress fiche to localStorage so the agent doesn't lose
+// 10+ minutes of work when:
+//   - Chrome discards the inactive tab (default after ~5-10 min idle)
+//   - The session token expires and the app redirects to login
+//   - The agent accidentally hits F5 / closes the tab / network drops
+//
+// Drafts are scoped per-application; cleared after a successful submit.
+const draftKey = (applicationNumber) =>
+  applicationNumber ? `bpa-pr-fiche-draft:${applicationNumber}` : null;
+
+const loadDraft = (applicationNumber) => {
+  const key = draftKey(applicationNumber);
+  if (!key) return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn("Could not load fiche draft:", e);
+    return null;
+  }
+};
+
+const saveDraft = (applicationNumber, data) => {
+  const key = draftKey(applicationNumber);
+  if (!key) return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    /* localStorage full or disabled — ignore */
+  }
+};
+
+const clearDraft = (applicationNumber) => {
+  const key = draftKey(applicationNumber);
+  if (!key) return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch (e) { /* ignore */ }
+};
+
+export const useAgentReportForm = (applicationNumber) => {
+  // Restore draft on mount if present, else default form.
+  const [formData, setFormData] = useState(() => {
+    const draft = loadDraft(applicationNumber);
+    return draft ? { ...DEFAULT_FORM_DATA, ...draft } : { ...DEFAULT_FORM_DATA };
+  });
   const [errors, setErrors] = useState({});
   const [uploadingFiles, setUploadingFiles] = useState(false);
+
+  // Persist every formData change to localStorage (scoped per application).
+  // Skipped on the very first render so we don't overwrite a freshly loaded
+  // draft with the default-empty form.
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    if (isFirstRun.current) { isFirstRun.current = false; return; }
+    saveDraft(applicationNumber, formData);
+  }, [formData, applicationNumber]);
+
+  const clearLocalDraft = useCallback(() => {
+    clearDraft(applicationNumber);
+  }, [applicationNumber]);
 
   const handleInputChange = useCallback((fieldName, value) => {
     setFormData(prev => ({
@@ -44,6 +110,16 @@ export const useAgentReportForm = () => {
       ...prev,
       technicalInfo: {
         ...prev.technicalInfo,
+        [fieldName]: value,
+      },
+    }));
+  }, []);
+
+  const handlePermitInfoChange = useCallback((fieldName, value) => {
+    setFormData(prev => ({
+      ...prev,
+      permitInfo: {
+        ...prev.permitInfo,
         [fieldName]: value,
       },
     }));
@@ -169,8 +245,10 @@ export const useAgentReportForm = () => {
     validateForm,
     setFormData,
     handleTechnicalInfoChange,
+    handlePermitInfoChange,
     handleCoteRowChange,
     addCoteRow,
     removeCoteRow,
+    clearLocalDraft,
   };
 };

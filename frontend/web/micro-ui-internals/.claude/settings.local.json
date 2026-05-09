@@ -57,7 +57,17 @@
       "Bash(awk '$5 >= 3 {print $1, $2, \"restarts=\"$5}')",
       "Read(//c/Users/amaze/.claude/skills/**)",
       "Bash(agent-browser --version)",
-      "Bash(PYTHONIOENCODING=utf-8 python *)"
+      "Bash(PYTHONIOENCODING=utf-8 python *)",
+      "PowerShell(aws eks describe-nodegroup *)",
+      "Bash(agent-browser open *)",
+      "Bash(agent-browser close *)",
+      "Bash(agent-browser session *)",
+      "Bash(agent-browser get *)",
+      "Bash(agent-browser screenshot *)",
+      "Bash(agent-browser snapshot *)",
+      "Bash(agent-browser wait *)",
+      "Bash(agent-browser reload *)",
+      "Bash(agent-browser fill *)"
     ]
   }
 }

@@ -110,7 +110,12 @@ const configModal = (t, action, approvers, businessService, moduleCode, document
             },
           },
           {
-            label: t("WF_MODAL_APPROVER"),
+            // Label intentionally blank — the assignee dropdown receives the
+            // file going forward (which can be a chef de service, a
+            // sous-directeur, a directeur, etc., depending on the action).
+            // Saying "Sélectionner l'approbateur" was misleading because the
+            // recipient is not always an "approbateur".
+            label: " ",
             type: "dropdown",
             isMandatory: true,
             disable: false,

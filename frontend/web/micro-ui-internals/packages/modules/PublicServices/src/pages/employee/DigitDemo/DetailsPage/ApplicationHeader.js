@@ -188,7 +188,7 @@ const ApplicationHeader = ({
           iconBgColor="bg-white/20"
           iconColor="text-white"
           label="Demandeur"
-          value={`Nom et prénom : ${getDisplayApplicantName(response) || applicant?.name || "N/A"} | Téléphone : ${applicant?.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant?.mobileNumber || "N/A"}`}
+          value={`Nom et prénom : ${applicant?.name || "N/A"} | Téléphone : ${applicant?.prefix ? `+${applicant.prefix} ` : "+253 "}${applicant?.mobileNumber || "N/A"}`}
         />
       </div>
 

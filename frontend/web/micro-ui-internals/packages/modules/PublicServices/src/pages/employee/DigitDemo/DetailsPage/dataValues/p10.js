@@ -7,9 +7,19 @@ export const p10Data = {
       color: "blue",
       fields: [
         {
-          label: "Numéro du permis de Remblai",
+          label: "Numéro du Certificat de Conformité de Remblai",
+          key: "ccrNumber",
+          icon: "LuHash"
+        },
+        {
+          label: "Numéro du Permis de Remblai",
           key: "originalPermitNumber",
           icon: "LuHash"
+        },
+        {
+          label: "Date de délivrance du Permis de Remblai",
+          key: "prDeliveryDate",
+          icon: "LuCalendar"
         },
         {
           label: "Date du permis original",

@@ -264,6 +264,8 @@ export const getDisplayApplicantName = (app) => {
     ad.pdInstructionSheet && ad.pdInstructionSheet.applicantName,             // PD
     ad.ccgVisitChecklist && ad.ccgVisitChecklist.applicantName,               // CCG
     ad.pvImplantationChecklist && ad.pvImplantationChecklist.applicantName,   // PV
+    ad.ccrChecklist && ad.ccrChecklist.beneficiaryName,                       // CCR
+    ad.agentChecklist && ad.agentChecklist.permitInfo && ad.agentChecklist.permitInfo.applicantName, // PR
   ];
   for (const c of candidates) {
     if (c && String(c).trim()) return String(c).trim();

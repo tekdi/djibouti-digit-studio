@@ -137,6 +137,39 @@ const OpenView = () => {
   const costEstimation = calculation?.Application[0]?.additionalDetails?.costEstimation;
   const applicationData = calculation?.Application[0];
 
+  // The "Nom et prénom" + "Numéro de la demande" shown on the cashier/citizen
+  // payment screen should come from the fiche the SRA agent filled (single
+  // source of truth), not from the original citizen-submitted name or the
+  // raw applicationNumber. Falls back to the bill/applicants when no fiche
+  // value is set.
+  const ad = applicationData?.additionalDetails || {};
+  const ficheApplicantName = (
+    ad.instructionSheet?.applicantName ||
+    ad.atarrInstructionSheet?.applicantName ||
+    ad.pcsInstructionSheet?.applicantName ||
+    ad.pfInstructionSheet?.applicantName ||
+    ad.pdInstructionSheet?.applicantName ||
+    ad.ccgVisitChecklist?.applicantName ||
+    ad.pvImplantationChecklist?.applicantName ||
+    ad.ccrChecklist?.beneficiaryName ||
+    ad.agentChecklist?.permitInfo?.applicantName ||
+    ""
+  );
+  const fichePermitNumber = (
+    ad.ccgVisitChecklist?.ccgNumber ||
+    ad.instructionSheet?.pcoNumber ||
+    ad.atarrInstructionSheet?.pcoNumber ||
+    ad.pcsInstructionSheet?.pcoNumber ||
+    ad.pfInstructionSheet?.pcoNumber ||
+    ad.pdInstructionSheet?.pcoNumber ||
+    ad.pvImplantationChecklist?.pcoNumber ||
+    ad.ccrChecklist?.ccrNumber ||
+    ad.agentChecklist?.permitInfo?.prNumber ||
+    ""
+  );
+  const displayPayerName = (ficheApplicantName && String(ficheApplicantName).trim()) || bill?.payerName || "-";
+  const displayApplicationId = (fichePermitNumber && String(fichePermitNumber).trim()) || queryParams?.consumerCode || queryParams?.applicationNumber;
+
   const arrears =
     bill?.billDetails
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
@@ -569,13 +602,24 @@ const OpenView = () => {
               <div className="p-6 space-y-6">
                 {/* Consumer Info */}
                 <div className="space-y-3">
+                  {/* Application/permit number — fiche-derived if filled, else raw consumer code */}
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                      <LuReceipt className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500">Numéro de la demande</p>
+                      <p className="font-semibold text-gray-900 font-mono truncate">{displayApplicationId}</p>
+                    </div>
+                  </div>
+
                   <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
                     <div className="bg-primary/10 p-2 rounded-lg">
                       <LuUser className="w-5 h-5 text-primary" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-xs text-gray-500">{t("OP_CONSUMER_NAME")}</p>
-                      <p className="font-semibold text-gray-900 truncate">{bill?.payerName || "-"}</p>
+                      <p className="font-semibold text-gray-900 truncate">{displayPayerName}</p>
                     </div>
                   </div>
                   

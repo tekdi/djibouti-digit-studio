@@ -30,8 +30,8 @@ const PFInstructionSheetCard = ({ service, state, t, isViewOnly = false }) => {
   }, [getFiche]);
 
   const handleSaved = useCallback(() => {
-    window.location.reload();
-  }, []);
+    reload();
+  }, [reload]);
 
   useEffect(() => {
     if (applicationNumber && serviceCode) reload();

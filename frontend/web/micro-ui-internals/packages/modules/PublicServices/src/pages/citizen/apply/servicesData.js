@@ -1097,8 +1097,8 @@ export const servicesData = {
       },
       {
         titre: "Préparation du CCR",
-        acteur: "Chef de Bureau (B.Topo)",
-        description: "Élaboration numérique du CCR par le Chef de Bureau",
+        acteur: "Chef de Bureau de la Brigade Topographique",
+        description: "Élaboration numérique du CCR par le Chef de Bureau de la Brigade Topographique",
         systeme: "Système intégré pour la génération du document",
       },
       {

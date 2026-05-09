@@ -247,6 +247,8 @@ export const getDisplayApplicantName = (app) => {
     ad.pdInstructionSheet?.applicantName,        // PD
     ad.ccgVisitChecklist?.applicantName,         // CCG
     ad.pvImplantationChecklist?.applicantName,   // PV
+    ad.ccrChecklist?.beneficiaryName,            // CCR — agent fills "beneficiaryName"
+    ad.agentChecklist?.permitInfo?.applicantName, // PR — agent fills permitInfo.applicantName
   ];
   for (const c of candidates) {
     if (c && String(c).trim()) return String(c).trim();
@@ -418,7 +420,7 @@ export const getStatusInfo = (status) => {
       progress: 25,
     },
     PENDING_REVIEW_BY_SRA_HOD: {
-      label: "En attente de révision par Chef de service SRA",
+      label: "En attente de révision par la Cheffe de Service du SRA",
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       icon: LuClock,
@@ -511,7 +513,7 @@ export const getStatusInfo = (status) => {
       progress: 60,
     },
     REVIEW_IN_PROGRESS_BY_SRA_HOD: {
-      label: "Révision en cours par Chef SRA",
+      label: "Révision en cours par la Cheffe SRA",
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       icon: LuClock,
@@ -532,7 +534,7 @@ export const getStatusInfo = (status) => {
       progress: 60,
     },
     PENDING_REVIEW_BY_SRA_HOD: {
-      label: "En attente de révision par Chef SRA",
+      label: "En attente de révision par la Cheffe SRA",
       color: "text-amber-600",
       bgColor: "bg-amber-50",
       icon: LuClock,
