@@ -6,7 +6,6 @@ import Chip from "./Chip";
 import ErrorMessage from "./ErrorMessage";
 import { getUserType } from "../utils/digitUtils";
 import TextInput from "./TextInput";
-import TooltipWrapper from "../molecules/TooltipWrapper";
 
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
@@ -193,88 +192,34 @@ const UploadFile = (props) => {
         <div style={{ height: "100%", width: "100%", maxWidth: "450px" }}>
           <TextInput type="text" value={`${props?.uploadedFiles?.length} ${t("CS_COMMON_FILES_UPLOADED")}`} name="file" disabled={true} />
         </div>
-        <TooltipWrapper
-          content={
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "180px" }}>
-              <div style={{ marginBottom: "10px", display: "flex", alignItems: "center", width: "100%", justifyContent: "center" }}>
-                <span style={{ marginRight: "8px" }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z" fill="#22a4d9"/>
-                  </svg>
-                </span>
-                <span style={{ fontWeight: "600", fontSize: "14px", color: "#0B0C0C" }}>{t('SUPPORTED_FILE_TYPES')}</span>
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px" }}>
-                {getTooltipContent().split(', ').map((type, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      fontSize: "11px",
-                      backgroundColor: "#F6F6F6",
-                      color: "#0B0C0C",
-                      padding: "3px 8px",
-                      borderRadius: "12px",
-                      border: "1px solid #E3E3E3",
-                      fontWeight: "500",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px"
-                    }}
-                  >
-                    {getFileTypeIcon(type)}
-                    {type}
-                  </span>
-                ))}
-              </div>
-            </div>
-          }
-          placement="bottom"
-          arrow={true}
-          theme="light"
-          style={{
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
-            borderRadius: "8px",
-            padding: "12px 16px",
-            border: "1px solid #E3E3E3"
-          }}
+        <div
+          className={`digit-upload-file ${props?.customClass ? props?.customClass : ""} ${
+            user_type === "employee" ? "" : "digit-upload-file-max-width"
+          } ${props.disabled ? " disabled" : ""}`}
+          style={props?.style}
         >
-          <div
-            className={`digit-upload-file ${props?.customClass ? props?.customClass : ""} ${
-              user_type === "employee" ? "" : "digit-upload-file-max-width"
-            } ${props.disabled ? " disabled" : ""}`}
-            style={props?.style}
-          >
-            {/* <ButtonSelector
-              theme="border"
-              label={t("CS_COMMON_UPLOAD_FILE")}
-              style={{ ...(props?.extraStyles ? props?.extraStyles?.buttonStyles : {}), ...(!props?.enableButton ? { opacity: 0.5 } : {}) }}
-              textStyles={props?.textStyles}
-              type='text'
-              className="upload-button"
-            /> */}
-            <div className="upload-button">{t("CS_COMMON_UPLOAD_FILE")}</div>
-            <input
-              className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
-              ref={inpRef}
-              type="file"
-              id={props.id || `document-${getRandomId()}`}
-              name="file"
-              multiple={props.multiple}
-              accept={props.accept}
-              disabled={props.disabled}
-              onChange={(e) => props.onUpload(e)}
-              onClick={(event) => {
-                if (!props?.enableButton) {
-                  event.preventDefault();
-                } else {
-                  const { target = {} } = event || {};
-                  target.value = "";
-                }
-              }}
-              required={props.required}
-            />
-          </div>
-        </TooltipWrapper>
+          <div className="upload-button">{t("CS_COMMON_UPLOAD_FILE")}</div>
+          <input
+            className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
+            ref={inpRef}
+            type="file"
+            id={props.id || `document-${getRandomId()}`}
+            name="file"
+            multiple={props.multiple}
+            accept={props.accept}
+            disabled={props.disabled}
+            onChange={(e) => props.onUpload(e)}
+            onClick={(event) => {
+              if (!props?.enableButton) {
+                event.preventDefault();
+              } else {
+                const { target = {} } = event || {};
+                target.value = "";
+              }
+            }}
+            required={props.required}
+          />
+        </div>
       </div>
       <div className="digit-upload-file-button-wrap">
         <div className="digit-tag-container-wrapper">

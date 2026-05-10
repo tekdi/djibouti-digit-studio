@@ -182,7 +182,7 @@ const useBCIEChecklist = (tenantId, serviceCode, applicationNumber) => {
           currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
         history,
       };
-      await Digit.CustomService.getResponse({
+      const putResp = await Digit.CustomService.getResponse({
         url: `/public-service/v1/application/${serviceCode}`,
         method: "PUT",
         headers: { "X-Tenant-Id": tenantId },
@@ -202,11 +202,22 @@ const useBCIEChecklist = (tenantId, serviceCode, applicationNumber) => {
           },
         },
       });
-      setData(payload);
+      // Use the echoed payload from the server if available; otherwise
+      // re-fetch so a card remount won't replace the local state with
+      // pre-save data (cause of the "Enregistrer pas de mise à jour" bug).
+      const echoed = Array.isArray(putResp?.Application)
+        ? putResp?.Application?.[0]?.additionalDetails?.bcieInspectionChecklist
+        : putResp?.Application?.additionalDetails?.bcieInspectionChecklist;
+      if (echoed) {
+        setData(echoed);
+      } else {
+        setData(payload);
+        await refresh();
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [fetchApplication, serviceCode, tenantId]);
+  }, [fetchApplication, refresh, serviceCode, tenantId]);
 
   return { data, isLoading, submit };
 };

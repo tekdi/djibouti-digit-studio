@@ -45,6 +45,26 @@ const PaymentsTab = ({
   const totalTax = Number(costEstimation?.totalTax || 0);
   const totalTaxWithService = Number(costEstimation?.totalTaxWithServiceCharge || totalTax || 0);
   const hasCalculationResults = totalProjectValue > 0 || totalTax > 0 || royaltyFee > 0;
+
+  // Map businessService → human permit name shown next to the royalty fee.
+  // Default rates: PCS is 2.5%, every other paid service is 1.5%.
+  const PERMIT_NAME_BY_SERVICE = {
+    BPA_PCO: "Permis de Construire",
+    BPA_PCO_SIMPLE: "Permis de Construire",
+    BPA_PL: "Permis de Lotir",
+    BPA_PCS: "Permis de Construire Simplifié",
+    BPA_PF: "Permis de Clôture",
+    BPA_PS: "Permis de Surélévation",
+    BPA_PD: "Permis de Démolir",
+    BPA_PR: "Permis de Remblai",
+    BPA_ATARR: "Autorisation de Travaux",
+  };
+  const permitName = PERMIT_NAME_BY_SERVICE[service] || "Permis de Construire";
+  const defaultRoyaltyPer = service === "BPA_PCS" ? 2.5 : 1.5;
+  // If the saved costEstimation has a 0/null royaltyPer (legacy buggy data), fall
+  // back to the per-service default rather than displaying "0%".
+  const displayRoyaltyPer = royaltyPer && Number(royaltyPer) > 0 ? royaltyPer : defaultRoyaltyPer;
+
   // Services with a simplified fee structure — no seismic fee, no registry service fee.
   // Even when an application was calculated *before* the simplified rates were applied
   // (so the saved costEstimation still has non-zero values), we force-hide those lines.
@@ -122,7 +142,7 @@ const PaymentsTab = ({
 
                   <div className={`flex items-center justify-between py-3 px-4 rounded-lg ${isPaid ? "bg-green-100/60" : "bg-gray-50"}`}>
                     <span className={isPaid ? "text-green-900" : "text-gray-600"}>
-                      Redevance de {royaltyPer != null ? royaltyPer : 1.5}% sur le Permis de Construire
+                      Redevance de {displayRoyaltyPer}% sur le {permitName}
                     </span>
                     <span className={`font-semibold ${isPaid ? "text-green-900" : "text-gray-900"}`}>{royaltyFee.toLocaleString()} FDj</span>
                   </div>

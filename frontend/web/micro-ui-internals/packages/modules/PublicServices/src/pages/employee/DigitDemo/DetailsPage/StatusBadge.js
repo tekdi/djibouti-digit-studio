@@ -22,7 +22,7 @@ const StatusBadge = ({ state, isCitizen = false }) => {
     };
     const info = getSimplifiedStatusInfo(simplifiedStatus);
     return (
-      <span className={`inline-flex items-center rounded-lg px-2 py-0.5 text-[10px] font-bold ${info.bgColor} ${info.color}`}>
+      <span className={`inline-flex items-center rounded-lg px-3 py-1 text-sm font-bold ${info.bgColor} ${info.color}`}>
         {info.label}
       </span>
     );
@@ -32,8 +32,8 @@ const StatusBadge = ({ state, isCitizen = false }) => {
   const StatusIcon = statusInfo.icon;
 
   return (
-    <span className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold ${statusInfo.bgColor} ${statusInfo.color}`}>
-      {StatusIcon && <StatusIcon className="w-3 h-3" />}
+    <span className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-sm font-bold ${statusInfo.bgColor} ${statusInfo.color}`}>
+      {StatusIcon && <StatusIcon className="w-4 h-4" />}
       {statusInfo.label}
     </span>
   );

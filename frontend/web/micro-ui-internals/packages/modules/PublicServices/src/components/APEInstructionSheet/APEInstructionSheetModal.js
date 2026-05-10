@@ -5,7 +5,10 @@ import { useAPEInstructionSheetAPI } from "./hooks/useAPEInstructionSheetAPI";
 import { DOCUMENTS_LIST } from "./documentsData";
 import {
   ModalHeader,
+  GeneralInfoSection,
   DocumentsTable,
+  SignaturesSection,
+  ObservationsSection,
   FinalCommentsAndOpinion,
 } from "./components";
 
@@ -30,7 +33,17 @@ const APEInstructionSheetModal = ({
   existingData = null,
 }) => {
   const [formData, setFormData] = useState({
+    // I. Informations générales
+    generalInfo: {},
+    // II. Documents
     documents: buildEmptyDocuments(),
+    // III. Signatures
+    signatures: {},
+    // IV. Observations ingénieur SDECC
+    engineerObservations: "",
+    // V. Observations chef SCC Privée
+    chefObservations: "",
+    // Final
     finalComments: "",
     finalOpinion: "",
   });
@@ -47,33 +60,44 @@ const APEInstructionSheetModal = ({
     applicationNumber
   );
 
-  // Helper function for color classes
   const getColorClass = (color) => {
-    const colorMap = {
+    const map = {
       emerald: "text-emerald-700",
       red: "text-red-700",
       amber: "text-amber-700",
       gray: "text-gray-700",
       blue: "text-blue-700",
     };
-    return colorMap[color] || "text-gray-700";
+    return map[color] || "text-gray-700";
   };
 
   useEffect(() => {
     if (existingData) {
       setFormData({
+        generalInfo: existingData.generalInfo || {},
         documents: existingData.documents || buildEmptyDocuments(),
+        signatures: existingData.signatures || {},
+        engineerObservations: existingData.engineerObservations || "",
+        chefObservations: existingData.chefObservations || "",
         finalComments: existingData.finalComments || "",
         finalOpinion: existingData.finalOpinion || "",
       });
     }
   }, [existingData]);
 
+  const isDisabled = isViewMode && !isEditMode;
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleGeneralInfoChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, generalInfo: { ...prev.generalInfo, [key]: value } }));
+  };
+
+  const handleSignatureChange = (rowKey, value) => {
+    setFormData((prev) => ({ ...prev, signatures: { ...prev.signatures, [rowKey]: value } }));
   };
 
   const handleDocumentChange = (docId, field, value) => {
@@ -89,17 +113,13 @@ const APEInstructionSheetModal = ({
     setFormData((prev) => ({
       ...prev,
       documents: prev.documents.map((doc) => {
-        if (String(doc.id) === String(docId)) {
-          const currentObservations = doc.observations || [];
-          const isSelected = currentObservations.includes(observationValue);
-          return {
-            ...doc,
-            observations: isSelected
-              ? currentObservations.filter((o) => o !== observationValue)
-              : [...currentObservations, observationValue],
-          };
-        }
-        return doc;
+        if (String(doc.id) !== String(docId)) return doc;
+        const cur = doc.observations || [];
+        const isSel = cur.includes(observationValue);
+        return {
+          ...doc,
+          observations: isSel ? cur.filter((o) => o !== observationValue) : [...cur, observationValue],
+        };
       }),
     }));
   };
@@ -107,112 +127,68 @@ const APEInstructionSheetModal = ({
   const handleFileUpload = async (docId, files) => {
     if (!files || files.length === 0) return;
     const file = files[0];
-    const maxSizeMB = 10;
-
-    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-      setShowToast({ label: "Seuls les fichiers PDF sont acceptés", isError: true });
+    const maxSizeMB = 50;
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    const allowed = ["pdf", "dwg", "pln"];
+    if (!allowed.includes(ext)) {
+      setShowToast({ label: `Format non accepté (${ext}). PDF / DWG / PLN uniquement`, isError: true });
       return;
     }
-
     if (file.size > maxSizeMB * 1024 * 1024) {
-      setShowToast({
-        label: `La taille du fichier ne doit pas dépasser ${maxSizeMB}MB`,
-        isError: true,
-      });
+      setShowToast({ label: `Taille max ${maxSizeMB}MB`, isError: true });
       return;
     }
-
     setUploadingFiles((prev) => ({ ...prev, [docId]: true }));
-
     try {
-      const uploadResponse = await Digit.UploadServices.Filestorage(
-        "DIGIT_DJIBOUTI_FILES",
-        file,
-        tenantId
-      );
-
-      if (uploadResponse?.data?.files?.[0]?.fileStoreId) {
-        const fileStoreId = uploadResponse.data.files[0].fileStoreId;
-        handleDocumentChange(docId, "modifiedFiles", fileStoreId);
+      const res = await Digit.UploadServices.Filestorage("DIGIT_DJIBOUTI_FILES", file, tenantId);
+      if (res?.data?.files?.[0]?.fileStoreId) {
+        const fsid = res.data.files[0].fileStoreId;
+        handleDocumentChange(docId, "modifiedFiles", fsid);
         setShowToast({ label: "Fichier téléchargé avec succès", isError: false });
       }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      setShowToast({ label: "Erreur lors du téléchargement du fichier", isError: true });
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      setShowToast({ label: "Erreur lors du téléchargement", isError: true });
     } finally {
       setUploadingFiles((prev) => ({ ...prev, [docId]: false }));
     }
   };
 
-  const removeFile = (docId) => {
-    handleDocumentChange(docId, "modifiedFiles", "");
-  };
+  const removeFile = (docId) => handleDocumentChange(docId, "modifiedFiles", "");
 
   const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.finalOpinion) {
-      newErrors.finalOpinion = "L'approbation est obligatoire";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e = {};
+    if (!formData.finalOpinion) e.finalOpinion = "L'approbation est obligatoire";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const onSubmitChecklist = async () => {
     if (!validateForm()) {
-      setShowToast({
-        label: "Veuillez remplir tous les champs obligatoires",
-        isError: true,
-      });
+      setShowToast({ label: "Veuillez compléter l'approbation finale", isError: true });
       return;
     }
-
     try {
-      await submitInstructionSheet(
-        formData,
-        service,
-        state,
-        !!existingData,
-        existingData
-      );
-
+      await submitInstructionSheet(formData, service, state, !!existingData, existingData);
       setShowToast({
         label: existingData ? "Fiche mise à jour avec succès" : "Fiche enregistrée avec succès",
         isError: false,
       });
-
-      setTimeout(() => {
-        onSuccess();
-        onClose();
-      }, 1500);
-    } catch (error) {
-      console.error("Error submitting APE instruction sheet:", error);
-      if (Digit.Toast) {
-        Digit.Toast.error("Erreur lors de la soumission de la fiche");
-      }
+      setTimeout(() => { onSuccess(); onClose(); }, 1200);
+    } catch (err) {
+      console.error("Error submitting APE instruction sheet:", err);
+      setShowToast({ label: "Erreur lors de la soumission de la fiche", isError: true });
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-gray-50 z-[1000] flex flex-col"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 bg-gray-50 z-[1000] flex flex-col" onClick={onClose}>
       {showToast && (
-        <Toast
-          label={showToast.label}
-          isError={showToast.isError}
-          onClose={() => setShowToast(null)}
-        />
+        <Toast label={showToast.label} isError={showToast.isError} onClose={() => setShowToast(null)} />
       )}
-
-      <div
-        className="flex flex-col h-full bg-white"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="flex flex-col h-full bg-white" onClick={(e) => e.stopPropagation()}>
         <ModalHeader
           applicationNumber={applicationNumber}
           isViewMode={isViewMode}
@@ -225,8 +201,13 @@ const APEInstructionSheetModal = ({
           onSubmitChecklist={onSubmitChecklist}
         />
 
-        {/* Content */}
         <div className="p-6 lg:p-8 bg-white overflow-y-auto flex-1">
+          <GeneralInfoSection
+            values={formData.generalInfo}
+            onChange={handleGeneralInfoChange}
+            isDisabled={isDisabled}
+          />
+
           <DocumentsTable
             formData={formData}
             isViewMode={isViewMode}
@@ -239,6 +220,20 @@ const APEInstructionSheetModal = ({
             downloadFile={downloadFile}
             getColorClass={getColorClass}
             getFileUrl={getFileUrl}
+          />
+
+          <SignaturesSection
+            values={formData.signatures}
+            onChange={handleSignatureChange}
+            isDisabled={isDisabled}
+          />
+
+          <ObservationsSection
+            engineerObservations={formData.engineerObservations}
+            chefObservations={formData.chefObservations}
+            onEngineerChange={(v) => handleInputChange("engineerObservations", v)}
+            onChefChange={(v) => handleInputChange("chefObservations", v)}
+            isDisabled={isDisabled}
           />
 
           <FinalCommentsAndOpinion
@@ -263,6 +258,7 @@ APEInstructionSheetModal.propTypes = {
   state: PropTypes.string.isRequired,
   onSuccess: PropTypes.func.isRequired,
   isViewMode: PropTypes.bool,
+  isViewOnly: PropTypes.bool,
   existingData: PropTypes.object,
 };
 

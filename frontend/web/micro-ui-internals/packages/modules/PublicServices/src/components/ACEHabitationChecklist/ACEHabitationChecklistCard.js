@@ -68,7 +68,7 @@ const buildEmptyForm = () => ({
   installationType: { domestique: false, climatisation: false },
   applicantName: "",
   address: "",
-  documentTypes: { constructionPermit: false, titreOccupation: false },
+  documentTypes: { constructionPermit: "", titreOccupation: "" },
   domestique: {
     multipleLogements: { nombre: "", typeF: "" },
     circuits: emptyCircuits(DOMESTIQUE_SECTIONS),
@@ -142,7 +142,7 @@ const useACEHabitation = (tenantId, serviceCode, applicationNumber) => {
           currentUser?.info?.name || currentUser?.info?.userName || "Utilisateur inconnu",
         history,
       };
-      await Digit.CustomService.getResponse({
+      const putResp = await Digit.CustomService.getResponse({
         url: `/public-service/v1/application/${serviceCode}`,
         method: "PUT",
         headers: { "X-Tenant-Id": tenantId },
@@ -162,11 +162,23 @@ const useACEHabitation = (tenantId, serviceCode, applicationNumber) => {
           },
         },
       });
-      setData(payload);
+      // Trust the server-echoed Application if present; otherwise re-fetch.
+      // Without this, closing+reopening the modal showed stale data because
+      // setData(payload) is local-only and a remount replaced it with the
+      // last GET (which was pre-save).
+      const echoed = Array.isArray(putResp?.Application)
+        ? putResp?.Application?.[0]?.additionalDetails?.aceHabitation
+        : putResp?.Application?.additionalDetails?.aceHabitation;
+      if (echoed) {
+        setData(echoed);
+      } else {
+        setData(payload);
+        await refresh();
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [fetchApplication, serviceCode, tenantId]);
+  }, [fetchApplication, refresh, serviceCode, tenantId]);
 
   return { data, isLoading, submit };
 };
@@ -382,19 +394,25 @@ const ACEHabitationModal = ({
               </Field>
             </div>
             <SubTitle>Document d'identification de la propriété</SubTitle>
-            <div className="space-y-3">
-              <Check
-                checked={form.documentTypes.constructionPermit}
-                onChange={(v) => set("documentTypes.constructionPermit")(v)}
-                disabled={!isEditable}
-                label="Numéro et date de délivrance du permis de Construire (construction en dur dans les lotissements — pièce à présenter)"
-              />
-              <Check
-                checked={form.documentTypes.titreOccupation}
-                onChange={(v) => set("documentTypes.titreOccupation")(v)}
-                disabled={!isEditable}
-                label="Pour les constructions légères dans les Quartiers 1 à 7, Djebel/Ambouli, Balbala et PK12 : Titre d'Occupation Provisoire ou attestation du Fonds de l'Habitat (Barwaquo, Cité-Gargaar, Cité Concorde, Cité Shebelley, Cité GR/GN)"
-              />
+            <div className="space-y-4">
+              <Field label="Numéro et date de délivrance du permis de Construire (construction en dur dans les lotissements — pièce à présenter)">
+                <Textarea
+                  rows={2}
+                  value={form.documentTypes.constructionPermit}
+                  onChange={setEvt("documentTypes.constructionPermit")}
+                  disabled={!isEditable}
+                  placeholder="Saisir le numéro et la date du permis de Construire…"
+                />
+              </Field>
+              <Field label="Pour les constructions légères dans les Quartiers 1 à 7, Djebel/Ambouli, Balbala et PK12 : Titre d'Occupation Provisoire ou attestation du Fonds de l'Habitat (Barwaquo, Cité-Gargaar, Cité Concorde, Cité Shebelley, Cité GR/GN)">
+                <Textarea
+                  rows={2}
+                  value={form.documentTypes.titreOccupation}
+                  onChange={setEvt("documentTypes.titreOccupation")}
+                  disabled={!isEditable}
+                  placeholder="Saisir la référence du Titre d'Occupation Provisoire ou de l'attestation…"
+                />
+              </Field>
             </div>
           </section>
 
