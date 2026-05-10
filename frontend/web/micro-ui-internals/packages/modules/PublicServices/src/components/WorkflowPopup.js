@@ -198,8 +198,37 @@ const AssigneeDropdown = ({ options, value, onChange }) => {
   );
 };
 
+// Display label for a parallel-workflow commissioner option. The codes come
+// in like "BPA_PCO_DGDCF", "BPA_PCO_DNPC" — translate via i18n if available,
+// else fall back to the trailing acronym ("DGDCF", "DNPC", …).
+const COMMISSIONER_NAMES = {
+  DGDCF: "DGDCF",
+  DNPC: "Protection Civile",
+  EDD: "Électricité (EDD)",
+  ONEAD: "Eau & Assainissement (ONEAD)",
+  INSPD: "Santé Publique",
+  SDECC: "SDECC",
+  ADR_COMM: "Architectes",
+  BCIE: "BCIE",
+  PL: "Routes (PL)",
+  ARCHITECT: "Architecte",
+  COMM: "Commissaire",
+};
+const labelForCommissioner = (opt, t) => {
+  const code = opt?.commissionerCode || opt?.code || "";
+  // Try translation first
+  if (t) {
+    const translated = t(code);
+    if (translated && translated !== code) return translated;
+  }
+  // Strip BPA_<svc>_ prefix and look up the suffix in the friendly map
+  const match = code.match(/^BPA_[A-Z_]+?_([A-Z_]+)$/);
+  const suffix = match ? match[1] : code;
+  return COMMISSIONER_NAMES[suffix] || suffix.replace(/_/g, " ") || code;
+};
+
 // Multi-select with chips — for SEND_TO_COMMISSIONER.
-const MultiSelectDropdown = ({ options, value, onChange, placeholder }) => {
+const MultiSelectDropdown = ({ options, value, onChange, placeholder, t }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
   useEffect(() => {
@@ -234,7 +263,7 @@ const MultiSelectDropdown = ({ options, value, onChange, placeholder }) => {
         <div className="flex flex-wrap gap-1.5 mt-2">
           {value.map((v) => (
             <span key={v.commissionerCode || v.code} className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-md">
-              {v.commissionerCode || v.code}
+              {labelForCommissioner(v, t)}
               <button type="button" onClick={() => toggle(v)} className="hover:text-red-600">
                 <LuX className="w-3 h-3" />
               </button>
@@ -254,10 +283,10 @@ const MultiSelectDropdown = ({ options, value, onChange, placeholder }) => {
                   key={opt.commissionerCode || opt.code || idx}
                   type="button"
                   onClick={() => toggle(opt)}
-                  className={`w-full text-left px-4 py-2.5 text-sm border-b last:border-b-0 border-gray-100 flex items-center gap-2 ${sel ? "bg-primary/10 text-primary" : "hover:bg-gray-50"}`}
+                  className={`w-full text-left px-4 py-2.5 text-sm border-b last:border-b-0 border-gray-100 flex items-center gap-2 ${sel ? "bg-primary/10 text-primary" : "text-gray-900 hover:bg-gray-50"}`}
                 >
                   <input type="checkbox" readOnly checked={sel} className="accent-primary" />
-                  <span>{opt.commissionerCode || opt.code}</span>
+                  <span>{labelForCommissioner(opt, t)}</span>
                 </button>
               );
             })
@@ -424,6 +453,7 @@ const WorkflowPopup = ({ applicationDetails, ...props }) => {
               options={assigneeOptions}
               value={commissioners}
               onChange={setCommissioners}
+              t={t}
               placeholder={
                 // Per-service override for the commissioner field placeholder.
                 // PS sends to a single internal service, PF sends only to the

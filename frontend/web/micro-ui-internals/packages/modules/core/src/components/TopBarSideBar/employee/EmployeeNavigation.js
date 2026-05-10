@@ -9,6 +9,7 @@ import {
   LuCircleCheck,
   LuFolderOpen,
   LuSearch,
+  LuShield,
 } from "react-icons/lu";
 
 const EmployeeNavigation = ({ mobileView }) => {
@@ -16,6 +17,10 @@ const EmployeeNavigation = ({ mobileView }) => {
   const { pathname } = useLocation();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showDossiersDropdown, setShowDossiersDropdown] = useState(false);
+
+  // STUDIO_ADMIN sees an extra "Admin" tab linking to the user-management dashboard.
+  const userRoles = Digit?.UserService?.getUser?.()?.info?.roles?.map((r) => r.code) || [];
+  const isStudioAdmin = userRoles.includes("STUDIO_ADMIN");
 
   // Employee navigation tabs
   const navigationTabs = [
@@ -64,6 +69,16 @@ const EmployeeNavigation = ({ mobileView }) => {
       icon: LuSearch,
       path: `/${window?.contextPath}/employee/publicservices/search`,
     },
+    ...(isStudioAdmin
+      ? [
+          {
+            id: "admin",
+            label: "Admin",
+            icon: LuShield,
+            path: `/${window?.contextPath}/employee/publicservices/admin-dashboard/employees`,
+          },
+        ]
+      : []),
   ];
 
   const handleTabClick = (tab) => {
@@ -87,6 +102,11 @@ const EmployeeNavigation = ({ mobileView }) => {
     
     // Search tab - matches search route
     if (tabId === "search" && pathname.includes("/search")) {
+      return true;
+    }
+
+    // Admin tab - matches the admin-dashboard route family
+    if (tabId === "admin" && pathname.includes("/admin-dashboard")) {
       return true;
     }
     
