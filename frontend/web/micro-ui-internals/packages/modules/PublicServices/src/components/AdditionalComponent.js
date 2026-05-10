@@ -87,7 +87,7 @@ const AdditionalComponent = ({ onSelect, ...props }) => {
   }, [documentData]);
   
   return (
-    <>
+    <React.Fragment>
       {documentData?.map((item, index) => (
         <Card type="secondary" style={{ marginBottom: "1.5rem",gap:"1.5rem"}}>
           {documentData?.length > 1 ? (
@@ -129,7 +129,7 @@ const AdditionalComponent = ({ onSelect, ...props }) => {
         </Card>
       ))}
       <Button variation="secondary" label={t(`Add more`)} className={""} icon={"AddIconNew"} onClick={add} style={{ marginLeft: "auto" }} />
-    </>
+    </React.Fragment>
   );
 };
 

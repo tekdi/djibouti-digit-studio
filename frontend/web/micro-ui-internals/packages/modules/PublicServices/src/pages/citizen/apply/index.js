@@ -86,7 +86,7 @@ const Apply = () => {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 pt-32 pb-16">
+    <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 pt-24 sm:pt-32 pb-10 sm:pb-16">
       <ApplyHeader />
       
       <SearchAndFilter 

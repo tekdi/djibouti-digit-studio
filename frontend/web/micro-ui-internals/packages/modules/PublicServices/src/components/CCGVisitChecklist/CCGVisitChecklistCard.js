@@ -758,7 +758,7 @@ const CCGVisitChecklistCard = ({ service, t, isViewOnly = false }) => {
               {isSubmitted && data.submittedByName && !isCommissioner && (
                 <p className="text-xs text-gray-500">
                   Soumis par <span className="font-medium text-gray-700">{data.submittedByName}</span>
-                  {photoCount > 0 && <> · {photoCount} photo{photoCount > 1 ? "s" : ""}</>}
+                  {photoCount > 0 && <React.Fragment> · {photoCount} photo{photoCount > 1 ? "s" : ""}</React.Fragment>}
                 </p>
               )}
             </div>

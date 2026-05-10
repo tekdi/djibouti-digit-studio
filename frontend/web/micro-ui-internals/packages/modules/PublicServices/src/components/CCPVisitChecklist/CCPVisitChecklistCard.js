@@ -251,7 +251,7 @@ const CCPVisitChecklistModal = ({ isOpen, onClose, applicationNumber, existingDa
                   disabled={isLoading}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-white text-djibouti-primary hover:bg-white/90 rounded-lg text-sm font-medium disabled:opacity-50"
                 >
-                  {isLoading ? "Enregistrement…" : existingData ? <><LuCheck className="h-4 w-4" /> Mettre à jour</> : <><LuSave className="h-4 w-4" /> Enregistrer</>}
+                  {isLoading ? "Enregistrement…" : existingData ? <React.Fragment><LuCheck className="h-4 w-4" /> Mettre à jour</React.Fragment> : <React.Fragment><LuSave className="h-4 w-4" /> Enregistrer</React.Fragment>}
                 </button>
               )}
               <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg" title="Fermer">

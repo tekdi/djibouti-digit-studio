@@ -132,7 +132,7 @@ const P2_CertificatConformiteRemblai = React.forwardRef((props, ref) => {
               <strong>Vu</strong> le Permis de Remblai N°
               <span style={highlight}>{prNumber}</span>
               {prDeliveryDate ? (
-                <>, délivré le <span style={highlight}>{formatDate(prDeliveryDate)}</span></>
+                <React.Fragment>, délivré le <span style={highlight}>{formatDate(prDeliveryDate)}</span></React.Fragment>
               ) : null}
             </div>
             <div style={bodyParagraph}>
