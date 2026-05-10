@@ -13,6 +13,7 @@ import { CCRChecklistCard } from "../../../components/CCRChecklist";
 import { PSSDECCInstructionSheetCard } from "../../../components/PSSDECCInstructionSheet";
 import { PVImplantationChecklistCard } from "../../../components/PVImplantationChecklist";
 import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
+import { CCPVisitChecklistCard } from "../../../components/CCPVisitChecklist";
 import { BCIEInspectionChecklistCard } from "../../../components/BCIEInspectionChecklist";
 import { ATARRInstructionSheetCard } from "../../../components/ATARRInstructionSheet";
 import { PCSInstructionSheetCard } from "../../../components/PCSInstructionSheet";
@@ -183,6 +184,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 code: "customPVImplantationChecklist",
                 clientId: "PV_IMPLANTATION_CHECKLIST",
                 auditDetails: { createdTime: Date.now() + 6 }
+              });
+            }
+
+            // Add CCP Visit checklist if configured (Procès-verbal de visite — CCP)
+            if (allowedCodes.includes("customCCPVisitChecklist")) {
+              items.push({
+                id: "custom-ccp-visit-checklist",
+                code: "customCCPVisitChecklist",
+                clientId: "CCP_VISIT_CHECKLIST",
+                auditDetails: { createdTime: Date.now() + 8 }
               });
             }
 
@@ -413,6 +424,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customCCGVisitChecklist") {
             return (
               <CCGVisitChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customCCPVisitChecklist") {
+            return (
+              <CCPVisitChecklistCard
                 key={index}
                 service={service}
                 state={state}

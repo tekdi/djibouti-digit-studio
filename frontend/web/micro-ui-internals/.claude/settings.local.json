@@ -84,7 +84,8 @@
       "Bash(awk '$5 ~ /^[0-9]+$/ && $5+0 >= 3 {print $1, $2, \"restarts=\"$5}')",
       "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $1, $2, \"ready=\"$3}')",
       "Bash(awk '{print $1}')",
-      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $0}')"
+      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $0}')",
+      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print \"  \"$1, $2, $3}')"
     ]
   }
 }

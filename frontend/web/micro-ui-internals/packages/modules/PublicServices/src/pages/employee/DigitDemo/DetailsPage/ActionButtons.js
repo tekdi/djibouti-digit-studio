@@ -132,28 +132,30 @@ const ActionButtons = ({
             style={{ display: "none" }}
           />
 
-          {/* View / Download SIGNED permit (once uploaded) */}
+          {/* View SIGNED permit — visible to everyone once uploaded */}
           {hasSignedPermit && (
-            <Fragment>
-              <button
-                onClick={() => handlePreviewSignedPermit(signedPermit)}
-                disabled={isOpeningPreview}
-                className={greenBtn}
-                title={signedPermit.fileName}
-              >
-                <LuEye className="h-4 w-4" />
-                {isOpeningPreview ? "Ouverture..." : `Voir le ${docLabel} signé`}
-              </button>
-              <button
-                onClick={() => downloadSignedPermit(signedPermit)}
-                disabled={isDownloading}
-                className={baseBtn}
-                title={signedPermit.fileName}
-              >
-                <LuFileCheck2 className="h-4 w-4" />
-                {isDownloading ? "Ouverture..." : `Télécharger le ${docLabel} signé`}
-              </button>
-            </Fragment>
+            <button
+              onClick={() => handlePreviewSignedPermit(signedPermit)}
+              disabled={isOpeningPreview}
+              className={greenBtn}
+              title={signedPermit.fileName}
+            >
+              <LuEye className="h-4 w-4" />
+              {isOpeningPreview ? "Ouverture..." : `Voir le ${docLabel} signé`}
+            </button>
+          )}
+
+          {/* Download SIGNED permit — citizens only (employees use upload/replace + view) */}
+          {hasSignedPermit && isCitizen && (
+            <button
+              onClick={() => downloadSignedPermit(signedPermit)}
+              disabled={isDownloading}
+              className={baseBtn}
+              title={signedPermit.fileName}
+            >
+              <LuFileCheck2 className="h-4 w-4" />
+              {isDownloading ? "Ouverture..." : `Télécharger le ${docLabel} signé`}
+            </button>
           )}
         </div>
       )}
