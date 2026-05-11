@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { 
-  LuBuilding, 
-  LuPhone, 
-  LuUser, 
-  LuHouse, 
-  LuBriefcase, 
+import {
+  LuBuilding,
+  LuPhone,
+  LuUser,
+  LuHouse,
+  LuBriefcase,
   LuBuilding2,
   LuShield,
   LuGavel,
   LuArrowLeft
 } from "react-icons/lu";
+import AnimatedLogo from "../../components/TopBarSideBar/AnimatedLogo";
 
 const ProfileSelection = () => {
   const history = useHistory();
@@ -68,26 +69,26 @@ const ProfileSelection = () => {
   };
 
   const renderProfileSelection = () => (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="text-center">
-        <h2 className="text-4xl font-black text-gray-900 mb-3">Choisissez votre profil</h2>
-        <p className="text-gray-600 text-lg">Sélectionnez le type de compte qui vous correspond</p>
+        <h2 className="text-2xl sm:text-4xl font-black text-gray-900 mb-2 sm:mb-3">Choisissez votre profil</h2>
+        <p className="text-gray-600 text-sm sm:text-lg">Sélectionnez le type de compte qui vous correspond</p>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {profileTypes.map((type) => (
           <button
             key={type.type}
             onClick={() => handleProfileSelection(type.type)}
-            className="p-3 rounded-xl border-2 transition-all hover:border-primary/50 hover:shadow-lg border-gray-200"
+            className="p-3 sm:p-3 rounded-xl border-2 bg-white transition-all hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 border-gray-200 text-left"
           >
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-lg bg-primary/10">
-                <type.icon className="w-6 h-6 text-primary" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                <type.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <div className="text-left">
-                <h3 className="text-lg font-black text-gray-900">{type.title}</h3>
-                <p className="text-gray-600 mt-1">{type.description}</p>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base sm:text-lg font-black text-gray-900 leading-tight">{type.title}</h3>
+                <p className="text-xs sm:text-base text-gray-600 mt-0.5 sm:mt-1 leading-relaxed">{type.description}</p>
               </div>
             </div>
           </button>
@@ -97,10 +98,15 @@ const ProfileSelection = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-slate-50 to-gray-50 flex overflow-hidden">
-      {/* Left side - Image and Info */}
-      <div className="hidden lg:block lg:w-1/3 relative">
-        <div className="absolute inset-0  bg-gradient-djibouti-light mix-blend-multiply z-10"></div>
+    <div className="min-h-screen relative flex overflow-hidden">
+      {/* Soft gradient backdrop with djibouti-primary tint and decorative blobs */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-blue-50 pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-djibouti-primary/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-djibouti-primary/10 blur-3xl pointer-events-none" />
+
+      {/* Left side - Image and Info (desktop only) */}
+      <div className="hidden lg:block lg:w-1/3 relative z-10">
+        <div className="absolute inset-0 bg-gradient-djibouti-light mix-blend-multiply z-10"></div>
         <img
           src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
           alt="Modern architecture"
@@ -144,12 +150,14 @@ const ProfileSelection = () => {
       </div>
 
       {/* Right side - Profile Selection */}
-      <div className="w-full lg:w-2/3 flex flex-col items-center justify-center p-8">
+      <div className="w-full lg:w-2/3 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10">
         <div className="w-full max-w-2xl">
-          {/* Mobile Header */}
-          <div className="block lg:hidden mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-900">E-Permis</h1>
-            <p className="text-gray-600 mt-2">Connexion</p>
+          {/* Mobile Header — animated logo + subtitle */}
+          <div className="block lg:hidden mb-6 sm:mb-8 text-center">
+            <div className="flex justify-center mb-2">
+              <AnimatedLogo />
+            </div>
+            <p className="text-gray-600 text-sm">Connexion</p>
           </div>
 
           {renderProfileSelection()}

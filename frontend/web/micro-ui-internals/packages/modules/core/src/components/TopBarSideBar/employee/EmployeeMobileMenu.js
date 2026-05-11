@@ -9,6 +9,7 @@ import {
   LuClock,
   LuFolderOpen,
   LuSearch,
+  LuShield,
 } from "react-icons/lu";
 
 const EmployeeMobileMenu = ({ mobileView }) => {
@@ -17,6 +18,9 @@ const EmployeeMobileMenu = ({ mobileView }) => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showDossiersDropdown, setShowDossiersDropdown] = useState(false);
+
+  const userRoles = Digit?.UserService?.getUser?.()?.info?.roles?.map((r) => r.code) || [];
+  const isStudioAdmin = userRoles.includes("STUDIO_ADMIN");
 
   // Same navigation structure as EmployeeNavigation.js
   const navigationTabs = [
@@ -59,6 +63,16 @@ const EmployeeMobileMenu = ({ mobileView }) => {
       icon: LuSearch,
       path: `/${window?.contextPath}/employee/publicservices/search`,
     },
+    ...(isStudioAdmin
+      ? [
+          {
+            id: "admin",
+            label: "Admin",
+            icon: LuShield,
+            path: `/${window?.contextPath}/employee/publicservices/admin-dashboard/employees`,
+          },
+        ]
+      : []),
   ];
 
   const handleTabClick = (tab) => {
@@ -75,6 +89,9 @@ const EmployeeMobileMenu = ({ mobileView }) => {
       return true;
     }
     if (tabId === "search" && pathname.includes("/search")) {
+      return true;
+    }
+    if (tabId === "admin" && pathname.includes("/admin-dashboard")) {
       return true;
     }
     return false;

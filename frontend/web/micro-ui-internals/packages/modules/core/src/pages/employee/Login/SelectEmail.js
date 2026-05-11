@@ -10,6 +10,7 @@ import {
   LuArrowLeft,
   LuSmartphone,
 } from "react-icons/lu";
+import AnimatedLogo from "../../../components/TopBarSideBar/AnimatedLogo";
 
 const features = [
   {
@@ -73,8 +74,16 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
     }
   };
 
+  // On mobile, parent .employee already enforces min-height: 100vh, so adding
+  // another `min-h-screen` here doubles the height and forces the page to
+  // scroll. Only apply min-h-screen at lg+ where the side-by-side desktop
+  // layout needs full viewport height.
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-slate-50 to-gray-50 flex overflow-hidden">
+    <div className="w-full relative flex overflow-hidden lg:min-h-screen">
+      {/* Soft gradient backdrop with djibouti-primary tint and decorative blobs */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-blue-50 pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-djibouti-primary/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-djibouti-primary/10 blur-3xl pointer-events-none" />
       {/* Left side - Image and Info (Desktop only) */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <div className="absolute inset-0 bg-gradient-djibouti-light mix-blend-multiply z-10"></div>
@@ -159,18 +168,13 @@ const SelectEmail = ({ t, onSelect, email, onEmailChange, config, canSubmit, onF
       </div>
 
       {/* Right side - Login Form (Desktop) & Fancy Card (Mobile) */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10">
         {/* Fancy Mobile Card */}
-        <div className="block lg:hidden w-full max-w-md mx-auto px-2 py-8">
+        <div className="block lg:hidden w-full max-w-md mx-auto py-4">
           <div className="relative z-10 w-full">
-            <div className="backdrop-blur-xl bg-white/80 shadow-2xl rounded-3xl px-6 py-10 flex flex-col items-center">
-              <div className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-djibouti-primary/10 p-3">
-                    <LuBuilding className="w-8 h-8 text-djibouti-primary" />
-                  </div>
-                  <h1 className="text-3xl font-bold text-gray-900">E-Permis</h1>
-                </div>
+            <div className="bg-white shadow-xl rounded-2xl px-4 sm:px-6 py-6 sm:py-10 flex flex-col items-center border border-gray-100">
+              <div className="mb-4 flex justify-center">
+                <AnimatedLogo />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 Connexion Email

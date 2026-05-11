@@ -46,9 +46,9 @@ var PSSDECCInstructionSheetModal = function (props) {
       var docs = prev[section].slice();
       var idx = docs.findIndex(function (d) { return d.id === docId; });
       if (idx === -1) return prev;
-      var obs = docs[idx].observations.slice();
-      var has = obs.indexOf(value);
-      if (has >= 0) obs.splice(has, 1); else obs.push(value);
+      // Single-select observation per row.
+      var has = docs[idx].observations.indexOf(value) >= 0;
+      var obs = has ? [] : [value];
       docs[idx] = Object.assign({}, docs[idx], { observations: obs });
       return Object.assign({}, prev, { [section]: docs });
     });
@@ -180,9 +180,9 @@ var PSSDECCInstructionSheetModal = function (props) {
                           var checked = docData.observations.indexOf(opt.value) >= 0;
                           return (
                             <label key={opt.value} className={"flex items-center gap-2 cursor-pointer" + (isDisabled ? " opacity-50 cursor-not-allowed" : "")}>
-                              <input type="checkbox" checked={checked} disabled={isDisabled}
+                              <input type="radio" name={"obs-" + section + "-" + doc.id} checked={checked} disabled={isDisabled}
                                 onChange={function () { if (!isDisabled) handleObsToggle(section, doc.id, opt.value); }}
-                                className="w-4 h-4 rounded border-2 cursor-pointer" />
+                                className="w-4 h-4 cursor-pointer accent-djibouti-primary" />
                               <span className={"text-xs font-medium " + getColorClass(opt.color)}>{opt.label}</span>
                             </label>
                           );

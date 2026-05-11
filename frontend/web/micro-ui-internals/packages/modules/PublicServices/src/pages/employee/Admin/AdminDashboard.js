@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useRouteMatch, Redirect } from "react-router-dom";
-import { LuSearch, LuUsers, LuBuilding2, LuSettings, LuUser, LuLogOut } from "react-icons/lu";
+import { LuSearch, LuUsers, LuBuilding2, LuSettings, LuUser, LuLogOut, LuArrowLeft } from "react-icons/lu";
 import AnimatedLogo from "../../../../../core/src/components/TopBarSideBar/AnimatedLogo";
 import SearchTab from "./components/SearchTab";
 import EmployeeManagementTab from "./components/EmployeeManagementTab";
@@ -134,6 +134,17 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-center">
               <AnimatedLogo withoutContentText={true} />
             </div>
+          </div>
+
+          {/* Back to platform link */}
+          <div className="px-4 pt-4">
+            <button
+              onClick={() => history.push(`/${window?.contextPath}/employee/publicservices/dashboard-employee`)}
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:text-[#22a4d9] hover:bg-[#22a4d9]/8 border border-gray-200 hover:border-[#22a4d9]/30 transition-all duration-200 group"
+            >
+              <LuArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Retour à la plateforme</span>
+            </button>
           </div>
 
           {/* Navigation Menu */}

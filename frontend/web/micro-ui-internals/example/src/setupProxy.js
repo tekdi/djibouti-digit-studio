@@ -98,7 +98,9 @@ module.exports = function (app) {
     "/mdms-v2/v1/_search",
     "/studio-pdf",
     "/calculator-service",
-    "/health-individual/v1/_search"
+    "/health-individual/v1/_search",
+    "/health-individual/v1/_update",
+    "/health-individual/v1/_create",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));

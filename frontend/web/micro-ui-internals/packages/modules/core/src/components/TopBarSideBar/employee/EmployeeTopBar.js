@@ -4,8 +4,6 @@ import { useHistory, useLocation } from "react-router-dom";
 import AnimatedLogo from "../AnimatedLogo";
 import LanguageSelector from "../LanguageSelector";
 import {
-  LuMenu,
-  LuX,
   LuLayoutDashboard,
   LuFileText,
   LuClipboardList,
@@ -17,6 +15,7 @@ import {
   LuChevronDown,
   LuLogOut,
   LuSettings,
+  LuShield,
 } from "react-icons/lu";
 
 // Role translation mapping
@@ -63,7 +62,6 @@ const priorityRoles = [
 const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showDossiersDropdown, setShowDossiersDropdown] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
@@ -83,6 +81,8 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
   const headerSecondary = isCommissioner ? fullName : displayRole;
   const shortName = headerPrimary.length > 18 ? headerPrimary.substring(0, 18) + "..." : headerPrimary;
 
+  const isStudioAdmin = userRoles.some((r) => r?.code === "STUDIO_ADMIN");
+
   const navItems = [
     { id: "dashboard", label: "Tableau de bord", icon: LuLayoutDashboard, path: `${basePath}/dashboard-employee` },
     {
@@ -95,12 +95,16 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
       ],
     },
     { id: "search", label: "Recherche", icon: LuSearch, path: `${basePath}/search` },
+    ...(isStudioAdmin
+      ? [{ id: "admin", label: "Admin", icon: LuShield, path: `${basePath}/admin-dashboard/employees` }]
+      : []),
   ];
 
   const isActive = (id) => {
     if (id === "dashboard") return pathname.includes("/dashboard-employee");
     if (id === "dossiers") return pathname.includes("/applications-employee") || pathname.includes("/BPA");
     if (id === "search") return pathname.includes("/search");
+    if (id === "admin") return pathname.includes("/admin-dashboard");
     return false;
   };
 
@@ -114,8 +118,8 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileMenuOpen(false); }, [pathname]);
+  // Close any open dropdown on route change
+  useEffect(() => { setShowUserDropdown(false); setShowDossiersDropdown(false); }, [pathname]);
 
   return (
     <Fragment>
@@ -225,116 +229,81 @@ const EmployeeTopBar = ({ t, userDetails, userOptions, mobileView }) => {
               </div>
             </div>
 
-            {/* Mobile: Logo + Hamburger only */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-gray-600 hover:bg-gray-100/80 transition-colors"
-            >
-              {mobileMenuOpen ? <LuX className="w-5 h-5" /> : <LuMenu className="w-5 h-5" />}
-            </button>
+            {/* Mobile: User avatar trigger (replaces hamburger — primary nav lives in
+                the sticky bottom nav so this only exposes user info + logout) */}
+            <div className="md:hidden relative user-dropdown">
+              <button
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                className="flex items-center gap-1 p-1 rounded-xl hover:bg-gray-100/80 transition-colors"
+              >
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <LuUser className="w-4.5 h-4.5" />
+                </div>
+                <LuChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${showUserDropdown ? "rotate-180" : ""}`} />
+              </button>
+              {showUserDropdown && (
+                <div className="absolute top-full right-0 mt-2 w-60 rounded-xl border border-gray-100 bg-white shadow-lg py-1.5 z-50">
+                  <div className="px-3 py-2 border-b border-gray-50">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{headerPrimary}</p>
+                    <p className="text-[11px] text-gray-400 truncate">{headerSecondary}</p>
+                  </div>
+                  <div className="px-3 py-2 border-b border-gray-50">
+                    <LanguageSelector />
+                  </div>
+                  {userOptions?.map((option, i) => {
+                    const isLogout = option.name?.toLowerCase().includes("logout") || option.name?.toLowerCase().includes("déconnexion");
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => { option.func(); setShowUserDropdown(false); }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
+                          isLogout ? "text-red-500 hover:bg-red-50" : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {isLogout ? <LuLogOut className="w-4 h-4" /> : <LuSettings className="w-4 h-4 text-gray-400" />}
+                        <span>{option.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </header>
       </div>
 
-      {/* Mobile Slide-down Menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)}>
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-          {/* Panel */}
-          <div
-            className="absolute top-[60px] left-3 right-3 rounded-2xl border border-white/60 bg-white/95 backdrop-blur-2xl shadow-xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* User info */}
-            <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <LuUser className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{headerPrimary}</p>
-                <p className="text-xs text-gray-400">{headerSecondary}</p>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="p-3 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.id);
-
-                if (item.children) {
-                  return (
-                    <div key={item.id}>
-                      <button
-                        onClick={() => setShowDossiersDropdown(!showDossiersDropdown)}
-                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                          active ? "text-primary bg-primary/5" : "text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Icon className="w-4.5 h-4.5" />
-                          <span>{item.label}</span>
-                        </div>
-                        <LuChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showDossiersDropdown ? "rotate-180" : ""}`} />
-                      </button>
-                      {showDossiersDropdown && (
-                        <div className="ml-4 pl-3 mt-1 mb-1 space-y-0.5 border-l-2 border-gray-100">
-                          {item.children.map((child) => (
-                            <button
-                              key={child.id}
-                              onClick={() => { history.push(child.path); setMobileMenuOpen(false); }}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                            >
-                              <child.icon className="w-4 h-4 text-gray-400" />
-                              <span>{child.label}</span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                }
-
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => { history.push(item.path); setMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                      active ? "text-primary bg-primary/5" : "text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    <Icon className="w-4.5 h-4.5" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Bottom: Language + Logout */}
-            <div className="px-3 pb-3 pt-1 border-t border-gray-100 mt-1 space-y-1">
-              <div className="px-3 py-2">
-                <LanguageSelector />
-              </div>
-              {userOptions?.map((option, i) => {
-                const isLogout = option.name?.toLowerCase().includes("logout") || option.name?.toLowerCase().includes("déconnexion");
-                return (
-                  <button
-                    key={i}
-                    onClick={() => { option.func(); setMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                      isLogout ? "text-red-500 hover:bg-red-50" : "text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {isLogout ? <LuLogOut className="w-4.5 h-4.5" /> : <LuSettings className="w-4.5 h-4.5 text-gray-400" />}
-                    <span>{option.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+      {/* Sticky bottom nav (mobile only) — like Instagram/Twitter */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-2xl border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
+        <div className="flex items-stretch justify-around px-1 pt-1.5 pb-1.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.id);
+            return (
+              <button
+                key={item.id}
+                onClick={() => history.push(item.path)}
+                className={`flex flex-col items-center justify-center flex-1 py-1.5 px-1 rounded-xl transition-all min-w-0 ${
+                  active ? "text-primary" : "text-gray-500 active:bg-gray-50"
+                }`}
+              >
+                <div className={`flex items-center justify-center w-10 h-7 rounded-xl mb-0.5 transition-all ${
+                  active ? "bg-primary/10" : ""
+                }`}>
+                  <Icon className={`transition-all ${active ? "w-5 h-5" : "w-5 h-5"}`} />
+                </div>
+                <span className={`text-[10.5px] leading-tight font-medium truncate w-full text-center ${
+                  active ? "text-primary" : "text-gray-500"
+                }`}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      )}
+      </nav>
+
+      {/* Spacer so page content isn't hidden behind the bottom nav on mobile */}
+      <div className="md:hidden h-16" aria-hidden="true" />
     </Fragment>
   );
 };

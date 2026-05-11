@@ -98,11 +98,12 @@ const DocumentsTable = ({
                   className={`flex items-center gap-1.5 cursor-pointer ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name={`obs-${doc.id}`}
                     checked={isChecked}
                     onChange={() => !isDisabled && handleObservationToggle(doc.id, option.value)}
                     disabled={isDisabled}
-                    className="w-4 h-4 rounded border-2 cursor-pointer"
+                    className="w-4 h-4 cursor-pointer accent-djibouti-primary"
                   />
                   <span className={`text-xs font-medium ${getColorClass(option.color)}`}>{option.label}</span>
                 </label>

@@ -28,6 +28,13 @@ var ActivitiesTab = function (props) {
   var timeline = props.timeline, response = props.response, isCitizen = props.isCitizen;
   var t = useTranslation().t;
 
+  // Architects log in via the employee app but should see the same trimmed
+  // history as citizens — no internal employee chatter, only commissioner
+  // verdicts. Treat them as external viewers.
+  var userRoles = (Digit?.UserService?.getUser?.()?.info?.roles || []).map(function (r) { return r.code; });
+  var isArchitect = userRoles.indexOf("BPA_ARCHITECT") !== -1;
+  var isExternalViewer = isCitizen || isArchitect;
+
   var formatDate = function (inst) {
     var epoch = inst?.auditDetails?.lastModifiedEpoch || inst?.auditDetails?.createdTime;
     if (!epoch) return inst?.auditDetails?.created || "";
@@ -155,15 +162,27 @@ var ActivitiesTab = function (props) {
                   </h4>
                   <span className="text-xs text-gray-500">{formatDate(inst)}</span>
                 </div>
-                {!isCitizen && inst?.assigner?.name && (
+                {!isExternalViewer && inst?.assigner?.name && (
                   <p className="text-xs text-gray-500">Par : {inst.assigner.name}</p>
                 )}
-                {inst?.comment && (
-                  <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <p className="text-xs font-medium text-gray-700 mb-1">{t("COMMENT")}</p>
-                    <p className="text-xs text-gray-600">"{inst.comment}"</p>
-                  </div>
-                )}
+                {inst?.comment && (() => {
+                  // External viewers (citizen / architect) only see comments
+                  // from commissioner verdicts ("Avis Favorable/Défavorable par X").
+                  // Internal employee chatter ("Calcul Paiement fait", etc.) stays
+                  // private to staff.
+                  if (isExternalViewer) {
+                    var act = inst?.performedAction || inst?.action;
+                    var cn2 = getCommissionerName(inst?.businessService);
+                    var isVerdict = !!(getVerdictForAction(act) && cn2);
+                    if (!isVerdict) return null;
+                  }
+                  return (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <p className="text-xs font-medium text-gray-700 mb-1">{t("COMMENT")}</p>
+                      <p className="text-xs text-gray-600">"{inst.comment}"</p>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           );

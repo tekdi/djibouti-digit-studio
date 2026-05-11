@@ -13,6 +13,7 @@ import {
   LuClock,
   LuMail,
 } from "react-icons/lu";
+import AnimatedLogo from "../../../components/TopBarSideBar/AnimatedLogo";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, canSubmit }) => {
   const [timeLeft, setTimeLeft] = useState(30);
@@ -86,8 +87,14 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
     window.location.href = `/${window?.contextPath}/profile-selection`;
   };
 
+  // See SelectEmail for why we skip min-h-screen on mobile (parent .employee
+  // already enforces 100vh; doubling causes scroll).
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-slate-50 to-gray-50 flex overflow-hidden">
+    <div className="w-full relative flex overflow-hidden lg:min-h-screen">
+      {/* Soft gradient backdrop with djibouti-primary tint and decorative blobs */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-white to-blue-50 pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-djibouti-primary/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-djibouti-primary/10 blur-3xl pointer-events-none" />
       {/* Left side - Image and Info (Desktop only) */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <div className="absolute inset-0 bg-gradient-djibouti-light mix-blend-multiply z-10"></div>
@@ -166,33 +173,34 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
       </div>
 
       {/* Right side - OTP Form */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 sm:p-8 relative z-10">
         {/* Mobile Card */}
-        <div className="block lg:hidden w-full max-w-md mx-auto px-2 py-8">
+        <div className="block lg:hidden w-full max-w-md mx-auto py-4">
           <div className="relative z-10 w-full">
-            <div className="backdrop-blur-xl bg-white/80 shadow-2xl rounded-3xl px-6 py-10 flex flex-col items-center">
-              <div className="mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-full bg-djibouti-primary/10 p-3">
-                    <LuShield className="w-8 h-8 text-djibouti-primary" />
-                  </div>
-                  <h1 className="text-3xl font-bold text-gray-900">Vérification</h1>
-                </div>
+            <div className="bg-white shadow-xl rounded-2xl px-4 sm:px-6 py-6 sm:py-10 flex flex-col items-center border border-gray-100">
+              <div className="mb-4 flex justify-center">
+                <AnimatedLogo />
               </div>
-              <p className="text-gray-600 text-base mb-2 text-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <LuShield className="w-5 h-5 sm:w-6 sm:h-6 text-djibouti-primary" />
+                Vérification
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base mb-1.5 text-center">
                 {getSubtitle()}
               </p>
-              <p className="text-djibouti-primary font-medium mb-8 text-center">
+              <p className="text-djibouti-primary font-medium mb-6 sm:mb-8 text-center text-sm sm:text-base break-all">
                 {config.email || "votre email"}
               </p>
 
               <div className="w-full">
-                {/* Custom OTP Input */}
-                <div className="flex justify-center gap-3 mb-6">
+                {/* Custom OTP Input — sized so 6 boxes fit on a 320px screen */}
+                <div className="flex justify-center gap-1.5 sm:gap-3 mb-6">
                   {[...Array(6)].map((_, index) => (
                     <input
                       key={index}
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       maxLength="1"
                       value={otpValue[index] || ""}
                       onChange={(e) => {
@@ -202,7 +210,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                           newOtp[index] = value;
                           const updatedOtp = newOtp.join("").slice(0, 6);
                           handleOtpInputChange(updatedOtp);
-                          
+
                           // Auto-focus next input
                           if (value && index < 5) {
                             const nextInput = e.target.parentNode.children[index + 1];
@@ -216,7 +224,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, can
                           if (prevInput) prevInput.focus();
                         }
                       }}
-                      className="w-12 h-12 text-center text-lg font-bold border-2 border-gray-200 rounded-xl focus:border-djibouti-primary focus:ring-2 focus:ring-djibouti-primary/20 bg-white/80 text-gray-900 transition-all duration-200"
+                      className="w-10 h-12 sm:w-12 sm:h-12 text-center text-lg font-bold border-2 border-gray-200 rounded-xl focus:border-djibouti-primary focus:ring-2 focus:ring-djibouti-primary/20 bg-white text-gray-900 transition-all duration-200 outline-none"
                     />
                   ))}
                 </div>
