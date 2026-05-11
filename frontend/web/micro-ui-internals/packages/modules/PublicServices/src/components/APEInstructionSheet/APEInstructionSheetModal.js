@@ -110,16 +110,14 @@ const APEInstructionSheetModal = ({
   };
 
   const handleObservationToggle = (docId, observationValue) => {
+    // Single-select: replace the row's observations with this single value,
+    // or clear if re-clicking the active option.
     setFormData((prev) => ({
       ...prev,
       documents: prev.documents.map((doc) => {
         if (String(doc.id) !== String(docId)) return doc;
-        const cur = doc.observations || [];
-        const isSel = cur.includes(observationValue);
-        return {
-          ...doc,
-          observations: isSel ? cur.filter((o) => o !== observationValue) : [...cur, observationValue],
-        };
+        const isSel = (doc.observations || []).includes(observationValue);
+        return { ...doc, observations: isSel ? [] : [observationValue] };
       }),
     }));
   };

@@ -86,77 +86,63 @@ const ArchitectFormModal = ({ architect, isEdit, onClose, onSuccess }) => {
           plainAccessRequest: {},
         },
         Individual: {
-          ...(isEdit && architect
-            ? {
-                id: architect.id,
-                individualId: architect.individualId,
-              }
-            : {}),
+          // For an update, start by spreading the existing record so we
+          // preserve fields the form doesn't touch (rowVersion, source,
+          // userUuid, userId, auditDetails, …). Without these, the
+          // individual service responds with NON_EXISTENT_ENTITY.
+          ...(isEdit && architect ? architect : {}),
           tenantId: tenantId,
           name: {
+            ...(architect?.name || {}),
             givenName: formData.name,
           },
           gender: formData.gender,
           mobileNumber: formData.mobileNumber,
-          address: [
-            {
-              tenantId: tenantId,
-              city: tenantId,
-              locality: {
-                code: "DZB-PLATEAU",
-              },
-              type: "PERMANENT",
-            },
-          ],
+          address: architect?.address?.length
+            ? architect.address
+            : [
+                {
+                  tenantId: tenantId,
+                  city: tenantId,
+                  locality: { code: "DZB-PLATEAU" },
+                  type: "PERMANENT",
+                },
+              ],
           identifiers: [
             {
+              ...(architect?.identifiers?.[0] || {}),
               identifierType: "licenseOrAccreditationNumber",
               identifierId: formData.licenseNumber,
             },
           ],
-          skills: [
-            {
-              type: "DRIVING",
-              level: "UNSKILLED",
-            },
-          ],
-          photo: null,
+          skills: architect?.skills?.length
+            ? architect.skills
+            : [{ type: "DRIVING", level: "UNSKILLED" }],
+          photo: architect?.photo || null,
           additionalFields: {
+            ...(architect?.additionalFields || {}),
             fields: [
-              {
-                key: "companyName",
-                value: formData.companyName,
-              },
-              {
-                key: "hqAddress",
-                value: formData.hqAddress,
-              },
-              {
-                key: "nameOfTechnicalManager",
-                value: formData.technicalManagerName,
-              },
-              {
-                key: "professionalPhoneOrEmail",
-                value: formData.professionalPhoneOrEmail,
-              },
+              { key: "companyName", value: formData.companyName },
+              { key: "hqAddress", value: formData.hqAddress },
+              { key: "nameOfTechnicalManager", value: formData.technicalManagerName },
+              { key: "professionalPhoneOrEmail", value: formData.professionalPhoneOrEmail },
             ],
           },
           isSystemUser: true,
+          // The link to the underlying user record lives at userUuid/userId on
+          // the Individual itself, not in userDetails. Carry both through on
+          // edit so the backend can find and update the user side too.
+          ...(isEdit && architect
+            ? { userUuid: architect.userUuid, userId: architect.userId }
+            : {}),
           userDetails: {
-            ...(isEdit && architect?.userDetails
-              ? {
-                  uuid: architect.userDetails.uuid,
-                  username: architect.userDetails.username,
-                }
-              : {
-                  username: formData.mobileNumber,
-                }),
+            ...(architect?.userDetails || {}),
+            ...(isEdit && architect?.userUuid
+              ? { uuid: architect.userUuid, username: architect?.userDetails?.username || formData.mobileNumber }
+              : { username: formData.mobileNumber }),
             tenantId: tenantId,
             roles: [
-              {
-                code: "BPA_ARCHITECT",
-                tenantId: tenantId,
-              },
+              { code: "BPA_ARCHITECT", tenantId: tenantId },
             ],
             type: "CITIZEN",
           },

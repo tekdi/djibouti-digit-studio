@@ -122,21 +122,13 @@ const SDECCInstructionSheetModal = ({
   };
 
   const handleObservationToggle = (docId, observationValue) => {
+    // Single-select observation per row.
     setFormData((prev) => ({
       ...prev,
       documents: prev.documents.map((doc) => {
-        if (doc.id === docId) {
-          const currentObservations = doc.observations || [];
-          const isSelected = currentObservations.includes(observationValue);
-          
-          return {
-            ...doc,
-            observations: isSelected
-              ? currentObservations.filter((o) => o !== observationValue)
-              : [...currentObservations, observationValue],
-          };
-        }
-        return doc;
+        if (doc.id !== docId) return doc;
+        const isSelected = (doc.observations || []).includes(observationValue);
+        return { ...doc, observations: isSelected ? [] : [observationValue] };
       }),
     }));
   };

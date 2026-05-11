@@ -153,7 +153,18 @@ const Home = ({
         />
       )}
 
-      <div className={`main center-container citizen-home-container mb-25`}>
+      {/* On login/register routes the global `.citizen .main { padding-top: 82px }`
+          rule (from digit-ui-components-css) pushes the auth screens down and
+          forces the page to scroll. The topbar is hidden on those routes anyway,
+          so we cancel the padding-top + bottom margin via inline style. */}
+      <div
+        className={`main center-container citizen-home-container mb-25`}
+        style={
+          (window.location.href.includes("/login") || window.location.href.includes("/register"))
+            ? { paddingTop: 0, paddingBottom: 0, marginBottom: 0, minHeight: "100vh" }
+            : undefined
+        }
+      >
         {/* {hideSidebar ? null : (
           <div className="SideBarStatic">
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
