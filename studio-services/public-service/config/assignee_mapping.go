@@ -14,7 +14,7 @@ var AssigneeMapping = map[string]string{
 	"BPA_CCE":        "BPA_SRA_SUB_DIRECTOR",
 	"BPA_CCP":        "BPA_SDECC_SUB_DIRECTOR",
 	"BPA_CCG":        "BPA_DIRECTOR",
-	"BPA_PV":         "BPA_SDECC_SUB_DIRECTOR",
+	"BPA_PV":         "TOPOGRAPHY_HOD",
 	"BPA_APE":        "BPA_SDECC_SUB_DIRECTOR",
 }
 
