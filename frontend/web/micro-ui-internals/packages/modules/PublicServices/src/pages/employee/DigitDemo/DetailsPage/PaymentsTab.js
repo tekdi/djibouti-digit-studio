@@ -1,9 +1,180 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Calculation from "../../../../../../core/src/pages/citizen/Calculation";
 import { checklistByService } from "../../../../utils/templateConfig.js";
-import { LuReceipt, LuCreditCard } from "react-icons/lu";
+import { LuReceipt, LuCreditCard, LuBanknote, LuFileText, LuDownload, LuCalendar } from "react-icons/lu";
 import TaxExemptionSection from "./TaxExemptionSection";
+
+const BILLING_BUSINESS_SERVICE = "PCO";
+
+// Fetches the most recent payment for this application from collection-services
+// so the Détails tab can show the receipt/quittance info captured at payment time.
+const usePaymentRecord = (tenantId, applicationNumber, isPaid) => {
+  const [payment, setPayment] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchPayment = useCallback(async () => {
+    if (!isPaid || !applicationNumber || !tenantId) return;
+    setIsLoading(true);
+    const consumer = encodeURIComponent(applicationNumber);
+    const candidates = [
+      `/collection-services/payments/${BILLING_BUSINESS_SERVICE}/_search?tenantId=${tenantId}&consumerCodes=${consumer}`,
+      `/collection-services/payments/_search?tenantId=${tenantId}&consumerCodes=${consumer}&businessServices=${BILLING_BUSINESS_SERVICE}`,
+      `/collection-services/payments/_search?tenantId=${tenantId}&consumerCodes=${consumer}`,
+    ];
+    let payments = [];
+    let lastError = null;
+    for (const url of candidates) {
+      try {
+        const resp = await Digit.CustomService.getResponse({
+          url,
+          method: "POST",
+          headers: { "X-Tenant-Id": tenantId },
+          body: {
+            RequestInfo: {
+              apiId: "Rainmaker",
+              authToken: Digit.UserService.getUser()?.access_token,
+              userInfo: Digit.UserService.getUser()?.info,
+              msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+            },
+          },
+        });
+        payments = resp?.Payments || [];
+        if (payments.length > 0) break;
+      } catch (e) {
+        lastError = e;
+        console.warn("[PaymentsTab] payment search failed for", url, e?.message);
+      }
+    }
+    if (lastError && payments.length === 0) {
+      console.error("[PaymentsTab] all payment search endpoints failed", lastError);
+    }
+
+    const sorted = payments.slice().sort(
+      (a, b) => (b?.auditDetails?.createdTime || 0) - (a?.auditDetails?.createdTime || 0),
+    );
+    const latest = sorted[0] || null;
+    setPayment(latest);
+
+    const detail = (latest?.paymentDetails || [])[0] || {};
+    const fileStoreId = latest?.fileStoreId
+      || detail?.fileStoreId
+      || latest?.additionalDetails?.fileStoreId
+      || detail?.additionalDetails?.fileStoreId
+      || "";
+    if (latest && fileStoreId) {
+      latest.fileStoreId = fileStoreId; // normalize for the card
+    }
+    if (fileStoreId) {
+      try {
+        const urlResp = await Digit.CustomService.getResponse({
+          url: `/filestore/v1/files/url?tenantId=${tenantId}&fileStoreIds=${encodeURIComponent(fileStoreId)}`,
+          method: "GET",
+          headers: { "X-Tenant-Id": tenantId },
+        });
+        const raw = urlResp?.fileStoreIds?.[0]?.url || "";
+        setFileUrl(raw.split(",")[0] || "");
+      } catch (e) {
+        setFileUrl("");
+      }
+    } else {
+      setFileUrl("");
+    }
+    setIsLoading(false);
+  }, [tenantId, applicationNumber, isPaid]);
+
+  useEffect(() => { fetchPayment(); }, [fetchPayment]);
+
+  return { payment, fileUrl, isLoading };
+};
+
+const formatDate = (epoch) => {
+  if (!epoch) return "—";
+  const d = new Date(Number(epoch));
+  if (isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+};
+
+const PaymentReceiptCard = ({ payment, fileUrl }) => {
+  if (!payment) return null;
+  const detail = (payment.paymentDetails || [])[0] || {};
+  const isCheque = payment.paymentMode === "CHEQUE";
+  return (
+    <div className="rounded-2xl shadow-sm border border-green-200 bg-white overflow-hidden">
+      <div className="px-6 py-4 border-b border-green-200 bg-green-50">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-green-500">
+            <LuReceipt className="w-5 h-5 text-white" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900">Reçu de paiement</h2>
+          <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">
+            {isCheque ? "Chèque" : "Espèces"}
+          </span>
+        </div>
+      </div>
+
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Numéro de reçu</p>
+          <p className="text-base font-semibold text-gray-900">{detail.manualReceiptNumber || "—"}</p>
+        </div>
+
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1 flex items-center gap-2">
+            <LuCalendar className="w-3.5 h-3.5" /> Date de la quittance
+          </p>
+          <p className="text-base font-semibold text-gray-900">{formatDate(detail.manualReceiptDate)}</p>
+        </div>
+
+        {isCheque && (
+          <React.Fragment>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-1">Numéro de chèque</p>
+              <p className="text-base font-semibold text-gray-900">{payment.instrumentNumber || payment.transactionNumber || "—"}</p>
+            </div>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-1 flex items-center gap-2">
+                <LuCalendar className="w-3.5 h-3.5" /> Date du chèque
+              </p>
+              <p className="text-base font-semibold text-gray-900">{formatDate(payment.instrumentDate)}</p>
+            </div>
+          </React.Fragment>
+        )}
+
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 md:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Montant payé</p>
+          <p className="text-2xl font-bold text-green-700">
+            {Number(payment.totalAmountPaid || 0).toLocaleString()} FDj
+          </p>
+          <p className="text-xs text-gray-500 mt-1">Payé par {payment.payerName || "—"}</p>
+        </div>
+
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 md:col-span-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 flex items-center gap-2">
+            <LuFileText className="w-3.5 h-3.5" /> Quittance téléversée
+          </p>
+          {payment.fileStoreId ? (
+            fileUrl ? (
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-djibouti-primary/30 bg-white px-4 py-2.5 text-sm font-semibold text-djibouti-primary hover:bg-djibouti-primary hover:text-white transition-all"
+              >
+                <LuDownload className="w-4 h-4" /> Télécharger la quittance
+              </a>
+            ) : (
+              <p className="text-sm text-gray-500 italic">Lien en cours de chargement…</p>
+            )
+          ) : (
+            <p className="text-sm text-gray-500 italic">Aucun fichier joint</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PaymentsTab = ({
   costEstimation,
@@ -87,6 +258,9 @@ const PaymentsTab = ({
     "APPROVED",
   ]);
   const isPaid = appStatus ? PAID_STATUSES.has(appStatus) : false;
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { payment, fileUrl } = usePaymentRecord(tenantId, applicationNumber, isPaid);
 
   return (
     <div className="space-y-6">
@@ -189,6 +363,13 @@ const PaymentsTab = ({
               )}
             </div>
           </div>
+
+          {/* Reçu de paiement — receipt info captured at payment time
+              (manualReceiptNumber, date, cheque info, uploaded file).
+              Hidden when fetch fails (ACL issue) — pending backend fix. */}
+          {isPaid && payment && (
+            <PaymentReceiptCard payment={payment} fileUrl={fileUrl} />
+          )}
 
           {/* BPA_PL only — tax exemption document section, just after the
               "Détails du paiement" card. Internally the component returns null

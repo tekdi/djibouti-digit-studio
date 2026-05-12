@@ -227,6 +227,8 @@ const OpenView = () => {
       if (paymentMode === "CHEQUE") {
         body.Payment.instrumentNumber = formData?.chequeNo;
         body.Payment.instrumentDate = formData?.chequeDate ? new Date(formData?.chequeDate).getTime() : null;
+        body.Payment.instrumentStatus = "APPROVED";
+        body.Payment.transactionNumber = formData?.chequeNo;
       }
 
       mutation.mutate(
@@ -253,7 +255,12 @@ const OpenView = () => {
             setIsSubmitting(false);
           },
           onError: (error) => {
-            console.error("Payment creation failed:", error.message);
+            console.error("Payment creation failed:", error);
+            const msg = error?.response?.data?.Errors?.[0]?.message
+              || error?.response?.data?.message
+              || error?.message
+              || "Échec de l'enregistrement du paiement";
+            setShowToast({ key: true, label: msg, error: true });
             setIsSubmitting(false);
           },
         }
@@ -338,7 +345,16 @@ const OpenView = () => {
 
   const handleFileStoreId = (files) => {
     if (files.length > 0) {
-      const fileStoreId = files[0][1]?.fileStoreId?.fileStoreId || "";
+      // MultiUploadWrapper hands back tuples [name, { file, fileStoreId }].
+      // Depending on the upload-service response shape, fileStoreId can be
+      // either a plain string or { fileStoreId, tenantId, ... }. Cover both.
+      const raw = files[0]?.[1]?.fileStoreId;
+      const fileStoreId =
+        (raw && typeof raw === "string" && raw) ||
+        raw?.fileStoreId ||
+        raw?.id ||
+        "";
+      console.log("[OpenView] file uploaded, fileStoreId resolved to:", fileStoreId, "raw:", raw);
       setFormData((prev) => ({ ...prev, fileStoreId }));
     } else {
       setFormData((prev) => ({ ...prev, fileStoreId: "" }));

@@ -105,7 +105,7 @@ const usePVChecklist = (tenantId, serviceCode, applicationNumber) => {
         history,
       };
 
-      await Digit.CustomService.getResponse({
+      const putResp = await Digit.CustomService.getResponse({
         url: `/public-service/v1/application/${serviceCode}`,
         method: "PUT",
         headers: { "X-Tenant-Id": tenantId },
@@ -113,6 +113,7 @@ const usePVChecklist = (tenantId, serviceCode, applicationNumber) => {
           RequestInfo: {
             apiId: "Rainmaker",
             authToken: Digit.UserService.getUser()?.access_token,
+            userInfo: Digit.UserService.getUser()?.info,
             msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
           },
           Application: {
@@ -125,11 +126,19 @@ const usePVChecklist = (tenantId, serviceCode, applicationNumber) => {
           },
         },
       });
-      setData(payload);
+      const echoed = Array.isArray(putResp?.Application)
+        ? putResp?.Application?.[0]?.additionalDetails?.pvImplantationChecklist
+        : putResp?.Application?.additionalDetails?.pvImplantationChecklist;
+      if (echoed) {
+        setData(echoed);
+      } else {
+        setData(payload);
+        await refresh();
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [fetchApplication, serviceCode, tenantId]);
+  }, [fetchApplication, refresh, serviceCode, tenantId]);
 
   return { data, isLoading, submit, refresh };
 };
@@ -164,11 +173,13 @@ const PVChecklistModal = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     if (!isOpen) return;
     setIsEditMode(false);
     setShowSuccess(false);
+    setSaveError("");
     setForm({
       implantationDate: existingData?.implantationDate || "",
       pcoNumber: existingData?.pcoNumber || "",
@@ -210,13 +221,19 @@ const PVChecklistModal = ({
 
   const handleSave = async () => {
     setIsSaving(true);
+    setSaveError("");
     try {
       await onSubmit(form);
       setShowSuccess(true);
       setIsEditMode(false);
       setTimeout(() => setShowSuccess(false), 2500);
     } catch (err) {
-      console.error(err);
+      console.error("[PVImplantation] save failed:", err);
+      const msg = err?.response?.data?.Errors?.[0]?.message
+        || err?.response?.data?.message
+        || err?.message
+        || "Échec de l'enregistrement";
+      setSaveError(msg);
     } finally {
       setIsSaving(false);
     }
@@ -267,6 +284,16 @@ const PVChecklistModal = ({
           {showSuccess && (
             <div className="mb-6 flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700">
               <LuCheck className="h-5 w-5" /><span className="text-sm font-semibold">Enregistré avec succès</span>
+            </div>
+          )}
+
+          {saveError && (
+            <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+              <LuX className="h-5 w-5 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Échec de l'enregistrement</p>
+                <p className="text-xs mt-1">{saveError}</p>
+              </div>
             </div>
           )}
 

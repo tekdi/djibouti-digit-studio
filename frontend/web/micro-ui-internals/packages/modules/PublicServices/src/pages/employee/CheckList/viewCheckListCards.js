@@ -14,6 +14,7 @@ import { PSSDECCInstructionSheetCard } from "../../../components/PSSDECCInstruct
 import { PVImplantationChecklistCard } from "../../../components/PVImplantationChecklist";
 import { CCGVisitChecklistCard } from "../../../components/CCGVisitChecklist";
 import { CCPVisitChecklistCard } from "../../../components/CCPVisitChecklist";
+import { CCPAttestationCard } from "../../../components/CCPAttestation";
 import { BCIEInspectionChecklistCard } from "../../../components/BCIEInspectionChecklist";
 import { ATARRInstructionSheetCard } from "../../../components/ATARRInstructionSheet";
 import { PCSInstructionSheetCard } from "../../../components/PCSInstructionSheet";
@@ -184,6 +185,16 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
                 code: "customPVImplantationChecklist",
                 clientId: "PV_IMPLANTATION_CHECKLIST",
                 auditDetails: { createdTime: Date.now() + 6 }
+              });
+            }
+
+            // Add CCP Attestation form if configured (Attestation parasismique — données pour PDF)
+            if (allowedCodes.includes("customCCPAttestation")) {
+              items.push({
+                id: "custom-ccp-attestation",
+                code: "customCCPAttestation",
+                clientId: "CCP_ATTESTATION",
+                auditDetails: { createdTime: Date.now() + 4 }
               });
             }
 
@@ -424,6 +435,18 @@ const ViewCheckListCards = ({ checkListCodes, applicationId, state }) => {
           if (item.code === "customCCGVisitChecklist") {
             return (
               <CCGVisitChecklistCard
+                key={index}
+                service={service}
+                state={state}
+                t={t}
+                isViewOnly={isViewOnly}
+              />
+            );
+          }
+
+          if (item.code === "customCCPAttestation") {
+            return (
+              <CCPAttestationCard
                 key={index}
                 service={service}
                 state={state}
