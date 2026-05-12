@@ -85,7 +85,8 @@
       "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $1, $2, \"ready=\"$3}')",
       "Bash(awk '{print $1}')",
       "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print $0}')",
-      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print \"  \"$1, $2, $3}')"
+      "Bash(awk '{split\\($3,a,\"/\"\\); if \\(a[1] != a[2]\\) print \"  \"$1, $2, $3}')",
+      "Bash(git *)"
     ]
   }
 }
